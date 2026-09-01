@@ -238,4 +238,18 @@ arquivo em `episodes/`. É ele que define onde a próxima execução começa.
 
 ## Licença
 
-MIT (a confirmar).
+Duas licenças, porque o repositório tem duas naturezas.
+
+| O quê | Licença |
+|---|---|
+| Código — `scripts/`, `tests/`, `config/`, `prompts/`, `docs/` | [MIT](LICENSE) |
+| Conteúdo editorial — `episodes/`, `research/`, `saved-items/`, `analysis/`, `archive/` e os MP3 | [CC BY 4.0](LICENSE-CONTENT.md) |
+
+Pegue o pipeline e monte o seu podcast, sem dever nada. Se reaproveitar texto ou
+áudio de um episódio, cite a fonte.
+
+A MIT foi escrita para software; aplicá-la a roteiro e narração seria ambíguo.
+A CC BY é a licença desenhada para obra criativa.
+
+**Licença não é permissão de escrita.** O repositório é público para leitura;
+contribuições entram por *pull request*, e nada é mesclado sem revisão do autor.

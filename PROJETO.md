@@ -7,7 +7,7 @@
 
 **Status:** Fase 1 em construção
 **Autor:** Camps
-**Licença:** MIT (a confirmar)
+**Licença:** MIT para o código, CC BY 4.0 para o conteúdo editorial
 
 ---
 
