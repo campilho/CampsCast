@@ -57,9 +57,17 @@ mkdir -p "$HOME/Library/LaunchAgents" "$ROOT/logs"
   echo '  <key>EnvironmentVariables</key><dict>'
   echo "    <key>PATH</key><string>$PATH_ENTRIES</string>"
   echo '  </dict>'
+  # Três horários por dia, não um. O launchd nunca roda duas instâncias do
+  # mesmo job em paralelo, e a invariante da janela torna a repescagem
+  # inofensiva: se o episódio do dia já saiu, a execução seguinte encerra em
+  # um segundo com "nada novo a cobrir". Se a primeira falhou — máquina
+  # dormindo, rede fora, fonte no ar — a segunda ou a terceira pega.
   echo '  <key>StartCalendarInterval</key><array>'
   for d in 1 2 3 4 5; do
-    echo "    <dict><key>Weekday</key><integer>$d</integer><key>Hour</key><integer>5</integer><key>Minute</key><integer>50</integer></dict>"
+    for hm in "5 50" "6 20" "7 00"; do
+      set -- $hm
+      echo "    <dict><key>Weekday</key><integer>$d</integer><key>Hour</key><integer>$1</integer><key>Minute</key><integer>$2</integer></dict>"
+    done
   done
   echo '  </array>'
   echo "  <key>StandardOutPath</key><string>$ROOT/logs/launchd.out.log</string>"
@@ -77,7 +85,7 @@ echo "Instalado: $PLIST"
 echo "  projeto : $ROOT"
 echo "  claude  : $CLAUDE_BIN"
 echo "  python3 : $PY_BIN"
-echo "  horário : segunda a sexta, 05:50"
+echo "  horário : segunda a sexta, 05:50 (repescagem 06:20 e 07:00)"
 echo
 echo "Disparar agora:  launchctl kickstart -k gui/$UID_NUM/$LABEL"
 echo "Ver status    :  launchctl list | grep campscast"

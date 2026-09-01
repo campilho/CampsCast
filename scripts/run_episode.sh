@@ -64,6 +64,16 @@ done
 
 EPISODE_DATE="${EPISODE_DATE:-$(date +%F)}"
 
+# ---------- manter o Mac acordado ----------
+# O episódio leva uns 8 minutos. `pmset -c sleep 0` impede o sono por
+# inatividade, mas não o sono por tampa fechada — e o despertar agendado do
+# pmset devolve a máquina para o sono pouco depois se nada a segurar. Sem isto,
+# a execução pode ser cortada no meio, deixando episódio ou upload pela metade.
+# O caffeinate morre junto com este script (-w $$), então nada fica preso.
+if command -v caffeinate >/dev/null 2>&1; then
+  caffeinate -i -m -s -w $$ &
+fi
+
 # ---------- logging ----------
 mkdir -p logs
 LOG="logs/${EPISODE_DATE}.log"
