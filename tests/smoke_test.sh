@@ -21,26 +21,63 @@ ok()   { printf '  \033[32m✓\033[0m %s\n' "$1"; PASS=$((PASS+1)); }
 bad()  { printf '  \033[31m✗\033[0m %s\n' "$1"; FAIL=$((FAIL+1)); }
 head_() { printf '\n\033[1m%s\033[0m\n' "$1"; }
 
-EP_BACKUP=""
+# O abrigo dos episódios reais fica DENTRO do repositório, com nome fixo.
+# Antes era um mktemp em /var/folders: quando o cleanup foi interrompido no
+# meio, os episódios sumiram de episodes/ e não havia como saber onde procurar.
+# Aqui é visível, previsível e recuperável na execução seguinte.
+EP_BACKUP="$ROOT/.smoke-backup"
+
+# Nome de episódio é sempre YYYY-MM-DD.md. Validar antes de mover, nos dois
+# sentidos, impede que lixo vire nome de arquivo: numa execução morta por
+# SIGPIPE (`smoke_test.sh | head -3`), o cleanup rodou com a saída quebrada e
+# produziu episódios chamados "2026-08-31.md\n  ✓ arquivo .env.example".
+nome_de_episodio_valido() {
+  [[ "$1" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}\.md$ ]]
+}
+
+restaurar_episodios() {
+  [[ -d "$EP_BACKUP" ]] || return 0
+  local f nome
+  for f in "$EP_BACKUP"/*.md; do
+    [[ -e "$f" ]] || continue
+    nome="${f##*/}"
+    if ! nome_de_episodio_valido "$nome"; then
+      printf '\033[31mAbrigo com nome inesperado, deixado intacto:\033[0m %s\n' \
+        "$f" >&2
+      continue
+    fi
+    # Nunca sobrescrever episódio que já esteja no lugar: se ele existe agora,
+    # é mais recente que o abrigo.
+    if [[ -e "episodes/$nome" ]]; then
+      rm -f "$f"
+    else
+      mv "$f" "episodes/$nome"
+    fi
+  done
+  rmdir "$EP_BACKUP" 2>/dev/null || true
+}
 
 cleanup() {
+  # Apaga só o que a própria suíte criou. A versão anterior fazia
+  # `rm -f episodes/*.md` antes de restaurar — uma janela em que os episódios
+  # só existiam no abrigo. Morrer ali significava perdê-los de vista.
   rm -f "$TMP_EP" "$TMP_AUDIO"
   if [[ -n "$FEED_BAK" && -f "$FEED_BAK" ]]; then
     mv "$FEED_BAK" feed/feed.xml
   else
     rm -f feed/feed.xml
   fi
-  # Devolve os episódios reais, aconteça o que acontecer.
-  if [[ -n "$EP_BACKUP" && -d "$EP_BACKUP" ]]; then
-    rm -f episodes/*.md 2>/dev/null || true
-    for f in "$EP_BACKUP"/*.md; do
-      [[ -e "$f" ]] && mv "$f" episodes/
-    done
-    rmdir "$EP_BACKUP" 2>/dev/null || true
-    EP_BACKUP=""
-  fi
+  restaurar_episodios
 }
-trap cleanup EXIT
+# INT e TERM também: Ctrl-C no meio da suíte não pode deixar episódio fora.
+trap cleanup EXIT INT TERM HUP PIPE
+
+# Auto-recuperação: se uma execução anterior morreu antes de restaurar, os
+# episódios ainda estão no abrigo. Devolve antes de qualquer outra coisa.
+if [[ -d "$EP_BACKUP" ]] && compgen -G "$EP_BACKUP/*.md" >/dev/null; then
+  printf '\033[33mRecuperando episódios de uma execução anterior interrompida.\033[0m\n' >&2
+  restaurar_episodios
+fi
 
 # A suíte move episodes/*.md para se isolar. Se um pipeline estiver gravando um
 # episódio nesse intervalo, os dois se atropelam — e o episódio real pode se
@@ -54,9 +91,16 @@ fi
 
 # A suíte precisa ser hermética: episódios reais mudam o cálculo da janela e
 # disparam a guarda de sobreposição. Saem de cena aqui e voltam no cleanup.
-EP_BACKUP="$(mktemp -d)"
+mkdir -p "$EP_BACKUP"
 for f in episodes/*.md; do
-  [[ -e "$f" ]] && mv "$f" "$EP_BACKUP"/
+  [[ -e "$f" ]] || continue
+  nome="${f##*/}"
+  if nome_de_episodio_valido "$nome"; then
+    mv "$f" "$EP_BACKUP/$nome"
+  else
+    printf '\033[31mArquivo com nome inesperado em episodes/, não tocado:\033[0m %s\n' \
+      "$f" >&2
+  fi
 done
 
 # ---------------------------------------------------------------- 1 estrutura

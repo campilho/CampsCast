@@ -192,9 +192,23 @@ padrão do Python.
 ## Agendamento (launchd)
 
 ```bash
-cp docs/com.camps.campscast.plist ~/Library/LaunchAgents/
-$EDITOR ~/Library/LaunchAgents/com.camps.campscast.plist   # ajuste o caminho
-launchctl load ~/Library/LaunchAgents/com.camps.campscast.plist
+scripts/install_launchd.sh
+```
+
+Gera o plist com os caminhos reais da máquina — `claude`, `python3`, raiz do
+projeto — valida e carrega.
+
+**O projeto não pode ficar em `~/Documents`, `~/Desktop` ou `~/Downloads`.** O
+macOS bloqueia agentes do launchd nessas pastas: o erro é `Operation not
+permitted` e a execução pelo Terminal continua funcionando, então isso só
+aparece de madrugada. O instalador recusa e explica. Detalhes em
+[docs/setup-macos.md](docs/setup-macos.md).
+
+Conferir e disparar na hora:
+
+```bash
+launchctl list | grep campscast
+launchctl kickstart -k gui/$(id -u)/com.camps.campscast
 ```
 
 O Mac precisa estar acordado às 05:50 em dias úteis:

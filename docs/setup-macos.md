@@ -226,27 +226,83 @@ python3 scripts/publish.py --no-upload   # gera feed/feed.xml localmente
 
 ## 11. Agendar (launchd)
 
-```bash
-cp docs/com.camps.campscast.plist ~/Library/LaunchAgents/
+### Onde o projeto NÃO pode estar
+
+O macOS bloqueia agentes do launchd em `~/Documents`, `~/Desktop` e
+`~/Downloads` — é o TCC, o mesmo mecanismo que pede permissão quando um app
+tenta ler suas pastas. O sintoma é enganoso:
+
+```
+/bin/bash: .../scripts/run_episode.sh: Operation not permitted
 ```
 
-Edite o arquivo copiado e troque `PROJECT_ROOT` pelo caminho real. Confira que
-o `PATH` declarado no plist inclui onde está o seu `claude` — o launchd roda com
-um `PATH` mínimo e não herda o do seu shell.
+Não fala em permissão de disco, e o mesmo comando funciona perfeitamente quando
+você o roda no Terminal — porque o Terminal já tem a permissão concedida. Só a
+execução automática falha, e só às 5h50, sem ninguém por perto.
+
+**Deixe o projeto fora dessas três pastas.** `~/CampsCast` serve. Há um segundo
+motivo: se `~/Documents` estiver sincronizada com o iCloud, um MP3 de 8 MB
+escrito toda madrugada sobe para a nuvem, e sincronização mexendo em arquivo que
+o agente está escrevendo é problema difícil de diagnosticar.
+
+A alternativa — dar Full Disk Access ao `/bin/bash` em Ajustes do Sistema —
+funciona, mas concede a permissão a **qualquer** script bash da máquina. Mover o
+projeto é mais barato e mais seguro.
+
+### Instalar
 
 ```bash
-launchctl load ~/Library/LaunchAgents/com.camps.campscast.plist
+scripts/install_launchd.sh
+```
+
+O script gera o plist com os caminhos reais desta máquina, valida com `plutil` e
+carrega no launchd. Ele também recusa a instalação se o projeto estiver numa
+pasta protegida, explicando o porquê.
+
+Gerar em vez de editar um template resolve o problema mais chato do launchd: ele
+**não herda o PATH do shell**. Se `claude` ou `python3` não estiverem no PATH
+declarado no plist, o agente falha silenciosamente na madrugada.
+
+### Testar sem esperar as 5h50
+
+```bash
+launchctl kickstart -k gui/$(id -u)/com.camps.campscast
+tail -20 logs/launchd.out.log
+```
+
+Se o episódio do dia já existir, a saída esperada é "Nada novo a cobrir" com
+código 0 — o que prova a cadeia inteira sem gastar créditos.
+
+Conferir o código da última execução:
+
+```bash
 launchctl list | grep campscast
 ```
 
-O Mac precisa estar acordado às 05:50 em dias úteis:
+A segunda coluna é o código de saída. `0` é sucesso; `126` costuma ser o TCC.
+
+### Deixar o Mac acordado
 
 ```bash
 sudo pmset -c sleep 0
+```
+
+```bash
 sudo pmset repeat wakeorpoweron MTWRF 05:45:00
 ```
 
----
+Conferir:
+
+```bash
+pmset -g sched
+pmset -g custom | grep -A1 "AC Power" 
+```
+
+### Remover o agendamento
+
+```bash
+scripts/install_launchd.sh --uninstall
+```
 
 ## Checklist final
 
