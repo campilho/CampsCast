@@ -1,0 +1,16 @@
+{
+  "title": "CampsCast",
+  "subtitle": "Briefing diário de IA, gerado por agentes autonomos",
+  "description": "Um briefing diário com as principais notícias do mundo de inteligência artificial — pesquisado, roteirizado e narrado por agentes de IA. Direto à fonte: labs, hardware e investidores.",
+  "author": "Fernando Campilho",
+  "email": "contato@campscast.invalid",
+  "language": "pt-BR",
+  "category": "Technology",
+  "subcategory": "Tech News",
+  "explicit": false,
+  "link": "https://campscast.s3.us-east-1.amazonaws.com/feed.xml",
+  "cover_url": "https://campscast.s3.us-east-1.amazonaws.com/cover.jpg",
+  "base_url": "https://campscast.s3.us-east-1.amazonaws.com",
+  "copyright": "© 2026 Camps",
+  "_nota_email": "PLACEHOLDER. Trocar por um alias dedicado antes de submeter ao Spotify/Apple, que exigem endereco real e alcancavel. Nao usar o e-mail pessoal: repositorio publico e varrido por bots de spam. O truque do +sufixo no Gmail nao adianta, o scraper remove. Precisa ser conta ou dominio separado."
+}

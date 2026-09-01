@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "updated_at": "2026-08-23",
+  "items": [
+    {
+      "episode": "2026-08-23",
+      "title": "OpenAI corta em mais de 20% o preço do GPT-5.6 Sol na API",
+      "original_date": "2026-08-21",
+      "source_name": "OpenAI — Documentação oficial de preços da API",
+      "source_url": "https://developers.openai.com/api/docs/pricing",
+      "summary": "Preço promocional do GPT-5.6 Sol cai para 4 dólares por milhão de tokens de entrada, 0,40 de entrada em cache e 20 de saída, válido pelo menos até 21/11/2026. Vale para API avulsa, créditos do Codex e planos elegíveis do ChatGPT Work; assinaturas Pro, Plus e Business não mudam."
+    },
+    {
+      "episode": "2026-08-23",
+      "title": "xAI inclui o Grok Bot em mais planos pagos",
+      "original_date": "2026-08-21",
+      "source_name": "xAI News",
+      "source_url": "https://x.ai/news/grok-bot-more-plans",
+      "summary": "Grok Bot, agente com computador próprio na nuvem (navegador e terminal), sai da fase de testes iniciada em 11/08 e passa a ser incluído em SuperGrok Plus, SuperGrok Heavy, Cursor Pro+, Cursor Ultra e planos de time do Cursor. Sem métricas públicas de taxa de conclusão de tarefa."
+    },
+    {
+      "episode": "2026-08-23",
+      "title": "Gemma passa de um bilhão de downloads e cem mil variantes",
+      "original_date": "2026-08-20",
+      "source_name": "Google — The Keyword",
+      "source_url": "https://blog.google/innovation-and-ai/technology/developers-tools/gemma-one-billion-downloads/",
+      "summary": "Post de Clement Farabet e Olivier Lacombe informa que a família aberta Gemma superou 1 bilhão de downloads e mais de 100 mil variantes da comunidade (Gemmaverso). Usos citados: Gemma em órbita com NASA/satélites, app de saúde na Índia, versões médicas. Puxado do backlog, com aviso de data no ar.",
+      "note": "Fora da janela 2026-08-21→2026-08-22; entrou como item de backlog com aviso de data."
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+# Áudio gerado — vive no S3, não no repo
+audio/
+*.mp3
+
+# Logs de execução
+logs/
+*.log
+
+# Feed gerado
+feed/feed.xml
+
+# Segredos
+.env
+.env.local
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# macOS
+.DS_Store

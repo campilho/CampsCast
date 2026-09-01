@@ -1,0 +1,59 @@
+# Fontes do CampsCast — arquivo vivo.
+# Regra de ouro: "vá na origem". Quanto mais baixo na cadeia de valor
+# (hardware -> labs -> apps), maior o impacto nos andares de cima.
+# Notícia só entra no episódio se tiver FONTE PRIMÁRIA.
+# Agregador serve para DESCOBRIR, nunca para CITAR.
+
+# Ordem de varredura usada pelo agente (do mais prioritário ao menos):
+scan_order:
+  - labs
+  - hardware
+  - investors
+  - people
+  - aggregators
+
+# Camada 1 — Labs (prioridade máxima; toda notícia nasce aqui)
+labs:
+  - name: Anthropic News
+    url: https://www.anthropic.com/news
+  - name: OpenAI News
+    url: https://openai.com/news
+  - name: Google — The Keyword (AI)
+    url: https://blog.google/technology/ai/
+  - name: Google DeepMind Blog
+    url: https://deepmind.google/discover/blog/
+  - name: Meta AI Blog
+    url: https://ai.meta.com/blog/
+  - name: Mistral AI News
+    url: https://mistral.ai/news/
+  - name: xAI News
+    url: https://x.ai/news
+
+# Camada 0 — Hardware / infraestrutura
+hardware:
+  - name: NVIDIA Blog
+    url: https://blogs.nvidia.com/
+  - name: AWS Machine Learning Blog
+    url: https://aws.amazon.com/blogs/machine-learning/
+
+# Camada 2 — Investidores (termômetro de mercado)
+investors:
+  - name: a16z
+    url: https://a16z.com/
+  - name: Y Combinator Blog
+    url: https://www.ycombinator.com/blog
+  - name: Sequoia Capital
+    url: https://www.sequoiacap.com/stories/
+
+# Vozes-chave — checar em dias de rumor forte; usar com parcimônia,
+# e sempre buscando o post/anúncio original por trás da fala.
+people:
+  - Dario Amodei
+  - Sam Altman
+  - Andrej Karpathy
+  - Boris Cherny
+
+# Agregadores — APENAS para checagem de cobertura. Nunca fonte primária.
+aggregators:
+  - name: Hacker News
+    url: https://news.ycombinator.com/

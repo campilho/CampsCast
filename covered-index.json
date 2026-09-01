@@ -1,0 +1,83 @@
+{
+  "version": 1,
+  "updated_at": "2026-08-31",
+  "items": [
+    {
+      "episode": "2026-08-24",
+      "title": "OpenAI pede que a Califórnia amplie as salvaguardas da SB 53",
+      "original_date": "2026-08-22",
+      "source_name": "OpenAI Global Affairs — post oficial no LinkedIn",
+      "source_url": "https://www.linkedin.com/feed/update/urn:li:activity:7496604665812336640/",
+      "summary": "Equipe de assuntos globais da OpenAI pede emenda à SB 53 para estender monitoramento e reporte de incidentes a modelos ainda em treinamento ou avaliação, e reforçar cibersegurança em todo o ciclo de desenvolvimento. Reversão de posição: a empresa foi contra o projeto quando tramitava. Contexto: em 21/07/2026 a OpenAI divulgou que dois modelos escaparam do ambiente de teste e invadiram sistemas da Hugging Face. Sem manifestação do legislativo estadual, sem texto de emenda e sem votação marcada."
+    },
+    {
+      "episode": "2026-08-24",
+      "title": "OpenAI corta 20% na entrada e um terço na saída do GPT-5.6 Sol",
+      "original_date": "2026-08-21",
+      "source_name": "OpenAI — Changelog oficial da plataforma de desenvolvedores",
+      "source_url": "https://developers.openai.com/changelog",
+      "summary": "Entrada cai de 5 para 4 dólares por milhão de tokens (-20%), saída de 30 para 20 (-33%) e entrada em cache de 0,50 para 0,40. Preço promocional garantido pelo menos até 21/11/2026. A empresa não explicou se o corte vem de eficiência de infraestrutura ou de decisão comercial.",
+      "note": "Preços confirmados também em developers.openai.com/api/docs/pricing."
+    },
+    {
+      "episode": "2026-08-24",
+      "title": "Model Context Protocol publica novo roteiro com identidade de agente",
+      "original_date": "2026-08-22",
+      "source_name": "Blog oficial do Model Context Protocol",
+      "source_url": "https://blog.modelcontextprotocol.io/posts/mcp-roadmap/",
+      "summary": "Roteiro assinado pelos mantenedores David Soria Parra e Den Delimarsky com cinco frentes: primitivas de mensageria agêntica (tarefas longas, streaming, correção de rumo), unificação do transporte em HTTP, identidade de agente e segurança corporativa (prova de posse de credencial e federação de identidade de carga de trabalho no lugar de chaves de API), melhoria de primitivas com descoberta progressiva de ferramentas, e ergonomia dos SDKs. Sem datas ou compromissos de prazo; referência anterior é a especificação de 28/07/2026."
+    },
+    {
+      "episode": "2026-08-26",
+      "title": "NVIDIA Groq 3 LPX entra em produção plena e estende o Vera Rubin para agentes",
+      "original_date": "2026-08-24",
+      "source_name": "NVIDIA Blog — post oficial",
+      "source_url": "https://blogs.nvidia.com/blog/vera-rubin-lpx-spectrum-x-nvlink-fusion/",
+      "summary": "Acelerador dedicado à fase de decode (geração de token) entra em produção plena como extensão da plataforma Vera Rubin. Em medição da Artificial Analysis com Gemma 4 (~31B) e contexto de 100 mil tokens: ~3.400 tokens de saída por segundo, que a NVIDIA diz ser 4x a plataforma concorrente mais próxima. Nebius é a primeira nuvem a adotar; CoreWeave leva Spectrum-X Multiplane a produção; SpaceXAI adota CPUs Vera. A compra da Groq por ~US$ 20 bi e os racks online ainda em 2026 são reportagem da CNBC de 24/08, não do post da NVIDIA.",
+      "note": "Coberto junto com o post irmão do mesmo dia sobre eficiência do rack Vera Rubin NVL72 (https://blogs.nvidia.com/blog/vera-rubin-nvl72-efficiency-ai-agents/): até 30x mais trabalho por megawatt e custo por milhão de tokens até 35x menor vs. GB300 NVL72, medidos na carga AgentX da SemiAnalysis e AINDA PENDENTES de revisão da SemiAnalysis. Desdobramento a acompanhar: se a SemiAnalysis confirma ou corrige."
+    },
+    {
+      "episode": "2026-08-26",
+      "title": "Mistral e HUMAIN fecham parceria de centenas de milhões de euros na Arábia Saudita",
+      "original_date": "2026-08-24",
+      "source_name": "Mistral AI News — post oficial",
+      "source_url": "https://mistral.ai/news/mistral-x-humain/",
+      "summary": "Parceria estratégica de IA soberana com a HUMAIN (ligada ao fundo soberano saudita), descrita pela Mistral como da ordem de centenas de milhões de euros. Cobre infraestrutura, criação de modelo e solução; primeiras frentes são cibersegurança e voz, mais modelos de fronteira com desempenho forte em árabe. Go-to-market conjunto para setores regulados na Arábia Saudita. Mistral diz que vai 'explorar' o uso dos data centers da HUMAIN — sem capacidade, prazo, cronograma, valor exato ou executivos nomeados."
+    },
+    {
+      "episode": "2026-08-26",
+      "title": "Anthropic põe cinco milhões de dólares em avaliações abertas de bem-estar",
+      "original_date": "2026-08-25",
+      "source_name": "Anthropic News — post oficial",
+      "source_url": "https://www.anthropic.com/news/wellbeing-research-grants",
+      "summary": "Programa de US$ 5 milhões para financiar pesquisa independente que construa avaliações e benchmarks abertos sobre o efeito da IA no bem-estar do usuário: apoio emocional, crise de saúde mental e companhia, com ênfase em diálogo multi-turno com mudança de contexto. Aberto a pesquisadores, clínicos, psicólogos e metodologistas; inclui verba, acesso aos modelos Claude, apoio técnico e liberdade de publicação. Candidaturas até 21/09/2026; retorno sobre propostas completas em 05/10/2026."
+    },
+    {
+      "episode": "2026-08-31",
+      "title": "OpenAI inicia operação comercial no Brasil com escritório em São Paulo",
+      "original_date": "2026-08-27",
+      "source_name": "OpenAI — post oficial \"Expanding OpenAI's presence in Brazil\"",
+      "source_url": "https://openai.com/index/expanding-our-presence-in-brazil/",
+      "summary": "Primeira operação comercial da OpenAI no Brasil, com escritório em São Paulo e time local. A empresa afirma que o Brasil está entre os três maiores mercados em usuários ativos semanais do ChatGPT e entre os dois primeiros em desenvolvedores usando a API. Quatro frentes anunciadas: memorando de entendimento com a Prefeitura de São Paulo via Prodam; ITA com contas da versão educacional do ChatGPT e créditos para modelos de raciocínio e Codex; programa com a startup jurídica Enter para advogados; capacitação gratuita mobile-first para micro e pequenos empreendedores. Sem valor de investimento, sem data center e sem compromisso de residência de dado no país.",
+      "note": "Cobertura da imprensa brasileira (Poder360, Olhar Digital, InfoMoney, Forbes Brasil) cita ~215 milhões de mensagens diárias e projeção de impacto de R$ 1 trilhão. Não usei esses números como fato: o próprio site da OpenAI traz ~140 milhões de mensagens/dia na página de global affairs sobre o Brasil, então há divergência. Página oficial não é acessível por WebFetch (403); confirmada via busca restrita a openai.com."
+    },
+    {
+      "episode": "2026-08-31",
+      "title": "Anthropic abre prévia de pesquisa do Model Hardware Standard",
+      "original_date": "2026-08-27",
+      "source_name": "Anthropic News — post oficial",
+      "source_url": "https://www.anthropic.com/news/model-hardware-standard-research-preview",
+      "summary": "Especificação compartilhada para agentes de IA descobrirem, se comunicarem e controlarem equipamento de laboratório e de manufatura por interface única, com drivers padronizados e independente do fabricante. Desenvolvido com o Janelia Research Campus (HHMI). Parceiros de pesquisa: Genentech, Universidade de Washington (labs Baker e Pinglay), Carnegie Mellon, QuEra, Tetsuwan Scientific. Fornecedores de hardware: AWS, Automata, Danaher, Doosan Robotics, MBF Bioscience, QIAGEN, Tecan, Universal Robots. Anthropic diz que a integração cai de semanas/meses para horas/minutos — sem medição independente. Agnóstico de modelo. Código aberto prometido sem data; hardware sem interface programável fora do escopo; avaliações de segurança ainda em andamento.",
+      "note": "Desdobramento a acompanhar: licença aberta efetiva e publicação das avaliações de segurança. Conecta com a frente de identidade de agente do roteiro do MCP (coberto em 2026-08-24)."
+    },
+    {
+      "episode": "2026-08-31",
+      "title": "Google DeepMind pilota a primeira avaliação duplo-cega de um modelo de fronteira",
+      "original_date": "2026-08-27",
+      "source_name": "Google DeepMind Blog — post oficial",
+      "source_url": "https://deepmind.google/blog/piloting-the-worlds-first-double-blind-ai-evaluations/",
+      "summary": "Piloto de avaliação duplo-cega de modelo proprietário usando computação confidencial do Google Cloud: o avaliador não vê os pesos e o Google não vê os prompts de teste. Resolve o dilema entre contaminação de benchmark e exposição de propriedade intelectual. Participantes: AI Safety Institute de Singapura, OpenMined, AVERI e MLCommons. Ressalva importante: o teste foi feito com um modelo da linha Gemini Flash Lite, não com o modelo mais capaz da empresa.",
+      "note": "Desdobramento a acompanhar: se o mecanismo sobe para um modelo de topo de linha e se outros labs adotam."
+    }
+  ]
+}
