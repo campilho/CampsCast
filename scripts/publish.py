@@ -19,6 +19,8 @@ import os
 import pathlib
 import re
 import sys
+import urllib.error
+import urllib.request
 from email.utils import format_datetime
 from datetime import datetime, timezone
 from xml.sax.saxutils import escape
@@ -27,6 +29,10 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 EPISODES = ROOT / "episodes"
 AUDIO = ROOT / "audio"
 FEED_OUT = ROOT / "feed" / "feed.xml"
+
+# Hub público de WebSub (PubSubHubbub). Serve para avisar agregadores de que o
+# feed mudou, em vez de depender de eles voltarem sozinhos.
+WEBSUB_HUB = "https://pubsubhubbub.appspot.com/"
 
 BITRATES = [0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 0]
 SAMPLE_RATES = [44100, 48000, 32000, 0]
@@ -224,6 +230,13 @@ def build_feed(show: dict, eps: list[dict]) -> str:
         f"  <copyright>{escape(show['copyright'])}</copyright>\n"
         f"  <lastBuildDate>{now}</lastBuildDate>\n"
         f'  <atom:link href="{escape(base)}/feed.xml" rel="self" type="application/rss+xml"/>\n'
+        # ttl: sugere ao agregador de quanto em quanto tempo repassar o feed.
+        # Nem todos honram, mas quem honra passa a checar de hora em hora em vez
+        # de usar o intervalo interno, que para feed pouco assinado é longo.
+        f"  <ttl>60</ttl>\n"
+        # WebSub: em vez de esperar o agregador voltar, o hub avisa que mudou.
+        # Declarar o hub é metade; a outra é o ping, em notify_hub().
+        f'  <atom:link rel="hub" href="{escape(WEBSUB_HUB)}"/>\n'
         f"  <itunes:author>{escape(show['author'])}</itunes:author>\n"
         f"  <itunes:subtitle>{escape(show['subtitle'])}</itunes:subtitle>\n"
         f"  <itunes:summary>{escape(show['description'])}</itunes:summary>\n"
@@ -297,8 +310,35 @@ def upload(date: str, show: dict) -> bool:
             print(f"ERRO: {e}", file=sys.stderr)
             return False
 
-    print(f"Feed publicado: {show['base_url'].rstrip('/')}/feed.xml")
+    feed_url = f"{show['base_url'].rstrip('/')}/feed.xml"
+    print(f"Feed publicado: {feed_url}")
+    notify_hub(feed_url)
     return True
+
+
+def notify_hub(feed_url: str) -> None:
+    """Avisa o hub WebSub que o feed mudou. Best-effort: nunca derruba o pipeline.
+
+    Agregadores que assinam o hub recebem o aviso na hora, em vez de descobrir
+    na próxima varredura — que, para um feed com poucos assinantes, pode levar
+    horas. Quem não usa WebSub simplesmente ignora, e nada muda.
+    """
+    import urllib.parse
+    dados = urllib.parse.urlencode({
+        "hub.mode": "publish",
+        "hub.url": feed_url,
+    }).encode("ascii")
+    req = urllib.request.Request(
+        WEBSUB_HUB, data=dados,
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+        method="POST")
+    try:
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            print(f"WebSub: hub avisado (HTTP {resp.status}).")
+    except urllib.error.HTTPError as e:
+        print(f"WebSub: hub respondeu HTTP {e.code} — seguindo mesmo assim.")
+    except Exception as e:
+        print(f"WebSub: não consegui avisar o hub ({e}) — seguindo mesmo assim.")
 
 
 def main() -> int:

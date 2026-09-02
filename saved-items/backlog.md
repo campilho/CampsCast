@@ -22,15 +22,35 @@ Regras:
 - validade: 2026-09-01
 - resumo: OpenSearch passa a suportar MCP Apps, devolvendo visualização interativa junto
   com a resposta em texto do agente. Ângulo bom de auditoria de agente; ficou de fora
-  por ser feature de plataforma, e o backlog já tem outro item de agente na AWS.
+  por ser feature de plataforma. VENCE HOJE — e o item do AWS Agent Registry abaixo
+  cobre melhor o mesmo ângulo.
 
-## SageMaker HyperPod ganha suporte gerenciado a Ray sobre EKS
-- data_original: 2026-08-24
-- fonte: AWS Machine Learning Blog — https://aws.amazon.com/blogs/machine-learning/introducing-new-ray-capabilities-on-sagemaker-hyperpod/
-- validade: 2026-08-31
-- resumo: Ray gerenciado no HyperPod rodando sobre EKS, com observabilidade integrada.
-  Interessa a quem treina em escala, mas é pauta de infraestrutura de nicho e perdeu
-  espaço para o anúncio de hardware da NVIDIA no mesmo dia. VENCE HOJE.
+## AWS Agent Registry entra em disponibilidade geral
+- data_original: 2026-08-31
+- fonte: AWS Machine Learning Blog — https://aws.amazon.com/blogs/machine-learning/manage-agents-tools-and-skills-at-scale-with-aws-agent-registry/
+- validade: 2026-09-07
+- resumo: Catálogo corporativo de agentes, ferramentas e skills, com registro de servidores
+  MCP e agentes A2A, plano de governança separado do de descoberta, aprovação por papel,
+  trilha de auditoria no CloudTrail e varredura de endpoints para achar "shadow AI".
+  Casa com o foco de agente em setor regulado; ficou de fora porque as duas pautas de
+  risco do dia eram mais fortes.
+
+## Anthropic mostra Claude fazendo pesquisa de alinhamento sozinho
+- data_original: 2026-08-28
+- fonte: Anthropic Research — https://www.anthropic.com/research/automated-researchers-mitigate-alignment-failures
+- validade: 2026-09-04
+- resumo: Pesquisadores automatizados fecharam de 26% a 96% da lacuna de segurança em dez
+  categorias de falha de alinhamento, superando propostas de especialistas humanos em
+  deception. Fora da janela de hoje (é de 28/08); vale como desdobramento do post de
+  alinhamento e segurança de 31/08 já coberto.
+
+## OpenAI corta o acesso da Cursor aos seus modelos após a compra pela SpaceX
+- data_original: 2026-08-29
+- fonte: OpenAI — post oficial https://openai.com/index/our-decision-on-cursor-following-its-acquisition-by-spacex/
+- validade: 2026-09-04
+- resumo: OpenAI aciona cláusula de mudança de controle após a aquisição da Anysphere pela
+  SpaceX e propõe desligar o fornecimento em 12/11/2026. Fora da janela de hoje (é de
+  29/08). Só entra se houver fato novo verificável, não como fofoca de bastidor.
 
 ## NVIDIA começa a entregar a CPU Vera, primeira feita para agentes
 - data_original: 2026-08-27
