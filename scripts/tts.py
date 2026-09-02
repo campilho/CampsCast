@@ -529,7 +529,11 @@ def main() -> int:
         audio += strip_container(synthesize(part, cfg, api_key, prev, nxt))
 
     out_path.write_bytes(bytes(audio))
-    print(f"OK {out_path.relative_to(ROOT)} {out_path.stat().st_size // 1024} KB")
+    try:
+        mostrado = out_path.relative_to(ROOT)
+    except ValueError:
+        mostrado = out_path          # --out fora do projeto, em teste
+    print(f"OK {mostrado} {out_path.stat().st_size // 1024} KB")
 
     if used_before is not None:
         try:

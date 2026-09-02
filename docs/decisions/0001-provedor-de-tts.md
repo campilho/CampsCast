@@ -1,6 +1,8 @@
 # ADR 0001 — Provedor de síntese de voz (TTS)
 
-- **Status:** aceito quanto ao provedor e ao plano; comparação com Polly/Chirp3 pendente
+- **Status:** provedor e plano aceitos. **A escolha de modelo foi revista em
+  02/09/2026 — ver [ADR 0004](0004-volume-entre-trechos.md).** Comparação com
+  Polly/Chirp3 pendente
 - **Data:** 2026-08-23
 - **Contexto:** Fase 1 do CampsCast
 
@@ -218,7 +220,11 @@ mesma voz clonada, sempre com o contador de cota estabilizado:
 | **`eleven_multilingual_v2`** | **0,55** | **4.134** | **90.948** | **69%** | 31 ep |
 | `eleven_v3` | 0,55 | 4.134 | 90.948 | 69% | 31 ep |
 
-**Escolhido: Multilingual v2.** O v3 saiu indistinguível dele no teste, pelo
+**Escolhido em 24/08: Multilingual v2** — decisão revertida em 02/09 pelo ADR
+0004, que mediu oscilação de volume dentro de cada geração. O texto abaixo fica
+como registro do raciocínio original.
+
+**Escolhido:** O v3 saiu indistinguível dele no teste, pelo
 motivo que a própria interface avisa — ele depende de tags de emoção escritas no
 texto ("requires more prompt engineering"), e não usamos nenhuma. Colocar essas
 tags no roteiro conflitaria com a regra de "zero markdown no corpo falado" e
