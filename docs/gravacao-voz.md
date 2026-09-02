@@ -1,0 +1,196 @@
+# Guia de gravação para clonagem de voz profissional
+
+Roteiro para gravar o material do Professional Voice Cloning da ElevenLabs, que
+substitui o Instant Voice Clone da Fase 1.
+
+O IVC aprendeu **timbre** com dois a três minutos. O que falta é **idioleto** —
+ritmo, entonação, redução de vogais, as marcas regionais da sua fala. Sem esses
+dados, o modelo preenche com o padrão dele, que para português brasileiro puxa
+para uma locução neutra. É por isso que a voz atual soa de outra região.
+
+---
+
+## 1. Equipamento: o contraintuitivo primeiro
+
+**Não use AirPods nem o Bose QuietComfort.**
+
+Fone Bluetooth, ao virar microfone, entra em perfil de headset: a banda cai
+drasticamente, o áudio passa por compressão pesada, e o firmware aplica
+supressão de ruído e controle automático de ganho. Esses três processos
+**alteram a voz** — e o modelo aprenderia os artefatos junto com você. Um clone
+treinado em áudio de Bluetooth soa abafado e processado, por mais caro que seja
+o fone.
+
+Ordem de preferência com o que você já tem:
+
+| Opção | Avaliação |
+|---|---|
+| **iPhone, app Gravador** | melhor opção — microfones bons, sem compressão de headset |
+| **Microfone do MacBook Pro** | boa segunda opção, 48 kHz, array de três cápsulas |
+| AirPods Pro 2 | evitar |
+| Bose QC Ultra | evitar |
+
+Detectei os dois primeiros disponíveis na sua máquina, ambos a 48 kHz.
+
+O iPhone ganha por poder ser posicionado onde você quiser, longe do ventilador
+do notebook. Grave no app **Gravador**, com a qualidade em *Sem perdas* nos
+ajustes, e depois passe os arquivos para o Mac.
+
+Se um dia quiser subir de nível, um microfone USB dinâmico resolve — mas não
+compre nada antes de tentar com o iPhone. A sala pesa mais que o microfone.
+
+## 2. A sala pesa mais que o equipamento
+
+Reverberação é o inimigo. O modelo aprende o eco da sua sala como se fosse
+parte da sua voz, e todo episódio sai com aquela sala junto.
+
+- Cômodo pequeno, com pano: quarto com cortina, closet, sofá.
+- Evite cozinha, banheiro, sala de piso duro e paredes nuas.
+- Desligue ar-condicionado, ventilador e purificador. O ruído contínuo some
+  para o seu ouvido em minutos, mas o modelo o escuta.
+- Celular no silencioso, notificações do Mac desligadas.
+
+Teste rápido: bata palma uma vez. Se ouvir um "chiado" depois do estalo, a sala
+tem reverberação demais — mude de cômodo ou grave dentro do closet, entre as
+roupas.
+
+## 3. Posição e execução
+
+- Distância de um palmo, mais ou menos vinte centímetros. Constante: aproximar
+  e afastar muda o timbre entre trechos.
+- Fale **ligeiramente para o lado** do microfone, não direto nele. Evita o
+  estouro dos "p" e "b".
+- Mantenha a mesma distância dentro de cada sessão. Se parar e voltar depois,
+  refaça a marcação.
+- Beba água antes, não durante — o som de garrafa entra na gravação.
+
+**Não aplique nenhum tratamento depois.** Nada de redução de ruído, normalização
+ou equalização. A ElevenLabs quer o material cru; qualquer processamento vira
+característica aprendida.
+
+## 4. Quanto tempo
+
+O Professional Voice Cloning pede **no mínimo trinta minutos** de fala limpa.
+Mais material melhora o resultado, com ganho decrescente — a faixa de uma a três
+horas é onde a maioria dos relatos indica o melhor custo-benefício.
+
+Confirme o mínimo exigido na própria interface da ElevenLabs no momento de criar
+a voz, porque esse número muda com o tempo.
+
+Sugestão de divisão, para não cansar a voz:
+
+| Sessão | Duração | Conteúdo |
+|---|---|---|
+| 1 | 15 min | blocos 1 e 2 abaixo |
+| 2 | 15 min | blocos 3 e 4 |
+| 3 | 15 min | blocos 5 e 6 |
+| 4 | 15 min | repetir os blocos que ficaram fracos |
+
+Grave em dias diferentes se preferir, mas **na mesma sala, com o mesmo
+microfone e à mesma distância**.
+
+## 5. O princípio: cobertura, não roteiro
+
+Em pesquisa de síntese de fala usa-se o conceito de **corpus foneticamente
+balanceado** — um conjunto de frases escolhido para que todos os sons da língua
+apareçam em quantidade suficiente, e em contextos variados. Para o português
+brasileiro existem corpora desse tipo usados academicamente.
+
+Você não precisa de um corpus formal. Precisa cobrir três eixos:
+
+1. **Fonética** — todos os sons do português, incluindo os que aparecem pouco
+   na conversa casual: "lh", "nh", "rr", ditongos nasais como "ão" e "ãe".
+2. **Prosódia** — afirmação, pergunta, enumeração, ênfase, dúvida, ironia.
+   Se você só afirmar, o modelo não saberá fazer perguntas com a sua voz.
+3. **Vocabulário do domínio** — os termos que aparecem no podcast: nomes em
+   inglês, siglas, números grandes.
+
+**Fale, não leia.** Leitura em voz alta tem prosódia própria — mais uniforme,
+com entonação de locutor. É justamente o que queremos evitar. Use os blocos
+abaixo como **tópicos para falar sobre**, não como texto para ler.
+
+---
+
+## 6. Os seis blocos
+
+### Bloco 1 — Apresentação e trabalho (5 min)
+Fale sobre você como falaria numa reunião com alguém que acabou de conhecer.
+Quem você é, o que faz, como chegou até aqui, o que te interessa hoje em
+tecnologia. Tom normal de conversa.
+
+### Bloco 2 — Explicar algo técnico a um leigo (5 min)
+Escolha um assunto que você domina e explique como explicaria para alguém de
+fora da área. Modelo de linguagem, agente de IA, o que é uma API, como funciona
+um seguro. Este bloco captura seu jeito de didatizar — que é o registro do
+podcast.
+
+### Bloco 3 — Termos em inglês e números (5 min)
+O bloco mais importante para o CampsCast, porque é onde o clone atual falha.
+Fale naturalmente citando:
+
+> Anthropic, OpenAI, Google DeepMind, NVIDIA, Mistral, Meta, xAI, Hugging Face,
+> Model Context Protocol, benchmark, deploy, machine learning, startup,
+> open source, dataset, prompt, token, cloud, chip, data center.
+
+E números falados por extenso, como aparecem no roteiro:
+
+> "cerca de setenta bilhões de parâmetros", "um bilhão de dólares em receita
+> anualizada", "cortou em mais de vinte por cento", "cem mil variantes",
+> "GPT cinco ponto seis", "SB cinquenta e três", "dois mil e vinte e seis".
+
+Não decore: monte frases suas em volta desses termos.
+
+### Bloco 4 — Variedade prosódica (5 min)
+Force os padrões que a conversa normal não cobre:
+
+- **Perguntas**: faça dez perguntas de verdade, como se entrevistasse alguém.
+- **Enumerações**: liste coisas, com a entonação suspensiva de "primeiro…,
+  segundo…, e terceiro…".
+- **Ênfase**: repita a mesma frase mudando a palavra enfatizada.
+- **Dúvida e ressalva**: "não está claro ainda se…", "a empresa afirma que…".
+- **Encerramento**: frases de fecho, do tipo "é isso, até amanhã".
+
+### Bloco 5 — Contar uma história (5 min)
+Conte um caso real, com começo, meio e fim. Um problema que você resolveu no
+trabalho, uma viagem, algo que deu errado. História traz variação natural de
+ritmo e emoção que nenhum outro bloco produz.
+
+### Bloco 6 — No registro do podcast (5 min)
+Pegue um episódio já publicado em `episodes/` e **conte as notícias com suas
+palavras**, olhando só as pautas, sem ler o roteiro. Este bloco alinha a
+gravação ao uso final: mesma energia, mesmo ritmo, mesmo tipo de conteúdo.
+
+É o bloco que mais influencia o resultado. Se tiver tempo para só um extra,
+faça mais deste.
+
+---
+
+## 7. Antes de subir
+
+- [ ] Trinta minutos ou mais de fala limpa
+- [ ] Mesma sala, mesmo microfone, mesma distância em tudo
+- [ ] Sem música, sem outra voz, sem ruído contínuo
+- [ ] Sem tratamento aplicado depois
+- [ ] Ouvir uma amostra de cada sessão antes de enviar
+
+Ouça um minuto de cada arquivo. Se algum tiver ruído, eco ou volume destoante,
+regrave em vez de enviar — material ruim contamina o modelo inteiro, e não há
+como remover depois.
+
+## 8. Depois
+
+Ao criar a voz na ElevenLabs, a verificação de identidade exige que você leia
+uma frase que eles fornecem. Isso é para provar que a voz é sua, e é o único
+momento em que ler é o certo.
+
+Ao trocar o `voice_id` em `config/tts.json`, **remeça o ritmo**: cada voz fala
+numa velocidade diferente, e a faixa de palavras do roteiro sai daí.
+
+```bash
+python3 scripts/tts.py --check          # valida a voz nova
+scripts/run_episode.sh --only tts       # gera com ela
+python3 scripts/tts.py --budget         # confere a faixa de palavras
+```
+
+O procedimento de medição está em
+[docs/setup-macos.md](setup-macos.md#9-medir-o-ritmo-da-voz).

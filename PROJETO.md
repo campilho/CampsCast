@@ -270,7 +270,8 @@ em português do Brasil, de 5 a 10 minutos, publicado em dias úteis.
 - [ ] README público caprichado + primeiro ADR de custos reais
 
 ### Fase 3 — Formato entrevista, feedback e curadoria humana
-- [ ] **Professional Voice Clone** do Camps + segunda voz de catálogo →
+- [ ] **Professional Voice Clone** do Camps (guia de gravação em
+      `docs/gravacao-voz.md`) + segunda voz de catálogo →
       formato entrevista: a voz de IA apresenta a notícia ou pergunta;
       a voz do Camps analisa
 - [ ] `analysis/` ativo: visões e pesquisas escritas pelo Camps, que o agente
