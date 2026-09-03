@@ -213,6 +213,7 @@ def build_feed(show: dict, eps: list[dict]) -> str:
             f"    <enclosure url=\"{escape(url)}\" length=\"{ep['size']}\" type=\"audio/mpeg\"/>\n"
             f"{dur}"
             f"    <itunes:explicit>{'true' if show['explicit'] else 'false'}</itunes:explicit>\n"
+            f"    <itunes:episodeType>full</itunes:episodeType>\n"
             "  </item>"
         )
 
@@ -241,6 +242,10 @@ def build_feed(show: dict, eps: list[dict]) -> str:
         f"  <itunes:subtitle>{escape(show['subtitle'])}</itunes:subtitle>\n"
         f"  <itunes:summary>{escape(show['description'])}</itunes:summary>\n"
         f"  <itunes:explicit>{'true' if show['explicit'] else 'false'}</itunes:explicit>\n"
+        # episodic: episódios independentes, do mais novo para o mais antigo.
+        # serial seria para série com ordem de escuta. Apple e Spotify usam isto
+        # para decidir como ordenar a lista para quem chega agora.
+        f"  <itunes:type>{escape(show.get('type', 'episodic'))}</itunes:type>\n"
         "  <itunes:owner>\n"
         f"    <itunes:name>{escape(show['author'])}</itunes:name>\n"
         f"    <itunes:email>{escape(show['email'])}</itunes:email>\n"

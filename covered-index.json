@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-09-01",
+  "updated_at": "2026-09-02",
   "items": [
     {
       "episode": "2026-08-24",
@@ -105,6 +105,33 @@
       "source_url": "https://openai.com/index/expanding-access-to-ai-with-chatgpt-ads/",
       "summary": "OpenAI afirma que o ChatGPT Ads atingiu US$ 1 bilhão em receita anualizada (run rate) em menos de 200 dias desde o lançamento, com dezenas de milhares de anunciantes. Anúncios disponíveis em mais de 40 países via time comercial da OpenAI e parceiros de agência e tecnologia; compra por autoatendimento no Ads Manager passa a valer na Índia, Europa, Oriente Médio e norte da África. O Ads Manager, lançado em maio, abriu a plataforma para pequenas e médias empresas, que a empresa diz já serem fatia relevante do negócio. A empresa posiciona publicidade como um dos pilares do modelo de negócio, ao lado de assinatura, venda para empresa e cobrança por uso da API, e justifica o formato como sustentação da camada gratuita para mais de 1 bilhão de usuários ativos semanais.",
       "note": "Número é run rate anualizado, não faturamento realizado no ano — dito assim no roteiro. Página oficial não acessível por WebFetch (403, mesmo comportamento do episódio de 2026-08-31); confirmada via busca restrita a openai.com. A imprensa cita 31 mercados europeus; não usei esse número por não estar confirmado no post oficial."
+    },
+    {
+      "episode": "2026-09-02",
+      "title": "Anthropic lança Claude Fable 5.1 e Claude Mythos 5.1",
+      "original_date": "2026-09-01",
+      "source_name": "Anthropic — anúncio oficial \"Introducing Claude Fable 5.1 and Claude Mythos 5.1\"",
+      "source_url": "https://www.anthropic.com/claude-fable-and-mythos-5-1",
+      "summary": "Lançamento de modelo de fronteira. Fable 5.1 e Mythos 5.1 são o MESMO modelo com níveis diferentes de salvaguarda: Fable é geralmente disponível (API como claude-fable-5-1, mais AWS, Google Cloud e Azure); Mythos é restrito a organizações dos EUA via dois programas de acesso verificado — Cyber Verification Program (cibersegurança defensiva; acesso classe Mythos ainda a ser adicionado) e Life Sciences Verification Program (feito em parceria com o governo americano, matrícula começando). Benchmarks (medição da própria empresa e de parceiros de acesso antecipado, sem verificação independente declarada): Terminal-Bench-Science 0.1 — Fable 5.1 52,6% vs Fable 5 24,7%; Terminal-Bench 4.0 — Mythos 5.1 60,9%, Fable 5.1 55,8%, Fable 5 42,0%; Humanity's Last Exam 65,0% vs 63,8%; CursorBench 3.2.0 73,4% vs 70,5%; OSWorld 2.0 estrito 41,7% vs 36,1%. Preço: US$ 10/milhão de tokens de entrada, US$ 50/milhão de saída, leitura de cache US$ 0,25/milhão (-75%); a empresa diz ~25% mais barato em uso típico e até 45% em trabalho agêntico. Salvaguardas: 60% menos falsos positivos em tarefas de cibersegurança; salvaguardas de biologia disparam 85% menos em pedidos benignos de biologia elementar e medicina vs. o lançamento do Fable 5; Fable 5.1 pode identificar vulnerabilidade de software defensivamente mas segue barrado de desenvolver exploit. Proteção anti-destilação: contas novas da API não podem editar manualmente contexto anterior preservando transcrições de raciocínio. Ciência: Mythos desenhou ligantes com afinidade 10x maior que os melhores projetos das competições da Adaptyv Bio em três alvos, taxa de acerto de quase 50% em 12 alvos vs. 10–15% típicos; Fable gerou mapa de elevação de Vênus com detalhe de 2–3 km (vs. 10–20 km) e alturas até 25% mais precisas; Mythos otimizou kernels de GPU com ganho de até 2,5x e economia estimada de 30–60% em análise de genoma.",
+      "note": "Anthropic afirma que as avaliações do Mythos 5.1 indicam que ele ainda fica abaixo do próximo nível de risco da Responsible Scaling Policy, e por isso foi implantado com salvaguardas equivalentes às do Mythos 5 para capacidades de biologia. Limitações reconhecidas pela própria empresa: intervenção de salvaguarda zerou algumas tarefas de benchmark; a auditoria comportamental automatizada enxerga menos em contexto muito longo e em cenário multiagente. Desdobramento a acompanhar: medição independente, principalmente dos resultados de biologia e de proteína; e a abertura do acesso classe Mythos no CVP."
+    },
+    {
+      "episode": "2026-09-02",
+      "title": "Enterprise Frontier Safeguards deixa o dado do cliente na nuvem do cliente",
+      "original_date": "2026-09-01",
+      "source_name": "Anthropic News — post oficial \"Developing Enterprise Frontier Safeguards with our customers\"",
+      "source_url": "https://www.anthropic.com/news/enterprise-frontier-safeguards",
+      "summary": "Arquitetura que combina retenção zero de dado com detecção de uso malicioso, resolvendo o conflito entre exigência de privacidade de setor regulado e necessidade do laboratório de monitorar abuso. O dado fica na infraestrutura de nuvem controlada pelo cliente (AWS, Google Cloud, Azure), não nos servidores da Anthropic; o cliente gerencia chave de criptografia, política de acesso e log de auditoria. Monitoramento automatizado analisa padrões ao longo de sessões e contas para detectar fraude, ataque cibernético, roubo de credencial e comportamento autônomo indevido, sem revisão humana da Anthropic. Mais de 100 empresas envolvidas em serviços financeiros, saúde, indústria, telecom, direito, varejo e governo — incluindo todos os grandes bancos americanos de importância sistêmica (Goldman Sachs, Morgan Stanley, Citi, Bank of America, Wells Fargo), além de Comcast, KPMG, Mastercard, Salesforce, Visa, Stripe e Snowflake. Anthropic não cobra pela funcionalidade; o provedor de nuvem cobra armazenamento e acesso. Implantação por fases começando no outono de 2026 (hemisfério norte); até lá, clientes elegíveis recebem retenção zero de dado em Claude Fable 5 e 5.1.",
+      "note": "Entrou pelo foco especial da semana (serviços financeiros). Casa diretamente com a carta do FSB ao G20 coberta em 2026-09-01: regulador cobrando protocolo de lançamento de quem fabrica o modelo, e o laboratório redesenhando a arquitetura de dado para caber na exigência de setor supervisionado. Desdobramento a acompanhar: se a implantação sai do papel no prazo e se OpenAI e Google respondem com arquitetura equivalente."
+    },
+    {
+      "episode": "2026-09-02",
+      "title": "NVIDIA e CrowdStrike lançam o SafeMind, defesa agêntica sobre modelos Nemotron",
+      "original_date": "2026-09-01",
+      "source_name": "NVIDIA Blog — post oficial (Fal.Con 2026)",
+      "source_url": "https://blogs.nvidia.com/blog/nvidia-crowdstrike-fal-con-2026/",
+      "summary": "SafeMind é um sistema de cibersegurança agêntica construído pelo Cyber Superintelligence Lab da CrowdStrike sobre os modelos abertos NVIDIA Nemotron, integrado nativamente à plataforma Falcon. Arquitetura: Nemotron 3 Ultra orquestra o harness de agentes defensivos; um Nemotron 3 Super ajustado alimenta o sub-agente de geração de regras; os modelos defensivos são pós-treinados com dados de ameaça da CrowdStrike em ciclos contínuos de coevolução ofensiva-defensiva. Base aberta permite pós-treinar com dado sensível sem compartilhá-lo com terceiro. Também anunciados: Falcon IQ, que operacionaliza o Project QuiltWorks com mais de 50 agentes coordenados para avaliação, priorização e remediação, e uma expansão do Guardian AI. Sem data de disponibilidade geral no anúncio.",
+      "note": "A afirmação de que o modelo Blue Solano teve acurácia maior que modelos de fronteira líderes com custo 99% menor é AVALIAÇÃO INTERNA, sem metodologia publicada — dita como tal no roteiro, sem tratar como fato. Desdobramento a acompanhar: metodologia divulgada ou medição de terceiro."
     }
   ]
 }
