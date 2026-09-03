@@ -104,6 +104,16 @@ eval "$WINDOW_EVAL"
 BUDGET_EVAL="$(python3 scripts/tts.py --budget 2>/dev/null)" || BUDGET_EVAL=""
 if [[ -n "$BUDGET_EVAL" ]]; then eval "$BUDGET_EVAL"; fi
 
+# ---------- ficha técnica do encerramento ----------
+# O agente cita o que narra o episódio. Sai da config, não de memória dele:
+# trocar de voz ou de modelo muda o texto falado sem ninguém editar o prompt.
+TTS_NOME="$(python3 -c "
+import json;d=json.load(open('config/tts.json'))
+print(d.get('_nome_falado', d['model_id']))" 2>/dev/null || echo "")"
+TTS_VOZ="$(python3 -c "
+import json;d=json.load(open('config/tts.json'))
+print(d.get('_voz_falada','uma voz sintetizada'))" 2>/dev/null || echo "")"
+
 SCRIPT_PATH="episodes/${EPISODE_DATE}.md"
 AUDIO_PATH="audio/${EPISODE_DATE}.mp3"
 
@@ -158,6 +168,7 @@ if stage_enabled research; then
 
   export EPISODE_DATE NEWS_WINDOW WINDOW_START WINDOW_END WINDOW_DAYS
   export WORD_MIN WORD_TARGET WORD_MAX WORDS_PER_MINUTE
+  export TTS_NOME TTS_VOZ
 
   if [[ $DRY_RUN -eq 1 ]]; then
     log "DRY-RUN: $CLAUDE_BIN -p \"\$(cat prompts/master.md)\" --permission-mode acceptEdits"
