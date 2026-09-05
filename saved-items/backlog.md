@@ -16,6 +16,18 @@ Regras:
 
 ---
 
+## Google DeepMind lança o WeatherNext 3
+- data_original: 2026-09-03
+- fonte: Google — The Keyword / DeepMind — https://blog.google/innovation-and-ai/models-and-research/google-deepmind/introducing-weathernext-3/
+- validade: 2026-09-10
+- resumo: Modelo global de previsão do tempo que aprende direto de observação de satélite, com
+  atualização horária (antes 6 em 6 horas) e resolução de superfície de 5 km, cinco vezes mais
+  fina que a versão 2. Google afirma até 60% mais acurácia de precipitação em médio prazo contra
+  satélite, 30% contra radar de solo e 10% contra pluviômetro. Já roda em Busca, Gemini, Maps,
+  Maps Platform Weather API e Earth Engine; dados via BigQuery, Earth Engine e Cloud Storage.
+  Perdeu para o GPT-6 Astra e para a compra da Hugging Face; é modelo de domínio, não de fronteira
+  generalista, mas é lançamento de modelo de um player principal com números fortes.
+
 ## Google lança compreensão agêntica de vídeo no Gemini
 - data_original: 2026-09-01
 - fonte: Google — The Keyword — https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-agentic-video-in-gemini/
@@ -23,7 +35,7 @@ Regras:
 - resumo: O modelo escolhe sozinho quais trechos, quadros e modalidades do vídeo analisar, em vez
   de amostrar a taxa fixa: até 88% menos tokens, até 66% menos custo e até 7% mais acurácia
   (números do Google). Vale em Gemini 3.7 Flash, 3.6 Flash e 3.5 Flash-Lite, via API e AI Studio,
-  sem taxa extra. Perdeu para o lançamento do Fable 5.1 e para as duas pautas de setor regulado.
+  sem taxa extra. Já perdeu para o Fable 5.1, para as pautas de setor regulado e agora para o Astra.
 
 ## OpenAI conecta Epic e nove bases públicas de saúde ao ChatGPT
 - data_original: 2026-09-01
@@ -44,52 +56,3 @@ Regras:
   trilha de auditoria no CloudTrail e varredura de endpoints para achar "shadow AI".
   Casa com o foco de agente em setor regulado; ficou de fora porque as duas pautas de
   risco do dia eram mais fortes.
-
-## Anthropic mostra Claude fazendo pesquisa de alinhamento sozinho
-- data_original: 2026-08-28
-- fonte: Anthropic Research — https://www.anthropic.com/research/automated-researchers-mitigate-alignment-failures
-- validade: 2026-09-04
-- resumo: Pesquisadores automatizados fecharam de 26% a 96% da lacuna de segurança em dez
-  categorias de falha de alinhamento, superando propostas de especialistas humanos em
-  deception. Ganhou força com o Fable 5.1: se a ciência agêntica melhorou tanto quanto a
-  Anthropic afirma, este é o precedente de "modelo pesquisando o próprio alinhamento".
-
-## OpenAI corta o acesso da Cursor aos seus modelos após a compra pela SpaceX
-- data_original: 2026-08-29
-- fonte: OpenAI — post oficial https://openai.com/index/our-decision-on-cursor-following-its-acquisition-by-spacex/
-- validade: 2026-09-04
-- resumo: OpenAI aciona cláusula de mudança de controle após a aquisição da Anysphere pela
-  SpaceX e propõe desligar o fornecimento em 12/11/2026. Só entra se houver fato novo
-  verificável, não como fofoca de bastidor.
-
-## NVIDIA começa a entregar a CPU Vera, primeira feita para agentes
-- data_original: 2026-08-27
-- fonte: NVIDIA Blog — https://blogs.nvidia.com/blog/vera-cpu-delivery/
-- validade: 2026-09-03
-- resumo: 88 núcleos Olympus, 1,2 TB/s de banda de memória, até 1,8x por núcleo em carga
-  agêntica (número da NVIDIA). Primeiras entregas para AWS, Oracle, Anthropic, OpenAI e
-  SpaceXAI. Ficou de fora por proximidade com o Vera Rubin já coberto em 26/08. VENCE AMANHÃ.
-
-## Anthropic abre 10 mil assentos e créditos para pesquisa científica
-- data_original: 2026-08-27
-- fonte: Anthropic News — https://www.anthropic.com/news/expanding-support-for-scientists
-- validade: 2026-09-03
-- resumo: Dez mil assentos do plano Team para cientistas, premium a US$ 15/mês com 5x de
-  limite, e até US$ 50 mil em créditos por projeto no AI for Science, agora além da
-  biologia. Casa com as alegações científicas do Fable 5.1. VENCE AMANHÃ.
-
-## Google lança Gemini Omni 1.1 Flash para vídeo
-- data_original: 2026-08-27
-- fonte: Google — The Keyword — https://blog.google/innovation-and-ai/technology/developers-tools/build-with-gemini-omni-1-1-flash/
-- validade: 2026-09-03
-- resumo: Extensão de cena em blocos de 10 segundos até 40, controle de primeiro e último
-  quadro, rascunho em 360p até 60% mais rápido e por um terço do custo, saída em 4K.
-  Pauta de mídia generativa; fora do foco fixo do briefing. VENCE AMANHÃ.
-
-## OpenAI libera TLS mútuo e federação de identidade X.509 na API
-- data_original: 2026-08-29
-- fonte: OpenAI — Changelog oficial — https://developers.openai.com/changelog
-- validade: 2026-09-04
-- resumo: Disponibilidade geral de mTLS e provedores de identidade X.509 configuráveis no
-  console. Casa direto com o foco de agente em setor regulado e com a frente de
-  identidade de agente do roteiro do MCP; ficou de fora por ser mudança de plataforma.

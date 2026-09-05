@@ -171,6 +171,11 @@ Estrutura do corpo (siga esta ordem, sem escrever os rótulos entre colchetes):
   - quantas pautas você avaliou e quantas entraram;
   - quem escreveu e quem narrou, usando TTS_NOME e TTS_VOZ.
 
+  **Os números têm de bater com o `research/<EPISODE_DATE>.md` que você acabou
+  de escrever.** Conte ali: páginas lidas, domínios distintos, e a soma das que
+  entraram com as descartadas. Não arredonde e não estime de memória — a graça
+  da ficha é ser verificável, e um ouvinte curioso pode abrir o log e conferir.
+
   Exemplo do tom, não do texto — varie a cada dia:
   "Este episódio saiu de vinte e oito páginas em catorze fontes. Onze pautas
   avaliadas, três no ar. Escrito por um agente do Claude Code e narrado pelo

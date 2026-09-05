@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-09-02",
+  "updated_at": "2026-09-04",
   "items": [
     {
       "episode": "2026-08-24",
@@ -132,6 +132,60 @@
       "source_url": "https://blogs.nvidia.com/blog/nvidia-crowdstrike-fal-con-2026/",
       "summary": "SafeMind é um sistema de cibersegurança agêntica construído pelo Cyber Superintelligence Lab da CrowdStrike sobre os modelos abertos NVIDIA Nemotron, integrado nativamente à plataforma Falcon. Arquitetura: Nemotron 3 Ultra orquestra o harness de agentes defensivos; um Nemotron 3 Super ajustado alimenta o sub-agente de geração de regras; os modelos defensivos são pós-treinados com dados de ameaça da CrowdStrike em ciclos contínuos de coevolução ofensiva-defensiva. Base aberta permite pós-treinar com dado sensível sem compartilhá-lo com terceiro. Também anunciados: Falcon IQ, que operacionaliza o Project QuiltWorks com mais de 50 agentes coordenados para avaliação, priorização e remediação, e uma expansão do Guardian AI. Sem data de disponibilidade geral no anúncio.",
       "note": "A afirmação de que o modelo Blue Solano teve acurácia maior que modelos de fronteira líderes com custo 99% menor é AVALIAÇÃO INTERNA, sem metodologia publicada — dita como tal no roteiro, sem tratar como fato. Desdobramento a acompanhar: metodologia divulgada ou medição de terceiro."
+    },
+    {
+      "episode": "2026-09-03",
+      "title": "Google lança Gemini 3.8 Flash e Gemini 3.8 Flash Cyber",
+      "original_date": "2026-09-02",
+      "source_name": "Google — The Keyword, post oficial \"Introducing Gemini 3.8 Flash and 3.8 Flash Cyber\"",
+      "source_url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/3-8-flash-and-3-8-flash-cyber/",
+      "summary": "Dois modelos anunciados no mesmo post. Gemini 3.8 Flash é de uso geral, voltado a programação e fluxo autônomo: HLE-Verified 54,9%; Google afirma superar a maioria dos modelos de fronteira maiores em DeepSWE v1.1 e superar 3.7 Flash e outros modelos de fronteira no Vals Finance Agent V2 e no benchmark jurídico da Harvey — todas medições da própria empresa, sem menção a verificação independente. Preço de lançamento US$ 0,75/milhão de tokens de entrada e US$ 3,75/milhão de saída até 31/12/2026; depois sobe para US$ 1,50 e US$ 7,50 (dobro). Google reconhece que o modelo pode gastar mais tokens por raciocinar mais, e diz que 3.7 Flash segue plenamente suportado para carga sensível a custo — coexistência, não substituição. Disponível em AI Studio, Android Studio, Google Antigravity, Gemini Enterprise, app Gemini, AI Mode da Busca e Google Sheets. Gemini 3.8 Flash Cyber é a versão de cibersegurança, com conjunto mais permissivo de mitigações, NÃO disponível ao público: só para 'trusted defenders' via programa Fairwind. Números do Cyber: nível de fronteira em descoberta autônoma de vulnerabilidade no CyberGym, superando modelos bem maiores; taxa de sucesso acima de 70% em benchmark interno de vulnerabilidades reais em 20 linguagens; 47,2% pass@1 em CWE-Bench; 2,6x mais correções válidas que a alternativa comercial na segurança do Chrome; ganho em robustez a injeção de prompt no Gray Swan. O 3.8 Flash padrão segue o Frontier Safety Framework do Google.",
+      "note": "Google não divulga tamanho do modelo nem afirma explicitamente que o Cyber é 'frontier'. Padrão idêntico ao Fable/Mythos 5.1 da Anthropic coberto em 2026-09-02: mesmo modelo, dois níveis de salvaguarda, o mais solto atrás de programa de acesso verificado. Desdobramento a acompanhar: medição independente dos números do Cyber e se a OpenAI publica arquitetura de acesso credenciado equivalente (o post 'Path to Astra', de 2026-09-01, ficou fora da janela e está no backlog)."
+    },
+    {
+      "episode": "2026-09-03",
+      "title": "Meta lança o Muse Spark 1.3 e entra no pelotão de frente",
+      "original_date": "2026-09-02",
+      "source_name": "Meta — página oficial do modelo no site de desenvolvedores",
+      "source_url": "https://developer.meta.com/ai/models/muse-spark/",
+      "summary": "Modelo treinado para fluxo agêntico e otimizado para programação, cerca de quatro semanas depois do Muse Spark 1.2. Janela de contexto de 1 milhão de tokens; entrada nativa de texto, imagem, vídeo e documento, com raciocínio visual rodando em ambiente de execução real. Em comparação interna com a versão 1.2, a Meta afirma ~20% menos chamadas de ferramenta e ~25% menos tokens para o mesmo trabalho. Duas variantes de preço: muse-spark-1.3 a US$ 1,25/milhão de tokens de entrada e US$ 4,25 de saída, com dado NÃO usado para melhorar produtos; muse-spark-1.3-contributor a US$ 0,10/milhão de entrada, com dado USADO para melhorar produtos — 12,5x de desconto por permissão de uso de dado. Disponível via Meta Model API, Muse Code e OpenRouter, com compatibilidade com o SDK da OpenAI. Sem liberação de pesos abertos no lançamento. MEDIÇÃO DE TERCEIRO no mesmo dia: a Artificial Analysis colocou a variante xhigh em 61 pontos no Intelligence Index (max em 62), empatada em quarto lugar com GPT-5.6 Sol (max), Grok 4.6 (high) e Claude Opus 5 (high), a US$ 0,55 por tarefa do índice — o mais barato naquele nível de desempenho.",
+      "note": "Primeira vez que a Meta aparece nesse patamar em índice independente. A página oficial não traz data de publicação; a data 02/09/2026 é confirmada por Bloomberg, Axios e pelo post oficial do perfil AI at Meta, e pelo artigo da Artificial Analysis do mesmo dia. A imprensa registra fala de Mark Zuckerberg sobre liberar pesos abertos no futuro — NÃO usado no roteiro por não estar no material primário. Desdobramento a acompanhar: liberação de pesos e se o índice se sustenta em avaliações posteriores."
+    },
+    {
+      "episode": "2026-09-03",
+      "title": "Programa Fairwind distribui o modelo cibernético do Google só a defensores credenciados",
+      "original_date": "2026-09-02",
+      "source_name": "Google — The Keyword, post oficial \"Proactive cyber defense for governments and enterprises\"",
+      "source_url": "https://blog.google/innovation-and-ai/technology/safety-security/fairwind-program/",
+      "summary": "Programa de acesso limitado que entrega o Gemini 3.8 Flash Cyber combinado com o CodeMender para três públicos prioritários: autoridades cibernéticas de governo, operadores de infraestrutura crítica (saúde, telecomunicações, energia, setor financeiro) e mantenedores de plataformas/tecnologia de base. Promessa: encontrar e corrigir vulnerabilidade de forma autônoma, gerando correções verificadas e prontas para implantar em minutos em vez de semanas, rodando dentro do ambiente de nuvem controlado pela própria organização. Google afirma mais de 650 parceiros participantes no mundo, exibindo nomes como Armadin, CrowdStrike, Palo Alto Networks, Snowflake e Wiz. Participantes aceitam padrões operacionais estritos: acesso restrito às equipes internas de segurança e resposta a incidente, e autenticação multifator obrigatória. Clientes fora do Fairwind ainda podem usar o CodeMender com modelos publicamente disponíveis pela oferta de segurança do Google Cloud.",
+      "note": "Entrou pelo foco especial da semana (infraestrutura crítica e setor financeiro) e por ser a metade de distribuição do anúncio do Gemini 3.8 Flash Cyber. Ângulo editorial do roteiro: governança privada de capacidade — quem define quem é 'confiável' é a mesma parte que ganha com a adoção. Desdobramento a acompanhar: critério publicado de admissão, e se Anthropic e OpenAI convergem para o mesmo formato de clube credenciado."
+    },
+    {
+      "episode": "2026-09-04",
+      "title": "OpenAI lança o GPT-6 Astra, primeiro modelo dela no limiar Crítico de cibersegurança",
+      "original_date": "2026-09-03",
+      "source_name": "OpenAI — post oficial, cartão de sistema (Deployment Safety Hub) e changelog da plataforma de desenvolvedores",
+      "source_url": "https://openai.com/index/gpt-6-astra/",
+      "summary": "Novo modelo de fronteira da OpenAI. Especificações: janela de contexto de 1.050.000 tokens, saída máxima de 128.000, entrada de texto e imagem, corte de conhecimento em 30/04/2026, esforço de raciocínio ajustável de low a max. Preço de API: US$ 10/milhão de tokens de entrada, US$ 50/milhão de saída, US$ 1/milhão em cache, com multiplicador de 2x na entrada acima de 272K tokens; modo fast a 2x o preço e até 2x a velocidade. Números da própria OpenAI: SRE-Bench15 com 88,0% na primeira tentativa e 99,2% em quatro tentativas (contra 55,9% e 68,7% do GPT-5.6 Sol); ARC-AGI-3 superando a linha de base humana de eficiência de ação em 96% dos níveis; estado da arte em Agents' Last Exam, AutomationBench e ScreenSpot Pro; 1,9x mais rápido que o GPT-5.6 Sol no Mind2Web. SEGURANÇA: primeiro modelo da OpenAI a atingir o limiar Crítico de cibersegurança do Preparedness Framework — em avaliações conduzidas por especialistas descobriu vulnerabilidades desconhecidas em navegador e sistema operacional endurecidos, escapou do sandbox e montou cadeia de escalada local de privilégio. Cartão de sistema: ~metade dos alertas de desalinhamento grave do antecessor em mais de 54.000 tarefas internas de simulação de deploy, e queda de monitorabilidade da cadeia de raciocínio (consegue às vezes driblar monitores internos quando instruído; sem esteganografia detectada). Distribuição escalonada: primeiro para empresas do programa Daybreak (acesso confiável para cibersegurança), depois API, Azure, AWS Bedrock e planos Plus, Pro, Business e Enterprise do ChatGPT.",
+      "note": "É o desdobramento direto do post 'Path to Astra' (01/09), que estava no backlog e foi consumido aqui — item removido do backlog. Data confirmada por três fontes primárias da própria OpenAI (changelog com entrada em 3/set, cartão de sistema publicado em 3/set, post do modelo) e corroborada por CNBC, Axios, Bloomberg e NBC. A fala de Greg Brockman sobre AGI é declaração à imprensa (Axios/The Information), NÃO material primário — usada no roteiro explicitamente rotulada como expectativa de executivo. openai.com bloqueia WebFetch (403); conteúdo obtido por busca restrita ao domínio e pelos subdomínios developers.openai.com e deploymentsafety.openai.com, que respondem. Desdobramentos a acompanhar: primeira medição independente (Artificial Analysis e similares) e o critério de admissão no Daybreak."
+    },
+    {
+      "episode": "2026-09-04",
+      "title": "NVIDIA compra a Hugging Face por 12,93 bilhões de dólares",
+      "original_date": "2026-09-03",
+      "source_name": "NVIDIA — blog oficial",
+      "source_url": "https://blogs.nvidia.com/blog/nvidia-to-acquire-hugging-face/",
+      "summary": "NVIDIA anuncia acordo para adquirir a Hugging Face por US$ 12.930.300.000. Escala da plataforma comprada, segundo o anúncio: mais de 18 milhões de desenvolvedores, pesquisadores e criadores; mais de 3 milhões de modelos; 500 mil datasets; mais de 1 milhão de aplicações; mais de 200 mil empresas usuárias. Compromissos declarados: a plataforma continua aberta e neutra, com suporte a todos os frameworks, nuvens e aceleradores, e 'computação NVIDIA não será exigida para construir ou publicar na Hugging Face'. A NVIDIA se apresenta como a maior contribuidora de modelos e dados abertos da plataforma, com mais de 500 modelos e 250 datasets abertos publicados. Jensen Huang, no comunicado: pesos abertos ampliam o acesso à IA e ajudam a garantir que a liderança em IA fique distribuída entre empresas, instituições e comunidades. Sem cronograma de aprovação regulatória no anúncio.",
+      "note": "Camada de hardware comprando a camada de distribuição de modelos abertos. Ângulo editorial do roteiro: o conflito é estrutural, não moral — ranking, destaque e integração padrão viram decisões de uma parte interessada. Corroboração de imprensa no mesmo dia (TechCrunch, CNBC, CNN, Benzinga), incluindo entrevista de Clément Delangue à CNBC dizendo que foi a Hugging Face que procurou Jensen Huang no meio do ano e que a plataforma segue independente e neutra dentro da NVIDIA. A CNBC havia noticiado o acordo em 27/08 como 'report'; a confirmação oficial é de 03/09. Desdobramento a acompanhar: análise antitruste e reação de concorrentes (AMD, Google, clouds)."
+    },
+    {
+      "episode": "2026-09-04",
+      "title": "Institute of Foundation Models publica o K2 Horizon, seis modelos abertos com dados e logs de treino",
+      "original_date": "2026-09-03",
+      "source_name": "Institute of Foundation Models (MBZUAI) — anúncio oficial e repositórios no Hugging Face",
+      "source_url": "https://ifm.ai/blog/k2",
+      "summary": "Seis modelos sob licença Apache 2.0, de 0,9B a 375B de parâmetros (incluindo K2-Horizon-375B-A23B, K2-Horizon-MoVA-36B-A4B, K2-Horizon-32B, K2-Horizon-7B e K2-Horizon-0.9B), publicados junto com os dados de treinamento, o código, as configurações, os checkpoints intermediários e os logs de treino que os produziram — ou seja, reprodutíveis, não apenas baixáveis. Disponíveis no Hugging Face e com suporte em vLLM e SGLang; API por parceiros de inferência (Compass, Cerebras, Nebius).",
+      "note": "Não é player principal segundo config/briefing.md, mas entrou como terceira pauta pelo contraste direto com a compra da Hugging Face no mesmo dia e por ser abertura radical (dados + logs) numa faixa de escala onde 'aberto' normalmente significa só peso. Fonte primária ifm.ai/blog/k2 responde 403 ao WebFetch; a confirmação veio dos repositórios oficiais da org IFM no Hugging Face (artefato primário) mais cobertura de HPCwire, Moor Insights, Middle East AI News e Zawya. Desdobramento a acompanhar: avaliação independente do 375B e se alguém consegue de fato reproduzir o treino."
     }
   ]
 }

@@ -112,7 +112,8 @@ for f in PROJETO.md README.md .gitignore .env.example covered-index.json \
          config/briefing.md config/sources.yaml config/show.json config/tts.json \
          prompts/master.md saved-items/backlog.md \
          scripts/run_episode.sh scripts/tts.py scripts/publish.py scripts/notify.py \
-         scripts/window.py scripts/watch_agent.py scripts/s3.py; do
+         scripts/window.py scripts/watch_agent.py scripts/s3.py \
+         scripts/calibrate_pace.py; do
   [[ -f "$f" ]] && ok "arquivo $f" || bad "faltando arquivo $f"
 done
 [[ -x scripts/run_episode.sh ]] && ok "run_episode.sh executável" || bad "run_episode.sh sem +x"
@@ -130,7 +131,8 @@ python3 -c "import json;d=json.load(open('covered-index.json'));assert isinstanc
 head_ "3. Sintaxe dos scripts"
 bash -n scripts/run_episode.sh 2>/dev/null && ok "run_episode.sh compila" || bad "run_episode.sh com erro de sintaxe"
 for p in scripts/tts.py scripts/publish.py scripts/notify.py scripts/window.py \
-         scripts/watch_agent.py scripts/s3.py tests/make_silent_mp3.py; do
+         scripts/watch_agent.py scripts/s3.py scripts/calibrate_pace.py \
+         tests/make_silent_mp3.py; do
   python3 -m py_compile "$p" 2>/dev/null && ok "$p compila" || bad "$p com erro de sintaxe"
 done
 
@@ -219,6 +221,26 @@ lento = word_budget({"words_per_minute": 125})
 rapido = word_budget({"words_per_minute": 163})
 assert lento["max"] < rapido["max"], "faixa não acompanha a velocidade da voz"
 print(f"    {rate} ppm -> {b['min']}-{b['max']} palavras, alvo {b['target']}")
+PYEOF
+
+# O teto de palavras não pode estourar 10 minutos ao ritmo REALMENTE medido nos
+# episódios publicados. Um words_per_minute otimista passa despercebido — foi
+# assim que ele foi parar em 165 com o real em 155, e o teto virou 10,1 min.
+python3 - <<'PYEOF' && ok "teto de palavras cabe em 10 min ao ritmo medido" || bad "teto de palavras estoura 10 min"
+import statistics, sys
+sys.path.insert(0, "scripts")
+from calibrate_pace import medicoes
+from tts import load_cfg, word_budget
+
+dados = medicoes("2026-09-01")
+if len(dados) < 2:
+    print("    (menos de 2 episódios medíveis — checagem pulada)")
+    raise SystemExit(0)
+medido = statistics.median(d[3] for d in dados)
+teto = word_budget(load_cfg())["max"]
+minutos = teto / medido
+print(f"    ritmo medido {medido:.0f} ppm, teto {teto} palavras = {minutos:.2f} min")
+assert minutos <= 10.0, f"teto daria {minutos:.2f} min, acima do limite rígido"
 PYEOF
 
 # O prompt não pode ter a faixa fixa no texto: ela vem por variável de ambiente.
