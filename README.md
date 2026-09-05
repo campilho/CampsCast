@@ -200,6 +200,7 @@ scripts/window.py       calcula a janela de notícias (ver seção abaixo)
 scripts/schedule.py     decide se o dia tem episódio (dias úteis, feriados)
 scripts/calibrate_pace.py  mede o ritmo real de fala e corrige a faixa de palavras
 scripts/s3.py           upload para o S3 (SigV4 em Python puro, sem AWS CLI)
+scripts/set_base_url.py troca o endereço público do feed, verificando antes
 scripts/watch_agent.py  espelha a atividade do agente ao vivo
 episodes/               1 roteiro por dia — é a memória do podcast
 research/               log de pesquisa: o que foi considerado e descartado
@@ -210,6 +211,7 @@ audio/  feed/  logs/    gerados; fora do git
 docs/decisions/         ADRs
 docs/gravacao-voz.md    guia para gravar o material da voz profissional
 docs/publicacao-diretorios.md  requisitos de Apple, Spotify e Pocket Casts
+docs/dominio-proprio.md  migrar o feed para campscast.com.br
 tests/smoke_test.sh     valida tudo offline
 ```
 

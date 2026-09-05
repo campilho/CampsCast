@@ -113,7 +113,7 @@ for f in PROJETO.md README.md .gitignore .env.example covered-index.json \
          prompts/master.md saved-items/backlog.md \
          scripts/run_episode.sh scripts/tts.py scripts/publish.py scripts/notify.py \
          scripts/window.py scripts/watch_agent.py scripts/s3.py \
-         scripts/calibrate_pace.py scripts/schedule.py; do
+         scripts/calibrate_pace.py scripts/schedule.py scripts/set_base_url.py; do
   [[ -f "$f" ]] && ok "arquivo $f" || bad "faltando arquivo $f"
 done
 [[ -x scripts/run_episode.sh ]] && ok "run_episode.sh executável" || bad "run_episode.sh sem +x"
@@ -132,7 +132,7 @@ head_ "3. Sintaxe dos scripts"
 bash -n scripts/run_episode.sh 2>/dev/null && ok "run_episode.sh compila" || bad "run_episode.sh com erro de sintaxe"
 for p in scripts/tts.py scripts/publish.py scripts/notify.py scripts/window.py \
          scripts/watch_agent.py scripts/s3.py scripts/calibrate_pace.py \
-         scripts/schedule.py tests/make_silent_mp3.py; do
+         scripts/schedule.py scripts/set_base_url.py tests/make_silent_mp3.py; do
   python3 -m py_compile "$p" 2>/dev/null && ok "$p compila" || bad "$p com erro de sintaxe"
 done
 
@@ -895,6 +895,27 @@ if env.exists():
     assert show["cover_url"].startswith(base), "cover_url fora da base_url"
 print(f"    {base}")
 PYEOF
+
+# set_base_url só grava se o domínio já servir os arquivos. Trocar antes disso
+# publica um feed cujos episódios apontam para o nada — e depois da submissão
+# aos diretórios isso vira download falhando em silêncio no app do ouvinte.
+OUT_BU="$(python3 scripts/set_base_url.py https://dominio-que-nao-existe-campscast.invalid --dry-run 2>&1 || true)"
+if [[ "$OUT_BU" == *"Não gravei nada"* ]]; then
+  ok "set_base_url recusa domínio que não responde"
+else
+  bad "set_base_url deveria recusar domínio inexistente"
+fi
+python3 - <<'PYEOF' && ok "set_base_url exige https" || bad "set_base_url deveria exigir https"
+import subprocess, sys
+r = subprocess.run([sys.executable, "scripts/set_base_url.py", "http://campscast.com.br"],
+                   capture_output=True, text=True)
+assert r.returncode == 2, r.returncode
+assert "https" in r.stderr
+PYEOF
+python3 -c "
+import json,pathlib,sys
+s=json.loads(pathlib.Path('config/show.json').read_text(encoding='utf-8'))
+sys.exit(0 if s['base_url'].startswith('https://') else 1)"   && ok "base_url do projeto usa https" || bad "base_url não usa https"
 
 # ----------------------------------------------------- 11 precedência do .env
 head_ "11. Precedência de variáveis (.env vs ambiente)"
