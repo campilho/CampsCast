@@ -5,7 +5,7 @@
 > Roda localmente em um MacBook Pro M3, com Claude Code em modo headless,
 > TTS na ElevenLabs e publicação via feed RSS em S3.
 
-**Status:** Fase 1 em construção
+**Status:** Fase 1 concluída em 05/09/2026 · Fase 2 em andamento
 **Autor:** Camps
 **Licença:** MIT para o código, CC BY 4.0 para o conteúdo editorial
 
@@ -39,7 +39,7 @@ Regras fixas que o agente deve respeitar:
 
 | Regra | Valor |
 |---|---|
-| Frequência | 1 episódio/dia, **apenas dias úteis** |
+| Frequência | 1 episódio/dia, **apenas dias úteis** — dias, feriados e exceções em `config/schedule.json` |
 | Janela de notícias | Dia anterior. Na segunda-feira: sexta + sábado + domingo |
 | Duração | **5 a 10 minutos** (alvo ~8 min; nunca ultrapassar 10) |
 | Tópicos por episódio | **Máximo 3 tópicos relevantes** |
@@ -251,14 +251,20 @@ em português do Brasil, de 5 a 10 minutos, publicado em dias úteis.
 - [x] `run_episode.sh` + `claude -p` headless funcionando manualmente
 - [x] Dedup por `covered-index.json` + leitura de episódios anteriores
 - [x] Backlog de itens guardados operante
-- [ ] TTS ElevenLabs (voz de catálogo PT-BR, modelo Flash) — testar também
-      Polly e Chirp3 para o ADR de comparação
+- [x] TTS ElevenLabs (Flash v2.5, voz clonada do Camps) — Polly e Chirp3
+      seguem pendentes no ADR 0001, sem bloquear
 - [x] `feed.xml` + MP3 no S3, feed válido
 - [ ] launchd seg–sex 05:50 (Mac configurado: `pmset` para acordar/não hibernar)
-- [ ] Assinatura no Pocket Casts/AntennaPod → teste real no EX30
-- [ ] URL compartilhada com 2–3 beta testers do time
+- [x] Assinatura no Pocket Casts → funciona no celular. No EX30 o app do
+      Android Automotive não atualiza de forma confiável; a saída é o
+      diretório, na Fase 2
+- [x] URL compartilhada com 4 beta testers — feedback formal fica para a Fase 2
 
-**Critério de saída:** 5 episódios consecutivos publicados sem intervenção manual.
+**Critério de saída:** 5 episódios consecutivos publicados sem intervenção
+manual. **Encerrada em 05/09/2026 com 4** — 01, 02, 03 e 04/09, todos
+disparados às 05:50 sem toque humano. O quinto cairia na segunda 07/09, que é
+feriado nacional; com a qualidade já validada nos testes do autor, esperar mais
+um dia útil não acrescentaria informação.
 
 ### Fase 2 — Voz própria e publicação
 - [ ] Refatorar para subagents do Claude Code (pesquisador / editor / publicador)

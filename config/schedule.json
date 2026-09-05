@@ -1,0 +1,12 @@
+{
+  "weekdays": [1, 2, 3, 4, 5],
+  "holidays": "BR",
+  "skip_dates": [],
+  "force_dates": [],
+
+  "_weekdays": "Dias em que há episódio. 1=segunda … 7=domingo. Para publicar todo dia, use [1,2,3,4,5,6,7].",
+  "_holidays": "\"BR\" pula os feriados nacionais brasileiros, inclusive os móveis, calculados a partir da Páscoa. Use null para ignorar feriados.",
+  "_skip_dates": "Datas extras sem episódio: férias, recesso, feriado local. Formato YYYY-MM-DD.",
+  "_force_dates": "Datas com episódio mesmo caindo fora de weekdays ou em feriado.",
+  "_nota": "Pular um dia não perde a notícia: a janela do episódio seguinte cobre desde o último dia já coberto. Ver scripts/window.py."
+}

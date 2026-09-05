@@ -5,7 +5,7 @@
 > Roda localmente num MacBook Pro M3, com Claude Code em modo headless,
 > TTS na ElevenLabs e publicação via feed RSS em S3.
 
-**Status:** Fase 1 — primeiro episódio publicado em 24/08/2026 · **Autor:** Camps · Detalhes de arquitetura em [PROJETO.md](PROJETO.md)
+**Status:** Fase 1 concluída em 05/09/2026 · Fase 2 em andamento · **Autor:** Camps · Detalhes de arquitetura em [PROJETO.md](PROJETO.md)
 
 ---
 
@@ -95,6 +95,7 @@ scripts/run_episode.sh
 | `--skip publish,notify` | pula as etapas listadas |
 | `--dry-run` | mostra o que faria, sem executar |
 | `--overwrite` | regrava um episódio que já existe |
+| `--force` | roda em dia sem episódio (fim de semana, feriado) |
 
 Logs por dia em `logs/YYYY-MM-DD.log`.
 
@@ -120,6 +121,38 @@ python3 scripts/watch_agent.py
 Ele lê a transcrição que o próprio CLI grava em `~/.claude/projects/`, e
 identifica a sessão do pipeline pelo prompt-mestre — não confunde com uma
 sessão interativa aberta no mesmo projeto.
+
+---
+
+## Quando há episódio
+
+Dias de publicação, feriados e exceções vivem em
+[config/schedule.json](config/schedule.json):
+
+```json
+{
+  "weekdays": [1, 2, 3, 4, 5],
+  "holidays": "BR",
+  "skip_dates": [],
+  "force_dates": []
+}
+```
+
+`holidays: "BR"` pula os feriados nacionais brasileiros — inclusive os móveis,
+calculados a partir da Páscoa, para não virar uma lista a manter todo janeiro.
+Quem clonar o projeto em outro país usa `null` e a própria lista em
+`skip_dates`; quem quiser publicar aos sábados põe `6` em `weekdays`.
+
+O instalador do launchd lê esse mesmo arquivo, então os horários de disparo
+nunca divergem da regra que o pipeline aplica.
+
+**Pular um dia não perde notícia.** A janela do episódio seguinte cobre desde o
+último dia coberto — depois de um feriado na segunda, a terça cobre sexta,
+sábado, domingo e segunda.
+
+```bash
+python3 scripts/schedule.py --proximos 14
+```
 
 ---
 
@@ -164,6 +197,8 @@ config/show.json        metadados do podcast (título, capa, URLs do feed)
 config/tts.json         voz e modelo da ElevenLabs
 prompts/master.md       prompt-mestre do agente
 scripts/window.py       calcula a janela de notícias (ver seção abaixo)
+scripts/schedule.py     decide se o dia tem episódio (dias úteis, feriados)
+scripts/calibrate_pace.py  mede o ritmo real de fala e corrige a faixa de palavras
 scripts/s3.py           upload para o S3 (SigV4 em Python puro, sem AWS CLI)
 scripts/watch_agent.py  espelha a atividade do agente ao vivo
 episodes/               1 roteiro por dia — é a memória do podcast

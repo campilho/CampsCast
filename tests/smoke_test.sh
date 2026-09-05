@@ -113,7 +113,7 @@ for f in PROJETO.md README.md .gitignore .env.example covered-index.json \
          prompts/master.md saved-items/backlog.md \
          scripts/run_episode.sh scripts/tts.py scripts/publish.py scripts/notify.py \
          scripts/window.py scripts/watch_agent.py scripts/s3.py \
-         scripts/calibrate_pace.py; do
+         scripts/calibrate_pace.py scripts/schedule.py; do
   [[ -f "$f" ]] && ok "arquivo $f" || bad "faltando arquivo $f"
 done
 [[ -x scripts/run_episode.sh ]] && ok "run_episode.sh executável" || bad "run_episode.sh sem +x"
@@ -132,7 +132,7 @@ head_ "3. Sintaxe dos scripts"
 bash -n scripts/run_episode.sh 2>/dev/null && ok "run_episode.sh compila" || bad "run_episode.sh com erro de sintaxe"
 for p in scripts/tts.py scripts/publish.py scripts/notify.py scripts/window.py \
          scripts/watch_agent.py scripts/s3.py scripts/calibrate_pace.py \
-         tests/make_silent_mp3.py; do
+         scripts/schedule.py tests/make_silent_mp3.py; do
   python3 -m py_compile "$p" 2>/dev/null && ok "$p compila" || bad "$p com erro de sintaxe"
 done
 
@@ -433,21 +433,31 @@ head_ "8. Orquestrador (dry-run)"
 # não entrar no cálculo da janela (ele fingiria uma parada de 56 anos).
 rm -f "$TMP_EP" "$TMP_AUDIO"
 
-OUT_SUN="$(bash scripts/run_episode.sh --date 2026-08-23 --dry-run --skip research 2>&1)"
-if [[ "$OUT_SUN" == *"Concluído"* ]]; then
+# 2026-08-24 é uma segunda-feira comum, sem feriado.
+OUT_SEG="$(bash scripts/run_episode.sh --date 2026-08-24 --dry-run --skip research 2>&1)"
+if [[ "$OUT_SEG" == *"Concluído"* ]]; then
   ok "run_episode.sh --dry-run completa"
 else
   bad "run_episode.sh --dry-run falhou"
 fi
-if [[ "$OUT_SUN" == *"Fim de semana: execução manual"* ]]; then
-  ok "domingo roda como execução manual, sem exigir flag"
+if [[ "$OUT_SEG" == *"Janela: 2026-08-21 → 2026-08-23 (3 dia(s))"* ]]; then
+  ok "segunda em partida a frio cobre sexta, sábado e domingo"
 else
-  bad "domingo deveria rodar sem flag"
+  bad "janela da segunda errada"
 fi
-if [[ "$OUT_SUN" == *"Janela: 2026-08-21 → 2026-08-22 (2 dia(s))"* ]]; then
-  ok "domingo em partida a frio cobre sexta + sábado, sem incluir hoje"
+
+# Domingo agora é barrado pelo calendário, e --force é a válvula de escape.
+OUT_DOM="$(bash scripts/run_episode.sh --date 2026-08-23 --dry-run --skip research 2>&1)"
+if [[ "$OUT_DOM" == *"sem episódio"* && "$OUT_DOM" == *"weekdays"* ]]; then
+  ok "domingo é barrado pelo calendário"
 else
-  bad "janela do domingo errada"
+  bad "domingo deveria ser barrado"
+fi
+OUT_DOMF="$(bash scripts/run_episode.sh --date 2026-08-23 --dry-run --force --skip research 2>&1)"
+if [[ "$OUT_DOMF" == *"Concluído"* ]]; then
+  ok "--force roda em dia sem episódio"
+else
+  bad "--force deveria rodar no domingo"
 fi
 
 OUT_TUE="$(bash scripts/run_episode.sh --date 2026-08-25 --dry-run --skip research 2>&1)"
@@ -487,20 +497,20 @@ FAKE="$(mktemp -d)"
 printf '#!/bin/sh\necho "Not logged in · Please run /login"\nexit 1\n' > "$FAKE/claude"
 chmod +x "$FAKE/claude"
 OUT_AUTH="$(CLAUDE_BIN="$FAKE/claude" bash scripts/run_episode.sh \
-             --date 2026-08-23 --only research 2>&1 || true)"
+             --date 2026-08-25 --only research 2>&1 || true)"
 rm -rf "$FAKE"
 if [[ "$OUT_AUTH" == *"não autenticado"* && "$OUT_AUTH" == *"/login"* ]]; then
   ok "diagnostica CLI sem autenticação em vez de repassar o erro cru"
 else
   bad "falta de login deveria virar mensagem acionável"
 fi
-if [[ ! -f episodes/2026-08-23.md ]]; then
+if [[ ! -f episodes/2026-08-25.md ]]; then
   ok "falha do agente não deixa episódio pela metade"
 else
   bad "episódio não deveria ter sido criado"
 fi
 
-rm -f logs/2026-08-23.log logs/2026-08-25.log
+rm -f logs/2026-08-23.log logs/2026-08-24.log logs/2026-08-25.log
 
 # ------------------------------------------------------ 9 acompanhamento vivo
 head_ "9. Acompanhamento do agente (watch_agent.py)"
@@ -578,6 +588,92 @@ if pgrep -f "watch_agent.py" >/dev/null 2>&1; then
 else
   ok "watcher encerrado sem deixar órfão"
 fi
+
+# --------------------------------------------------- 9b calendário de publicação
+head_ "9b. Calendário de publicação"
+python3 - <<'PYEOF' && ok "dias úteis, feriados e exceções" || bad "calendário"
+import sys
+from datetime import date
+sys.path.insert(0, "scripts")
+from schedule import avaliar, feriados_br, pascoa
+
+# Páscoa: âncora dos feriados móveis. Valores conferidos contra calendário.
+assert pascoa(2026) == date(2026, 4, 5), pascoa(2026)
+assert pascoa(2027) == date(2027, 3, 28), pascoa(2027)
+
+f26 = feriados_br(2026)
+assert f26[date(2026, 9, 7)] == "Independência"
+assert date(2026, 4, 3) in f26, "Sexta-feira Santa de 2026"
+assert date(2026, 2, 17) in f26, "Carnaval de 2026"
+assert date(2026, 6, 4) in f26, "Corpus Christi de 2026"
+assert date(2026, 11, 20) in f26, "Consciência Negra"
+
+padrao = {"weekdays": [1,2,3,4,5], "holidays": "BR",
+          "skip_dates": [], "force_dates": []}
+assert avaliar(date(2026, 9, 4), padrao)[0] is True,  "sexta comum"
+assert avaliar(date(2026, 9, 5), padrao)[0] is False, "sábado"
+assert avaliar(date(2026, 9, 7), padrao)[0] is False, "feriado"
+assert "Independência" in avaliar(date(2026, 9, 7), padrao)[1]
+assert avaliar(date(2026, 9, 8), padrao)[0] is True,  "terça depois do feriado"
+
+# force_dates vence feriado e fim de semana; skip_dates vence dia útil.
+forcado = {**padrao, "force_dates": ["2026-09-07", "2026-09-05"]}
+assert avaliar(date(2026, 9, 7), forcado)[0] is True
+assert avaliar(date(2026, 9, 5), forcado)[0] is True
+pulado = {**padrao, "skip_dates": ["2026-09-08"]}
+assert avaliar(date(2026, 9, 8), pulado)[0] is False
+
+# Quem clonar pode querer publicar todo dia, ou ignorar feriados brasileiros.
+todo_dia = {**padrao, "weekdays": [1,2,3,4,5,6,7], "holidays": None}
+assert avaliar(date(2026, 9, 5), todo_dia)[0] is True, "sábado liberado"
+assert avaliar(date(2026, 9, 7), todo_dia)[0] is True, "feriado ignorado"
+print("    Páscoa, feriados móveis, fim de semana e exceções conferidos")
+PYEOF
+
+# O feriado não pode fazer a notícia sumir: o dia seguinte tem de cobri-lo.
+python3 - <<'PYEOF' && ok "dia pulado é coberto pela janela seguinte" || bad "notícia perdida no feriado"
+import pathlib, shutil, sys, tempfile
+from datetime import date
+sys.path.insert(0, "scripts")
+import window
+
+EP = pathlib.Path("episodes")
+abrigo = tempfile.mkdtemp()
+for p in EP.glob("*.md"):
+    shutil.move(str(p), abrigo)
+try:
+    # Sexta 04/09 cobriu até quinta 03/09. Segunda 07/09 é feriado.
+    linhas = ["---", "date: 2026-09-04", "window_start: 2026-09-03",
+              "window_end: 2026-09-03", "title: t", "---", "", "x"]
+    (EP / "2026-09-04.md").write_text(chr(10).join(linhas) + chr(10),
+                                      encoding="utf-8")
+    r = window.compute(date(2026, 9, 8))       # terça seguinte
+    assert str(r["start"]) == "2026-09-04", r
+    assert str(r["end"]) == "2026-09-07", r    # inclui o feriado
+    assert r["days"] == 4, r
+    print(f"    terça cobre {r['start']} a {r['end']} — o feriado entra")
+finally:
+    for p in EP.glob("*.md"):
+        p.unlink()
+    for p in pathlib.Path(abrigo).glob("*.md"):
+        shutil.move(str(p), EP)
+    shutil.rmtree(abrigo, ignore_errors=True)
+PYEOF
+
+# O launchd tem de disparar exatamente nos dias de config/schedule.json.
+python3 - <<'PYEOF' && ok "launchd e schedule.json concordam nos dias" || bad "launchd diverge do schedule"
+import json, os, pathlib, plistlib, sys
+cfg = json.loads(pathlib.Path("config/schedule.json").read_text(encoding="utf-8"))
+esperados = set(cfg.get("weekdays") or [1,2,3,4,5])
+plist = pathlib.Path(os.path.expanduser("~/Library/LaunchAgents/com.camps.campscast.plist"))
+if not plist.exists():
+    print("    (agendamento não instalado — checagem pulada)")
+    raise SystemExit(0)
+d = plistlib.loads(plist.read_bytes())
+achados = {e["Weekday"] for e in d["StartCalendarInterval"]}
+assert achados == esperados, f"plist dispara em {sorted(achados)}, config diz {sorted(esperados)}"
+print(f"    dias {sorted(achados)} em ambos")
+PYEOF
 
 # ------------------------------------------------------- 10 assinatura AWS S3
 head_ "10. Upload S3 (assinatura SigV4, sem AWS CLI)"

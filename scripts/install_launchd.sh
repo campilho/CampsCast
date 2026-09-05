@@ -41,6 +41,15 @@ PY_BIN="$(command -v python3 || true)"
 
 PATH_ENTRIES="$(dirname "$CLAUDE_BIN"):$(dirname "$PY_BIN"):/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
+# Os dias de disparo saem de config/schedule.json, para não divergirem da
+# regra que o run_episode.sh aplica. Feriado o script decide na hora; o
+# launchd só precisa saber os dias da semana.
+DIAS="$(python3 -c "
+import json, pathlib
+p = pathlib.Path('$ROOT/config/schedule.json')
+d = json.loads(p.read_text()) if p.exists() else {}
+print(' '.join(str(x) for x in d.get('weekdays') or [1,2,3,4,5]))" 2>/dev/null || echo "1 2 3 4 5")"
+
 mkdir -p "$HOME/Library/LaunchAgents" "$ROOT/logs"
 
 {
@@ -63,7 +72,7 @@ mkdir -p "$HOME/Library/LaunchAgents" "$ROOT/logs"
   # um segundo com "nada novo a cobrir". Se a primeira falhou — máquina
   # dormindo, rede fora, fonte no ar — a segunda ou a terceira pega.
   echo '  <key>StartCalendarInterval</key><array>'
-  for d in 1 2 3 4 5; do
+  for d in $DIAS; do
     for hm in "5 50" "6 20" "7 00"; do
       set -- $hm
       echo "    <dict><key>Weekday</key><integer>$d</integer><key>Hour</key><integer>$1</integer><key>Minute</key><integer>$2</integer></dict>"
@@ -85,7 +94,8 @@ echo "Instalado: $PLIST"
 echo "  projeto : $ROOT"
 echo "  claude  : $CLAUDE_BIN"
 echo "  python3 : $PY_BIN"
-echo "  horário : segunda a sexta, 05:50 (repescagem 06:20 e 07:00)"
+echo "  dias    : weekdays $DIAS de config/schedule.json"
+echo "  horário : 05:50 (repescagem 06:20 e 07:00)"
 echo
 echo "Disparar agora:  launchctl kickstart -k gui/$UID_NUM/$LABEL"
 echo "Ver status    :  launchctl list | grep campscast"

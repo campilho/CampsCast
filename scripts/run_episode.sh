@@ -10,6 +10,7 @@
 #   scripts/run_episode.sh --skip publish,notify # pula etapas
 #   scripts/run_episode.sh --dry-run             # mostra o que faria, não executa
 #   scripts/run_episode.sh --overwrite           # regrava um episódio existente
+#   scripts/run_episode.sh --force               # roda em dia sem episódio
 #
 # Janela de notícias: calculada por scripts/window.py a partir do último dia já
 # coberto por algum episódio. Rodar no sábado ou no domingo é permitido e não
@@ -47,6 +48,7 @@ CLAUDE_BIN="${CLAUDE_BIN:-claude}"
 EPISODE_DATE=""
 DRY_RUN=0
 OVERWRITE=0
+FORCE_DAY=0
 ONLY=""
 SKIP=""
 
@@ -57,6 +59,7 @@ while [[ $# -gt 0 ]]; do
     --skip)    SKIP="$2"; shift 2 ;;
     --dry-run)   DRY_RUN=1; shift ;;
     --overwrite) OVERWRITE=1; shift ;;
+    --force)     FORCE_DAY=1; shift ;;
     -h|--help)   sed -n '2,20p' "$0"; exit 0 ;;
     *) echo "Argumento desconhecido: $1" >&2; exit 2 ;;
   esac
@@ -90,6 +93,21 @@ run() {
   if [[ $DRY_RUN -eq 1 ]]; then log "DRY-RUN: $*"; return 0; fi
   "$@"
 }
+
+# ---------- há episódio hoje? ----------
+# Dias úteis, feriados e exceções vivem em config/schedule.json, não aqui:
+# quem clonar o projeto pode estar em outro país, ou querer publicar no sábado.
+# Pular um dia não perde notícia — a janela do episódio seguinte cobre o buraco.
+if [[ $FORCE_DAY -eq 0 ]]; then
+  if ! MOTIVO="$(python3 scripts/schedule.py --date "$EPISODE_DATE" 2>/dev/null)"; then
+    mkdir -p logs
+    printf '[%s] %s\n' "$(date +%H:%M:%S)" "${MOTIVO:-sem episódio hoje}" \
+      | tee -a "logs/${EPISODE_DATE}.log"
+    printf '[%s] Nada a fazer. Use --force para rodar assim mesmo.\n' \
+      "$(date +%H:%M:%S)" | tee -a "logs/${EPISODE_DATE}.log"
+    exit 0
+  fi
+fi
 
 # ---------- janela de notícias ----------
 # Regra: cobre do dia seguinte ao último dia já coberto até ontem. Hoje nunca

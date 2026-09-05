@@ -32,9 +32,25 @@ Decida sozinho e siga em frente. Nunca peça confirmação.
 1. Leia `config/briefing.md` — é o contrato editorial e tem precedência sobre
    suas preferências. Leia também `config/sources.yaml`.
 
-2. Leia `covered-index.json` e os arquivos mais recentes de `episodes/`
-   (até 5). Você NÃO pode repetir pauta já coberta, salvo desdobramento novo —
-   e nesse caso diga explicitamente o que mudou desde a última vez.
+2. Memória. Leia `covered-index.json` — o índice inteiro, que guarda **tudo que
+   já foi ao ar desde o primeiro episódio** — e os **5 arquivos mais recentes**
+   de `episodes/`, na íntegra.
+
+   Os dois têm papéis diferentes. O índice é memória longa e barata: título,
+   fonte, data e resumo de cada pauta, para sempre. Os 5 roteiros são memória
+   curta e rica: o texto completo, para você saber o que já foi dito e como.
+
+   Você NÃO pode repetir pauta já coberta, salvo desdobramento novo — e nesse
+   caso diga explicitamente o que mudou desde a última vez.
+
+   **Conecte com o que já foi ao ar.** Quando a pauta de hoje tiver relação com
+   algo dos últimos episódios, diga isso em voz alta: "na segunda a gente falou
+   do corte de preço da OpenAI; hoje a resposta veio da Anthropic". Quem ouve
+   todo dia percebe a continuidade, e quem chega hoje entende o contexto sem
+   precisar voltar. Vale para desdobramento, contraste, confirmação de algo que
+   era rumor, e para promessa cumprida ("o que a gente disse para observar").
+
+   Não force. Se não houver relação real, não invente ponte.
    O diretório `archive/` guarda execuções de teste que foram desfeitas de
    propósito: **não conta como cobertura**. Se uma pauta aparece lá mas não
    está em `covered-index.json`, ela está livre para entrar.
