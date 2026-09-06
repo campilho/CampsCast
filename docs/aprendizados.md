@@ -147,6 +147,23 @@ sugere a conclusão errada de que gravar sem perdas é o problema.
 `prep_voice_samples.py` converte para WAV mono 44,1 kHz. Verificado que a
 conversão preserva as medições exatamente.
 
+### Distância domina sobre qualidade do microfone
+
+Mesma sala, mesma pessoa, mesmo minuto: iPhone a ~20 cm mediu **−23,6 dBFS** de
+fala e 38 dB de relação sinal/ruído; microfone do MacBook, sentado à frente,
+mediu **−38,9 dBFS** e 17 dB.
+
+Quinze decibéis de diferença. Pela lei do inverso do quadrado, cada dobra de
+distância custa 6 dB — quinze equivalem a estar cerca de cinco vezes mais
+longe, o que bate com um metro contra vinte centímetros.
+
+O microfone do MacBook Pro é bom; o problema é onde ele fica. Nenhuma melhora
+de codec compensa: gravar sem perdas mantém o nível da fala e ainda faz o piso
+de ruído medido **subir**, porque o encoder deixa de limpar o silêncio. A
+relação sinal/ruído pioraria.
+
+Antes de comprar microfone melhor, chegue mais perto do que você tem.
+
 ### Fone Bluetooth é pior que o microfone do notebook
 
 Perfil de headset comprime a banda e aplica supressão de ruído e ganho

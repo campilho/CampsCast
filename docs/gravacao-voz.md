@@ -33,7 +33,10 @@ Ordem de preferência com o que você já tem:
 Detectei os dois primeiros disponíveis na sua máquina, ambos a 48 kHz.
 
 O iPhone ganha por poder ser posicionado onde você quiser, longe do ventilador
-do notebook. Grave no app **Gravador**, com a qualidade em *Sem perdas* nos
+do notebook. **A diferença é grande e vem da distância, não da qualidade do
+microfone**: medido na mesma sala, no mesmo minuto, o iPhone a 20 cm deu 38 dB
+de relação sinal/ruído e o MacBook, sentado à frente, deu 17 dB. Quinze
+decibéis a menos no nível da fala — cerca de cinco vezes mais longe. Grave no app **Gravador**, com a qualidade em *Sem perdas* nos
 ajustes, e depois passe os arquivos para o Mac.
 
 Se um dia quiser subir de nível, um microfone USB dinâmico resolve — mas não
