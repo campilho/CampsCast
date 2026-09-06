@@ -24,3 +24,6 @@ venv/
 
 # Abrigo temporário do smoke test (recuperado automaticamente)
 .smoke-backup/
+
+# Anotações pessoais do autor — não fazem parte do projeto
+privado/

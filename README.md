@@ -211,7 +211,8 @@ audio/  feed/  logs/    gerados; fora do git
 docs/decisions/         ADRs
 docs/gravacao-voz.md    guia para gravar o material da voz profissional
 docs/publicacao-diretorios.md  requisitos de Apple, Spotify e Pocket Casts
-docs/dominio-proprio.md  migrar o feed para campscast.com.br
+docs/dominio-proprio.md  migrar o feed para domínio próprio
+docs/dominio-registro-br-route53.md  .com.br + Route 53 + CloudFront, passo a passo
 tests/smoke_test.sh     valida tudo offline
 ```
 
