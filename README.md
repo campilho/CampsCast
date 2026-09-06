@@ -204,7 +204,8 @@ prompts/master.md       prompt-mestre do agente
 scripts/window.py       calcula a janela de notícias (ver seção abaixo)
 scripts/schedule.py     decide se o dia tem episódio (dias úteis, feriados)
 scripts/calibrate_pace.py  mede o ritmo real de fala e corrige a faixa de palavras
-scripts/check_recording.py avalia gravação para clonagem; --sala mede o ambiente
+scripts/audio_metrics.py  métricas de áudio (espectro, reverberação, dinâmica)
+scripts/check_recording.py avalia gravação; --sala mede ambiente, --markdown tabela
 scripts/prep_voice_samples.py converte gravações para o formato que a ElevenLabs aceita
 scripts/s3.py           upload para o S3 (SigV4 em Python puro, sem AWS CLI)
 scripts/set_base_url.py troca o endereço público do feed, verificando antes
@@ -217,6 +218,7 @@ analysis/               [Fase 3] análises escritas pelo Camps
 audio/  feed/  logs/    gerados; fora do git
 docs/decisions/         ADRs
 docs/aprendizados.md    o que quebrou, por quê, e o que ficou de método
+docs/benchmarks-audio.md medições comparadas de sala, aparelho e distância
 CLAUDE.md               orientação para quem (ou o quê) pegar o projeto
 docs/gravacao-voz.md    guia para gravar o material da voz profissional
 docs/publicacao-diretorios.md  requisitos de Apple, Spotify e Pocket Casts

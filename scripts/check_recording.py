@@ -1,253 +1,223 @@
 #!/usr/bin/env python3
 """
-CampsCast — avalia se uma gravação serve para clonagem de voz.
+CampsCast — avalia gravações para clonagem de voz, e compara cenários.
 
-Clonagem aprende tudo que está no áudio, inclusive o que você não queria: ruído
-de rua, chiado do ar-condicionado, eco do cômodo. Depois não há como separar.
-Meia hora gravada num lugar ruim vira um clone ruim, e o erro só aparece no
-episódio.
+Clonagem aprende tudo que está no áudio: ruído de rua, chiado de aparelho, eco
+do cômodo. Depois não há como separar. Este script mede antes de você gastar a
+gravação inteira — e produz tabelas comparáveis entre salas, aparelhos e
+distâncias, para documentar o que funciona.
 
-Este script mede antes de gastar a gravação inteira. Aceita qualquer formato
-que o afconvert leia — m4a do iPhone, wav, mp3.
-
-    python3 scripts/check_recording.py amostra.m4a
-    python3 scripts/check_recording.py iphone.m4a mac.m4a     # compara
+    python3 scripts/check_recording.py bloco.m4a
+    python3 scripts/check_recording.py silencio.m4a --sala
+    python3 scripts/check_recording.py *.m4a --markdown      # tabela p/ docs
 """
 from __future__ import annotations
 
 import argparse
-import array
-import math
-import os
 import pathlib
-import subprocess
 import sys
-import tempfile
-import wave
 
-TAXA = 22050          # suficiente para medir voz e ruído, e leve na memória
-JANELA = 0.25         # segundos por janela de análise
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "scripts"))
 
-# Limiares para material de clonagem, do exigente ao aceitável.
-PISO_RUIDO_BOM, PISO_RUIDO_OK = -60.0, -50.0
+from audio_metrics import BANDAS, analisa   # noqa: E402
+
+PISO_BOM, PISO_OK = -60.0, -50.0
 SNR_BOM, SNR_OK = 40.0, 30.0
 FALA_MIN, FALA_MAX = -26.0, -14.0
-GRAVE_ALERTA = 0.35   # fração da energia abaixo de ~150 Hz
+REVERB_BOM, REVERB_OK = 0.4, 0.6
+
+BLOCOS = " ░▒▓█"
 
 
-def para_wav(caminho: pathlib.Path) -> pathlib.Path:
-    saida = pathlib.Path(tempfile.mkdtemp()) / "a.wav"
-    r = subprocess.run(
-        ["afconvert", "-f", "WAVE", "-d", f"LEI16@{TAXA}", "-c", "1",
-         str(caminho), str(saida)],
-        capture_output=True)
-    if r.returncode != 0 or not saida.exists():
-        raise RuntimeError(f"não consegui converter {caminho.name}: "
-                           f"{r.stderr.decode('utf-8', 'replace')[:200]}")
+def barra(fracao: float, largura: int = 28) -> str:
+    cheios = int(fracao * largura)
+    return "█" * cheios + "·" * (largura - cheios)
+
+
+def perfil_tempo(ns: list[float], duracao: float, linhas: int = 16) -> list[str]:
+    """Gráfico do nível ao longo do tempo, em blocos de densidade."""
+    if not ns:
+        return []
+    lo, hi = min(ns), max(ns)
+    faixa = max(hi - lo, 6.0)
+    por_linha = max(1, len(ns) // linhas)
+    saida = []
+    for i in range(0, len(ns), por_linha):
+        grupo = ns[i:i + por_linha]
+        marcas = "".join(
+            BLOCOS[min(len(BLOCOS) - 1, int((v - lo) / faixa * (len(BLOCOS) - 1)))]
+            for v in grupo[:12])
+        t = i * duracao / len(ns)
+        saida.append(f"    {int(t)//60:d}:{int(t)%60:02d}  {marcas:<12}  "
+                     f"{min(grupo):6.1f} a {max(grupo):6.1f} dBFS")
     return saida
 
 
-def dbfs(rms: float) -> float:
-    return 20 * math.log10(rms / 32768) if rms > 0 else -120.0
+def espectro_texto(fracoes: list[float], titulo: str) -> list[str]:
+    linhas = [f"  {titulo}"]
+    for (lo, hi, nome), f in zip(BANDAS, fracoes):
+        faixa = f"{lo}–{hi} Hz" if hi < 11025 else f"{lo//1000}k+ Hz"
+        linhas.append(f"    {nome:<12} {faixa:>12}  {f * 100:5.1f}%  {barra(f)}")
+    return linhas
 
 
-def formato(caminho: pathlib.Path) -> str:
-    """Taxa de bits da origem. Comparar arquivos de codificação diferente
-    engana: compressão com perdas descarta o que é baixo demais para o ouvido,
-    e isso melhora artificialmente o piso de ruído medido."""
-    try:
-        r = subprocess.run(["afinfo", str(caminho)], capture_output=True, text=True)
-        for linha in r.stdout.splitlines():
-            if "bit rate" in linha.lower():
-                kbps = int(int(linha.split(":")[1].strip().split()[0]) / 1000)
-                return f"{kbps} kbps" + (" (com perdas)" if kbps < 400 else " (sem perdas)")
-    except Exception:
-        pass
-    return "?"
+def relatorio_sala(m: dict) -> None:
+    ns = m["niveis"]
+    print(f"\n═══ {m['arquivo']} — ambiente ({m['duracao']:.0f}s) ═══\n")
+    print(f"  ruído médio      : {sum(ns)/len(ns):7.1f} dBFS")
+    print(f"  mais quieto      : {min(ns):7.1f} dBFS")
+    print(f"  mais alto        : {max(ns):7.1f} dBFS")
+    print(f"  variação         : {max(ns)-min(ns):7.1f} dB")
+    print(f"  desvio no tempo  : {m['desvio_tempo']:7.1f} dB")
+    if m["reverb"]:
+        print(f"  reverberação     : {m['reverb']:7.2f} s  (estimativa)")
 
+    print(f"\n  Perfil no tempo:")
+    for linha in perfil_tempo(ns, m["duracao"]):
+        print(linha)
 
-def analisa(caminho: pathlib.Path) -> dict:
-    wav = para_wav(caminho)
-    w = wave.open(str(wav))
-    total = w.getnframes()
-    passo = int(TAXA * JANELA)
+    print()
+    for linha in espectro_texto(m["espectro_fala"], "Espectro do ruído:"):
+        print(linha)
 
-    niveis, graves, picos, clipes = [], [], 0, 0
-    # Filtro passa-baixa de um polo, ~150 Hz. Grosseiro de propósito: serve para
-    # detectar ronco de trânsito e motor, não para análise fina.
-    alfa = math.exp(-2 * math.pi * 150 / TAXA)
-
-    for _ in range(total // passo):
-        b = array.array("h")
-        b.frombytes(w.readframes(passo))
-        if not b:
-            break
-        soma = soma_grave = 0.0
-        y = 0.0
-        for x in b:
-            soma += float(x) * x
-            y = alfa * y + (1 - alfa) * x
-            soma_grave += y * y
-            if abs(x) >= 32700:
-                clipes += 1
-            if abs(x) > picos:
-                picos = abs(x)
-        n = len(b)
-        niveis.append(dbfs(math.sqrt(soma / n)))
-        graves.append(soma_grave / soma if soma > 0 else 0.0)
-    # pares (nível, fração grave) para separar silêncio de fala depois
-    pares = list(zip(niveis, graves))
-    w.close()
-    os.remove(wav)
-    os.rmdir(wav.parent)
-
-    if len(niveis) < 8:
-        raise RuntimeError("gravação curta demais para medir (mínimo ~5s)")
-
-    # O piso de ruído só é mensurável se a gravação CONTIVER silêncio de
-    # verdade. Numa fala contínua, os trechos mais quietos são pausas entre
-    # palavras — com respiração e cauda de reverberação —, e tomá-los por
-    # ruído de sala reprova material bom. Foi o que a primeira versão fez:
-    # acusou -46,9 dBFS de "ruído" numa gravação cujo silêncio real estava
-    # abaixo de -57.
-    LIMIAR_SILENCIO = -50.0
-    # 2 segundos, não menos: pausa de fala raramente passa disso, então o
-    # limiar separa silêncio de respiração entre frases. Calibrado comparando
-    # uma gravação de fala contínua (0 trechos) com outra que começou com 20s
-    # parado (2 trechos, 19,8s).
-    MIN_JANELAS = int(2.0 / JANELA)
-
-    silencio_real, corrida = [], []
-    for nivel, g in pares:
-        if nivel < LIMIAR_SILENCIO:
-            corrida.append((nivel, g))
-        else:
-            if len(corrida) >= MIN_JANELAS:
-                silencio_real.extend(corrida)
-            corrida = []
-    if len(corrida) >= MIN_JANELAS:
-        silencio_real.extend(corrida)
-
-    # Desvio dos níveis ao longo do tempo: máquina faz ruído constante,
-    # conteúdo (TV, voz, trânsito passando) flutua. É o que distingue "desligue
-    # o ar-condicionado" de "peça para abaixar a TV".
-    media_n = sum(n for n, _ in pares) / len(pares)
-    variacao = math.sqrt(sum((n - media_n) ** 2 for n, _ in pares) / len(pares))
-
-    ordenados = sorted(pares, key=lambda x: x[0])
-    corte = max(1, len(ordenados) // 10)
-    voz = ordenados[-corte * 3:]              # 30% mais altos
-    fala = sum(n for n, _ in voz) / len(voz)
-
-    if silencio_real:
-        silencio = silencio_real
-        piso = sum(n for n, _ in silencio) / len(silencio)
-        piso_confiavel = True
+    print()
+    media = sum(ns) / len(ns)
+    if media <= PISO_BOM:
+        print("  ok    sala silenciosa — pode gravar")
+    elif media <= PISO_OK:
+        print("  ~     sala aceitável, mas já se ouve o ambiente")
     else:
-        # Sem silêncio sustentado, o melhor que dá é um limite superior:
-        # o percentil 1 ainda contém fala, então o ruído real é MENOR que isto.
-        i = max(0, len(ordenados) // 100)
-        silencio = ordenados[:max(1, i)]
-        piso = silencio[-1][0]
-        piso_confiavel = False
+        print("  X     sala barulhenta demais — procure outra hora ou cômodo")
 
-    # A fração de graves só diz algo sobre o AMBIENTE se medida no silêncio.
-    # Medida na fala ela captura a fundamental da própria voz — que num homem
-    # fica entre 85 e 155 Hz, dentro da banda do filtro. Foi assim que a
-    # primeira versão acusou "52% de graves" numa gravação limpa.
-    grave_ambiente = sum(g for _, g in silencio) / len(silencio)
-
-    return {
-        "arquivo": caminho.name,
-        "formato": formato(caminho),
-        "duracao": len(pares) * JANELA,
-        "piso": piso,
-        "fala": fala,
-        "snr": fala - piso,
-        "piso_confiavel": piso_confiavel,
-        "silencio_s": len(silencio_real) * JANELA,
-        "variacao": variacao,
-        "pico": dbfs(picos),
-        "clipes": clipes,
-        "grave": grave_ambiente,
-    }
+    graves = m["espectro_fala"][0] + m["espectro_fala"][1]
+    if graves > 0.6:
+        print("        ruído quase todo grave — e grave atravessa porta e parede,")
+        print("        por isso o microfone pega o que você não ouve")
+    if m["desvio_tempo"] < 1.5:
+        print("  i     CONSTANTE: aparelho ligado — ar-condicionado, geladeira,")
+        print("        ventilador, computador. Desligue e remeça.")
+    else:
+        print(f"  i     FLUTUANTE ({m['desvio_tempo']:.1f} dB de desvio): é conteúdo,")
+        print("        não máquina. TV ou som em outro cômodo, voz, trânsito.")
+    if m["reverb"]:
+        if m["reverb"] <= REVERB_BOM:
+            print(f"  ok    pouca reverberação ({m['reverb']:.2f}s) — sala abafada, boa")
+        elif m["reverb"] <= REVERB_OK:
+            print(f"  ~     reverberação média ({m['reverb']:.2f}s) — aceitável")
+        else:
+            print(f"  X     muito eco ({m['reverb']:.2f}s) — o clone aprende a sala junto")
 
 
 def veredito(m: dict) -> list[tuple[str, str]]:
-    saida = []
-
+    s = []
     if not m["piso_confiavel"]:
-        saida.append(("i", "sem silêncio para medir o ruído — a gravação é fala "
-                           "contínua. O piso abaixo é um limite superior: o "
-                           "ruído real é menor."))
-        # Sem medição confiável, não dá para reprovar por ruído nem por S/R.
-        if m["clipes"] > 0:
-            saida.append(("X", f"{m['clipes']} amostras estouradas — distorção "
-                               "não se conserta"))
+        s.append(("i", "sem silêncio para medir o ruído — o piso é um limite "
+                       "superior, o real é menor. Comece o próximo bloco com "
+                       "20 segundos parado."))
+    else:
+        if m["piso"] <= PISO_BOM:
+            s.append(("ok", f"silêncio limpo ({m['piso']:.1f} dBFS)"))
+        elif m["piso"] <= PISO_OK:
+            s.append(("~", f"ruído de fundo audível ({m['piso']:.1f} dBFS)"))
         else:
-            saida.append(("ok", f"sem distorção (pico {m['pico']:.1f} dBFS)"))
-        if FALA_MIN <= m["fala"] <= FALA_MAX:
-            saida.append(("ok", f"volume da fala adequado ({m['fala']:.1f} dBFS)"))
-        elif m["fala"] < FALA_MIN:
-            saida.append(("~", f"fala baixa ({m['fala']:.1f} dBFS) — aproxime-se "
-                               "um pouco do microfone"))
+            s.append(("X", f"ruído de fundo alto ({m['piso']:.1f} dBFS) — o clone "
+                           "aprende isso junto com a voz"))
+        if m["snr"] >= SNR_BOM:
+            s.append(("ok", f"voz bem acima do ruído ({m['snr']:.0f} dB)"))
+        elif m["snr"] >= SNR_OK:
+            s.append(("~", f"margem apertada ({m['snr']:.0f} dB) — chegue mais perto"))
         else:
-            saida.append(("~", f"fala alta ({m['fala']:.1f} dBFS) — afaste-se"))
-        saida.append(("i", "para medir o ruído de verdade, comece a próxima "
-                           "gravação com 20 segundos parado, em silêncio"))
-        return saida
+            s.append(("X", f"voz perto demais do ruído ({m['snr']:.0f} dB)"))
 
-    if m["piso"] <= PISO_RUIDO_BOM:
-        saida.append(("ok", f"silêncio limpo ({m['piso']:.1f} dBFS)"))
-    elif m["piso"] <= PISO_RUIDO_OK:
-        saida.append(("~", f"ruído de fundo audível ({m['piso']:.1f} dBFS) — "
-                           "aceitável, mas melhoraria em hora mais silenciosa"))
+    if m["clipes"]:
+        s.append(("X", f"{m['clipes']} amostras estouradas — distorção não se conserta"))
     else:
-        saida.append(("X", f"ruído de fundo alto ({m['piso']:.1f} dBFS) — o clone "
-                           "vai aprender isso junto com a sua voz"))
-
-    if m["snr"] >= SNR_BOM:
-        saida.append(("ok", f"voz bem acima do ruído ({m['snr']:.0f} dB)"))
-    elif m["snr"] >= SNR_OK:
-        saida.append(("~", f"margem apertada entre voz e ruído ({m['snr']:.0f} dB) — "
-                           "fale mais perto do microfone"))
-    else:
-        saida.append(("X", f"voz perto demais do ruído ({m['snr']:.0f} dB) — "
-                           "não use para clonagem"))
-
-    if m["clipes"] > 0:
-        saida.append(("X", f"{m['clipes']} amostras estouradas — afaste-se do "
-                           "microfone ou baixe o ganho; distorção não se conserta"))
-    elif m["pico"] > -1.0:
-        saida.append(("~", f"picos muito perto do teto ({m['pico']:.1f} dBFS)"))
-    else:
-        saida.append(("ok", f"sem distorção (pico {m['pico']:.1f} dBFS)"))
+        s.append(("ok", f"sem distorção (pico {m['pico']:.1f} dBFS)"))
 
     if FALA_MIN <= m["fala"] <= FALA_MAX:
-        saida.append(("ok", f"volume da fala adequado ({m['fala']:.1f} dBFS)"))
+        s.append(("ok", f"volume da fala adequado ({m['fala']:.1f} dBFS)"))
     elif m["fala"] < FALA_MIN:
-        saida.append(("~", f"fala baixa ({m['fala']:.1f} dBFS) — aproxime-se"))
+        s.append(("~", f"fala baixa ({m['fala']:.1f} dBFS) — aproxime-se"))
     else:
-        saida.append(("~", f"fala alta ({m['fala']:.1f} dBFS) — afaste-se um pouco"))
+        s.append(("~", f"fala alta ({m['fala']:.1f} dBFS) — afaste-se"))
 
-    # Ronco só importa se o ruído de fundo já estiver alto o bastante para ser
-    # ouvido. Num piso de -70 dBFS, a composição dele é irrelevante.
-    if m["piso"] > PISO_RUIDO_BOM and m["grave"] > GRAVE_ALERTA:
-        saida.append(("~", f"o ruído de fundo é grave ({m['grave']:.0%} abaixo de "
-                           "150 Hz) — costuma ser trânsito ou ar-condicionado"))
-    elif m["piso"] <= PISO_RUIDO_BOM:
-        saida.append(("ok", "ruído de fundo baixo demais para o timbre importar"))
+    if m["reverb"]:
+        if m["reverb"] <= REVERB_BOM:
+            s.append(("ok", f"pouca reverberação ({m['reverb']:.2f}s)"))
+        elif m["reverb"] <= REVERB_OK:
+            s.append(("~", f"reverberação média ({m['reverb']:.2f}s)"))
+        else:
+            s.append(("X", f"muito eco ({m['reverb']:.2f}s) — o clone aprende a sala"))
+
+    if m["dinamica"] < 6:
+        s.append(("~", f"pouca variação de volume na fala ({m['dinamica']:.0f} dB) — "
+                       "pode ser ganho automático achatando a expressividade"))
+    return s
+
+
+def relatorio_voz(m: dict) -> list[str]:
+    print(f"\n═══ {m['arquivo']}  ({m['duracao']:.0f}s, "
+          f"{m['taxa_bits']} kbps {m['tipo_codec']}) ═══\n")
+    print(f"  piso de ruído    : {m['piso']:7.1f} dBFS"
+          f"{'' if m['piso_confiavel'] else '  (estimado)'}")
+    print(f"  nível da fala    : {m['fala']:7.1f} dBFS")
+    print(f"  relação sinal/ruído: {m['snr']:5.1f} dB")
+    print(f"  pico             : {m['pico']:7.1f} dBFS")
+    print(f"  fator de crista  : {m['crista']:7.1f} dB")
+    print(f"  faixa dinâmica   : {m['dinamica']:7.1f} dB")
+    if m["reverb"]:
+        print(f"  reverberação     : {m['reverb']:7.2f} s")
+    print(f"  silêncio medido  : {m['silencio_s']:7.1f} s")
+
+    print(f"\n  Perfil no tempo:")
+    for linha in perfil_tempo(m["niveis"], m["duracao"]):
+        print(linha)
+    print()
+    for linha in espectro_texto(m["espectro_fala"], "Espectro da gravação:"):
+        print(linha)
+    if m["espectro_ruido"]:
+        print()
+        for linha in espectro_texto(m["espectro_ruido"], "Espectro só do ruído:"):
+            print(linha)
+
+    print()
+    marcas = {"ok": "  ok  ", "~": "  ~   ", "X": "  X   ", "i": "  i   "}
+    problemas = veredito(m)
+    for nivel, texto in problemas:
+        print(f"{marcas[nivel]}{texto}")
+    niveis_v = [n for n, _ in problemas]
+    print()
+    if "X" in niveis_v:
+        print("  VEREDITO: não use este material para clonagem.")
+    elif "~" in niveis_v:
+        print("  VEREDITO: serve, mas dá para melhorar.")
     else:
-        saida.append(("ok", f"ruído de fundo sem ronco ({m['grave']:.0%} em graves)"))
+        print("  VEREDITO: material bom.")
+    return niveis_v
 
-    return saida
+
+def tabela_markdown(medidas: list[dict]) -> None:
+    print("\n| Cenário | Fala | Ruído | S/R | Reverb | Crista | Codec |")
+    print("|---|---|---|---|---|---|---|")
+    for m in medidas:
+        rev = f"{m['reverb']:.2f}s" if m["reverb"] else "—"
+        piso = f"{m['piso']:.1f}" + ("" if m["piso_confiavel"] else "*")
+        print(f"| {m['arquivo'].rsplit('.', 1)[0]} | {m['fala']:.1f} dBFS | "
+              f"{piso} dBFS | **{m['snr']:.0f} dB** | {rev} | "
+              f"{m['crista']:.0f} dB | {m['taxa_bits']} kbps |")
+    if any(not m["piso_confiavel"] for m in medidas):
+        print("\n`*` piso estimado: a gravação não tem silêncio sustentado, "
+              "então o ruído real é menor que o indicado.")
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="Avalia gravação para clonagem.")
+    ap = argparse.ArgumentParser(description="Avalia gravações para clonagem.")
     ap.add_argument("arquivos", nargs="+")
     ap.add_argument("--sala", action="store_true",
-                    help="a gravação é só silêncio: mede o ambiente e não julga a fala")
+                    help="a gravação é só silêncio: mede o ambiente")
+    ap.add_argument("--markdown", action="store_true",
+                    help="imprime tabela comparativa pronta para documentação")
     args = ap.parse_args()
 
     medidas = []
@@ -262,68 +232,27 @@ def main() -> int:
             print(f"ERRO em {caminho.name}: {e}", file=sys.stderr)
             return 1
         medidas.append(m)
-
-        if args.sala:
-            # Numa gravação só de silêncio, o "nível da fala" é ruído também.
-            print(f"\n═══ {m['arquivo']} — medição de ambiente ({m['duracao']:.0f}s) ═══")
-            print(f"  ruído do ambiente : {m['fala']:7.1f} dBFS")
-            print(f"  momentos mais quietos: {m['piso']:5.1f} dBFS")
-            print(f"  fração em graves  : {m['grave']:7.0%}")
-            print()
-            ref = -60.0
-            if m["fala"] <= ref:
-                print("  ok    sala silenciosa — pode gravar")
-            elif m["fala"] <= -50:
-                print("  ~     sala aceitável, mas já se ouve o ambiente")
-                print("        compare com uma medição em hora mais silenciosa")
-            else:
-                print("  X     sala barulhenta demais — procure outra hora ou cômodo")
-            if m["grave"] > 0.6:
-                print("        o ruído é quase todo grave — e grave atravessa porta")
-                print("        e parede, por isso o microfone pega o que você não ouve")
-            if m["variacao"] < 1.5:
-                print("  i     ruído CONSTANTE: aparelho ligado — ar-condicionado,")
-                print("        geladeira, ventilador, computador. Desligue e remeça.")
-            else:
-                print(f"  i     ruído FLUTUANTE ({m['variacao']:.1f} dB de desvio): é")
-                print("        conteúdo, não máquina. TV ou som em outro cômodo, voz,")
-                print("        ou trânsito passando. Máquina não varia assim.")
+        if args.markdown:
             continue
-
-        print(f"\n═══ {m['arquivo']}  ({m['duracao']:.0f}s, {m['formato']}) ═══")
-        print(f"  piso de ruído : {m['piso']:7.1f} dBFS"
-          f"{'' if m['piso_confiavel'] else '   (estimado — sem silêncio na gravação)'}")
-        print(f"  nível da fala : {m['fala']:7.1f} dBFS")
-        print(f"  relação S/R   : {m['snr']:7.1f} dB")
-        print(f"  pico          : {m['pico']:7.1f} dBFS")
-        print()
-        marcas = {"ok": "  ok  ", "~": "  ~   ", "X": "  X   ", "i": "  i   "}
-        for nivel, texto in veredito(m):
-            print(f"{marcas[nivel]}{texto}")
-        ruins = [n for n, _ in veredito(m)]
-        print()
-        if "X" in ruins:
-            print("  VEREDITO: não use este material para clonagem.")
-        elif "~" in ruins:
-            print("  VEREDITO: serve, mas dá para melhorar. Veja os pontos acima.")
+        if args.sala:
+            relatorio_sala(m)
         else:
-            print("  VEREDITO: material bom. Pode gravar os 30 minutos assim.")
+            relatorio_voz(m)
 
-    if len(medidas) > 1:
-        print(f"\n═══ comparação ═══")
-        print(f"  {'arquivo':<24}{'piso':>9}{'S/R':>8}{'fala':>9}  formato")
+    if args.markdown:
+        tabela_markdown(medidas)
+    elif len(medidas) > 1:
+        print("\n═══ comparação ═══")
+        print(f"  {'arquivo':<26}{'fala':>8}{'ruído':>9}{'S/R':>7}{'reverb':>9}")
         for m in medidas:
-            print(f"  {m['arquivo'][:22]:<24}{m['piso']:>8.1f}{m['snr']:>8.0f}"
-                  f"{m['fala']:>9.1f}  {m['formato']}")
-        formatos = {m["formato"].split(" (")[-1] for m in medidas}
-        if len(formatos) > 1:
-            print("\n  ATENÇÃO: os arquivos têm codificações diferentes. Compressão")
-            print("  com perdas descarta som baixo demais para o ouvido, o que")
-            print("  MELHORA o piso de ruído medido sem melhorar a gravação.")
-            print("  Para clonagem, prefira o sem perdas mesmo que meça pior.")
-        else:
-            melhor = max(medidas, key=lambda x: x["snr"])
-            print(f"\n  Melhor relação sinal/ruído: {melhor['arquivo']}")
+            rev = f"{m['reverb']:.2f}s" if m["reverb"] else "—"
+            print(f"  {m['arquivo'][:24]:<26}{m['fala']:>8.1f}{m['piso']:>9.1f}"
+                  f"{m['snr']:>7.0f}{rev:>9}")
+        tipos = {m["tipo_codec"] for m in medidas}
+        if len(tipos) > 1:
+            print("\n  ATENÇÃO: codificações diferentes. Compressão com perdas")
+            print("  descarta som baixo demais para o ouvido, o que MELHORA o")
+            print("  piso medido sem melhorar a gravação.")
     return 0
 
 

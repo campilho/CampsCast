@@ -70,7 +70,8 @@ Agregador serve para descobrir, nunca para citar.
 ### Clonagem de voz
 | Script | O que faz |
 |---|---|
-| `check_recording.py` | avalia uma gravação; `--sala` mede só o ambiente |
+| `check_recording.py` | avalia gravação; `--sala` ambiente, `--markdown` tabela |
+| `audio_metrics.py` | métricas reutilizáveis: espectro, reverberação, dinâmica |
 | `prep_voice_samples.py` | converte para WAV e valida antes do upload |
 
 ## Configuração
