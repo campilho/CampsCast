@@ -49,6 +49,12 @@ Grave uma amostra curta e meça:
 
 1. Comece o gravador e **fique 20 segundos em silêncio**. Parado, sem falar.
    É isso que mede o ruído do ambiente de forma honesta.
+
+   > **Faça isso em todos os blocos, não só no teste.** Sem um trecho de
+   > silêncio real, não há como medir o ruído da sala: as pausas entre frases
+   > carregam respiração e cauda de reverberação, e tomá-las por ruído reprova
+   > material bom. O script detecta a ausência e avisa, em vez de reprovar —
+   > mas aí você fica sem a medição.
 2. Fale 40 segundos normalmente, na distância e no tom que vai usar depois.
 3. Repita no outro aparelho, no mesmo lugar e na mesma hora.
 

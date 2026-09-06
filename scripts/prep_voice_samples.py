@@ -69,7 +69,7 @@ def main() -> int:
         total_min += m["duracao"] / 60
 
         print(f"  -> {destino}  ({mb:.1f} MB, {m['duracao'] / 60:.1f} min)")
-        marcas = {"ok": "  ok  ", "~": "  ~   ", "X": "  X   "}
+        marcas = {"ok": "  ok  ", "~": "  ~   ", "X": "  X   ", "i": "  i   "}
         problemas = veredito(m)
         for nivel, texto in problemas:
             if nivel != "ok":

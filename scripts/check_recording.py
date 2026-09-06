@@ -104,12 +104,46 @@ def analisa(caminho: pathlib.Path) -> dict:
     if len(niveis) < 8:
         raise RuntimeError("gravação curta demais para medir (mínimo ~5s)")
 
-    pares.sort(key=lambda x: x[0])
-    corte = max(1, len(pares) // 10)
-    silencio = pares[:corte]                 # 10% mais silenciosos
-    voz = pares[-corte * 3:]                 # 30% mais altos
-    piso = sum(n for n, _ in silencio) / len(silencio)
+    # O piso de ruído só é mensurável se a gravação CONTIVER silêncio de
+    # verdade. Numa fala contínua, os trechos mais quietos são pausas entre
+    # palavras — com respiração e cauda de reverberação —, e tomá-los por
+    # ruído de sala reprova material bom. Foi o que a primeira versão fez:
+    # acusou -46,9 dBFS de "ruído" numa gravação cujo silêncio real estava
+    # abaixo de -57.
+    LIMIAR_SILENCIO = -50.0
+    # 2 segundos, não menos: pausa de fala raramente passa disso, então o
+    # limiar separa silêncio de respiração entre frases. Calibrado comparando
+    # uma gravação de fala contínua (0 trechos) com outra que começou com 20s
+    # parado (2 trechos, 19,8s).
+    MIN_JANELAS = int(2.0 / JANELA)
+
+    silencio_real, corrida = [], []
+    for nivel, g in pares:
+        if nivel < LIMIAR_SILENCIO:
+            corrida.append((nivel, g))
+        else:
+            if len(corrida) >= MIN_JANELAS:
+                silencio_real.extend(corrida)
+            corrida = []
+    if len(corrida) >= MIN_JANELAS:
+        silencio_real.extend(corrida)
+
+    ordenados = sorted(pares, key=lambda x: x[0])
+    corte = max(1, len(ordenados) // 10)
+    voz = ordenados[-corte * 3:]              # 30% mais altos
     fala = sum(n for n, _ in voz) / len(voz)
+
+    if silencio_real:
+        silencio = silencio_real
+        piso = sum(n for n, _ in silencio) / len(silencio)
+        piso_confiavel = True
+    else:
+        # Sem silêncio sustentado, o melhor que dá é um limite superior:
+        # o percentil 1 ainda contém fala, então o ruído real é MENOR que isto.
+        i = max(0, len(ordenados) // 100)
+        silencio = ordenados[:max(1, i)]
+        piso = silencio[-1][0]
+        piso_confiavel = False
 
     # A fração de graves só diz algo sobre o AMBIENTE se medida no silêncio.
     # Medida na fala ela captura a fundamental da própria voz — que num homem
@@ -124,6 +158,8 @@ def analisa(caminho: pathlib.Path) -> dict:
         "piso": piso,
         "fala": fala,
         "snr": fala - piso,
+        "piso_confiavel": piso_confiavel,
+        "silencio_s": len(silencio_real) * JANELA,
         "pico": dbfs(picos),
         "clipes": clipes,
         "grave": grave_ambiente,
@@ -132,6 +168,27 @@ def analisa(caminho: pathlib.Path) -> dict:
 
 def veredito(m: dict) -> list[tuple[str, str]]:
     saida = []
+
+    if not m["piso_confiavel"]:
+        saida.append(("i", "sem silêncio para medir o ruído — a gravação é fala "
+                           "contínua. O piso abaixo é um limite superior: o "
+                           "ruído real é menor."))
+        # Sem medição confiável, não dá para reprovar por ruído nem por S/R.
+        if m["clipes"] > 0:
+            saida.append(("X", f"{m['clipes']} amostras estouradas — distorção "
+                               "não se conserta"))
+        else:
+            saida.append(("ok", f"sem distorção (pico {m['pico']:.1f} dBFS)"))
+        if FALA_MIN <= m["fala"] <= FALA_MAX:
+            saida.append(("ok", f"volume da fala adequado ({m['fala']:.1f} dBFS)"))
+        elif m["fala"] < FALA_MIN:
+            saida.append(("~", f"fala baixa ({m['fala']:.1f} dBFS) — aproxime-se "
+                               "um pouco do microfone"))
+        else:
+            saida.append(("~", f"fala alta ({m['fala']:.1f} dBFS) — afaste-se"))
+        saida.append(("i", "para medir o ruído de verdade, comece a próxima "
+                           "gravação com 20 segundos parado, em silêncio"))
+        return saida
 
     if m["piso"] <= PISO_RUIDO_BOM:
         saida.append(("ok", f"silêncio limpo ({m['piso']:.1f} dBFS)"))
@@ -198,12 +255,13 @@ def main() -> int:
         medidas.append(m)
 
         print(f"\n═══ {m['arquivo']}  ({m['duracao']:.0f}s, {m['formato']}) ═══")
-        print(f"  piso de ruído : {m['piso']:7.1f} dBFS")
+        print(f"  piso de ruído : {m['piso']:7.1f} dBFS"
+          f"{'' if m['piso_confiavel'] else '   (estimado — sem silêncio na gravação)'}")
         print(f"  nível da fala : {m['fala']:7.1f} dBFS")
         print(f"  relação S/R   : {m['snr']:7.1f} dB")
         print(f"  pico          : {m['pico']:7.1f} dBFS")
         print()
-        marcas = {"ok": "  ok  ", "~": "  ~   ", "X": "  X   "}
+        marcas = {"ok": "  ok  ", "~": "  ~   ", "X": "  X   ", "i": "  i   "}
         for nivel, texto in veredito(m):
             print(f"{marcas[nivel]}{texto}")
         ruins = [n for n, _ in veredito(m)]
