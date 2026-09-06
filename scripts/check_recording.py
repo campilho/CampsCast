@@ -51,6 +51,21 @@ def dbfs(rms: float) -> float:
     return 20 * math.log10(rms / 32768) if rms > 0 else -120.0
 
 
+def formato(caminho: pathlib.Path) -> str:
+    """Taxa de bits da origem. Comparar arquivos de codificação diferente
+    engana: compressão com perdas descarta o que é baixo demais para o ouvido,
+    e isso melhora artificialmente o piso de ruído medido."""
+    try:
+        r = subprocess.run(["afinfo", str(caminho)], capture_output=True, text=True)
+        for linha in r.stdout.splitlines():
+            if "bit rate" in linha.lower():
+                kbps = int(int(linha.split(":")[1].strip().split()[0]) / 1000)
+                return f"{kbps} kbps" + (" (com perdas)" if kbps < 400 else " (sem perdas)")
+    except Exception:
+        pass
+    return "?"
+
+
 def analisa(caminho: pathlib.Path) -> dict:
     wav = para_wav(caminho)
     w = wave.open(str(wav))
@@ -80,6 +95,8 @@ def analisa(caminho: pathlib.Path) -> dict:
         n = len(b)
         niveis.append(dbfs(math.sqrt(soma / n)))
         graves.append(soma_grave / soma if soma > 0 else 0.0)
+    # pares (nível, fração grave) para separar silêncio de fala depois
+    pares = list(zip(niveis, graves))
     w.close()
     os.remove(wav)
     os.rmdir(wav.parent)
@@ -87,19 +104,29 @@ def analisa(caminho: pathlib.Path) -> dict:
     if len(niveis) < 8:
         raise RuntimeError("gravação curta demais para medir (mínimo ~5s)")
 
-    ordenados = sorted(niveis)
-    corte = max(1, len(ordenados) // 10)
-    piso = sum(ordenados[:corte]) / corte            # 10% mais silenciosos
-    fala = sum(ordenados[-corte * 3:]) / (corte * 3)  # 30% mais altos
+    pares.sort(key=lambda x: x[0])
+    corte = max(1, len(pares) // 10)
+    silencio = pares[:corte]                 # 10% mais silenciosos
+    voz = pares[-corte * 3:]                 # 30% mais altos
+    piso = sum(n for n, _ in silencio) / len(silencio)
+    fala = sum(n for n, _ in voz) / len(voz)
+
+    # A fração de graves só diz algo sobre o AMBIENTE se medida no silêncio.
+    # Medida na fala ela captura a fundamental da própria voz — que num homem
+    # fica entre 85 e 155 Hz, dentro da banda do filtro. Foi assim que a
+    # primeira versão acusou "52% de graves" numa gravação limpa.
+    grave_ambiente = sum(g for _, g in silencio) / len(silencio)
+
     return {
         "arquivo": caminho.name,
-        "duracao": len(niveis) * JANELA,
+        "formato": formato(caminho),
+        "duracao": len(pares) * JANELA,
         "piso": piso,
         "fala": fala,
         "snr": fala - piso,
         "pico": dbfs(picos),
         "clipes": clipes,
-        "grave": sum(graves) / len(graves),
+        "grave": grave_ambiente,
     }
 
 
@@ -139,11 +166,15 @@ def veredito(m: dict) -> list[tuple[str, str]]:
     else:
         saida.append(("~", f"fala alta ({m['fala']:.1f} dBFS) — afaste-se um pouco"))
 
-    if m["grave"] > GRAVE_ALERTA:
-        saida.append(("~", f"muita energia grave ({m['grave']:.0%}) — costuma ser "
-                           "trânsito, ar-condicionado ou vento no microfone"))
+    # Ronco só importa se o ruído de fundo já estiver alto o bastante para ser
+    # ouvido. Num piso de -70 dBFS, a composição dele é irrelevante.
+    if m["piso"] > PISO_RUIDO_BOM and m["grave"] > GRAVE_ALERTA:
+        saida.append(("~", f"o ruído de fundo é grave ({m['grave']:.0%} abaixo de "
+                           "150 Hz) — costuma ser trânsito ou ar-condicionado"))
+    elif m["piso"] <= PISO_RUIDO_BOM:
+        saida.append(("ok", "ruído de fundo baixo demais para o timbre importar"))
     else:
-        saida.append(("ok", f"pouco ronco de baixa frequência ({m['grave']:.0%})"))
+        saida.append(("ok", f"ruído de fundo sem ronco ({m['grave']:.0%} em graves)"))
 
     return saida
 
@@ -166,7 +197,7 @@ def main() -> int:
             return 1
         medidas.append(m)
 
-        print(f"\n═══ {m['arquivo']}  ({m['duracao']:.0f}s) ═══")
+        print(f"\n═══ {m['arquivo']}  ({m['duracao']:.0f}s, {m['formato']}) ═══")
         print(f"  piso de ruído : {m['piso']:7.1f} dBFS")
         print(f"  nível da fala : {m['fala']:7.1f} dBFS")
         print(f"  relação S/R   : {m['snr']:7.1f} dB")
@@ -186,12 +217,19 @@ def main() -> int:
 
     if len(medidas) > 1:
         print(f"\n═══ comparação ═══")
-        print(f"  {'arquivo':<24}{'piso':>9}{'S/R':>8}{'fala':>9}")
+        print(f"  {'arquivo':<24}{'piso':>9}{'S/R':>8}{'fala':>9}  formato")
         for m in medidas:
             print(f"  {m['arquivo'][:22]:<24}{m['piso']:>8.1f}{m['snr']:>8.0f}"
-                  f"{m['fala']:>9.1f}")
-        melhor = max(medidas, key=lambda x: x["snr"])
-        print(f"\n  Melhor relação sinal/ruído: {melhor['arquivo']}")
+                  f"{m['fala']:>9.1f}  {m['formato']}")
+        formatos = {m["formato"].split(" (")[-1] for m in medidas}
+        if len(formatos) > 1:
+            print("\n  ATENÇÃO: os arquivos têm codificações diferentes. Compressão")
+            print("  com perdas descarta som baixo demais para o ouvido, o que")
+            print("  MELHORA o piso de ruído medido sem melhorar a gravação.")
+            print("  Para clonagem, prefira o sem perdas mesmo que meça pior.")
+        else:
+            melhor = max(medidas, key=lambda x: x["snr"])
+            print(f"\n  Melhor relação sinal/ruído: {melhor['arquivo']}")
     return 0
 
 

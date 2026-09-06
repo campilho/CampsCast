@@ -27,3 +27,8 @@ venv/
 
 # Anotações pessoais do autor — não fazem parte do projeto
 privado/
+
+# Gravações de teste da voz — pessoais e grandes
+*.m4a
+*.wav
+*.aiff

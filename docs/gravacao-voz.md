@@ -72,6 +72,24 @@ microfone.
 **41 dB de relação sinal/ruído**. Chegar perto disso numa gravação caseira é
 excelente; 30 dB já serve.
 
+### Não compare arquivos de codificação diferente
+
+Compressão com perdas **descarta som baixo demais para o ouvido perceber** — e
+esse som é justamente o ruído de fundo. O resultado é que um arquivo comprimido
+mede um piso de ruído *melhor* que o mesmo material sem perdas, sem que a
+gravação seja melhor em nada.
+
+Medido aqui, no mesmo quarto e com um minuto de diferença:
+
+| Arquivo | Piso | S/R | Formato |
+|---|---|---|---|
+| Teste 1 | −70,8 dBFS | 48 dB | 129 kbps, com perdas |
+| Teste 2 | −66,3 dBFS | 43 dB | 1234 kbps, sem perdas |
+
+O segundo parece pior e é melhor: mostra o ruído que realmente existe, em vez
+de escondê-lo, e entrega ao modelo o detalhe completo da voz. **Para clonagem,
+grave sem perdas.** O script avisa quando você compara codificações diferentes.
+
 Não conte com a ElevenLabs avaliar para você: mesmo que a interface dê algum
 retorno, isso só acontece **depois** de subir a gravação inteira. Medir antes
 custa um minuto.
