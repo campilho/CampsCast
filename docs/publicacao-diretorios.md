@@ -7,6 +7,38 @@ entre dispositivos e varredura regular.
 
 ---
 
+## Situação das submissões
+
+| Diretório | Estado | Observação |
+|---|---|---|
+| **Spotify** | enviado em 06/09/2026 | processando; leva algumas horas |
+| **Pocket Casts** | enviado | formulário de um clique, só a URL |
+| **Podcast Index** | enviado | idem |
+| **Apple Podcasts** | **bloqueado** | ver abaixo |
+| YouTube Music | não avaliado | confirmar disponibilidade no Brasil |
+
+### O bloqueio da Apple
+
+O Podcasts Connect falha ao criar a conta, com "Ocorreu um erro. Tente
+novamente mais tarde" — sem código nem detalhe.
+
+Causa provável, encontrada por eliminação: o Apple ID usa um endereço em
+domínio **expirado**. O `crisfer.com.br` não tem NS, MX nem A, e consta como
+livre no registro.br. O fluxo de criação de conta manda confirmação para o
+e-mail do Apple ID, e essa mensagem não tem para onde ir.
+
+Isso também é um risco de segurança independente do podcast: domínio expirado
+usado como Apple ID é vetor conhecido de tomada de conta — qualquer um pode
+registrar o domínio, criar o endereço e tentar recuperação.
+
+Solução: trocar o e-mail principal do Apple ID em
+`appleid.apple.com → Início de Sessão e Segurança`, ou submeter com outra conta
+Apple. **O Apple ID não fica gravado no feed** — é apenas quem administra —
+então trocar de conta não tem custo de longo prazo.
+
+Vale lembrar que a Apple é o maior multiplicador: Overcast, Castro e Podcast
+Addict usam o diretório dela como índice. Não é um item para abandonar.
+
 ## Onde submeter, e por quê nessa ordem
 
 ### 1. Apple Podcasts — o maior multiplicador

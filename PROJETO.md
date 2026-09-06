@@ -267,13 +267,24 @@ feriado nacional; com a qualidade já validada nos testes do autor, esperar mais
 um dia útil não acrescentaria informação.
 
 ### Fase 2 — Voz própria e publicação
+
+- [x] **Instant Voice Clone** da voz do Camps narrando o episódio — antecipado
+      ainda na Fase 1
+- [x] **Domínio próprio** `campscast.com.br`, com Route 53, ACM e CloudFront
+- [x] **Alias de e-mail dedicado** `contato@campscast.com.br`
+- [x] Capa — `> CC` em conceito de terminal, 1400×1400
+- [x] Submissão ao **Spotify** — enviada em 06/09/2026, em processamento
+- [x] Submissão ao **Pocket Casts**
+- [x] Submissão ao **Podcast Index**
+- [ ] Submissão à **Apple Podcasts** — bloqueada: o Apple ID usa um e-mail em
+      domínio expirado, e o Podcasts Connect falha ao enviar a confirmação
+- [ ] **Professional Voice Clone** — guia de gravação em `docs/gravacao-voz.md`
+- [ ] README público caprichado, com os links dos diretórios
 - [ ] Refatorar para subagents do Claude Code (pesquisador / editor / publicador)
-- [ ] **Instant Voice Clone** da voz do Camps (ElevenLabs Starter) narrando o episódio
-- [ ] **Alias de e-mail dedicado** e trocar o placeholder em `config/show.json`
-      (o Spotify exige endereço real; não usar o pessoal em repo público)
-- [ ] Capa placeholder simples (requisito do Spotify: 3000×3000)
-- [ ] Submissão do feed ao Spotify for Creators
-- [ ] README público caprichado + primeiro ADR de custos reais
+- [ ] ADR de custos reais consolidado
+
+**Critério de saída:** podcast encontrável pelo nome nos principais diretórios,
+narrado com voz clonada profissional.
 
 ### Fase 3 — Formato entrevista, feedback e curadoria humana
 - [ ] **Professional Voice Clone** do Camps (guia de gravação em

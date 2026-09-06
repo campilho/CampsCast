@@ -12,11 +12,16 @@
 ## Como assinar
 
 ```
-https://campscast.s3.us-east-1.amazonaws.com/feed.xml
+https://campscast.com.br/feed.xml
 ```
 
-Cole em qualquer app de podcast que aceite URL de RSS — Pocket Casts, AntennaPod,
-Overcast. O Spotify entra na Fase 2.
+Cole em qualquer app que aceite URL de RSS. Em breve também pelo nome, nos
+diretórios — Spotify, Pocket Casts e Podcast Index receberam a submissão em
+06/09/2026 e estão processando. A Apple Podcasts vem em seguida.
+
+> O endereço antigo, `campscast.s3.us-east-1.amazonaws.com/feed.xml`, continua
+> funcionando para quem assinou antes da migração de domínio. Os dois servem o
+> mesmo feed.
 
 ---
 
