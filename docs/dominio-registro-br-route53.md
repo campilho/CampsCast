@@ -37,9 +37,14 @@ no Route 53, o ACM cria os registros de validação sozinho, com um clique.
 3. Esperar propagar
 4. Pedir o certificado no ACM (us-east-1)
 5. Criar a distribuição no CloudFront
-6. Criar o ALIAS no Route 53
-7. Verificar
+6. Editar a distribuição: domínios e certificado   <- o assistente não pede
+7. Criar o ALIAS no Route 53
+8. Verificar
 ```
+
+O passo 6 surpreende: o assistente de criação **não** pergunta pelo certificado
+nem pelos nomes de domínio, a menos que o domínio esteja registrado dentro da
+AWS. Para domínio de fora, isso se configura depois, em *Settings → Edit*.
 
 ---
 
@@ -167,61 +172,95 @@ referência do nosso caso: 22 episódios por mês, cerca de 8 MB cada, e uma
 dezena de ouvintes dá menos de 2 GB de transferência mensal — folga larga em
 qualquer patamar.
 
-### 4.2 Specify origin
+### 4.2 Get started
+
+Só um campo importa:
 
 | Campo | Valor |
 |---|---|
-| Origin domain | `campscast.s3.us-east-1.amazonaws.com` |
-| Origin access | Public |
+| Distribution name | `campscast` |
+| Distribution type | Single website or app |
 
-Ao clicar no campo, a AWS sugere seus buckets numa lista. **Prefira digitar o
-endereço completo** em vez de escolher da lista: a opção sugerida às vezes usa o
-endpoint de *website* do S3, que não faz HTTPS na origem e provoca
-`ERR_TOO_MANY_REDIRECTS`.
+Há também um campo **Route 53 managed domain**. Ele serve para domínio
+**registrado dentro do Route 53 como registrador** — e aí o CloudFront emite o
+certificado sozinho. Um `.com.br` não pode ser registrado na AWS: ele mora no
+registro.br, e o Route 53 é só o DNS. **Deixe em branco e siga.**
 
-### 4.3 Enable security
+É por causa disso que o assistente não mostra passo de certificado: ele só
+aparece por esse caminho. O certificado e os nomes de domínio são configurados
+**depois de criada a distribuição** — ver 4.6.
 
-O assistente oferece ativar WAF e proteções contra bots.
+### 4.3 Specify origin
 
-**Para um feed de podcast, não ative nada além do padrão.** O conteúdo é
-público por definição, não há formulário, login nem dado sensível a proteger. E
-WAF mal configurado bloqueia cliente legítimo: agregadores de podcast fazem
-requisições automatizadas, com user-agents pouco comuns, que é exatamente o
-padrão que regra de bot tende a barrar. O sintoma seria o episódio "não
-aparecer" em alguns apps — difícil de diagnosticar.
+| Campo | Valor |
+|---|---|
+| Origin type | Amazon S3 |
+| S3 origin | `campscast.s3.us-east-1.amazonaws.com` |
+| Origin path | vazio |
 
-### 4.4 Get TLS certificate
+Digite o endereço em vez de usar o *Browse S3*: a escolha pela lista às vezes
+usa o endpoint de *website* do bucket, que não faz HTTPS na origem.
 
-Selecione o certificado que você emitiu no passo 3, em us-east-1. Se ele não
-aparecer na lista, é porque foi emitido em outra região.
+> ### Cuidado com "Grant CloudFront access to origin"
+>
+> Em algum ponto do assistente, o padrão vem como **Yes**, e a tela de revisão
+> avisa:
+>
+> > *Because you granted CloudFront access to your origin, CloudFront can write
+> > and update S3 bucket policies that restrict access to your S3 origin to
+> > CloudFront.*
+>
+> Traduzindo: o CloudFront vai **reescrever a bucket policy** para permitir só
+> ele. O endereço direto do bucket
+> (`campscast.s3.us-east-1.amazonaws.com/feed.xml`) passa a responder **403**.
+>
+> Isso quebra **quem já assinou pela URL antiga**. Num podcast, é o pior tipo
+> de falha: o app do ouvinte simplesmente para de baixar, sem erro visível.
+>
+> **Enquanto houver assinantes na URL antiga, deixe em Nº** — a bucket policy
+> pública que já existe basta para o CloudFront ler a origem.
+>
+> Depois que todos migrarem para o domínio novo, vale voltar e ativar: restringir
+> o acesso ao CloudFront é a configuração mais segura, e aí não quebra ninguém.
 
-Aqui também se informa o **Alternate domain name (CNAME)**:
+### 4.4 Enable security
 
-```
-campscast.com.br
-www.campscast.com.br
-```
+O assistente mostra o WAF já incluído no plano, com proteções básicas, e a
+opção *Use monitor mode*.
 
-Sem isso, o CloudFront responde com o certificado próprio dele
+**Não altere nada.** As proteções padrão são genéricas e não atrapalham; ativar
+regras adicionais, sim. Agregadores de podcast fazem requisições automatizadas
+com user-agents incomuns — o padrão que regra de bot tende a barrar. O sintoma
+seria o episódio "não aparecer" em alguns apps, difícil de diagnosticar.
+
+A proteção contra DDoS de camada 7 aparece bloqueada, disponível só no plano
+Business. Não é necessária.
+
+### 4.5 Depois de criada: domínio e certificado
+
+Aqui está o passo que o assistente não oferece. Com a distribuição criada, abra
+**Settings → Edit**:
+
+| Campo | Valor |
+|---|---|
+| Alternate domain names (CNAMEs) | `campscast.com.br` e `www.campscast.com.br` |
+| Custom SSL certificate | o do passo 3 |
+| Default root object | `index.html` (opcional) |
+
+Sem o *Alternate domain name*, o CloudFront responde com o certificado próprio
 (`*.cloudfront.net`) e o navegador acusa erro no seu domínio.
 
-### 4.5 Demais ajustes
+Se o certificado não aparecer na lista, foi emitido fora de us-east-1.
 
-Se o assistente oferecer, use:
+Confira também, em **Behaviors → Edit**:
 
 | Campo | Valor |
 |---|---|
 | Viewer protocol policy | Redirect HTTP to HTTPS |
 | Allowed HTTP methods | GET, HEAD |
 | Cache policy | CachingOptimized |
-| Default root object | `index.html` |
 
-Alguns desses só aparecem depois de criada, em **Settings → Edit**. Não é
-problema criar primeiro e ajustar depois.
-
-### 4.6 Review and create
-
-A distribuição leva de dez a vinte minutos para sair de *Deploying*. Anote o
+Cada alteração leva de dez a vinte minutos para sair de *Deploying*. Anote o
 *Distribution domain name*, algo como `d111abcdef8.cloudfront.net`.
 
 ### Sobre cache
@@ -303,6 +342,16 @@ escolhido não cobre o nome.
 
 **O certificado não aparece na lista do CloudFront.** Ele foi emitido fora de
 us-east-1. Não há como mover: peça outro naquela região.
+
+**O assistente não pergunta pelo certificado.** É o comportamento normal para
+domínio registrado fora da AWS. Crie a distribuição e configure depois, em
+*Settings → Edit*.
+
+**A URL antiga do S3 passou a dar 403 depois de criar a distribuição.** O
+CloudFront reescreveu a bucket policy porque *Grant CloudFront access to origin*
+estava em *Yes*. Quem assinou pela URL antiga parou de receber episódios, em
+silêncio. Para reverter, regrave a policy pública:
+`python3 scripts/s3.py --print-policy` e cole em *Permissions → Bucket policy*.
 
 **Alguns apps de podcast não veem os episódios novos, outros veem.** Se você
 ativou WAF ou proteção contra bots, é o suspeito. Agregadores fazem requisições
