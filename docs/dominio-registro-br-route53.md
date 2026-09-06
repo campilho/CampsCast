@@ -125,32 +125,110 @@ O status vai de *Pending validation* para *Issued* em alguns minutos.
 
 ## 4. Distribuição no CloudFront
 
-**CloudFront → Create distribution**
+O console mudou e agora é um assistente de seis passos, com escolha de plano
+logo na entrada. A ordem, em setembro de 2026:
+
+```
+1. Choose a plan
+2. Get started
+3. Specify origin
+4. Enable security
+5. Get TLS certificate
+6. Review and create
+```
+
+### 4.1 Choose a plan
+
+Primeiro escolha entre **Flat-rate plans** e **Pay as you go**.
+
+| Modelo | Como cobra |
+|---|---|
+| **Flat-rate** | preço fixo por mês, sem cobrança por uso excedente |
+| Pay as you go | varia com o tráfego, **sem teto de gasto** |
+
+Dentro de flat-rate há quatro níveis: **Free (US$ 0)**, Pro (US$ 15), Business
+(US$ 200) e Premium (US$ 1.000).
+
+**Escolha Free.** Ele já inclui CDN global, WAF, DNS e edge compute — mais do
+que um podcast precisa. O que falta nele (access logs, bot analytics) são
+recursos de site comercial.
+
+O motivo de preferir flat-rate ao pay as you go não é preço, é **teto**. O
+pay as you go não tem limite de gasto: um episódio que viralize, ou um robô
+insistente baixando o mesmo MP3 de 8 MB, viram conta no fim do mês. O flat-rate
+protege contra isso por definição.
+
+Repare que o plano Free anuncia **DNS** entre os itens incluídos. Vale conferir,
+na tela seguinte, se isso cobre a zona hospedada do Route 53 — se cobrir, aqueles
+US$ 0,50 por mês somem. Não conte com isso antes de ver escrito.
+
+Confira também os limites de uso inclusos que o assistente mostrar. Para
+referência do nosso caso: 22 episódios por mês, cerca de 8 MB cada, e uma
+dezena de ouvintes dá menos de 2 GB de transferência mensal — folga larga em
+qualquer patamar.
+
+### 4.2 Specify origin
 
 | Campo | Valor |
 |---|---|
 | Origin domain | `campscast.s3.us-east-1.amazonaws.com` |
 | Origin access | Public |
+
+Ao clicar no campo, a AWS sugere seus buckets numa lista. **Prefira digitar o
+endereço completo** em vez de escolher da lista: a opção sugerida às vezes usa o
+endpoint de *website* do S3, que não faz HTTPS na origem e provoca
+`ERR_TOO_MANY_REDIRECTS`.
+
+### 4.3 Enable security
+
+O assistente oferece ativar WAF e proteções contra bots.
+
+**Para um feed de podcast, não ative nada além do padrão.** O conteúdo é
+público por definição, não há formulário, login nem dado sensível a proteger. E
+WAF mal configurado bloqueia cliente legítimo: agregadores de podcast fazem
+requisições automatizadas, com user-agents pouco comuns, que é exatamente o
+padrão que regra de bot tende a barrar. O sintoma seria o episódio "não
+aparecer" em alguns apps — difícil de diagnosticar.
+
+### 4.4 Get TLS certificate
+
+Selecione o certificado que você emitiu no passo 3, em us-east-1. Se ele não
+aparecer na lista, é porque foi emitido em outra região.
+
+Aqui também se informa o **Alternate domain name (CNAME)**:
+
+```
+campscast.com.br
+www.campscast.com.br
+```
+
+Sem isso, o CloudFront responde com o certificado próprio dele
+(`*.cloudfront.net`) e o navegador acusa erro no seu domínio.
+
+### 4.5 Demais ajustes
+
+Se o assistente oferecer, use:
+
+| Campo | Valor |
+|---|---|
 | Viewer protocol policy | Redirect HTTP to HTTPS |
 | Allowed HTTP methods | GET, HEAD |
 | Cache policy | CachingOptimized |
-| Alternate domain name (CNAME) | `campscast.com.br` e `www.campscast.com.br` |
-| Custom SSL certificate | o do passo 3 |
 | Default root object | `index.html` |
 
-Um detalhe do campo *Origin domain*: ao clicar, a AWS sugere o bucket numa
-lista. **Prefira digitar o endereço completo** `campscast.s3.us-east-1.amazonaws.com`
-em vez de escolher da lista — a opção da lista às vezes usa o endpoint de
-website do S3, que não faz HTTPS na origem.
+Alguns desses só aparecem depois de criada, em **Settings → Edit**. Não é
+problema criar primeiro e ajustar depois.
+
+### 4.6 Review and create
 
 A distribuição leva de dez a vinte minutos para sair de *Deploying*. Anote o
-*Distribution domain name*.
+*Distribution domain name*, algo como `d111abcdef8.cloudfront.net`.
 
 ### Sobre cache
 
 O pipeline já manda os cabeçalhos certos: `max-age=300` no `feed.xml` e um ano
 nos MP3. O CloudFront respeita, então o feed continua atualizando em cinco
-minutos e os episódios ficam em cache por muito tempo — que é o que se quer.
+minutos e os episódios ficam em cache por muito tempo — que é o desejado.
 
 Se um dia precisar forçar atualização, use *Invalidations* com `/feed.xml`.
 
@@ -223,15 +301,28 @@ REST do bucket na origem, como recomendado acima.
 *Alternate domain name* não foi preenchido na distribuição, ou o certificado
 escolhido não cobre o nome.
 
+**O certificado não aparece na lista do CloudFront.** Ele foi emitido fora de
+us-east-1. Não há como mover: peça outro naquela região.
+
+**Alguns apps de podcast não veem os episódios novos, outros veem.** Se você
+ativou WAF ou proteção contra bots, é o suspeito. Agregadores fazem requisições
+automatizadas com user-agents incomuns — o padrão que regras de bot barram.
+Desative e teste de novo.
+
+**A conta do CloudFront veio maior que o esperado.** Provavelmente foi escolhido
+*Pay as you go*, que não tem teto de gasto. Um plano flat-rate resolve; a troca
+é feita na própria distribuição.
+
 ---
 
 ## Custo
 
 | Item | Por mês |
 |---|---|
-| Zona hospedada no Route 53 | US$ 0,50 |
+| CloudFront, plano Free flat-rate | US$ 0 |
+| Zona hospedada no Route 53 | US$ 0,50 — conferir se o plano Free do CloudFront já cobre |
 | Consultas DNS | centavos |
-| CloudFront, poucos ouvintes | menos de US$ 1 |
 
 Com audiência maior o CloudFront tende a sair **mais barato** que servir do S3
-direto, porque a transferência por gigabyte custa menos.
+direto, porque a transferência por gigabyte custa menos. E o plano flat-rate
+garante que não há surpresa: episódio que viralize não vira conta inesperada.
