@@ -9,6 +9,7 @@ distâncias, para documentar o que funciona.
 
     python3 scripts/check_recording.py bloco.m4a
     python3 scripts/check_recording.py silencio.m4a --sala
+    python3 scripts/check_recording.py bloco.m4a --detalhe   # perfil linha a linha
     python3 scripts/check_recording.py *.m4a --markdown      # tabela p/ docs
 """
 from __future__ import annotations
@@ -28,11 +29,30 @@ FALA_MIN, FALA_MAX = -26.0, -14.0
 REVERB_BOM, REVERB_OK = 0.4, 0.6
 
 BLOCOS = " ░▒▓█"
+SPARK = "▁▂▃▄▅▆▇█"
 
 
 def barra(fracao: float, largura: int = 28) -> str:
     cheios = int(fracao * largura)
     return "█" * cheios + "·" * (largura - cheios)
+
+
+def sparkline(ns: list[float], largura: int = 56) -> tuple[str, float, float]:
+    """O perfil inteiro numa linha só. Cada caractere é um trecho do tempo."""
+    if not ns:
+        return "", 0.0, 0.0
+    lo, hi = min(ns), max(ns)
+    faixa = max(hi - lo, 6.0)
+    por_col = max(1, len(ns) / largura)
+    colunas = []
+    i = 0.0
+    while int(i) < len(ns):
+        grupo = ns[int(i):max(int(i) + 1, int(i + por_col))]
+        v = sum(grupo) / len(grupo)
+        colunas.append(SPARK[min(len(SPARK) - 1,
+                                 int((v - lo) / faixa * (len(SPARK) - 1)))])
+        i += por_col
+    return "".join(colunas), lo, hi
 
 
 def perfil_tempo(ns: list[float], duracao: float, linhas: int = 16) -> list[str]:
@@ -62,27 +82,40 @@ def espectro_texto(fracoes: list[float], titulo: str) -> list[str]:
     return linhas
 
 
-def relatorio_sala(m: dict) -> None:
+def espectro_compacto(fracoes: list[float]) -> str:
+    partes = []
+    for (lo, hi, nome), f in zip(BANDAS, fracoes):
+        if f >= 0.05:
+            partes.append(f"{nome} {f*100:.0f}% {'█' * max(1, int(f * 14))}")
+    resto = sum(f for f in fracoes if f < 0.05)
+    if resto >= 0.01:
+        partes.append(f"resto {resto*100:.0f}%")
+    return "   ".join(partes)
+
+
+def relatorio_sala(m: dict, detalhe: bool = False) -> None:
     ns = m["niveis"]
-    print(f"\n═══ {m['arquivo']} — ambiente ({m['duracao']:.0f}s) ═══\n")
-    print(f"  ruído médio      : {sum(ns)/len(ns):7.1f} dBFS")
-    print(f"  mais quieto      : {min(ns):7.1f} dBFS")
-    print(f"  mais alto        : {max(ns):7.1f} dBFS")
-    print(f"  variação         : {max(ns)-min(ns):7.1f} dB")
-    print(f"  desvio no tempo  : {m['desvio_tempo']:7.1f} dB")
-    if m["reverb"]:
-        print(f"  reverberação     : {m['reverb']:7.2f} s  (estimativa)")
-
-    print(f"\n  Perfil no tempo:")
-    for linha in perfil_tempo(ns, m["duracao"]):
-        print(linha)
-
-    print()
-    for linha in espectro_texto(m["espectro_fala"], "Espectro do ruído:"):
-        print(linha)
-
-    print()
     media = sum(ns) / len(ns)
+    print(f"\n═══ {m['arquivo']} — ambiente ({m['duracao']:.0f}s) ═══\n")
+    print(f"  ruído   médio {media:6.1f}   min {min(ns):6.1f}   "
+          f"max {max(ns):6.1f}   variação {max(ns)-min(ns):5.1f} dB")
+    linha_tempo = f"  tempo   desvio {m['desvio_tempo']:.1f} dB"
+    linha_tempo += ("  ->  CONSTANTE (aparelho ligado)" if m["desvio_tempo"] < 1.5
+                    else "  ->  FLUTUANTE (conteúdo: TV, voz, trânsito)")
+    print(linha_tempo)
+    if m["reverb"]:
+        print(f"  sala    reverberação {m['reverb']:.2f}s")
+
+    spark, lo, hi = sparkline(ns)
+    print(f"\n  {spark}")
+    rotulo_fim = f"{m['duracao']:.0f}s"
+    preenche = max(1, len(spark) - 2 - len(rotulo_fim))
+    print(f"  0s{' ' * preenche}{rotulo_fim}"
+          f"      escala {lo:.0f} a {hi:.0f} dBFS")
+
+    print(f"\n  espectro  {espectro_compacto(m['espectro_fala'])}")
+
+    print()
     if media <= PISO_BOM:
         print("  ok    sala silenciosa — pode gravar")
     elif media <= PISO_OK:
@@ -92,21 +125,18 @@ def relatorio_sala(m: dict) -> None:
 
     graves = m["espectro_fala"][0] + m["espectro_fala"][1]
     if graves > 0.6:
-        print("        ruído quase todo grave — e grave atravessa porta e parede,")
-        print("        por isso o microfone pega o que você não ouve")
-    if m["desvio_tempo"] < 1.5:
-        print("  i     CONSTANTE: aparelho ligado — ar-condicionado, geladeira,")
-        print("        ventilador, computador. Desligue e remeça.")
-    else:
-        print(f"  i     FLUTUANTE ({m['desvio_tempo']:.1f} dB de desvio): é conteúdo,")
-        print("        não máquina. TV ou som em outro cômodo, voz, trânsito.")
-    if m["reverb"]:
-        if m["reverb"] <= REVERB_BOM:
-            print(f"  ok    pouca reverberação ({m['reverb']:.2f}s) — sala abafada, boa")
-        elif m["reverb"] <= REVERB_OK:
-            print(f"  ~     reverberação média ({m['reverb']:.2f}s) — aceitável")
-        else:
-            print(f"  X     muito eco ({m['reverb']:.2f}s) — o clone aprende a sala junto")
+        print("        ruído quase todo grave — atravessa porta e parede, por isso")
+        print("        o microfone pega o que você não ouve")
+    if m["reverb"] and m["reverb"] > REVERB_OK:
+        print(f"  X     muito eco ({m['reverb']:.2f}s) — o clone aprende a sala junto")
+
+    if detalhe:
+        print(f"\n  Perfil detalhado:")
+        for linha in perfil_tempo(ns, m["duracao"]):
+            print(linha)
+        print()
+        for linha in espectro_texto(m["espectro_fala"], "Espectro completo:"):
+            print(linha)
 
 
 def veredito(m: dict) -> list[tuple[str, str]]:
@@ -156,30 +186,27 @@ def veredito(m: dict) -> list[tuple[str, str]]:
     return s
 
 
-def relatorio_voz(m: dict) -> list[str]:
+def relatorio_voz(m: dict, detalhe: bool = False) -> list[str]:
     print(f"\n═══ {m['arquivo']}  ({m['duracao']:.0f}s, "
           f"{m['taxa_bits']} kbps {m['tipo_codec']}) ═══\n")
-    print(f"  piso de ruído    : {m['piso']:7.1f} dBFS"
-          f"{'' if m['piso_confiavel'] else '  (estimado)'}")
-    print(f"  nível da fala    : {m['fala']:7.1f} dBFS")
-    print(f"  relação sinal/ruído: {m['snr']:5.1f} dB")
-    print(f"  pico             : {m['pico']:7.1f} dBFS")
-    print(f"  fator de crista  : {m['crista']:7.1f} dB")
-    print(f"  faixa dinâmica   : {m['dinamica']:7.1f} dB")
-    if m["reverb"]:
-        print(f"  reverberação     : {m['reverb']:7.2f} s")
-    print(f"  silêncio medido  : {m['silencio_s']:7.1f} s")
+    est = "" if m["piso_confiavel"] else "*"
+    print(f"  níveis  fala {m['fala']:6.1f}   ruído {m['piso']:6.1f}{est}   "
+          f"S/R {m['snr']:5.1f} dB   pico {m['pico']:6.1f}")
+    rev = f"{m['reverb']:.2f}s" if m["reverb"] else "—"
+    print(f"  sala    reverberação {rev}     dinâmica {m['dinamica']:.1f} dB     "
+          f"crista {m['crista']:.1f} dB")
+    print(f"  medido  {m['silencio_s']:.0f}s de silêncio sustentado" +
+          ("" if m["piso_confiavel"] else "  (nenhum — ruído é limite superior)"))
 
-    print(f"\n  Perfil no tempo:")
-    for linha in perfil_tempo(m["niveis"], m["duracao"]):
-        print(linha)
-    print()
-    for linha in espectro_texto(m["espectro_fala"], "Espectro da gravação:"):
-        print(linha)
+    spark, lo, hi = sparkline(m["niveis"])
+    print(f"\n  {spark}")
+    rotulo = f"{m['duracao']:.0f}s"
+    print(f"  0s{' ' * max(1, len(spark) - 2 - len(rotulo))}{rotulo}"
+          f"      escala {lo:.0f} a {hi:.0f} dBFS")
+
+    print(f"\n  voz       {espectro_compacto(m['espectro_fala'])}")
     if m["espectro_ruido"]:
-        print()
-        for linha in espectro_texto(m["espectro_ruido"], "Espectro só do ruído:"):
-            print(linha)
+        print(f"  ruído     {espectro_compacto(m['espectro_ruido'])}")
 
     print()
     marcas = {"ok": "  ok  ", "~": "  ~   ", "X": "  X   ", "i": "  i   "}
@@ -194,18 +221,46 @@ def relatorio_voz(m: dict) -> list[str]:
         print("  VEREDITO: serve, mas dá para melhorar.")
     else:
         print("  VEREDITO: material bom.")
+
+    if detalhe:
+        print(f"\n  Perfil detalhado:")
+        for linha in perfil_tempo(m["niveis"], m["duracao"]):
+            print(linha)
+        print()
+        for linha in espectro_texto(m["espectro_fala"], "Espectro da gravação:"):
+            print(linha)
+        if m["espectro_ruido"]:
+            print()
+            for linha in espectro_texto(m["espectro_ruido"], "Espectro só do ruído:"):
+                print(linha)
     return niveis_v
 
 
 def tabela_markdown(medidas: list[dict]) -> None:
-    print("\n| Cenário | Fala | Ruído | S/R | Reverb | Crista | Codec |")
-    print("|---|---|---|---|---|---|---|")
+    """Tabela markdown com colunas alinhadas — válida no GitHub e legível crua."""
+    cab = ["Cenário", "Fala", "Ruído", "S/R", "Reverb", "Crista", "Codec"]
+    linhas = []
     for m in medidas:
-        rev = f"{m['reverb']:.2f}s" if m["reverb"] else "—"
-        piso = f"{m['piso']:.1f}" + ("" if m["piso_confiavel"] else "*")
-        print(f"| {m['arquivo'].rsplit('.', 1)[0]} | {m['fala']:.1f} dBFS | "
-              f"{piso} dBFS | **{m['snr']:.0f} dB** | {rev} | "
-              f"{m['crista']:.0f} dB | {m['taxa_bits']} kbps |")
+        linhas.append([
+            m["arquivo"].rsplit(".", 1)[0],
+            f"{m['fala']:.1f} dBFS",
+            f"{m['piso']:.1f}{'' if m['piso_confiavel'] else '*'} dBFS",
+            f"**{m['snr']:.0f} dB**",
+            f"{m['reverb']:.2f}s" if m["reverb"] else "—",
+            f"{m['crista']:.0f} dB",
+            f"{m['taxa_bits']} kbps",
+        ])
+
+    larg = [max(len(cab[i]), *(len(l[i]) for l in linhas)) for i in range(len(cab))]
+    def linha(campos, preencher=" "):
+        return "| " + " | ".join(c.ljust(larg[i], preencher)
+                                 for i, c in enumerate(campos)) + " |"
+
+    print()
+    print(linha(cab))
+    print(linha(["-" * larg[i] for i in range(len(cab))], "-"))
+    for l in linhas:
+        print(linha(l))
     if any(not m["piso_confiavel"] for m in medidas):
         print("\n`*` piso estimado: a gravação não tem silêncio sustentado, "
               "então o ruído real é menor que o indicado.")
@@ -216,6 +271,8 @@ def main() -> int:
     ap.add_argument("arquivos", nargs="+")
     ap.add_argument("--sala", action="store_true",
                     help="a gravação é só silêncio: mede o ambiente")
+    ap.add_argument("--detalhe", action="store_true",
+                    help="perfil linha a linha e espectro completo")
     ap.add_argument("--markdown", action="store_true",
                     help="imprime tabela comparativa pronta para documentação")
     args = ap.parse_args()
@@ -235,9 +292,9 @@ def main() -> int:
         if args.markdown:
             continue
         if args.sala:
-            relatorio_sala(m)
+            relatorio_sala(m, args.detalhe)
         else:
-            relatorio_voz(m)
+            relatorio_voz(m, args.detalhe)
 
     if args.markdown:
         tabela_markdown(medidas)

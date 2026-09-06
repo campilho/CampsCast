@@ -10,6 +10,26 @@ Todas as medições vêm de:
 python3 scripts/check_recording.py arquivo.m4a --markdown
 ```
 
+A tabela sai com as colunas alinhadas: é markdown válido no GitHub e legível
+direto no terminal, sem precisar renderizar.
+
+Outras saídas:
+
+```bash
+python3 scripts/check_recording.py bloco.m4a            # avaliação compacta
+python3 scripts/check_recording.py silencio.m4a --sala  # só o ambiente
+python3 scripts/check_recording.py bloco.m4a --detalhe  # perfil linha a linha
+```
+
+O modo compacto resume o perfil de nível numa linha só, com blocos de altura
+variável. Foi assim que a TV do cômodo ao lado apareceu — o traço sobe da
+esquerda para a direita ao longo de trinta segundos:
+
+```
+  ▂▃▃▂▂▁▁▃▂▁▃▄▅▄▃▃▃▄▂▂▂▃▂▃▃▄▃▃▄▃▄▅▄▄▅▄▄▅▅▅▅▅▄▄▅▆▆▆▆▇▆▆▅▅▅▅
+  0s                                                   31s
+```
+
 ---
 
 ## O que cada métrica significa
