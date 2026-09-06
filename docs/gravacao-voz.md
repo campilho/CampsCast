@@ -228,6 +228,32 @@ faça mais deste.
 
 ---
 
+## 6b. Converter antes de subir — obrigatório
+
+O app Gravador do iPhone, na qualidade **Sem perdas**, grava em **ALAC** dentro
+de um `.m4a`. A ElevenLabs **não decodifica esse codec**: ela lê duração zero e
+recusa com *"At least 30s of audio is required"*, mesmo num arquivo de um
+minuto. A mensagem não menciona formato, então o erro parece ser outra coisa.
+
+O arquivo em qualidade normal sobe sem reclamar, porque aí é AAC — o que leva à
+conclusão errada de que o problema é a gravação sem perdas. Não é: é o
+contêiner.
+
+```bash
+python3 scripts/prep_voice_samples.py bloco1.m4a bloco2.m4a bloco3.m4a
+```
+
+Converte para WAV mono 44,1 kHz — sem perdas e universalmente aceito —, roda a
+checagem de qualidade em cada um e soma a duração total. Verificado: a conversão
+preserva as medições exatamente, os mesmos −66,3 dBFS e 43 dB de S/R.
+
+### Tamanho
+
+WAV mono a 44,1 kHz ocupa cerca de **5 MB por minuto**. Trinta minutos dão 150
+MB no total — motivo a mais para gravar **em blocos separados** em vez de um
+arquivo único: cada bloco de cinco minutos fica em 25 MB, e a ElevenLabs aceita
+várias amostras.
+
 ## 7. Antes de subir
 
 - [ ] Trinta minutos ou mais de fala limpa

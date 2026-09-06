@@ -32,3 +32,6 @@ privado/
 *.m4a
 *.wav
 *.aiff
+
+# Amostras convertidas para clonagem de voz
+amostras-voz/
