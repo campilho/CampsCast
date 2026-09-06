@@ -1,0 +1,208 @@
+# Aprendizados
+
+Achados não óbvios deste projeto. Quase todos vieram de uma suposição razoável
+que a medição derrubou — e vários custariam horas a quem repetisse o caminho.
+
+Decisões formais ficam nos [ADRs](decisions/). Aqui está o que não cabe em
+decisão: o que quebrou, por quê, e o que ficou de método.
+
+---
+
+## Método
+
+### Medir vale mais que supor, e o oposto quase nunca é verdade
+
+Contagem informal deste projeto: **oito** hipóteses plausíveis derrubadas por
+medição, **zero** confirmadas sem ela. Entre as que caíram:
+
+- "A ElevenLabs normaliza cada requisição, daí os degraus de volume." Era queda
+  de nível dentro da geração.
+- "Então peça o episódio inteiro numa requisição." Ficou pior.
+- "O ruído de fundo está alto." Era a pausa entre palavras.
+- "Mudei de posição na cama, deve ser isso." Era a TV do cômodo ao lado.
+
+### Uma medição que compartilha suposições com o código medido não é verificação
+
+O bug que truncava os episódios em 30% ([ADR 0003](decisions/0003-costura-de-mp3.md))
+sobreviveu porque o parser de duração e o gerador eram ambos nossos, concordavam
+entre si, e estavam ambos olhando para a coisa errada. Só uma ferramenta
+independente — o `afinfo` do macOS, que enxerga como um player — revelou.
+
+Ao validar algo próprio, procure um verificador que não compartilhe a
+implementação.
+
+### Erro de configuração deve falhar no teste, não em produção
+
+Cada bug corrigido ganhou um teste antes da correção. O `smoke_test.sh` tem 93,
+roda offline e sem custo. Vários deles existem porque algo passou despercebido
+uma vez.
+
+---
+
+## Agentes
+
+### A memória precisa de duas camadas
+
+`covered-index.json` é a longa: título, fonte e resumo de tudo que já foi ao ar,
+para sempre. Os 5 roteiros recentes são a curta: texto integral, para o agente
+saber **como** algo foi dito, não só que foi.
+
+A conexão entre episódios ("na segunda a gente falou do corte de preço; hoje
+veio a resposta") emergiu sozinha da instrução de não repetir pauta. Depois
+virou diretriz explícita.
+
+### Dado calculado é melhor que dado lembrado
+
+Janela de notícias, faixa de palavras, nome do sintetizador — tudo chega ao
+agente por variável de ambiente, calculado por script. Ele não recalcula nem
+lembra. Trocar de voz muda o texto falado sem ninguém editar o prompt.
+
+### Peça o número, mas ancore na fonte
+
+A ficha técnica no fim do episódio cita páginas lidas e pautas avaliadas. O
+prompt manda contar do `research/` que o agente acabou de escrever, não estimar
+de memória. Sem isso ele arredondava: disse "vinte páginas" onde o rastro
+mostrava 22.
+
+### Deixe o agente registrar o descarte
+
+`research/AAAA-MM-DD.md` lista o que entrou **e o que foi descartado, com
+motivo**. O `research_trail.py` reconstrói o rastro bruto das transcrições do
+CLI. Um é relato, o outro é registro de máquina — se divergirem, dá para saber.
+
+---
+
+## Áudio
+
+### Concatenar MP3 cru trunca o episódio
+
+Cada resposta da API é um arquivo completo, com cabeçalho `Xing`/`Info` que
+declara a duração. Emendados, o player lê o primeiro e para ali. Oito minutos
+tocavam dois. Ver [ADR 0003](decisions/0003-costura-de-mp3.md).
+
+### Modelo bom pode ter defeito que o modelo simples não tem
+
+O `eleven_multilingual_v2` perde nível ao longo de cada geração — 2,6 dB em
+2.100 caracteres, criando dente de serra nas costuras. O `flash_v2_5` é plano
+(0,29 dB), mais alto, mais rápido e metade do preço. Ver
+[ADR 0004](decisions/0004-volume-entre-trechos.md).
+
+### Contador de cota é assíncrono
+
+A ElevenLabs marcou 7 créditos logo após uma síntese cujo custo real eram 2.074.
+Ler cedo demais gera conclusão errada sobre custo. O `tts.py` espera três
+leituras iguais antes de reportar.
+
+### Ritmo de fala pertence à voz E ao modelo
+
+Mesma voz: 163 palavras/minuto no Flash, 155 no Multilingual. Vozes diferentes:
+125 e 163. A faixa de palavras do roteiro sai daí, então trocar qualquer um dos
+dois exige remedir.
+
+Um erro de digitação meu numa contagem de palavras (1466 onde eram 1364) inflou
+o ritmo em 7% e fez o teto autorizar roteiros de 10,1 minutos, acima do limite
+do formato. Por isso a calibração virou script, não número digitado.
+
+---
+
+## Clonagem de voz
+
+### O ruído só é mensurável se houver silêncio
+
+Medir o "piso de ruído" pelos trechos mais quietos de uma fala contínua mede
+pausas entre palavras — com respiração e cauda de reverberação —, não a sala.
+Uma gravação boa foi reprovada assim.
+
+O `check_recording.py` agora só calcula o piso a partir de silêncio
+**sustentado**: 2 segundos consecutivos abaixo de −50 dBFS. O parâmetro foi
+calibrado comparando duas gravações reais — a de fala contínua não tinha
+nenhum trecho, a que começou com 20 segundos parado tinha dois, somando 19,8s.
+
+**Grave 20 segundos de silêncio no início de cada bloco.**
+
+### Grave atravessa parede; agudo não
+
+Um quarto que media −66 dBFS passou a medir −50, com 76% da energia abaixo de
+120 Hz. Não era a rua nem a posição: era a TV do cômodo ao lado, com a porta
+fechada. Só o grave passa, e é justamente ele que polui a medição — por isso o
+morador não escuta e o microfone pega.
+
+Máquina faz ruído constante (desvio abaixo de 1,5 dB); conteúdo flutua. O modo
+`--sala` usa isso para nomear a fonte provável.
+
+### Compressão com perdas melhora a medição sem melhorar a gravação
+
+O encoder descarta o que é baixo demais para o ouvido — que é justamente o
+ruído de fundo. Mesmo quarto, um minuto de diferença: o arquivo AAC mediu
+−70,8 dBFS e 48 dB de relação sinal/ruído; o sem perdas, −66,3 e 43. O segundo
+é o bom: mostra o ruído que existe e entrega o detalhe completo.
+
+### A ElevenLabs não decodifica ALAC
+
+O Gravador do iPhone em "Sem perdas" grava ALAC dentro de `.m4a`. O upload
+recusa com *"At least 30s of audio is required"* num arquivo de 59,7 segundos,
+sem mencionar formato. O arquivo em qualidade normal sobe, porque é AAC — o que
+sugere a conclusão errada de que gravar sem perdas é o problema.
+
+`prep_voice_samples.py` converte para WAV mono 44,1 kHz. Verificado que a
+conversão preserva as medições exatamente.
+
+### Fone Bluetooth é pior que o microfone do notebook
+
+Perfil de headset comprime a banda e aplica supressão de ruído e ganho
+automático. O modelo aprenderia os artefatos junto com a voz. iPhone no app
+Gravador supera qualquer AirPods para esta finalidade.
+
+### Consistência importa mais que perfeição
+
+Blocos gravados em condições diferentes ensinam ao modelo uma variação que não
+existe na voz. Se a sala não puder melhorar, é melhor gravar tudo na condição
+pior do que misturar as duas. Vale também para processamento: ou todos os
+arquivos passam pela redução de ruído da ElevenLabs, ou nenhum.
+
+---
+
+## Infraestrutura
+
+### macOS bloqueia launchd em `~/Documents`
+
+Agente do launchd não acessa `~/Documents`, `~/Desktop` nem `~/Downloads`
+(TCC). O erro é `Operation not permitted`, rc=126, sem mencionar permissão — e
+a execução pelo Terminal continua funcionando, porque o Terminal já tem acesso.
+Só falha de madrugada. O projeto mora em `~/CampsCast` por isso.
+
+### launchd não herda o PATH do shell
+
+O plist declara onde estão `claude` e `python3`. Gerado por
+`install_launchd.sh` com os caminhos reais da máquina, porque caminho editado à
+mão é erro que só aparece às 5h50.
+
+### Cache negativo de DNS dura 24 horas
+
+O SOA de uma zona nova traz TTL negativo de 86400. Quem consultou o nome antes
+do registro existir guarda "não existe" por um dia — e quem está configurando é
+justamente quem mais consultou antes. O domínio funciona para o mundo e não
+para você. Daí o `--resolve` do `set_base_url.py`.
+
+### CloudFront reescreve a bucket policy se deixarem
+
+"Grant CloudFront access to origin" vem como *Yes* e restringe o bucket ao
+CloudFront — quebrando quem assinou pela URL antiga, em silêncio. Ficou em *No*
+enquanto houver assinantes no endereço do S3.
+
+### O `.env` não pode sobrescrever o ambiente
+
+`set -a; source .env` sobrescrevia o `CLAUDE_BIN` passado na linha de comando, e
+um teste com CLI falso disparou uma execução real. Ambiente explícito vence o
+arquivo, como no `os.environ.setdefault` dos scripts Python.
+
+### Teste que mexe em dado real acaba perdendo dado real
+
+O `smoke_test.sh` move `episodes/` para se isolar. Duas vezes quase custou
+episódios: uma por interrupção no meio do cleanup, outra por SIGPIPE
+(`smoke_test.sh | head -3`) que rodou o cleanup com a saída quebrada e produziu
+nomes de arquivo com lixo dentro.
+
+Hoje o abrigo fica dentro do repositório, com auto-recuperação e validação de
+nome. **A correção certa continua pendente:** os testes não deveriam tocar em
+dados reais.

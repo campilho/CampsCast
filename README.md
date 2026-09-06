@@ -216,6 +216,8 @@ covered-index.json      dedup barato: o que já foi ao ar
 analysis/               [Fase 3] análises escritas pelo Camps
 audio/  feed/  logs/    gerados; fora do git
 docs/decisions/         ADRs
+docs/aprendizados.md    o que quebrou, por quê, e o que ficou de método
+CLAUDE.md               orientação para quem (ou o quê) pegar o projeto
 docs/gravacao-voz.md    guia para gravar o material da voz profissional
 docs/publicacao-diretorios.md  requisitos de Apple, Spotify e Pocket Casts
 docs/dominio-proprio.md  migrar o feed para domínio próprio

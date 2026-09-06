@@ -5,10 +5,19 @@ Lista curta e datada. O planejamento de longo prazo vive em
 
 ## Hoje
 
+- [x] Medir a sala — descoberto que a TV do cômodo ao lado sobe o ruído de
+      −61 para −47 dBFS. Regravar tudo à noite, com a TV desligada.
 - [ ] **Gravar o material da voz profissional** — 30+ minutos, seguindo os seis
       blocos de [docs/gravacao-voz.md](docs/gravacao-voz.md). É o item de maior
       impacto perceptível para quem ouve, e o único que depende de silêncio em
       casa. Gravar no iPhone, app Gravador, qualidade *Sem perdas*.
+
+      Protocolo por bloco:
+      1. `python3 scripts/check_recording.py silencio.m4a --sala` — se der
+         abaixo de −60 dBFS, pode gravar
+      2. Começar cada bloco com **20 segundos parado, em silêncio**
+      3. Mesma posição e distância em todos os blocos
+      4. `python3 scripts/prep_voice_samples.py *.m4a` — converte e valida
 - [ ] **Conta Apple** — trocar o e-mail de notificação (hoje é de outra pessoa)
       e o e-mail principal, que está num domínio expirado. Depois, tentar o
       Podcasts Connect de novo.
