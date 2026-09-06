@@ -130,9 +130,22 @@ de diferença: **−66 dBFS** numa tarde e **−50 dBFS** em outra. Doze decibé
 diferença, com a fração de graves subindo de irrelevante para 76% — trânsito
 que aumentou, ou algum aparelho que ligou.
 
-Se o ruído for quase todo grave, procure a fonte: ar-condicionado, geladeira,
-ventilador, ou a janela voltada para a rua. Desligar o aparelho custa nada;
-consertar depois, não dá.
+Se o ruído for quase todo grave, procure a fonte. O modo `--sala` ajuda a
+identificar: máquina faz ruído **constante**, conteúdo **flutua**.
+
+| Desvio dos níveis | Provável fonte |
+|---|---|
+| < 1,5 dB | aparelho ligado: ar-condicionado, geladeira, ventilador |
+| > 1,5 dB | TV ou som em outro cômodo, voz, trânsito passando |
+
+**Grave atravessa porta e parede; agudo não.** Por isso a TV da sala aparece na
+gravação sem que você a escute conscientemente — o que passa pela porta é só o
+grave, exatamente a faixa que polui a medição.
+
+Caso real deste projeto: uma medição de 30 segundos saiu de −61 dBFS no começo
+para −47 no fim, com 4,1 dB de desvio. Não era a sala nem a posição: era a TV
+na sala ao lado, com a porta do quarto fechada. Os primeiros segundos mostravam
+que o quarto era bom; o resto mostrava o que estava entrando.
 
 **Consistência importa mais que perfeição.** Blocos gravados em condições
 diferentes ensinam ao modelo uma variação que não existe na sua voz. Se a sala

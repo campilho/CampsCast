@@ -128,6 +128,12 @@ def analisa(caminho: pathlib.Path) -> dict:
     if len(corrida) >= MIN_JANELAS:
         silencio_real.extend(corrida)
 
+    # Desvio dos níveis ao longo do tempo: máquina faz ruído constante,
+    # conteúdo (TV, voz, trânsito passando) flutua. É o que distingue "desligue
+    # o ar-condicionado" de "peça para abaixar a TV".
+    media_n = sum(n for n, _ in pares) / len(pares)
+    variacao = math.sqrt(sum((n - media_n) ** 2 for n, _ in pares) / len(pares))
+
     ordenados = sorted(pares, key=lambda x: x[0])
     corte = max(1, len(ordenados) // 10)
     voz = ordenados[-corte * 3:]              # 30% mais altos
@@ -160,6 +166,7 @@ def analisa(caminho: pathlib.Path) -> dict:
         "snr": fala - piso,
         "piso_confiavel": piso_confiavel,
         "silencio_s": len(silencio_real) * JANELA,
+        "variacao": variacao,
         "pico": dbfs(picos),
         "clipes": clipes,
         "grave": grave_ambiente,
@@ -272,8 +279,15 @@ def main() -> int:
             else:
                 print("  X     sala barulhenta demais — procure outra hora ou cômodo")
             if m["grave"] > 0.6:
-                print("        o ruído é quase todo grave: trânsito, ar-condicionado,")
-                print("        geladeira ou ventilador. Vale procurar a fonte.")
+                print("        o ruído é quase todo grave — e grave atravessa porta")
+                print("        e parede, por isso o microfone pega o que você não ouve")
+            if m["variacao"] < 1.5:
+                print("  i     ruído CONSTANTE: aparelho ligado — ar-condicionado,")
+                print("        geladeira, ventilador, computador. Desligue e remeça.")
+            else:
+                print(f"  i     ruído FLUTUANTE ({m['variacao']:.1f} dB de desvio): é")
+                print("        conteúdo, não máquina. TV ou som em outro cômodo, voz,")
+                print("        ou trânsito passando. Máquina não varia assim.")
             continue
 
         print(f"\n═══ {m['arquivo']}  ({m['duracao']:.0f}s, {m['formato']}) ═══")
