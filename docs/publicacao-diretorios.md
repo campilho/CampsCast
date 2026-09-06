@@ -70,9 +70,20 @@ Auditado em 02/09/2026 contra os requisitos de Apple e Spotify:
 | Por episódio: `title`, `description`, `pubDate`, `guid`, `enclosure` com `length` | ok |
 | Por episódio: `itunes:duration`, `itunes:episodeType` | ok |
 
-## Os dois bloqueadores
+## Bloqueadores: nenhum (06/09/2026)
 
-### 1. A capa não existe
+Ambos resolvidos:
+
+- **Capa** — `cover.jpg`, 1400×1400, responde 200 em `campscast.com.br`.
+- **E-mail do dono** — `contato@campscast.com.br`, encaminhando para uma caixa
+  real. Testado recebendo de um remetente externo.
+
+Auditoria completa do feed passa em todos os campos exigidos por Apple e
+Spotify. Pode submeter.
+
+### Registro histórico dos bloqueadores
+
+#### 1. A capa (resolvido)
 
 `itunes:image` aponta para `cover.jpg`, que ainda não foi enviada. Apple,
 Spotify e Pocket Casts rejeitam a submissão sem capa válida.
@@ -101,7 +112,7 @@ A bucket policy já libera `cover.jpg`. Confira com:
 curl -sI https://campscast.s3.us-east-1.amazonaws.com/cover.jpg | head -1
 ```
 
-### 2. O e-mail do dono é um placeholder
+#### 2. O e-mail do dono (resolvido)
 
 `config/show.json` traz `contato@campscast.invalid`. **A Spotify envia um código
 de verificação para esse endereço**, e a Apple usa o mesmo campo para contato.
@@ -129,8 +140,17 @@ python3 scripts/publish.py --date $(date +%F)
 6. Submeter ao Pocket Casts e ao Podcast Index
 7. Avaliar YouTube Music
 
-## Antes de submeter, vale ter mais episódios
+## Sobre a quantidade de episódios
 
-Diretórios olham com desconfiança feed com um ou dois episódios. Cinco a dez dá
-um sinal melhor de que o podcast é real e ativo — o que combina com o critério
-de saída da Fase 1, de cinco episódios consecutivos.
+Diretórios olham com desconfiança feed com um ou dois episódios. **Sete
+publicados** dá um sinal claro de podcast real e ativo.
+
+## Um cuidado ao preencher os formulários
+
+Todos vão pedir o endereço do feed. Use **`https://campscast.com.br/feed.xml`**,
+nunca o endereço antigo do bucket S3.
+
+Depois de indexado, a URL do feed no diretório é dolorosa de trocar — em alguns
+casos exige recomeçar a submissão e perder o histórico. O endereço do S3
+continua funcionando para os beta testers, mas não deve entrar em diretório
+nenhum.

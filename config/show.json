@@ -3,7 +3,7 @@
   "subtitle": "Briefing diário de IA, escrito e narrado por agentes",
   "description": "Um briefing diário, em dias úteis, com as principais notícias do mundo de inteligência artificial — pesquisado, selecionado, roteirizado e narrado de forma autônoma por agentes de IA, sem intervenção humana em nenhuma etapa. A regra editorial é ir direto à fonte: labs, hardware e investidores, sempre com fonte primária, no máximo três pautas por dia, entre cinco e dez minutos.\n\nEste é um experimento público de engenharia de agentes, hoje na Fase 1. O roteiro é escrito por um agente do Claude Code rodando em modo headless num Mac, disparado por um agendador às 5h50. A narração usa o ElevenLabs Flash 2.5 sobre uma cópia sintética da voz do Camps, criada por ele e com o consentimento dele. Nenhuma voz de terceiros é imitada.\n\nO código, os roteiros, os logs de pesquisa e as decisões de arquitetura são abertos em github.com/campilho/CampsCast — inclusive os erros. Quem quiser montar o seu próprio pode clonar: o pipeline é MIT.",
   "author": "Fernando Campilho",
-  "email": "contato@campscast.invalid",
+  "email": "contato@campscast.com.br",
   "language": "pt-BR",
   "category": "Technology",
   "subcategory": "Tech News",
@@ -12,6 +12,5 @@
   "cover_url": "https://campscast.com.br/cover.jpg",
   "base_url": "https://campscast.com.br",
   "copyright": "© 2026 Fernando Campilho — conteúdo sob CC BY 4.0",
-  "_nota_email": "PLACEHOLDER. Trocar por um alias dedicado antes de submeter ao Spotify/Apple, que exigem endereco real e alcancavel. Nao usar o e-mail pessoal: repositorio publico e varrido por bots de spam. O truque do +sufixo no Gmail nao adianta, o scraper remove. Precisa ser conta ou dominio separado.",
   "type": "episodic"
 }
