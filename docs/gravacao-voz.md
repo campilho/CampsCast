@@ -39,6 +39,43 @@ ajustes, e depois passe os arquivos para o Mac.
 Se um dia quiser subir de nível, um microfone USB dinâmico resolve — mas não
 compre nada antes de tentar com o iPhone. A sala pesa mais que o microfone.
 
+## 1b. Teste 60 segundos antes de gravar 30 minutos
+
+Clonagem aprende tudo que está no áudio — ruído de rua, chiado de
+ar-condicionado, eco do cômodo — e depois não há como separar. Meia hora
+gravada num lugar ruim vira um clone ruim, e o erro só aparece no episódio.
+
+Grave uma amostra curta e meça:
+
+1. Comece o gravador e **fique 20 segundos em silêncio**. Parado, sem falar.
+   É isso que mede o ruído do ambiente de forma honesta.
+2. Fale 40 segundos normalmente, na distância e no tom que vai usar depois.
+3. Repita no outro aparelho, no mesmo lugar e na mesma hora.
+
+```bash
+python3 scripts/check_recording.py iphone.m4a mac.m4a
+```
+
+O script mede piso de ruído, nível da fala, relação sinal/ruído, distorção e
+energia de baixa frequência — que denuncia trânsito, ar-condicionado e vento no
+microfone.
+
+### Como ler o resultado
+
+| Medida | Bom | Aceitável | Ruim |
+|---|---|---|---|
+| Piso de ruído | ≤ −60 dBFS | ≤ −50 | acima disso |
+| Relação sinal/ruído | ≥ 40 dB | ≥ 30 | abaixo disso |
+| Nível da fala | −26 a −14 dBFS | | estourado |
+
+**Referência:** o áudio que a ElevenLabs devolve nos nossos episódios mede
+**41 dB de relação sinal/ruído**. Chegar perto disso numa gravação caseira é
+excelente; 30 dB já serve.
+
+Não conte com a ElevenLabs avaliar para você: mesmo que a interface dê algum
+retorno, isso só acontece **depois** de subir a gravação inteira. Medir antes
+custa um minuto.
+
 ## 2. A sala pesa mais que o equipamento
 
 Reverberação é o inimigo. O modelo aprende o eco da sua sala como se fosse
@@ -53,6 +90,14 @@ parte da sua voz, e todo episódio sai com aquela sala junto.
 Teste rápido: bata palma uma vez. Se ouvir um "chiado" depois do estalo, a sala
 tem reverberação demais — mude de cômodo ou grave dentro do closet, entre as
 roupas.
+
+Quarto com cama, travesseiros, cobertor e cortina grande costuma ser o melhor
+cômodo da casa: tecido absorve reflexão, que é o que estraga gravação caseira.
+
+**Ruído de rua** é a variável que sobra. Ele não é eliminável, mas é
+administrável: grave no horário mais silencioso que conseguir, feche a janela,
+e afaste-se dela. E meça — o `check_recording.py` diz se está no nível que
+atrapalha ou não, em vez de você decidir de ouvido.
 
 ## 3. Posição e execução
 
