@@ -312,6 +312,35 @@ Ouça um minuto de cada arquivo. Se algum tiver ruído, eco ou volume destoante,
 regrave em vez de enviar — material ruim contamina o modelo inteiro, e não há
 como remover depois.
 
+## 7b. Acompanhar o treino
+
+Criada a voz, a ElevenLabs treina **um modelo de cada vez**, e leva de 2 a 6
+horas. A tela de Voices mostra a voz na lista antes de ela estar pronta, com um
+discreto "0/4 models" — que significa zero prontos, não que está pronta.
+
+```bash
+python3 scripts/tts.py --voice-status ID_DA_VOZ
+```
+
+Lista as amostras enviadas e o estado de cada modelo, e avisa especificamente
+se o modelo que está em produção (`model_id` de `config/tts.json`) já terminou.
+Só esse importa: os outros três podem ficar treinando sem atrapalhar.
+
+## 7c. Se precisar refazer
+
+O plano Creator permite **uma** voz profissional por vez, e a interface não
+oferece trocar as amostras de uma voz existente — o "Edit voice" mexe só nos
+metadados.
+
+Para regravar, o caminho é **apagar e recriar**: no menu de três pontos da voz,
+*Delete voice*, e criar de novo com as amostras novas.
+
+Vale deixar o treino em andamento terminar antes de apagar, mesmo que você já
+saiba que vai refazer. Não custa nada além de esperar, e dá uma referência: se
+o clone feito com material imperfeito já soar bem, você aprende quanto a
+qualidade da gravação realmente pesa. Se soar ruim, confirma que valia
+regravar.
+
 ## 8. Depois
 
 Ao criar a voz na ElevenLabs, a verificação de identidade exige que você leia

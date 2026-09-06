@@ -53,7 +53,7 @@ Agregador serve para descobrir, nunca para citar.
 | `run_episode.sh` | orquestrador; `--only`, `--skip`, `--dry-run`, `--force`, `--overwrite` |
 | `window.py` | calcula a janela de notícias |
 | `schedule.py` | decide se o dia tem episódio (dias úteis, feriados) |
-| `tts.py` | narra; `--check`, `--budget`, `--voice`, `--model`, `--list-voices` |
+| `tts.py` | narra; `--check`, `--budget`, `--voice`, `--model`, `--list-voices`, `--voice-status` |
 | `publish.py` | gera o feed e sobe |
 | `s3.py` | upload SigV4; `--print-policy`, `--print-iam-policy` |
 | `notify.py` | avisa que saiu |

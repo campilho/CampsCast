@@ -400,6 +400,8 @@ def main() -> int:
     ap.add_argument("--model", help="usa este modelo em vez do de config/tts.json")
     ap.add_argument("--budget", action="store_true",
                     help="imprime a faixa de palavras desta voz (KEY=VALUE)")
+    ap.add_argument("--voice-status", metavar="ID", nargs="?", const="",
+                    help="estado do treino de uma voz clonada (default: a de config)")
     ap.add_argument("--list-voices", action="store_true",
                     help="lista as vozes disponíveis na conta (precisa de 'Voices (read)')")
     ap.add_argument("--dry-run", action="store_true",
@@ -416,6 +418,54 @@ def main() -> int:
     if args.model:
         cfg = {**cfg, "model_id": args.model}
         print(f"(modelo sobrescrito: {args.model})")
+
+    if args.voice_status is not None:
+        api_key = os.environ.get("ELEVENLABS_API_KEY", "").strip()
+        if not api_key:
+            print("ERRO: ELEVENLABS_API_KEY não definida.", file=sys.stderr)
+            return 1
+        vid = args.voice_status or cfg["voice_id"]
+        try:
+            v = api_get(f"voices/{vid}", api_key)
+        except urllib.error.HTTPError as e:
+            if e.code in (401, 403):
+                print("ERRO: a chave não tem o escopo 'Voices (read)'.", file=sys.stderr)
+            elif e.code == 404:
+                print(f"ERRO: voz {vid} não encontrada.", file=sys.stderr)
+            else:
+                print(f"ERRO: HTTP {e.code}.", file=sys.stderr)
+            return 1
+        except Exception as e:
+            print(f"ERRO: {explain_network_error(e)}", file=sys.stderr)
+            return 1
+
+        print(f"Voz     : {v.get('name')}  ({vid})")
+        print(f"Tipo    : {v.get('category')}")
+        amostras = v.get("samples") or []
+        total_mb = sum(a.get("size_bytes", 0) for a in amostras) / 1048576
+        print(f"Amostras: {len(amostras)}  ({total_mb:.0f} MB)")
+        for a in amostras:
+            print(f"          {a.get('file_name')}")
+
+        estados = ((v.get("fine_tuning") or {}).get("state")) or {}
+        if not estados:
+            print("Treino  : sem informação de treino (voz não é clone profissional?)")
+            return 0
+        print("\nTreino por modelo:")
+        prontos = 0
+        for modelo, estado in sorted(estados.items()):
+            marca = {"fine_tuned": "PRONTO", "fine_tuning": "treinando",
+                     "not_started": "na fila", "failed": "FALHOU"}.get(estado, estado)
+            if estado == "fine_tuned":
+                prontos += 1
+            print(f"  {marca:<10} {modelo}")
+        em_uso = cfg["model_id"]
+        print(f"\n{prontos} de {len(estados)} modelos prontos.")
+        if estados.get(em_uso) == "fine_tuned":
+            print(f"O modelo em produção ({em_uso}) já está pronto — pode usar.")
+        elif em_uso in estados:
+            print(f"O modelo em produção ({em_uso}) ainda não está pronto.")
+        return 0
 
     if args.budget:
         b = word_budget(cfg)
