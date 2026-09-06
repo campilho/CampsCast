@@ -204,7 +204,7 @@ prompts/master.md       prompt-mestre do agente
 scripts/window.py       calcula a janela de notícias (ver seção abaixo)
 scripts/schedule.py     decide se o dia tem episódio (dias úteis, feriados)
 scripts/calibrate_pace.py  mede o ritmo real de fala e corrige a faixa de palavras
-scripts/check_recording.py avalia se uma gravação serve para clonagem de voz
+scripts/check_recording.py avalia gravação para clonagem; --sala mede o ambiente
 scripts/prep_voice_samples.py converte gravações para o formato que a ElevenLabs aceita
 scripts/s3.py           upload para o S3 (SigV4 em Python puro, sem AWS CLI)
 scripts/set_base_url.py troca o endereço público do feed, verificando antes

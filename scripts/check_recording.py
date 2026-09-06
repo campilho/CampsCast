@@ -239,6 +239,8 @@ def veredito(m: dict) -> list[tuple[str, str]]:
 def main() -> int:
     ap = argparse.ArgumentParser(description="Avalia gravação para clonagem.")
     ap.add_argument("arquivos", nargs="+")
+    ap.add_argument("--sala", action="store_true",
+                    help="a gravação é só silêncio: mede o ambiente e não julga a fala")
     args = ap.parse_args()
 
     medidas = []
@@ -253,6 +255,26 @@ def main() -> int:
             print(f"ERRO em {caminho.name}: {e}", file=sys.stderr)
             return 1
         medidas.append(m)
+
+        if args.sala:
+            # Numa gravação só de silêncio, o "nível da fala" é ruído também.
+            print(f"\n═══ {m['arquivo']} — medição de ambiente ({m['duracao']:.0f}s) ═══")
+            print(f"  ruído do ambiente : {m['fala']:7.1f} dBFS")
+            print(f"  momentos mais quietos: {m['piso']:5.1f} dBFS")
+            print(f"  fração em graves  : {m['grave']:7.0%}")
+            print()
+            ref = -60.0
+            if m["fala"] <= ref:
+                print("  ok    sala silenciosa — pode gravar")
+            elif m["fala"] <= -50:
+                print("  ~     sala aceitável, mas já se ouve o ambiente")
+                print("        compare com uma medição em hora mais silenciosa")
+            else:
+                print("  X     sala barulhenta demais — procure outra hora ou cômodo")
+            if m["grave"] > 0.6:
+                print("        o ruído é quase todo grave: trânsito, ar-condicionado,")
+                print("        geladeira ou ventilador. Vale procurar a fonte.")
+            continue
 
         print(f"\n═══ {m['arquivo']}  ({m['duracao']:.0f}s, {m['formato']}) ═══")
         print(f"  piso de ruído : {m['piso']:7.1f} dBFS"

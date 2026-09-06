@@ -111,7 +111,34 @@ parte da sua voz, e todo episódio sai com aquela sala junto.
   para o seu ouvido em minutos, mas o modelo o escuta.
 - Celular no silencioso, notificações do Mac desligadas.
 
-Teste rápido: bata palma uma vez. Se ouvir um "chiado" depois do estalo, a sala
+### Medir a sala antes de cada sessão
+
+Grave 30 segundos parado, em silêncio, e rode:
+
+```bash
+python3 scripts/check_recording.py silencio.m4a --sala
+```
+
+| Ruído do ambiente | Veredito |
+|---|---|
+| ≤ −60 dBFS | sala silenciosa |
+| −60 a −50 | aceitável, já se ouve o ambiente |
+| acima de −50 | procure outra hora ou cômodo |
+
+Vale medir **em cada sessão**, não uma vez só. Medido no mesmo quarto com horas
+de diferença: **−66 dBFS** numa tarde e **−50 dBFS** em outra. Doze decibéis de
+diferença, com a fração de graves subindo de irrelevante para 76% — trânsito
+que aumentou, ou algum aparelho que ligou.
+
+Se o ruído for quase todo grave, procure a fonte: ar-condicionado, geladeira,
+ventilador, ou a janela voltada para a rua. Desligar o aparelho custa nada;
+consertar depois, não dá.
+
+**Consistência importa mais que perfeição.** Blocos gravados em condições
+diferentes ensinam ao modelo uma variação que não existe na sua voz. Se a sala
+não puder melhorar, prefira gravar tudo na condição pior a misturar as duas.
+
+Teste rápido de reverberação: bata palma uma vez. Se ouvir um "chiado" depois do estalo, a sala
 tem reverberação demais — mude de cômodo ou grave dentro do closet, entre as
 roupas.
 
