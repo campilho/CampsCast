@@ -9,8 +9,8 @@
   "subcategory": "Tech News",
   "explicit": false,
   "link": "https://github.com/campilho/CampsCast",
-  "cover_url": "https://campscast.s3.us-east-1.amazonaws.com/cover.jpg",
-  "base_url": "https://campscast.s3.us-east-1.amazonaws.com",
+  "cover_url": "https://campscast.com.br/cover.jpg",
+  "base_url": "https://campscast.com.br",
   "copyright": "© 2026 Fernando Campilho — conteúdo sob CC BY 4.0",
   "_nota_email": "PLACEHOLDER. Trocar por um alias dedicado antes de submeter ao Spotify/Apple, que exigem endereco real e alcancavel. Nao usar o e-mail pessoal: repositorio publico e varrido por bots de spam. O truque do +sufixo no Gmail nao adianta, o scraper remove. Precisa ser conta ou dominio separado.",
   "type": "episodic"

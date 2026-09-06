@@ -358,6 +358,35 @@ ativou WAF ou proteção contra bots, é o suspeito. Agregadores fazem requisiç
 automatizadas com user-agents incomuns — o padrão que regras de bot barram.
 Desative e teste de novo.
 
+**O domínio funciona para todo mundo, menos para você.** Cache negativo de DNS.
+O SOA de uma zona nova costuma trazer TTL negativo de 24 horas — o último campo
+de `dig +short SOA seu-dominio`. Quem consultou o nome **antes** do registro
+existir guarda "não existe" por um dia inteiro, e quem está configurando é
+justamente quem mais consultou antes.
+
+Confirme que é só cache comparando com um resolvedor público:
+
+```bash
+dig +short campscast.com.br            # o seu, possivelmente vazio
+dig +short @8.8.8.8 campscast.com.br   # a verdade
+```
+
+Se o público responde e o seu não, está tudo certo. Para verificar sem esperar,
+o `set_base_url.py` aceita `--resolve`, que conecta no IP mantendo Host e SNI:
+
+```bash
+python3 scripts/set_base_url.py https://campscast.com.br \
+  --resolve $(dig +short @8.8.8.8 campscast.com.br | head -1)
+```
+
+Reiniciar o roteador costuma limpar o cache dele. `sudo dscacheutil
+-flushcache` limpa só o do macOS, que quase nunca é o culpado.
+
+**O feed pelo domínio novo ainda mostra as URLs antigas.** É o cache do
+CloudFront, de cinco minutos no `feed.xml`. Espere, ou force com
+*Invalidations* em `/feed.xml`. A origem no S3 já tem a versão certa — dá para
+conferir baixando direto do bucket.
+
 **A conta do CloudFront veio maior que o esperado.** Provavelmente foi escolhido
 *Pay as you go*, que não tem teto de gasto. Um plano flat-rate resolve; a troca
 é feita na própria distribuição.
