@@ -1035,6 +1035,34 @@ else
   fi
 fi
 
+# ------------------------------------------------ 13 monitor de gravação
+head_ "13. Monitor de gravação"
+# Não dá para testar captura de microfone offline, mas o que quebra sem microfone
+# é o resto: as funções puras e o aviso sobre comparar dBFS entre aparelhos.
+MON="$(python3 - <<'PYMON'
+import importlib.util
+spec = importlib.util.spec_from_file_location("mon", "scripts/monitor.py")
+m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+erros = []
+if m.percentil([], 0.5) != -120.0: erros.append("percentil vazio")
+if m.percentil([-60, -50, -40], 0.5) != -50: erros.append("percentil mediana")
+if m.relogio(125) != "02:05": erros.append("relogio")
+if len(m.barra(-40)) != 34: erros.append("largura da barra")
+if m.barra(-100) != chr(9617)*34: erros.append("barra no piso")
+print(";".join(erros) if erros else "ok")
+PYMON
+)" || MON="import falhou"
+if [[ "$MON" == "ok" ]]; then
+  ok "funções do monitor conferem"
+else
+  bad "monitor: $MON"
+fi
+if grep -q "não são os mesmos" scripts/monitor.py; then
+  ok "monitor avisa que os dBFS não valem para o celular"
+else
+  bad "monitor não avisa sobre comparar dBFS entre aparelhos"
+fi
+
 # ------------------------------------------------------------------- resultado
 printf '\n\033[1m%s\033[0m\n' "Resultado: $PASS ok, $FAIL falha(s)"
 [[ $FAIL -eq 0 ]] || exit 1

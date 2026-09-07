@@ -73,6 +73,7 @@ Agregador serve para descobrir, nunca para citar.
 | `check_recording.py` | avalia gravação; `--sala`, `--detalhe`, `--markdown` |
 | `audio_metrics.py` | métricas reutilizáveis: espectro, reverberação, dinâmica |
 | `prep_voice_samples.py` | converte para WAV e valida antes do upload |
+| `monitor.py` | medidor ao vivo no terminal enquanto você grava no celular |
 
 ## Configuração
 
