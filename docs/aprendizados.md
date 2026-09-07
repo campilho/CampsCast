@@ -250,13 +250,21 @@ curto e mais limpo:
 
 | | Piso de ruído | Reverberação |
 |---|---|---|
-| Clone Instant | −77,6 dBFS | 0,42 s |
-| Clone Professional | −51,6 dBFS | 0,64 s |
+| Clone Instant | **−90,4 dBFS** | 0,42 s |
+| Clone Professional | **−52,2 dBFS** | 0,64 s |
 
-Vinte e seis decibéis piores, com mais material de treino. Não é erro de
-medição: o modelo **gera ruído de fundo nas pausas entre frases**. Os dois
-valores são limites superiores (nenhum tinha silêncio sustentado), mas foram
-medidos do mesmo jeito, e o espectro confirma por outro caminho:
+**Trinta e oito decibéis piores**, com mais material de treino. O modelo **gera
+ruído de fundo nas pausas entre frases**: o Instant entrega silêncio quase
+digital, o Professional entrega o quarto.
+
+Medir isso exigiu corrigir a ferramenta. O piso pedia 2 s de silêncio contínuo,
+regra certa para gravação humana e errada para voz sintética, que não faz pausa
+tão longa — a janela de 2 s engolia fala e devolvia −77,6 e −51,6, achatando a
+diferença para 26 dB. Com `--sintetico` (0,5 s, a pausa real entre frases) a
+distância verdadeira aparece. **Toda métrica traz junto uma suposição sobre o
+sinal; quando o sinal muda de natureza, a suposição precisa mudar com ele.**
+
+O espectro confirma por outro caminho:
 
 | | sub | grave | médio-grave | médio |
 |---|---|---|---|---|

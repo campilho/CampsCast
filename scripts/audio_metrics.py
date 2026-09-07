@@ -19,6 +19,8 @@ import wave
 
 TAXA = 22050
 JANELA = 0.25
+PAUSA_PADRAO = 2.0       # silêncio contínuo exigido para medir o piso
+PAUSA_SINTETICA = 0.5    # voz de TTS não faz pausa longa; a dela é curta
 SNR_PARA_REVERB = 35.0   # abaixo disto a reverberação medida é ruído, não sala
                          # (a 30 dB o viés medido ainda é de ~0,12s: alto demais
                          #  para julgar contra um alvo de 0,4s)
@@ -147,7 +149,7 @@ def reverberacao(amostras: list[int], taxa: int) -> float | None:
     return 60.0 / mediana if mediana > 0 else None
 
 
-def analisa(caminho: pathlib.Path) -> dict:
+def analisa(caminho: pathlib.Path, pausa_min: float = PAUSA_PADRAO) -> dict:
     """Todas as métricas de um arquivo."""
     wav = para_wav(caminho)
     w = wave.open(str(wav))
@@ -178,7 +180,7 @@ def analisa(caminho: pathlib.Path) -> dict:
     # dBFS de "ruído" onde a sala estava a -54.
     # Usa-se o máximo dentro da janela, não a média: exige silêncio o tempo
     # todo, senão uma pausa longa com um estalo no meio passaria.
-    MIN = int(2.0 / JANELA)
+    MIN = max(1, round(pausa_min / JANELA))
     idx_sil = []
     if len(ns) >= MIN:
         k = min(range(len(ns) - MIN + 1), key=lambda i: max(ns[i:i + MIN]))

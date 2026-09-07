@@ -21,7 +21,8 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from audio_metrics import BANDAS, analisa   # noqa: E402
+from audio_metrics import (BANDAS, PAUSA_PADRAO, PAUSA_SINTETICA,  # noqa: E402
+                           analisa)
 
 PISO_BOM, PISO_OK = -60.0, -50.0
 SNR_BOM, SNR_OK = 40.0, 30.0
@@ -281,6 +282,12 @@ def tabela_markdown(medidas: list[dict]) -> None:
 def main() -> int:
     ap = argparse.ArgumentParser(description="Avalia gravações para clonagem.")
     ap.add_argument("arquivos", nargs="+")
+    ap.add_argument("--pausa", type=float, default=None,
+                    help="segundos de silêncio contínuo exigidos para medir o "
+                         "piso (padrão 2.0; use 0.5 para áudio de TTS, que não "
+                         "faz pausa longa entre frases)")
+    ap.add_argument("--sintetico", action="store_true",
+                    help="atalho para --pausa 0.5, ao avaliar voz gerada")
     ap.add_argument("--sala", action="store_true",
                     help="a gravação é só silêncio: mede o ambiente")
     ap.add_argument("--detalhe", action="store_true",
@@ -296,7 +303,9 @@ def main() -> int:
             print(f"ERRO: não encontrei {caminho}", file=sys.stderr)
             return 1
         try:
-            m = analisa(caminho)
+            pausa = (PAUSA_SINTETICA if args.sintetico
+                     else args.pausa if args.pausa else PAUSA_PADRAO)
+            m = analisa(caminho, pausa_min=pausa)
         except Exception as e:
             print(f"ERRO em {caminho.name}: {e}", file=sys.stderr)
             return 1

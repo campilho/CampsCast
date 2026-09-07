@@ -1084,6 +1084,35 @@ if [[ "$DUP" == "ok" ]]; then
 else
   bad "detector de duplicata não distingue cópia de original ($DUP)"
 fi
+  # Voz sintética não faz pausa de 2s: exigir isso mede fala e achata o piso.
+  # Com o arquivo sintético (4s de silêncio + tom), pedir 0,5s e pedir 2s têm
+  # que dar o mesmo piso; o que não pode é a exigência longa piorar a medida.
+  PAUSA="$(python3 - <<'PYPAUSA'
+import sys, math, struct, wave, random, tempfile, pathlib
+sys.path.insert(0, "scripts")
+from audio_metrics import analisa
+d = pathlib.Path(tempfile.mkdtemp())
+random.seed(11)
+TAXA = 44100
+q = []
+for i in range(TAXA * 10):
+    t = i / TAXA
+    voz = 0.0 if (t % 2.0) < 0.6 else 4000 * math.sin(2 * math.pi * 180 * t)
+    q.append(max(-32000, min(32000, int(voz + random.gauss(0, 40)))))
+caminho = d / "curto.wav"
+with wave.open(str(caminho), "wb") as w:
+    w.setnchannels(1); w.setsampwidth(2); w.setframerate(TAXA)
+    w.writeframes(b"".join(struct.pack("<h", v) for v in q))
+curto = analisa(caminho, pausa_min=0.5)["piso"]
+longo = analisa(caminho, pausa_min=2.0)["piso"]
+print("ok" if curto < longo - 5 else f"falhou curto={curto:.1f} longo={longo:.1f}")
+PYPAUSA
+)" || PAUSA="erro"
+if [[ "$PAUSA" == "ok" ]]; then
+  ok "--pausa curta acha o piso onde a pausa longa não cabe"
+else
+  bad "pausa curta não melhora a medida em áudio sem silêncio longo ($PAUSA)"
+fi
   # ALAC é sem perdas mesmo saindo abaixo de 400 kbps.
   if [[ "$CODEC1 $CODEC2" == "sem perdas" ]]; then
     ok "ALAC reconhecido como sem perdas (${KBPS} kbps)"
