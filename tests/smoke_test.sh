@@ -1133,8 +1133,8 @@ erros = []
 if m.percentil([], 0.5) != -120.0: erros.append("percentil vazio")
 if m.percentil([-60, -50, -40], 0.5) != -50: erros.append("percentil mediana")
 if m.relogio(125) != "02:05": erros.append("relogio")
-if len(m.barra(-40)) != 34: erros.append("largura da barra")
-if m.barra(-100) != chr(9617)*34: erros.append("barra no piso")
+if len(m.barra(-40)) != 30: erros.append("largura da barra")
+if m.barra(-100) != chr(9617)*30: erros.append("barra no piso")
 print(";".join(erros) if erros else "ok")
 PYMON
 )" || MON="import falhou"
@@ -1143,10 +1143,42 @@ if [[ "$MON" == "ok" ]]; then
 else
   bad "monitor: $MON"
 fi
-if grep -q "não são os mesmos" scripts/monitor.py; then
-  ok "monitor avisa que os dBFS não valem para o celular"
+if grep -q "não são os de lá" scripts/monitor.py; then
+  ok "monitor avisa que os dBFS não valem para outro aparelho"
 else
   bad "monitor não avisa sobre comparar dBFS entre aparelhos"
+fi
+if grep -q "localizedName" scripts/monitor.swift; then
+  ok "monitor identifica de qual microfone está lendo"
+else
+  bad "monitor não diz de qual microfone vêm os números"
+fi
+# Separar voz de ruído por nível é impossível; por banda funciona. Os casos
+# abaixo são os medidos nas gravações reais: avião e moto sobem os graves e
+# deixam a banda de voz intacta, e a fala faz o contrário.
+CLS="$(python3 - <<'PYCLS'
+import importlib.util
+spec = importlib.util.spec_from_file_location("mon", "scripts/monitor.py")
+m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+BG, BV = -70.9, -81.1                      # quarto calmo, calibração
+casos = [
+    ("silêncio",  [-70.9] * 20, [-81.1] * 20, False, False),
+    ("fala",      [-31.2] * 20, [-37.8] * 20, True,  True),
+    ("avião",     [-56.5] * 20, [-80.0] * 20, False, True),
+    ("moto",      [-41.6] * 20, [-79.9] * 20, False, True),
+]
+erros = []
+for nome, g, v, voz_esp, ruido_esp in casos:
+    voz, ruido, _ = m.classifica(g, v, BG, BV)
+    if voz != voz_esp or ruido != ruido_esp:
+        erros.append(f"{nome}(voz={voz},ruido={ruido})")
+print(";".join(erros) if erros else "ok")
+PYCLS
+)" || CLS="erro"
+if [[ "$CLS" == "ok" ]]; then
+  ok "voz e ruído externo separados por banda, não por nível"
+else
+  bad "classificação por banda errou: $CLS"
 fi
 
 # ------------------------------------------------------------------- resultado
