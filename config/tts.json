@@ -1,7 +1,7 @@
 {
   "provider": "elevenlabs",
-  "voice_id": "nuDrGETtLL431mKJ9MWm",
-  "model_id": "eleven_flash_v2_5",
+  "voice_id": "LvmWSbvGusgLWSQDKHJH",
+  "model_id": "eleven_multilingual_v2",
   "output_format": "mp3_44100_128",
   "voice_settings": {
     "stability": 0.5,
@@ -11,7 +11,7 @@
     "speed": 1.0
   },
   "_nota": "Voz: Instant Voice Clone do Camps. Modelo: Flash v2.5, adotado em 02/09/2026 por medição de volume — o Multilingual v2 perde nível ao longo de cada geração (queda de 2,6 dB em 2.100 caracteres), produzindo degraus audíveis nas costuras entre trechos. Ver docs/decisions/0004-volume-entre-trechos.md.",
-  "words_per_minute": 155,
+  "words_per_minute": 145,
   "_nota_ritmo": "Medido por scripts/calibrate_pace.py em 4 episódios: mediana 155 ppm. Trocar de voz OU de modelo exige remedir — rode com --desde a partir do primeiro episódio da configuração nova.",
   "_nota_ajustes": "Espelham o painel da ElevenLabs (print de 24/08/2026): Speed no default, Stability 0.5, Similarity 0.75, Style Exaggeration em zero. Style acima de zero degrada a fidelidade de voz clonada — por isso zero, e não 0.10.",
   "_nome_falado": "ElevenLabs Flash 2.5",
