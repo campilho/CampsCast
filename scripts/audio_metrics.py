@@ -19,7 +19,9 @@ import wave
 
 TAXA = 22050
 JANELA = 0.25
-SNR_PARA_REVERB = 30.0   # abaixo disto a reverberação medida é ruído, não sala
+SNR_PARA_REVERB = 35.0   # abaixo disto a reverberação medida é ruído, não sala
+                         # (a 30 dB o viés medido ainda é de ~0,12s: alto demais
+                         #  para julgar contra um alvo de 0,4s)
 JANELA_CURTA = 0.05        # para medir decaimento de reverberação
 
 BANDAS = [

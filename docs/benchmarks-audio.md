@@ -39,7 +39,7 @@ esquerda para a direita ao longo de trinta segundos:
 | **Fala** | nível médio dos trechos falados | −26 a −14 dBFS |
 | **Ruído** | nível do silêncio sustentado | ≤ −60 dBFS |
 | **S/R** | distância entre voz e ruído | ≥ 40 dB bom, ≥ 30 aceitável |
-| **Reverb** | decaimento estimado da sala | ≤ 0,4 s (só vale com S/R ≥ 30 dB) |
+| **Reverb** | decaimento estimado da sala | ≤ 0,4 s (só vale com S/R ≥ 35 dB) |
 | **Crista** | pico menos média — quanto de dinâmica sobrou | 15–22 dB |
 | **Codec** | taxa de bits da origem | sem perdas para clonagem |
 
@@ -339,6 +339,42 @@ A distância já estava igualada e a diferença permaneceu. **O que faltava não
 proximidade, era projeção de voz** — a variável que não aparece em nenhuma
 especificação de equipamento e que valeu mais que sala, aparelho e distância
 somados.
+
+### Apoiar o aparelho injeta vibração pelo móvel
+
+Ruído por banda, em nível absoluto, mesma sala e mesma tarde:
+
+| | sub | grave | médio-grave | médio | agudo |
+|---|---|---|---|---|---|
+| **20 cm, na mão** | **−75,6** | **−75,6** | −73,9 | −77,0 | −85,6 |
+| 10 cm, em apoio | −68,0 | −67,1 | −72,4 | −76,3 | −84,1 |
+| 20 cm, em suporte na mesa | −66,0 | −66,9 | −71,8 | −76,5 | −85,1 |
+
+Acima de 120 Hz os três são iguais dentro de 3 dB; abaixo, as apoiadas perdem
+**8 a 9 dB**. Ruído do ar subiria em todas as bandas — subir só nas graves é
+assinatura de **som estrutural**, vibração entrando pelo móvel e pelo suporte.
+
+Segurar na mão resolve, mas cansa e traz ruído de manuseio em quinze minutos de
+gravação. A alternativa é desacoplar o suporte do tampo com algo macio.
+
+### Falar de lado custa mais do que projetar rende
+
+Nível **mediano** da fala, mais robusto que a média dos trechos altos:
+
+| Cenário | Fala mediana |
+|---|---|
+| Melhor arquivo do projeto | **−27,0 dBFS** |
+| 20 cm, na mão | −31,8 dBFS |
+| 10 cm, em apoio | −32,5 dBFS |
+| 20 cm, em suporte, falando mais alto e de lado | **−33,6 dBFS** |
+
+A tentativa de falar mais alto de lado saiu com o **menor** nível mediano de
+todas. O pico subiu 6 dB e a dinâmica foi de 10,4 para 15,4 dB — a projeção
+aconteceu —, mas o desvio do eixo tirou mais do que ela pôs. O microfone do
+iPhone fica na borda de baixo, junto ao conector.
+
+Apontando essa borda para a boca, um pouco abaixo da linha do lábio, e sem
+capa, a fala subiu para −27,5 dBFS: o melhor da sala até aqui.
 
 ### Referência de comparação
 
