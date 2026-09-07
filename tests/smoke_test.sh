@@ -1057,6 +1057,26 @@ if [[ "$SEMSIL" == "limpo" ]]; then
 else
   bad "alarme de ganho automático com piso não confiável ($SEMSIL)"
 fi
+  # Exportar a mesma gravação duas vezes dá contêineres com metadados
+  # diferentes: tamanho igual ao byte, hash de arquivo diferente, áudio igual.
+  # Só o PCM denuncia, e amostra repetida entra no treino com peso dobrado.
+  DUP="$(python3 - "$AUD_DIR" <<'PYDUP'
+import sys, pathlib, shutil, importlib.util
+sys.path.insert(0, "scripts")
+spec = importlib.util.spec_from_file_location("pvs", "scripts/prep_voice_samples.py")
+m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+d = pathlib.Path(sys.argv[1])
+shutil.copy(d / "baixo.wav", d / "copia.wav")
+a, b = m._impressao(d / "baixo.wav"), m._impressao(d / "copia.wav")
+c = m._impressao(d / "ruidoso.wav")
+print("ok" if a == b and a != c else "falhou")
+PYDUP
+)" || DUP="erro"
+if [[ "$DUP" == "ok" ]]; then
+  ok "duplicata é detectada pelo áudio, não pelo arquivo"
+else
+  bad "detector de duplicata não distingue cópia de original ($DUP)"
+fi
   # ALAC é sem perdas mesmo saindo abaixo de 400 kbps.
   if [[ "$CODEC1 $CODEC2" == "sem perdas" ]]; then
     ok "ALAC reconhecido como sem perdas (${KBPS} kbps)"

@@ -458,3 +458,17 @@ anterior aprendeu o quarto.
 Agora audita a pasta inteira a cada execução e move o reprovado para
 `reprovadas/` em vez de apagar. **Toda ferramenta de validação deve medir o
 artefato que vai ser usado, não o que passou pela sua mão.**
+
+### Arquivo diferente não é áudio diferente
+
+Duas amostras exportadas da mesma gravação tinham **tamanho idêntico ao byte** e
+hashes de arquivo diferentes — metadados do contêiner mudam a cada exportação.
+Passaram como material novo, e teriam entrado no treino com peso dobrado.
+
+O que denuncia é o hash do **PCM decodificado**. Vale sempre que a pergunta for
+"é o mesmo conteúdo?": compare o conteúdo depois de decodificar, nunca os bytes
+do arquivo nem o tamanho.
+
+Neste caso as métricas também denunciavam — S/R, pico, reverberação e dinâmica
+iguais até a casa decimal, o que não acontece entre duas gravações distintas.
+Coincidência exata em muitas casas é sinal de identidade, não de sorte.

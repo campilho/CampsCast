@@ -16,9 +16,11 @@ aceito — e roda a checagem de qualidade em cada arquivo antes de você subir.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import pathlib
 import subprocess
 import sys
+import wave
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -91,12 +93,33 @@ def main() -> int:
     return audita_pasta(saida)
 
 
+def _impressao(wav: pathlib.Path) -> str:
+    """Hash do áudio decodificado, não do arquivo.
+
+    Exportar a mesma gravação duas vezes gera contêineres com metadados
+    diferentes: tamanho igual ao byte, hash de arquivo diferente. Só o PCM
+    denuncia. Amostra repetida entra no treino com peso dobrado.
+    """
+    with wave.open(str(wav)) as f:
+        return hashlib.sha256(f.readframes(f.getnframes())).hexdigest()
+
+
 def audita_pasta(saida: pathlib.Path, mover: bool = True) -> int:
     from check_recording import analisa
 
     quarentena = saida / "reprovadas"
     aprovados, recusados = [], []
+    vistos: dict[str, str] = {}
     for w in sorted(saida.glob("*.wav")):
+        try:
+            digital = _impressao(w)
+        except Exception:
+            digital = None
+        if digital and digital in vistos:
+            recusados.append((w, f"áudio idêntico a {vistos[digital]}"))
+            continue
+        if digital:
+            vistos[digital] = w.name
         try:
             m = analisa(w)
         except Exception as e:
