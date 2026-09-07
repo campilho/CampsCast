@@ -376,6 +376,47 @@ iPhone fica na borda de baixo, junto ao conector.
 Apontando essa borda para a boca, um pouco abaixo da linha do lábio, e sem
 capa, a fala subiu para −27,5 dBFS: o melhor da sala até aqui.
 
+### A capa do celular é um amortecedor
+
+Tirar a capa para "desobstruir o microfone" parece óbvio e sai caro. Ruído por
+banda, com e sem capa, nos dois cômodos:
+
+| | sub | grave | médio-grave | médio |
+|---|---|---|---|---|
+| Quarto, com capa | −71,2 | −75,2 | −77,1 | −80,4 |
+| Quarto, sem capa | −64,1 | −62,9 | −69,9 | −76,5 |
+| Sala, com capa | −75,6 | −75,6 | −73,9 | −77,0 |
+| Sala, sem capa | −68,7 | −67,2 | −69,2 | −72,9 |
+
+| Efeito de tirar a capa | sub | grave | médio-grave | médio |
+|---|---|---|---|---|
+| Quarto | +7,1 | **+12,4** | +7,3 | +3,8 |
+| Sala | +7,0 | **+8,4** | +4,7 | +4,1 |
+
+Reproduz nos dois cômodos, com a concentração nas graves típica de ruído de
+contato. Segurando o aparelho nu, pele, aperto e micromovimento da mão entram
+direto no corpo do telefone; a capa amortece esse caminho.
+
+A fala de fato sobe sem capa — foi assim que se chegou a −26,1 dBFS —, mas o
+ruído sobe mais, e o S/R piora: na sala, de 33,6 para 30,8 dB.
+
+### O piso do quarto é instável; o da sala não
+
+| Cômodo | Medição | Piso |
+|---|---|---|
+| Quarto | domingo à tarde | −62,5 dBFS |
+| Quarto | feriado, 15h42 | −54,9 dBFS |
+| Quarto | feriado, 17h | −54,7 dBFS |
+| Sala (sem adega) | feriado, 16h21 | **−63,7 dBFS** |
+
+Quase 8 dB de variação no quarto entre dois dias, com o mesmo aparelho e a
+mesma capa. É o preço da porta de sacada com entrada de ar aberta: o cômodo
+depende da rua na hora da gravação. A sala, com vidro duplo do piso ao teto e a
+adega desligada, entrega o mesmo piso de forma repetível.
+
+**Para material de clonagem, piso repetível vale mais que piso ocasionalmente
+melhor** — quinze minutos de gravação atravessam várias condições de rua.
+
 ### Referência de comparação
 
 | Cenário | S/R |

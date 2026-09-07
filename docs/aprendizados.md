@@ -375,3 +375,17 @@ firme, acima de 25 dB são estouros isolados sobre fala baixa.
 
 **Antes de comprar microfone, meça a própria voz.** A variável que mais pesou
 não está em nenhuma ficha técnica.
+
+### Desobstruir o microfone piorou: a capa amortecia a mão
+
+Tirar a capa do celular para o microfone ficar livre elevou o piso de ruído em
+7 dB nas sub e 8 a 12 dB nas graves, reproduzindo nos dois cômodos testados. A
+fala sobe — a obstrução era real — mas o ruído sobe mais, e o S/R cai.
+
+A concentração nas graves entrega a origem: é ruído de contato, a mão entrando
+pelo corpo do aparelho. A capa era o amortecedor que ninguém tinha creditado.
+
+Vale como padrão, não como curiosidade: **toda a série de testes de posição
+mostrou que o caminho mecânico importa mais que o acústico.** Suporte na mesa
+custou 8 a 9 dB nas graves, aparelho nu custou 7 a 12 dB, e ambos passam
+despercebidos porque ninguém ouve o problema — só o microfone, encostado nele.
