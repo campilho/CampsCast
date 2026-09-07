@@ -171,35 +171,25 @@ def analisa(caminho: pathlib.Path) -> dict:
     corte = max(1, len(ns) // 10)
     fala = sum(ordenados[-corte * 3:]) / (corte * 3)
 
-    # Silêncio sustentado: 2s consecutivos abaixo do limiar. O limiar é ancorado
-    # na distribuição do próprio arquivo, não num valor fixo de dBFS. Com -50
-    # dBFS fixo, o mesmo minuto gravado ao mesmo tempo dava 4s de silêncio no
-    # MacBook e 0s no iPhone — só porque o iPhone amplifica ~5 dB a mais.
-    LIMIAR = ordenados[len(ordenados) // 4] + 3.0
+    # O piso sai do trecho contínuo de 2s MAIS SILENCIOSO do arquivo, e não de
+    # todas as janelas abaixo de um limiar. Limiar — fixo ou relativo — falha
+    # quando quase todo o arquivo é fala: o corte cai dentro das pausas entre
+    # palavras e passa a medir a voz. Numa gravação 87% falada isso deu -41,8
+    # dBFS de "ruído" onde a sala estava a -54.
+    # Usa-se o máximo dentro da janela, não a média: exige silêncio o tempo
+    # todo, senão uma pausa longa com um estalo no meio passaria.
     MIN = int(2.0 / JANELA)
-    idx_sil, corrida = [], []
-    for i, v in enumerate(ns):
-        if v < LIMIAR:
-            corrida.append(i)
-        else:
-            if len(corrida) >= MIN:
-                idx_sil.extend(corrida)
-            corrida = []
-    if len(corrida) >= MIN:
-        idx_sil.extend(corrida)
-
-    # Numa gravação sem pausa nenhuma o limiar relativo cairia dentro da fala
-    # baixa e a chamaria de silêncio. Só rejeitamos quando o arquivo de fato
-    # tem fala: num arquivo só de ambiente é correto que tudo seja silêncio.
-    tem_fala = fala - ordenados[len(ordenados) // 4] > 15.0
-    if tem_fala and idx_sil:
-        candidato = sum(ns[i] for i in idx_sil) / len(idx_sil)
-        if fala - candidato < 12.0:
-            idx_sil = []
+    idx_sil = []
+    if len(ns) >= MIN:
+        mais_silencioso = min(max(ns[i:i + MIN]) for i in range(len(ns) - MIN + 1))
+        LIMIAR = mais_silencioso + 3.0
+        idx_sil = [i for i, v in enumerate(ns) if v <= LIMIAR]
 
     if idx_sil:
         piso = sum(ns[i] for i in idx_sil) / len(idx_sil)
-        confiavel = True
+        # Silêncio de verdade fica bem abaixo da fala. Se não ficar, o que se
+        # achou foi fala baixa, e o piso é um limite superior.
+        confiavel = (fala - piso) >= 12.0
         passo = int(taxa * JANELA)
         amostras_sil = []
         for i in idx_sil:

@@ -961,13 +961,13 @@ saida = pathlib.Path(sys.argv[1])
 TAXA = 44100
 random.seed(7)
 
-def escreve(caminho, ganho_db, ruido=40):
+def escreve(caminho, ganho_db, ruido=40, silencio_s=4, dur_s=12):
     g = 10 ** (ganho_db / 20)
     quadros = []
-    for i in range(TAXA * 12):
+    for i in range(TAXA * dur_s):
         t = i / TAXA
         r = random.gauss(0, ruido)              # piso constante
-        if t > 4:                               # 4s de silêncio, depois "fala"
+        if t > silencio_s:                      # silêncio, depois "fala"
             fase = 2 * math.pi * 180 * t
             voz = 4000 * math.sin(fase) * (0.6 + 0.4 * math.sin(2 * math.pi * 3 * t))
         else:
@@ -980,6 +980,7 @@ def escreve(caminho, ganho_db, ruido=40):
 
 escreve(saida / "baixo.wav", 0)
 escreve(saida / "ruidoso.wav", 0, ruido=900)   # mesmo eco, S/R baixo
+escreve(saida / "quase_tudo_fala.wav", 0, silencio_s=3, dur_s=33)
 escreve(saida / "alto.wav", 14)    # mesmo conteúdo, 14 dB de ganho a mais
                                    # (piso vai a -44 dBFS, acima do antigo limiar fixo)
 PY
@@ -996,12 +997,13 @@ b = analisa(d / "baixo.wav")
 a = analisa(d / "alto.wav")
 m = analisa(d / "baixo.m4a")
 n = analisa(d / "ruidoso.wav")
+q = analisa(d / "quase_tudo_fala.wav")
 print(f"{b['silencio_s']:.1f} {a['silencio_s']:.1f} {b['snr']:.1f} {a['snr']:.1f} "
       f"{m['tipo_codec']} {m['taxa_bits']} {int(b['reverb_confiavel'])} "
-      f"{int(n['reverb_confiavel'])} {n['snr']:.1f}")
+      f"{int(n['reverb_confiavel'])} {n['snr']:.1f} {q['piso']:.1f}")
 PY
 )" || MET=""
-read -r SIL_B SIL_A SNR_B SNR_A CODEC1 CODEC2 KBPS REV_OK REV_RUIM SNR_N <<< "$MET"
+read -r SIL_B SIL_A SNR_B SNR_A CODEC1 CODEC2 KBPS REV_OK REV_RUIM SNR_N PISO_Q <<< "$MET"
 rm -rf "$AUD_DIR"
 
 if [[ -z "$MET" ]]; then
@@ -1026,6 +1028,14 @@ else
     ok "reverberação se declara não confiável com S/R baixo (${SNR_N} dB)"
   else
     bad "reverberação não distingue S/R alto de baixo (${REV_OK}/${REV_RUIM})"
+  fi
+  # Arquivo 90% falado: o piso tem que sair dos 3s de silêncio (-58 dBFS),
+  # não das pausas entre palavras. Um limiar por percentil caía dentro da fala
+  # e media a voz — deu -41,8 dBFS onde a sala estava a -54.
+  if awk -v p="$PISO_Q" 'BEGIN{exit !(p < -50)}'; then
+    ok "piso vem do trecho mais silencioso, não das pausas (${PISO_Q} dBFS)"
+  else
+    bad "piso medido nas pausas da fala (${PISO_Q} dBFS, esperado < -50)"
   fi
   # ALAC é sem perdas mesmo saindo abaixo de 400 kbps.
   if [[ "$CODEC1 $CODEC2" == "sem perdas" ]]; then

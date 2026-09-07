@@ -32,6 +32,8 @@ FONTE = RAIZ / "scripts" / "monitor.swift"
 BINARIO = RAIZ / ".cache" / "monitor"
 
 JANELA_S = 20.0          # memória para estimar fundo e voz
+MEMORIA_REF_S = 180.0    # por quanto tempo o melhor fundo serve de referência
+AQUECIMENTO_S = 2.0      # os primeiros blocos do microfone vêm perto de zero
 SUBIDA_ALERTA = 6.0      # dB de subida do fundo que dispara o aviso
 ACIMA_DO_FUNDO = 8.0     # dB acima do fundo para um bloco contar como voz
 META_MIN = 30.0          # minutos de material que a clonagem profissional pede
@@ -85,7 +87,8 @@ def main() -> int:
 
     memoria: collections.deque[float] = collections.deque(maxlen=int(JANELA_S / 0.05))
     traco: collections.deque[float] = collections.deque(maxlen=46)
-    piso_ref = None
+    refs: collections.deque[tuple[float, float]] = collections.deque()
+    inicio_sessao = time.time()
     inicio_tomada = time.time()
     tomadas: list[tuple[float, float, float]] = []   # duração, voz, S/R
     ultimo_desenho = 0.0
@@ -146,9 +149,17 @@ def main() -> int:
             else:
                 firmeza = None
 
-            if piso_ref is None or piso < piso_ref:
-                piso_ref = piso
-            subida = piso - piso_ref if piso_ref is not None else 0.0
+            # A referência de fundo é MÓVEL: o melhor dos últimos minutos, não
+            # o melhor da sessão inteira. Com mínimo absoluto, um instante
+            # anormalmente baixo — inclusive o arranque do microfone, que vem
+            # perto de zero — fixava a referência baixa demais e o alerta
+            # ficava aceso para sempre.
+            if agora - inicio_sessao > AQUECIMENTO_S:
+                refs.append((agora, piso))
+            while refs and agora - refs[0][0] > MEMORIA_REF_S:
+                refs.popleft()
+            piso_ref = min((v for _, v in refs), default=piso)
+            subida = piso - piso_ref
             alertando = subida >= SUBIDA_ALERTA
 
             lo, hi = min(traco), max(traco)

@@ -389,3 +389,31 @@ Vale como padrão, não como curiosidade: **toda a série de testes de posição
 mostrou que o caminho mecânico importa mais que o acústico.** Suporte na mesa
 custou 8 a 9 dB nas graves, aparelho nu custou 7 a 12 dB, e ambos passam
 despercebidos porque ninguém ouve o problema — só o microfone, encostado nele.
+
+### Piso de ruído se mede no trecho mais silencioso, não abaixo de um limiar
+
+Terceira versão da mesma função, e a terceira falha veio de um ângulo novo. O
+limiar fixo de −50 dBFS julgava o ganho do aparelho. O limiar por percentil
+corrigiu isso, mas quebrou numa gravação **87% falada**: o corte caiu dentro
+das pausas entre palavras e passou a medir a voz. Deu −41,8 dBFS de "ruído"
+onde a sala estava a −54, reprovando material bom.
+
+A formulação que sobrevive às três é não usar limiar nenhum: procure o **trecho
+contínuo de 2 s mais silencioso do arquivo** e ancore o piso nele, usando o
+máximo dentro da janela para exigir silêncio o tempo todo. Não depende do ganho
+nem de quanto do arquivo é fala.
+
+O padrão vale além do áudio: **um limiar é uma suposição sobre a distribuição
+do dado.** Toda vez que a distribuição mudou — outro aparelho, outra proporção
+de fala — o limiar quebrou. Estatística de ordem sobre o próprio arquivo não
+tem esse problema.
+
+### Referência de ruído tem que ser móvel
+
+O monitor ao vivo comparava o fundo atual com o menor já visto na sessão. Um
+avião passou, o alerta acendeu certo, e depois nunca mais apagou: bastou um
+instante anormalmente baixo — inclusive o arranque do microfone, que entrega os
+primeiros blocos perto de zero — para fixar a referência baixo demais.
+
+Referência de "normal" em sinal que varia tem que ser janelada. Agora é o menor
+fundo dos últimos três minutos, com os dois primeiros segundos descartados.
