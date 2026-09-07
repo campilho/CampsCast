@@ -1,39 +1,30 @@
 # Áudio gerado — vive no S3, não no repo
 audio/
 *.mp3
-
 # Logs de execução
 logs/
 *.log
-
 # Feed gerado
 feed/feed.xml
-
 # Segredos
 .env
 .env.local
-
 # Python
 __pycache__/
 *.pyc
 .venv/
 venv/
-
 # macOS
 .DS_Store
-
 # Abrigo temporário do smoke test (recuperado automaticamente)
 .smoke-backup/
-
 # Anotações pessoais do autor — não fazem parte do projeto
 privado/
-
 # Gravações de teste da voz — pessoais e grandes
 *.m4a
 *.wav
 *.aiff
-
 # Amostras convertidas para clonagem de voz
 amostras-voz/
-amostras-voz/
 referencias/clones/*.mp3
+gravacoes/

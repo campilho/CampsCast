@@ -795,6 +795,7 @@ assert recursos == [
     "arn:aws:s3:::meu-bucket/feed.xml",
     "arn:aws:s3:::meu-bucket/cover.jpg",
     "arn:aws:s3:::meu-bucket/audio/*",
+    "arn:aws:s3:::meu-bucket/referencias/*",
 ], recursos
 assert all(r.startswith("arn:aws:s3:::") for r in recursos), "ARN mal formado"
 assert not any("s3://" in r for r in recursos), "ARN não usa esquema s3://"
@@ -1135,6 +1136,11 @@ if m.percentil([-60, -50, -40], 0.5) != -50: erros.append("percentil mediana")
 if m.relogio(125) != "02:05": erros.append("relogio")
 if len(m.barra(-40)) != 30: erros.append("largura da barra")
 if m.barra(-100) != chr(9617)*30: erros.append("barra no piso")
+linhas = m.analisador([-12.0] + [-90.0]*7, [-12.0] + [-90.0]*7)
+if len(linhas) != m.ALTURA + 2: erros.append("altura do analisador")
+if linhas[0].count(chr(9608)) != 3: erros.append("banda alta não chega ao topo")
+if chr(9608) in linhas[m.ALTURA - 1].replace(linhas[m.ALTURA-1][:4], "", 1)[4:]:
+    erros.append("banda baixa acendeu coluna errada")
 print(";".join(erros) if erros else "ok")
 PYMON
 )" || MON="import falhou"
@@ -1143,7 +1149,7 @@ if [[ "$MON" == "ok" ]]; then
 else
   bad "monitor: $MON"
 fi
-if grep -q "não são os de lá" scripts/monitor.py; then
+if grep -q "não descrevem o arquivo dela" scripts/monitor.py; then
   ok "monitor avisa que os dBFS não valem para outro aparelho"
 else
   bad "monitor não avisa sobre comparar dBFS entre aparelhos"

@@ -26,9 +26,10 @@ saem as duas referências. Sem calibrar não há como saber o que é "normal" ne
 sala, nesta hora, neste microfone.
 
 DE QUAL MICROFONE SÃO OS NÚMEROS. Do dispositivo de entrada padrão do sistema,
-cujo nome aparece no cabeçalho. Se você grava em outro aparelho, os dBFS daqui
-não são os de lá: ganho diferente desloca a escala inteira. Vale para variação,
-não como alvo absoluto — quem julga o arquivo é o check_recording.py.
+cujo nome aparece no cabeçalho — e só dele. Se a gravação de verdade acontece em
+outro aparelho, esses dBFS não descrevem o arquivo dela: ganho diferente desloca
+a escala inteira. Use para variação (subiu? caiu? está firme?), não como alvo
+absoluto. Quem julga o arquivo é o check_recording.py.
 
 Vários programas podem ler o mesmo microfone ao mesmo tempo no macOS, então dá
 para gravar num aplicativo e monitorar aqui.
@@ -49,11 +50,12 @@ FONTE = RAIZ / "scripts" / "monitor.swift"
 BINARIO = RAIZ / ".cache" / "monitor"
 
 CALIBRACAO_S = 8.0
-JANELA_S = 15.0
+JANELA_S = 15.0        # memória para estatística da voz
+JANELA_VOZ_S = 2.0     # janela da decisão "tem alguém falando"
+QUEDA_PICO = 0.35      # dB por quadro que o marcador de pico desce
 VOZ_ACIMA = 12.0       # dB na banda de voz que indicam alguém falando
 RUIDO_ACIMA = 10.0     # dB nos graves que indicam fonte externa entrando
 META_MIN = 30.0
-SPARK = "▁▂▃▄▅▆▇█"
 
 
 def compila() -> pathlib.Path:
@@ -80,9 +82,41 @@ def percentil(vs, p: float) -> float:
     return o[min(len(o) - 1, max(0, int(len(o) * p)))]
 
 
+ROTULOS = ["60", "125", "250", "500", " 1k", " 2k", " 4k", " 8k"]
+PISO_TELA, TETO_TELA, ALTURA = -80.0, -12.0, 9
+LARGURA_COL = 4
+
+
 def barra(v: float, lo: float = -70.0, hi: float = -5.0, largura: int = 30) -> str:
     n = int(max(0.0, min(1.0, (v - lo) / (hi - lo))) * largura)
     return "█" * n + "░" * (largura - n)
+
+
+def analisador(faixas: list[float], picos: list[float]) -> list[str]:
+    """Analisador de espectro em oito bandas, com retenção de pico.
+
+    Além do visual, serve de diagnóstico: avião e trânsito acendem as colunas
+    da esquerda sem tocar o miolo, e a voz faz o contrário.
+    """
+    def altura(db: float) -> float:
+        return max(0.0, min(1.0, (db - PISO_TELA) / (TETO_TELA - PISO_TELA))) * ALTURA
+
+    hs = [altura(v) for v in faixas]
+    hp = [altura(v) for v in picos]
+    linhas = []
+    for linha in range(ALTURA, 0, -1):
+        celulas = []
+        for h, p in zip(hs, hp):
+            if h >= linha:
+                celulas.append("███ ")
+            elif int(p + 0.999) == linha:
+                celulas.append("▄▄▄ ")          # marcador de pico retido
+            else:
+                celulas.append("    ")
+        linhas.append("  │" + "".join(celulas).rstrip().ljust(len(ROTULOS) * LARGURA_COL))
+    linhas.append("  └" + "─" * (len(ROTULOS) * LARGURA_COL))
+    linhas.append("   " + "".join(f"{r:<4}" for r in ROTULOS))
+    return linhas
 
 
 def classifica(graves: list[float], vozes: list[float],
@@ -94,8 +128,11 @@ def classifica(graves: list[float], vozes: list[float],
     quarto calmo e deixam a banda de voz praticamente intacta, 1 dB.
     """
     subida = percentil(graves, 0.5) - base_grave
-    falando = [v for v in vozes if v > base_voz + VOZ_ACIMA]
-    tem_voz = len(falando) > len(vozes) * 0.20 if vozes else False
+    # A decisão de voz olha só o trecho recente: exigir 20% de uma janela de
+    # 15s significava esperar 3 segundos de fala acumulada para acender.
+    recentes = vozes[-int(JANELA_VOZ_S / 0.05):] if vozes else []
+    falando = [v for v in recentes if v > base_voz + VOZ_ACIMA]
+    tem_voz = len(falando) > len(recentes) * 0.25 if recentes else False
     return tem_voz, subida >= RUIDO_ACIMA, subida
 
 
@@ -114,7 +151,8 @@ def main() -> int:
     print("  Enter encerra a tomada.  'c' e Enter recalibra.  Ctrl-C sai.\n")
 
     mem = collections.deque(maxlen=int(JANELA_S / 0.05))
-    traco = collections.deque(maxlen=44)
+    faixas = [PISO_TELA] * 8
+    picos = [PISO_TELA] * 8
     base_grave = base_voz = None
     cal: list[tuple[float, float]] = []
     inicio_cal = time.time()
@@ -163,10 +201,15 @@ def main() -> int:
                 dado = proc.stdout.readline()
                 if not dado:
                     break
+                campos = dado.split()
+                if len(campos) < 12:
+                    continue
                 try:
-                    total, _pico, grave, voz = (float(x) for x in dado.split())
+                    total, _pico, grave, voz = (float(x) for x in campos[:4])
+                    faixas = [float(x) for x in campos[4:12]]
                 except ValueError:
                     continue
+                picos = [max(f, p - QUEDA_PICO) for f, p in zip(faixas, picos)]
                 if base_voz is None:
                     cal.append((grave, voz))
                     if time.time() - inicio_cal >= CALIBRACAO_S and len(cal) > 40:
@@ -183,7 +226,6 @@ def main() -> int:
                         sys.stdout.flush()
                     continue
                 mem.append((total, grave, voz))
-                traco.append(total)
 
             agora = time.time()
             if base_voz is None or agora - ultimo < 0.15 or len(mem) < 20:
@@ -203,15 +245,13 @@ def main() -> int:
             else:
                 firmeza = nivel = None
 
-            lo, hi = min(traco), max(traco)
-            spark = "".join(SPARK[min(7, int((v - lo) / (hi - lo + 1e-9) * 8))]
-                            for v in traco)
-
             out = [
                 f"  ⏱  {relogio(agora - inicio_tomada)}   tomada {len(tomadas) + 1}"
-                f"      {barra(totais[-1])} {totais[-1]:6.1f} dBFS",
+                f"      {totais[-1]:6.1f} dBFS",
                 "",
             ]
+            out += analisador(faixas, picos)
+            out.append("")
             if nivel is not None:
                 q = "firme" if firmeza < 3.0 else "oscilando"
                 out.append(f"  voz     {nivel:6.1f} dBFS   ±{firmeza:.1f} dB {q}")
@@ -219,8 +259,6 @@ def main() -> int:
                 out.append(f"  voz        —          (ninguém falando)")
             out.append(f"  graves  {subida:+6.1f} dB sobre a calibração"
                        f"   (base {base_grave:.1f})")
-            out.append("")
-            out.append(f"  {spark}")
             out.append("")
             out.append(f"  \033[1;31m⚠  RUÍDO EXTERNO ENTRANDO — pare\033[0m"
                        if alerta else "  \033[32m✓\033[0m  ambiente estável")
@@ -245,8 +283,11 @@ def main() -> int:
         print(f"   {i:2d}.  {relogio(d)}   voz {v:6.1f} dBFS")
     if tomadas:
         print(f"\n  total {relogio(sum(d for d, _, _ in tomadas))}")
-    print(f"\n  Números do microfone \"{cabecalho}\", não do aparelho onde você")
-    print("  gravou. Avalie os arquivos de verdade com:\n")
+    print(f"\n  Números lidos de: {cabecalho}\n")
+    print("  Este monitor acompanha o ambiente; ele não avalia o arquivo.")
+    print("  Para converter as gravações do Gravador do iPhone (.m4a) para o")
+    print("  formato que a ElevenLabs aceita (.wav mono) e ver as métricas de")
+    print("  cada uma, incluindo relação sinal/ruído:\n")
     print("      python3 scripts/prep_voice_samples.py <arquivos>\n")
     return 0
 

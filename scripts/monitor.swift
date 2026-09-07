@@ -37,6 +37,14 @@ let nome = AVCaptureDevice.default(for: .audio)?.localizedName ?? "microfone pad
 print("# \(nome) @ \(Int(taxa)) Hz")
 fflush(stdout)
 
+// Oito bandas de exibição, aproximadamente por oitava. Servem ao analisador
+// no terminal e também mostram de olho onde o ruído está entrando.
+let BANDAS: [(Float, Float)] = [(40, 90), (90, 180), (180, 355), (355, 710),
+                                (710, 1400), (1400, 2800), (2800, 5600), (5600, 11000)]
+var faixaAlta = BANDAS.map { (UmPolo(corte: $0.0, taxa: taxa), UmPolo(corte: $0.0, taxa: taxa)) }
+var faixaBaixa = BANDAS.map { (UmPolo(corte: $0.1, taxa: taxa), UmPolo(corte: $0.1, taxa: taxa)) }
+var somaFaixa = [Float](repeating: 0, count: BANDAS.count)
+
 var grave1 = UmPolo(corte: 200, taxa: taxa), grave2 = UmPolo(corte: 200, taxa: taxa)
 var vozAlta1 = UmPolo(corte: 300, taxa: taxa), vozAlta2 = UmPolo(corte: 300, taxa: taxa)
 var vozBaixa1 = UmPolo(corte: 3400, taxa: taxa), vozBaixa2 = UmPolo(corte: 3400, taxa: taxa)
@@ -49,10 +57,17 @@ entrada.installTap(onBus: 0, bufferSize: AVAudioFrameCount(taxa / 20),
     let n = Int(buffer.frameLength)
     if n == 0 { return }
     var soma: Float = 0, somaGrave: Float = 0, somaVoz: Float = 0, pico: Float = 0
+    for b in 0..<somaFaixa.count { somaFaixa[b] = 0 }
     for i in 0..<n {
         let x = dados[i]
         soma += x * x
         if abs(x) > pico { pico = abs(x) }
+
+        for b in 0..<BANDAS.count {
+            let semBaixo = x - faixaAlta[b].1.passaBaixa(faixaAlta[b].0.passaBaixa(x))
+            let f = faixaBaixa[b].1.passaBaixa(faixaBaixa[b].0.passaBaixa(semBaixo))
+            somaFaixa[b] += f * f
+        }
 
         let g = grave2.passaBaixa(grave1.passaBaixa(x))
         somaGrave += g * g
@@ -63,11 +78,11 @@ entrada.installTap(onBus: 0, bufferSize: AVAudioFrameCount(taxa / 20),
         somaVoz += v * v
     }
     let m = Float(n)
-    print(String(format: "%.2f %.2f %.2f %.2f",
-                 decibeis((soma / m).squareRoot()),
-                 decibeis(pico),
-                 decibeis((somaGrave / m).squareRoot()),
-                 decibeis((somaVoz / m).squareRoot())))
+    var campos = [decibeis((soma / m).squareRoot()), decibeis(pico),
+                  decibeis((somaGrave / m).squareRoot()),
+                  decibeis((somaVoz / m).squareRoot())]
+    campos += somaFaixa.map { decibeis(($0 / m).squareRoot()) }
+    print(campos.map { String(format: "%.1f", $0) }.joined(separator: " "))
     fflush(stdout)
 }
 
