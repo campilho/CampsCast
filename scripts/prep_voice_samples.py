@@ -27,6 +27,9 @@ TAXA = 44100          # padrão de áudio; 48k também serve e ocupa 9% mais
 MB_POR_MINUTO = 5.05  # mono 16 bits a 44,1 kHz
 
 
+SNR_MINIMO = 30.0
+
+
 def converte(origem: pathlib.Path, destino: pathlib.Path) -> None:
     destino.parent.mkdir(parents=True, exist_ok=True)
     r = subprocess.run(
@@ -81,20 +84,55 @@ def main() -> int:
         elif "~" not in niveis:
             print("  ok — sem ressalvas")
 
-    print(f"\n═══ resumo ═══")
-    print(f"  {total_min:.0f} minutos, {total_mb:.0f} MB em {saida}/")
-    if total_min < 30:
-        print(f"  Faltam {30 - total_min:.0f} minutos para o mínimo do "
-              "Professional Voice Cloning.")
-    else:
-        print("  Acima dos 30 minutos mínimos.")
-    if reprovados:
-        print(f"\n  NÃO SUBA antes de regravar: {', '.join(reprovados)}")
-        print("  Material ruim contamina o modelo inteiro, e não há como "
-              "remover depois.")
-        return 1
-    print("\n  Suba os .wav como amostras separadas — a ElevenLabs aceita vários.")
-    return 0
+    # Auditoria da PASTA INTEIRA, não só do que acabou de ser convertido. Quem
+    # sobe seleciona a pasta, não a lista desta execução: uma sessão anterior
+    # deixou 4,7 minutos com piso a -31,6 dBFS convivendo com material bom, e o
+    # resumo anunciava só os minutos recém-processados.
+    return audita_pasta(saida)
+
+
+def audita_pasta(saida: pathlib.Path, mover: bool = True) -> int:
+    from check_recording import analisa
+
+    quarentena = saida / "reprovadas"
+    aprovados, recusados = [], []
+    for w in sorted(saida.glob("*.wav")):
+        try:
+            m = analisa(w)
+        except Exception as e:
+            recusados.append((w, f"não deu para analisar: {e}"))
+            continue
+        if not m["piso_confiavel"]:
+            recusados.append((w, "sem silêncio para medir o S/R"))
+        elif m["snr"] < SNR_MINIMO:
+            recusados.append((w, f"S/R {m['snr']:.1f} dB, abaixo de {SNR_MINIMO:.0f}"))
+        else:
+            aprovados.append((w, m))
+
+    print(f"\n═══ o que está em {saida}/ ═══\n")
+    for w, m in aprovados:
+        print(f"  ✓  {w.name:34} {m['duracao']/60:5.1f} min   "
+              f"S/R {m['snr']:5.1f} dB   fala {m['fala']:6.1f} dBFS")
+    for w, motivo in recusados:
+        print(f"  ✗  {w.name:34} {motivo}")
+
+    bons = sum(m["duracao"] for _, m in aprovados) / 60
+    print(f"\n  {bons:.1f} minutos aprovados de {30:.0f}")
+    if bons < 30:
+        print(f"  Faltam {30 - bons:.1f} minutos.")
+
+    if not recusados:
+        print("\n  Suba os .wav como amostras separadas — a ElevenLabs aceita vários.")
+        return 0
+
+    if mover:
+        quarentena.mkdir(exist_ok=True)
+        for w, _ in recusados:
+            w.rename(quarentena / w.name)
+        print(f"\n  {len(recusados)} arquivo(s) movido(s) para {quarentena}/ para que")
+        print("  não subam por engano. Nada foi apagado.")
+    print("  Material ruim contamina o modelo inteiro, e não há como remover depois.")
+    return 1
 
 
 if __name__ == "__main__":

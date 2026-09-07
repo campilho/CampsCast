@@ -443,3 +443,18 @@ Uma única medição de trinta segundos não caracteriza um cômodo com rua; ela
 amostra um instante. Para planejar gravação é preciso a distribuição, e a
 conclusão que sai dela é oposta à intuição: **não espere a janela silenciosa,
 grave mais blocos e deixe a medição escolher.**
+
+### Valide a pasta que vai subir, não a lista que você processou
+
+O `prep_voice_samples.py` anunciava "9 minutos" enquanto a pasta de upload
+tinha 28, incluindo 4,7 minutos de uma sessão anterior com piso de ruído a
+**−31,6 dBFS** — 24 dB acima do material novo. Ele auditava o que tinha acabado
+de converter; quem sobe seleciona a pasta.
+
+O descompasso é silencioso e do tipo pior: o número que aparece é verdadeiro,
+só não é sobre a coisa certa. E o custo já é conhecido — foi assim que o clone
+anterior aprendeu o quarto.
+
+Agora audita a pasta inteira a cada execução e move o reprovado para
+`reprovadas/` em vez de apagar. **Toda ferramenta de validação deve medir o
+artefato que vai ser usado, não o que passou pela sua mão.**
