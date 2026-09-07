@@ -193,6 +193,68 @@ comprime.
 **Nada disso vira qualidade aqui.** O `prep_voice_samples.py` converte para
 mono antes de subir, e bits abaixo do ruído da sala não carregam voz.
 
+### A adega desligada: o teste que fecha o caso
+
+Mesma sala, mesmo par de aparelhos, adega desligada na tomada:
+
+| | 239,56 Hz com adega | Sem adega | Queda |
+|---|---|---|---|
+| iPhone 16 | −57,8 dBFS | −96,6 dBFS | **38,8 dB** |
+| MacBook | −77,3 dBFS | −103,5 dBFS | **26,2 dB** |
+
+O tom desapareceu abaixo do piso nos dois. Restou um resíduo em 120 Hz a
+−85 dBFS, presente em todos os cômodos e em ambos os aparelhos: zumbido da rede
+do prédio, 30 dB abaixo do que a adega era e 65 dB abaixo da voz. Irrelevante.
+
+Efeito no ruído total do cômodo:
+
+| | Com adega | Sem adega | Ganho |
+|---|---|---|---|
+| MacBook, sala | −61,4 dBFS | −62,3 dBFS | 0,9 dB |
+| iPhone, sala | −50,0 dBFS | −59,4 dBFS | **9,4 dB** |
+
+A energia em médio-grave do iPhone caiu de 55% para 15%. O MacBook mal registra
+a diferença porque, no ganho dele, o tom já estava 16 dB abaixo do piso largo —
+**o aparelho que menos amplifica é o que menos enxerga o problema.**
+
+Com a adega desligada, os dois aparelhos concordam que a sala é o melhor cômodo:
+2,1 dB mais silenciosa que o quarto pelo MacBook, 4,5 dB pelo iPhone. E é a sala
+que tem o vidro duplo contra a rota de Congonhas.
+
+### Aparelho contra aparelho, com a mesma fala
+
+Um minuto no quarto, porta fechada, 20 s de silêncio e 40 s de voz, gravado
+**simultaneamente** nos dois aparelhos posicionados à mesma distância.
+
+| Aparelho | Ruído | Fala | S/R | Reverb |
+|---|---|---|---|---|
+| MacBook Pro M3 | −50,3 dBFS | −35,1 dBFS | **15,2 dB** | — |
+| iPhone 16 | −46,5 dBFS | −29,5 dBFS | **17,0 dB** | 0,73 s |
+
+O posicionamento foi confirmado pelos números: o desvio no nível da fala foi de
++5,5 dB e o desvio de ganho medido antes, só com silêncio, era +5,3 dB. Batem,
+então a diferença é do aparelho, não da distância.
+
+**Os aparelhos empatam: 1,8 dB de S/R.** Combinado com os 21 dB que a distância
+produziu no teste anterior, o veredito é que o microfone quase não importa
+nesta faixa de equipamento.
+
+### O custo de igualar a distância
+
+| Cenário | Fala | S/R | Reverb |
+|---|---|---|---|
+| iPhone a ~20 cm | −23,6 dBFS | **38 dB** | 0,48 s |
+| iPhone com distância igualada ao Mac | −29,5 dBFS | **17 dB** | 0,73 s |
+
+**Vinte e um decibéis perdidos** para tornar a comparação justa. Os 5,9 dB a
+menos de fala correspondem a cerca do dobro da distância, e o eco subiu junto,
+porque afastar aumenta o peso do som refletido sobre o direto. O ruído da sala
+não mudou; só o sinal caiu.
+
+O experimento respondeu a pergunta e, no mesmo ato, produziu material
+inaproveitável. **Comparação e produção pedem posições diferentes** — decida o
+aparelho num teste dedicado e grave de perto.
+
 ### Referência de comparação
 
 | Cenário | S/R |
@@ -205,10 +267,6 @@ Gravação caseira que chegue perto disso está excelente. É o teto prático.
 
 ## Cenários ainda não medidos
 
-- **Sala com a adega desligada na tomada** — o teste que fecha o caso dos
-  239,56 Hz e possivelmente elege a sala como melhor cômodo
-- **MacBook contra iPhone com a mesma fala, mesma distância, ao mesmo tempo** —
-  o único jeito de comparar os aparelhos; silêncio não serve
 - Quarto em dia útil, hora do rush, para medir o custo da fresta de ventilação
 - iPhone 17 Pro Max, mesma distância e sala
 - Microfone USB dinâmico com braço articulado

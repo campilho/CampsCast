@@ -947,6 +947,83 @@ else
   ok ".env.example deixa CLAUDE_BIN comentado"
 fi
 
+# ------------------------------------------------- 12 métricas de áudio
+head_ "12. Métricas de áudio (ganho e codec)"
+# Dois bugs achados comparando MacBook e iPhone gravando o mesmo minuto:
+#  - o limiar de silêncio era absoluto (-50 dBFS), então o aparelho de ganho
+#    maior era julgado "sem silêncio" só por amplificar mais;
+#  - o codec era adivinhado pelo bitrate, e ALAC mono de 16 bits comprime tanto
+#    que caía abaixo do corte e era rotulado "com perdas".
+AUD_DIR="$(mktemp -d)"
+python3 - "$AUD_DIR" <<'PY'
+import math, random, struct, sys, wave, pathlib
+saida = pathlib.Path(sys.argv[1])
+TAXA = 44100
+random.seed(7)
+
+def escreve(caminho, ganho_db):
+    g = 10 ** (ganho_db / 20)
+    quadros = []
+    for i in range(TAXA * 12):
+        t = i / TAXA
+        ruido = random.gauss(0, 40)            # piso constante
+        if t > 4:                               # 4s de silêncio, depois "fala"
+            fase = 2 * math.pi * 180 * t
+            voz = 4000 * math.sin(fase) * (0.6 + 0.4 * math.sin(2 * math.pi * 3 * t))
+        else:
+            voz = 0.0
+        v = max(-32000, min(32000, int((voz + ruido) * g)))
+        quadros.append(v)
+    with wave.open(str(caminho), "wb") as w:
+        w.setnchannels(1); w.setsampwidth(2); w.setframerate(TAXA)
+        w.writeframes(b"".join(struct.pack("<h", v) for v in quadros))
+
+escreve(saida / "baixo.wav", 0)
+escreve(saida / "alto.wav", 14)    # mesmo conteúdo, 14 dB de ganho a mais
+                                   # (piso vai a -44 dBFS, acima do antigo limiar fixo)
+PY
+
+# ALAC mono de 16 bits: bitrate baixo, mas sem perdas.
+afconvert -f m4af -d alac "$AUD_DIR/baixo.wav" "$AUD_DIR/baixo.m4a" 2>/dev/null
+
+MET="$(python3 - "$AUD_DIR" <<'PY'
+import sys, pathlib
+sys.path.insert(0, "scripts")
+from audio_metrics import analisa
+d = pathlib.Path(sys.argv[1])
+b = analisa(d / "baixo.wav")
+a = analisa(d / "alto.wav")
+m = analisa(d / "baixo.m4a")
+print(f"{b['silencio_s']:.1f} {a['silencio_s']:.1f} {b['snr']:.1f} {a['snr']:.1f} "
+      f"{m['tipo_codec']} {m['taxa_bits']}")
+PY
+)" || MET=""
+read -r SIL_B SIL_A SNR_B SNR_A CODEC1 CODEC2 KBPS <<< "$MET"
+rm -rf "$AUD_DIR"
+
+if [[ -z "$MET" ]]; then
+  bad "analisa() falhou nos arquivos sintéticos"
+else
+  # O arquivo com mais ganho tem que achar silêncio igual ao outro.
+  if awk -v a="$SIL_A" 'BEGIN{exit !(a >= 1.5)}'; then
+    ok "silêncio detectado apesar do ganho maior (${SIL_A}s)"
+  else
+    bad "ganho maior escondeu o silêncio (${SIL_A}s contra ${SIL_B}s) — limiar absoluto"
+  fi
+  # S/R é uma razão: não pode mudar quando só o ganho muda.
+  if awk -v x="$SNR_B" -v y="$SNR_A" 'BEGIN{exit !((x-y < 2) && (y-x < 2))}'; then
+    ok "S/R não muda com o ganho (${SNR_B} contra ${SNR_A} dB)"
+  else
+    bad "S/R mudou só por causa do ganho (${SNR_B} contra ${SNR_A} dB)"
+  fi
+  # ALAC é sem perdas mesmo saindo abaixo de 400 kbps.
+  if [[ "$CODEC1 $CODEC2" == "sem perdas" ]]; then
+    ok "ALAC reconhecido como sem perdas (${KBPS} kbps)"
+  else
+    bad "ALAC de ${KBPS} kbps rotulado '$CODEC1 $CODEC2' — corte por bitrate"
+  fi
+fi
+
 # ------------------------------------------------------------------- resultado
 printf '\n\033[1m%s\033[0m\n' "Resultado: $PASS ok, $FAIL falha(s)"
 [[ $FAIL -eq 0 ]] || exit 1

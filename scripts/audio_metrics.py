@@ -41,16 +41,29 @@ def para_wav(caminho: pathlib.Path, taxa: int = TAXA) -> pathlib.Path:
     return saida
 
 
+SEM_PERDAS = ("alac", "lpcm", "flac", "aiff")
+
+
 def taxa_de_bits(caminho: pathlib.Path) -> tuple[int, str]:
+    """Taxa de bits e se a codificação preserva o original.
+
+    O tipo vem do nome do codec, nunca do bitrate: ALAC mono de 16 bits comprime
+    o silêncio a ponto de sair abaixo de 200 kbps, e um corte por bitrate o
+    rotularia "com perdas" — foi o que aconteceu com a gravação do MacBook.
+    """
+    kbps, tipo = 0, "?"
     try:
         r = subprocess.run(["afinfo", str(caminho)], capture_output=True, text=True)
         for linha in r.stdout.splitlines():
-            if "bit rate" in linha.lower():
+            baixa = linha.lower()
+            if "bit rate" in baixa:
                 kbps = int(int(linha.split(":")[1].strip().split()[0]) / 1000)
-                return kbps, "sem perdas" if kbps >= 400 else "com perdas"
+            elif "data format" in baixa:
+                tipo = ("sem perdas" if any(c in baixa for c in SEM_PERDAS)
+                        else "com perdas")
     except Exception:
         pass
-    return 0, "?"
+    return kbps, tipo
 
 
 def dbfs(rms: float) -> float:
@@ -151,8 +164,16 @@ def analisa(caminho: pathlib.Path) -> dict:
     clipes = sum(1 for x in amostras if abs(x) >= 32700)
     rms_total = math.sqrt(sum(float(x) * x for x in amostras) / len(amostras))
 
-    # silêncio sustentado: 2s consecutivos abaixo de -50 dBFS
-    LIMIAR, MIN = -50.0, int(2.0 / JANELA)
+    ordenados = sorted(ns)
+    corte = max(1, len(ns) // 10)
+    fala = sum(ordenados[-corte * 3:]) / (corte * 3)
+
+    # Silêncio sustentado: 2s consecutivos abaixo do limiar. O limiar é ancorado
+    # na distribuição do próprio arquivo, não num valor fixo de dBFS. Com -50
+    # dBFS fixo, o mesmo minuto gravado ao mesmo tempo dava 4s de silêncio no
+    # MacBook e 0s no iPhone — só porque o iPhone amplifica ~5 dB a mais.
+    LIMIAR = ordenados[len(ordenados) // 4] + 3.0
+    MIN = int(2.0 / JANELA)
     idx_sil, corrida = [], []
     for i, v in enumerate(ns):
         if v < LIMIAR:
@@ -164,9 +185,14 @@ def analisa(caminho: pathlib.Path) -> dict:
     if len(corrida) >= MIN:
         idx_sil.extend(corrida)
 
-    ordenados = sorted(ns)
-    corte = max(1, len(ns) // 10)
-    fala = sum(ordenados[-corte * 3:]) / (corte * 3)
+    # Numa gravação sem pausa nenhuma o limiar relativo cairia dentro da fala
+    # baixa e a chamaria de silêncio. Só rejeitamos quando o arquivo de fato
+    # tem fala: num arquivo só de ambiente é correto que tudo seja silêncio.
+    tem_fala = fala - ordenados[len(ordenados) // 4] > 15.0
+    if tem_fala and idx_sil:
+        candidato = sum(ns[i] for i in idx_sil) / len(idx_sil)
+        if fala - candidato < 12.0:
+            idx_sil = []
 
     if idx_sil:
         piso = sum(ns[i] for i in idx_sil) / len(idx_sil)

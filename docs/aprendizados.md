@@ -58,6 +58,20 @@ nível de tomadas simultâneas: r ≥ 0,8 confirma. Se o desvio entre aparelhos
 mudar de um cômodo para outro (foi de +5,3 para +11,4 dB), há uma fonte local
 em um deles, e vale procurar no espectro.
 
+O erro estava também dentro da nossa ferramenta. O `check_recording.py` procurava
+silêncio com limiar fixo de −50 dBFS, e no mesmo minuto gravado ao mesmo tempo
+achou 4 s de silêncio no MacBook e **0 s no iPhone** — não porque o iPhone
+tivesse menos silêncio, mas porque amplifica 5 dB a mais. O limiar passou a ser
+ancorado na distribuição do próprio arquivo, e os dois passaram a acusar os 20 s
+que de fato foram gravados. Ver [teste que reproduz](../tests/smoke_test.sh),
+seção 12.
+
+Corolário desagradável: **o aparelho que menos amplifica é o que menos enxerga o
+problema.** O tom da adega estava 32 dB acima do piso local no iPhone e apenas
+25 dB no MacBook; no ruído total do cômodo, desligar a adega melhorou 9,4 dB no
+iPhone e 0,9 dB no MacBook. Diagnosticar sala com o aparelho de ganho baixo dá
+falso "está tudo bem".
+
 **Silêncio puro não escolhe aparelho.** Ele mede o piso, e o que decide é a
 relação sinal/ruído com voz na distância real. Para comparar microfones é
 preciso gravar a mesma fala, na mesma distância, ao mesmo tempo.
@@ -215,6 +229,10 @@ cai dentro da banda da voz, então o modelo o aprende como se fosse timbre e
 depois não há filtro que o tire sem levar a voz junto. Ronco de rua é largo e
 variável, e o modelo tende a tratá-lo como fundo.
 
+Confirmado desligando a adega na tomada: o tom caiu 38,8 dB no iPhone e 26,2 dB
+no MacBook, sumindo abaixo do piso nos dois, e a sala virou o cômodo mais
+silencioso da casa.
+
 Para distinguir motor de ruído ambiente, procure **série harmônica**: motor na
 rede aparece em múltiplos de 60 Hz. E para saber se o tom é acústico ou
 interferência elétrica no aparelho, meça em dois cômodos — interferência não
@@ -252,6 +270,31 @@ cômodo. Aprendeu o ambiente junto com a voz, e a reverberação subiu junto.
 **Mais material não compensa material pior.** E isso dá um critério objetivo de
 aceitação para o próximo clone: medir o piso de ruído do áudio gerado e comparar
 com o do clone anterior, em vez de decidir de ouvido.
+
+### O experimento justo pode destruir a gravação
+
+Para comparar dois microfones é preciso colocá-los à mesma distância. Foi feito,
+e funcionou: o desvio no nível da fala (+5,5 dB) bateu com o desvio de ganho
+medido antes só com silêncio (+5,3 dB), provando que as posições estavam iguais,
+e os aparelhos empataram em 1,8 dB de S/R.
+
+Só que igualar a distância significou afastar o celular de 20 para ~40 cm, e o
+material saiu com **21 dB a menos de relação sinal/ruído** e o eco subindo de
+0,48 para 0,73 s. Inaproveitável para clonagem.
+
+**Comparação e produção pedem posições diferentes.** Resolva a comparação num
+teste dedicado, aceite que o material dele é descartável, e grave a sério de
+perto. Não tente extrair as duas respostas da mesma tomada.
+
+### Codec se lê no nome, não no bitrate
+
+O tipo de codificação era adivinhado por um corte de 400 kbps. ALAC mono de 16
+bits comprime silêncio tão bem que sai a 176 kbps, e a gravação sem perdas do
+MacBook foi rotulada "com perdas" — o que, pela nossa própria regra de nunca
+comparar codecs diferentes, teria invalidado a comparação inteira.
+
+O nome do codec está no `afinfo`, em `Data format`. Adivinhar grandeza derivada
+quando o dado exato está disponível é sempre troca ruim.
 
 ## Infraestrutura
 
