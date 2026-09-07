@@ -1060,15 +1060,22 @@ fi
   # Exportar a mesma gravação duas vezes dá contêineres com metadados
   # diferentes: tamanho igual ao byte, hash de arquivo diferente, áudio igual.
   # Só o PCM denuncia, e amostra repetida entra no treino com peso dobrado.
-  DUP="$(python3 - "$AUD_DIR" <<'PYDUP'
-import sys, pathlib, shutil, importlib.util
+  DUP="$(python3 - <<'PYDUP'
+import sys, pathlib, shutil, struct, wave, random, tempfile, importlib.util
 sys.path.insert(0, "scripts")
 spec = importlib.util.spec_from_file_location("pvs", "scripts/prep_voice_samples.py")
 m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
-d = pathlib.Path(sys.argv[1])
-shutil.copy(d / "baixo.wav", d / "copia.wav")
-a, b = m._impressao(d / "baixo.wav"), m._impressao(d / "copia.wav")
-c = m._impressao(d / "ruidoso.wav")
+d = pathlib.Path(tempfile.mkdtemp())
+def grava(nome, semente):
+    random.seed(semente)
+    q = b"".join(struct.pack("<h", random.randint(-9000, 9000)) for _ in range(44100))
+    with wave.open(str(d / nome), "wb") as w:
+        w.setnchannels(1); w.setsampwidth(2); w.setframerate(44100); w.writeframes(q)
+grava("a.wav", 1); grava("outro.wav", 2)
+shutil.copy(d / "a.wav", d / "copia.wav")
+a, b = m._impressao(d / "a.wav"), m._impressao(d / "copia.wav")
+c = m._impressao(d / "outro.wav")
+shutil.rmtree(d)
 print("ok" if a == b and a != c else "falhou")
 PYDUP
 )" || DUP="erro"
