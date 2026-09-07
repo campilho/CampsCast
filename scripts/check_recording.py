@@ -104,7 +104,8 @@ def relatorio_sala(m: dict, detalhe: bool = False) -> None:
                     else "  ->  FLUTUANTE (conteúdo: TV, voz, trânsito)")
     print(linha_tempo)
     if m["reverb"]:
-        print(f"  sala    reverberação {m['reverb']:.2f}s")
+        marca = "" if m.get("reverb_confiavel", True) else "?"
+        print(f"  sala    reverberação {m['reverb']:.2f}s{marca}")
 
     spark, lo, hi = sparkline(ns)
     print(f"\n  {spark}")
@@ -127,7 +128,7 @@ def relatorio_sala(m: dict, detalhe: bool = False) -> None:
     if graves > 0.6:
         print("        ruído quase todo grave — atravessa porta e parede, por isso")
         print("        o microfone pega o que você não ouve")
-    if m["reverb"] and m["reverb"] > REVERB_OK:
+    if m["reverb"] and m["reverb"] > REVERB_OK and m.get("reverb_confiavel", True):
         print(f"  X     muito eco ({m['reverb']:.2f}s) — o clone aprende a sala junto")
 
     if detalhe:
@@ -172,7 +173,10 @@ def veredito(m: dict) -> list[tuple[str, str]]:
     else:
         s.append(("~", f"fala alta ({m['fala']:.1f} dBFS) — afaste-se"))
 
-    if m["reverb"]:
+    if m["reverb"] and not m.get("reverb_confiavel", True):
+        s.append(("i", f"reverberação ({m['reverb']:.2f}s) não é confiável com S/R de "
+                       f"{m['snr']:.0f} dB — o ruído infla a medida; melhore o S/R antes"))
+    elif m["reverb"]:
         if m["reverb"] <= REVERB_BOM:
             s.append(("ok", f"pouca reverberação ({m['reverb']:.2f}s)"))
         elif m["reverb"] <= REVERB_OK:

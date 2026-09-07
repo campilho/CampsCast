@@ -19,6 +19,7 @@ import wave
 
 TAXA = 22050
 JANELA = 0.25
+SNR_PARA_REVERB = 30.0   # abaixo disto a reverberação medida é ruído, não sala
 JANELA_CURTA = 0.05        # para medir decaimento de reverberação
 
 BANDAS = [
@@ -234,5 +235,10 @@ def analisa(caminho: pathlib.Path) -> dict:
         "espectro_fala": espectro(amostras, taxa),
         "espectro_ruido": espectro(amostras_sil, taxa) if amostras_sil else None,
         "reverb": reverberacao(amostras, taxa),
+        # A estimativa de reverberação só vale com sinal bem acima do ruído:
+        # o decaimento afunda no piso e o rabo achatado lê como eco longo.
+        # Medido somando ruído branco à mesma gravação, sala inalterada:
+        # S/R 39 dB -> 0,48s;  29 dB -> 0,61s;  20 dB -> 0,73s;  14 dB -> 0,95s.
+        "reverb_confiavel": (fala - piso) >= SNR_PARA_REVERB,
         "taxa": taxa,
     }

@@ -340,3 +340,21 @@ nomes de arquivo com lixo dentro.
 Hoje o abrigo fica dentro do repositório, com auto-recuperação e validação de
 nome. **A correção certa continua pendente:** os testes não deveriam tocar em
 dados reais.
+
+### Reverberação medida com pouco sinal é ruído, não sala
+
+A estimativa de reverberação dobrou — de 0,48 s para 0,95 s — quando só se
+somou ruído branco à mesma gravação. A sala não mudou. O decaimento afunda no
+piso antes de terminar, e o rabo achatado é lido como eco longo.
+
+Isso invalidou retroativamente várias leituras do projeto: os 0,73 s medidos no
+quarto vinham de gravações com 17 dB de S/R, e eram inteiramente explicáveis
+pelo ruído. Quase escolhemos o cômodo errado por causa disso.
+
+O script agora só reporta reverberação como confiável acima de 30 dB de S/R.
+É a terceira métrica que precisou de uma regra de comparabilidade, depois de
+codec e de dBFS entre aparelhos: **toda métrica derivada carrega uma condição
+de validade, e vale a pena descobri-la antes de comparar, não depois.**
+
+O jeito de descobrir é barato e sempre o mesmo — pegue um arquivo bom, degrade
+uma variável de cada vez, e veja o que a métrica faz.

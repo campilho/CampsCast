@@ -961,24 +961,25 @@ saida = pathlib.Path(sys.argv[1])
 TAXA = 44100
 random.seed(7)
 
-def escreve(caminho, ganho_db):
+def escreve(caminho, ganho_db, ruido=40):
     g = 10 ** (ganho_db / 20)
     quadros = []
     for i in range(TAXA * 12):
         t = i / TAXA
-        ruido = random.gauss(0, 40)            # piso constante
+        r = random.gauss(0, ruido)              # piso constante
         if t > 4:                               # 4s de silêncio, depois "fala"
             fase = 2 * math.pi * 180 * t
             voz = 4000 * math.sin(fase) * (0.6 + 0.4 * math.sin(2 * math.pi * 3 * t))
         else:
             voz = 0.0
-        v = max(-32000, min(32000, int((voz + ruido) * g)))
+        v = max(-32000, min(32000, int((voz + r) * g)))
         quadros.append(v)
     with wave.open(str(caminho), "wb") as w:
         w.setnchannels(1); w.setsampwidth(2); w.setframerate(TAXA)
         w.writeframes(b"".join(struct.pack("<h", v) for v in quadros))
 
 escreve(saida / "baixo.wav", 0)
+escreve(saida / "ruidoso.wav", 0, ruido=900)   # mesmo eco, S/R baixo
 escreve(saida / "alto.wav", 14)    # mesmo conteúdo, 14 dB de ganho a mais
                                    # (piso vai a -44 dBFS, acima do antigo limiar fixo)
 PY
@@ -994,11 +995,13 @@ d = pathlib.Path(sys.argv[1])
 b = analisa(d / "baixo.wav")
 a = analisa(d / "alto.wav")
 m = analisa(d / "baixo.m4a")
+n = analisa(d / "ruidoso.wav")
 print(f"{b['silencio_s']:.1f} {a['silencio_s']:.1f} {b['snr']:.1f} {a['snr']:.1f} "
-      f"{m['tipo_codec']} {m['taxa_bits']}")
+      f"{m['tipo_codec']} {m['taxa_bits']} {int(b['reverb_confiavel'])} "
+      f"{int(n['reverb_confiavel'])} {n['snr']:.1f}")
 PY
 )" || MET=""
-read -r SIL_B SIL_A SNR_B SNR_A CODEC1 CODEC2 KBPS <<< "$MET"
+read -r SIL_B SIL_A SNR_B SNR_A CODEC1 CODEC2 KBPS REV_OK REV_RUIM SNR_N <<< "$MET"
 rm -rf "$AUD_DIR"
 
 if [[ -z "$MET" ]]; then
@@ -1015,6 +1018,14 @@ else
     ok "S/R não muda com o ganho (${SNR_B} contra ${SNR_A} dB)"
   else
     bad "S/R mudou só por causa do ganho (${SNR_B} contra ${SNR_A} dB)"
+  fi
+  # Reverberação medida com pouco S/R é ruído, não sala: precisa se declarar
+  # não confiável. Somar ruído branco à mesma gravação levava a estimativa de
+  # 0,48s para 0,95s sem que a sala mudasse.
+  if [[ "$REV_OK" == "1" && "$REV_RUIM" == "0" ]]; then
+    ok "reverberação se declara não confiável com S/R baixo (${SNR_N} dB)"
+  else
+    bad "reverberação não distingue S/R alto de baixo (${REV_OK}/${REV_RUIM})"
   fi
   # ALAC é sem perdas mesmo saindo abaixo de 400 kbps.
   if [[ "$CODEC1 $CODEC2" == "sem perdas" ]]; then

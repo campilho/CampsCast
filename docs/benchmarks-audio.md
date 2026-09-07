@@ -39,7 +39,7 @@ esquerda para a direita ao longo de trinta segundos:
 | **Fala** | nível médio dos trechos falados | −26 a −14 dBFS |
 | **Ruído** | nível do silêncio sustentado | ≤ −60 dBFS |
 | **S/R** | distância entre voz e ruído | ≥ 40 dB bom, ≥ 30 aceitável |
-| **Reverb** | decaimento estimado da sala | ≤ 0,4 s |
+| **Reverb** | decaimento estimado da sala | ≤ 0,4 s (só vale com S/R ≥ 30 dB) |
 | **Crista** | pico menos média — quanto de dinâmica sobrou | 15–22 dB |
 | **Codec** | taxa de bits da origem | sem perdas para clonagem |
 
@@ -254,6 +254,51 @@ não mudou; só o sinal caiu.
 O experimento respondeu a pergunta e, no mesmo ato, produziu material
 inaproveitável. **Comparação e produção pedem posições diferentes** — decida o
 aparelho num teste dedicado e grave de perto.
+
+### Sala sem adega, com voz, em duas distâncias
+
+Um minuto cada, 20 s de silêncio e 40 s de fala, pares gravados
+simultaneamente. A distância de 20 cm foi medida com régua, da boca até a grade
+inferior do alto-falante esquerdo do MacBook e até a porta de carga do iPhone.
+
+| Aparelho | Distância | Fala | Ruído | S/R | Reverb |
+|---|---|---|---|---|---|
+| MacBook | ~28 cm | −38,0 dBFS | −63,6 dBFS | 25,6 dB | — |
+| iPhone 16 | ~28 cm | −32,6 dBFS | −60,4 dBFS | 27,8 dB | 0,73 s ? |
+| MacBook | **20 cm** | −35,0 dBFS | −65,3 dBFS | **30,3 dB** | — |
+| iPhone 16 | **20 cm** | −30,1 dBFS | −63,7 dBFS | **33,6 dB** | 0,71 s |
+
+Contra o quarto com a porta fechada (S/R 15–17 dB), a sala sem a adega rende
+**13 a 17 dB a mais**. Os aparelhos seguem empatados dentro de 3 dB.
+
+A distância declarada se confirma na física: de ~28 cm para 20 cm o nível subiu
+3,0 dB no MacBook e 2,5 dB no iPhone, e 2,75 dB correspondem a uma razão de
+1,37 — ou seja, a cadeira estava a cerca de 27 cm, ponta baixa da estimativa de
+30 a 40 cm feita a olho.
+
+### A reverberação medida é enviesada pelo ruído
+
+Somando **só ruído branco** à mesma gravação, sem tocar na sala:
+
+| S/R resultante | Reverberação medida |
+|---|---|
+| 39,0 dB | **0,48 s** |
+| 34,4 dB | 0,53 s |
+| 29,5 dB | 0,61 s |
+| 24,6 dB | 0,63 s |
+| 19,6 dB | 0,73 s |
+| 14,1 dB | **0,95 s** |
+
+O decaimento afunda no piso de ruído antes de terminar, o rabo achata, e
+achatamento lê como eco longo. A estimativa dobra sem que nada acústico mude.
+
+Por isso `check_recording.py` passou a marcar a reverberação como não confiável
+abaixo de **30 dB de S/R**, e a não reprovar a gravação por ela nesse regime.
+As leituras de 0,73 s no quarto, com S/R de 17 dB, eram explicadas inteiramente
+pelo ruído — não havia evidência de que o quarto tivesse piorado.
+
+**Nunca compare reverberação entre gravações de S/R diferente.** Vale a mesma
+disciplina já estabelecida para codec e para dBFS entre aparelhos.
 
 ### Referência de comparação
 
