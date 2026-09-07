@@ -15,7 +15,7 @@ Lista curta e datada. O planejamento de longo prazo vive em
       Protocolo por bloco:
       1. `python3 scripts/check_recording.py silencio.m4a --sala` — se der
          abaixo de −60 dBFS, pode gravar
-      2. Começar cada bloco com **20 segundos parado, em silêncio**
+      2. Começar cada bloco com **10 segundos parado, em silêncio**
       3. Mesma posição e distância em todos os blocos
       4. `python3 scripts/prep_voice_samples.py *.m4a` — converte e valida
 - [ ] **Conta Apple** — trocar o e-mail de notificação (hoje é de outra pessoa)

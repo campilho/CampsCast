@@ -1037,6 +1037,26 @@ else
   else
     bad "piso medido nas pausas da fala (${PISO_Q} dBFS, esperado < -50)"
   fi
+  # Sem silêncio, a dinâmica é contada a partir de um piso errado e acusa 0 dB
+  # de variação numa fala expressiva. Não pode virar alarme.
+  SEMSIL="$(python3 - <<'PYSIL'
+import importlib.util, pathlib, sys
+sys.path.insert(0, "scripts")
+spec = importlib.util.spec_from_file_location("cr", "scripts/check_recording.py")
+m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+falso = {"dinamica": 0.0, "piso_confiavel": False, "snr": 7.0, "piso": -29.5,
+         "fala": -22.1, "pico": -4.6, "clipes": 0, "crista": 20.3, "reverb": 0.7,
+         "reverb_confiavel": False, "silencio_s": 0.0, "taxa_bits": 1440,
+         "tipo_codec": "sem perdas", "duracao": 115.0}
+avisos = " ".join(txt for _, txt in m.veredito(falso))
+print("limpo" if "ganho automático" not in avisos else "alarme falso")
+PYSIL
+)" || SEMSIL="falhou"
+if [[ "$SEMSIL" == "limpo" ]]; then
+  ok "dinâmica não vira alarme quando o piso não é confiável"
+else
+  bad "alarme de ganho automático com piso não confiável ($SEMSIL)"
+fi
   # ALAC é sem perdas mesmo saindo abaixo de 400 kbps.
   if [[ "$CODEC1 $CODEC2" == "sem perdas" ]]; then
     ok "ALAC reconhecido como sem perdas (${KBPS} kbps)"

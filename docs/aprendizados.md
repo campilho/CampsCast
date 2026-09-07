@@ -155,7 +155,7 @@ O `check_recording.py` agora só calcula o piso a partir de silêncio
 calibrado comparando duas gravações reais — a de fala contínua não tinha
 nenhum trecho, a que começou com 20 segundos parado tinha dois, somando 19,8s.
 
-**Grave 20 segundos de silêncio no início de cada bloco.**
+**Grave 10 segundos de silêncio no início de cada bloco.**
 
 ### Grave atravessa parede; agudo não
 

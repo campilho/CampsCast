@@ -50,7 +50,7 @@ gravada num lugar ruim vira um clone ruim, e o erro só aparece no episódio.
 
 Grave uma amostra curta e meça:
 
-1. Comece o gravador e **fique 20 segundos em silêncio**. Parado, sem falar.
+1. Comece o gravador e **fique 10 segundos em silêncio**. Parado, sem falar.
    É isso que mede o ruído do ambiente de forma honesta.
 
    > **Faça isso em todos os blocos, não só no teste.** Sem um trecho de

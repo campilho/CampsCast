@@ -145,7 +145,7 @@ def veredito(m: dict) -> list[tuple[str, str]]:
     if not m["piso_confiavel"]:
         s.append(("i", "sem silêncio para medir o ruído — o piso é um limite "
                        "superior, o real é menor. Comece o próximo bloco com "
-                       "20 segundos parado."))
+                       "10 segundos parado."))
     else:
         if m["piso"] <= PISO_BOM:
             s.append(("ok", f"silêncio limpo ({m['piso']:.1f} dBFS)"))
@@ -184,7 +184,10 @@ def veredito(m: dict) -> list[tuple[str, str]]:
         else:
             s.append(("X", f"muito eco ({m['reverb']:.2f}s) — o clone aprende a sala"))
 
-    if m["dinamica"] < 6:
+    # A dinâmica é contada a partir do piso; com piso não confiável ela vira
+    # alarme falso. Num arquivo sem silêncio nenhum acusou 0,0 dB de variação
+    # numa fala perfeitamente expressiva.
+    if m["dinamica"] < 6 and m["piso_confiavel"]:
         s.append(("~", f"pouca variação de volume na fala ({m['dinamica']:.0f} dB) — "
                        "pode ser ganho automático achatando a expressividade"))
     return s
@@ -223,6 +226,11 @@ def relatorio_voz(m: dict, detalhe: bool = False) -> list[str]:
         print("  VEREDITO: não use este material para clonagem.")
     elif "~" in niveis_v:
         print("  VEREDITO: serve, mas dá para melhorar.")
+    elif not m["piso_confiavel"]:
+        # Sem silêncio não há S/R, e S/R é a métrica que mais importa para
+        # clonagem. Aprovar sem ela seria aprovar pelo que sobrou de medir.
+        print("  VEREDITO: o que dá para medir está bom, mas sem silêncio no")
+        print("            começo não dá para verificar o S/R.")
     else:
         print("  VEREDITO: material bom.")
 
