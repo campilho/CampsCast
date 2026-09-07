@@ -39,6 +39,29 @@ uma vez.
 
 ---
 
+### dBFS não atravessa aparelhos
+
+Comparar o piso de ruído de dois aparelhos em dBFS é comparar nada: a escala é
+relativa ao fundo de escala de cada um, e ganhos de entrada diferentes deslocam
+o número inteiro. O MacBook mediu o mesmo quarto 5,3 dB "mais silencioso" que o
+iPhone; não porque grave melhor, mas porque amplifica menos.
+
+O que é comparável:
+
+- **o mesmo aparelho em cômodos diferentes** — o ganho sai da conta
+- **a relação sinal/ruído**, que é uma razão e cancela o ganho
+- **a forma do espectro**, em porcentagem da energia
+- **picos tonais**, cuja frequência não depende do ganho
+
+Para saber se dois arquivos são do mesmo ambiente, correlacione os envelopes de
+nível de tomadas simultâneas: r ≥ 0,8 confirma. Se o desvio entre aparelhos
+mudar de um cômodo para outro (foi de +5,3 para +11,4 dB), há uma fonte local
+em um deles, e vale procurar no espectro.
+
+**Silêncio puro não escolhe aparelho.** Ele mede o piso, e o que decide é a
+relação sinal/ruído com voz na distância real. Para comparar microfones é
+preciso gravar a mesma fala, na mesma distância, ao mesmo tempo.
+
 ## Agentes
 
 ### A memória precisa de duas camadas
@@ -178,6 +201,57 @@ pior do que misturar as duas. Vale também para processamento: ou todos os
 arquivos passam pela redução de ruído da ElevenLabs, ou nenhum.
 
 ---
+
+### Um tom fixo é pior que um ronco mais alto
+
+O motor de uma adega do outro lado da sala produziu um tom em **239,56 Hz** —
+4× a frequência da rede elétrica brasileira, assinatura de motor de indução.
+A mesma frequência exata apareceu nos quatro arquivos gravados no apartamento,
+inclusive no quarto com a porta fechada, 10 dB mais fraca através da parede.
+Inaudível para quem mora ali; medível com folga.
+
+Um tom é pior que ronco de trânsito, mesmo sendo mais fraco: é fixo, afinado e
+cai dentro da banda da voz, então o modelo o aprende como se fosse timbre e
+depois não há filtro que o tire sem levar a voz junto. Ronco de rua é largo e
+variável, e o modelo tende a tratá-lo como fundo.
+
+Para distinguir motor de ruído ambiente, procure **série harmônica**: motor na
+rede aparece em múltiplos de 60 Hz. E para saber se o tom é acústico ou
+interferência elétrica no aparelho, meça em dois cômodos — interferência não
+muda de nível com a distância.
+
+Isso muda o critério de escolha da sala. Não é qual mede mais baixo, é **qual
+defeito se conserta**. Um motor se desliga na tomada; uma fresta de ventilação
+para a rua, não.
+
+### O clone aprende a sala, e o piso de ruído prova
+
+Um clone Professional treinado com 15 minutos gravados no quarto com a TV
+ligada na sala, comparado ao clone Instant anterior feito de material mais
+curto e mais limpo:
+
+| | Piso de ruído | Reverberação |
+|---|---|---|
+| Clone Instant | −77,6 dBFS | 0,42 s |
+| Clone Professional | −51,6 dBFS | 0,64 s |
+
+Vinte e seis decibéis piores, com mais material de treino. Não é erro de
+medição: o modelo **gera ruído de fundo nas pausas entre frases**. Os dois
+valores são limites superiores (nenhum tinha silêncio sustentado), mas foram
+medidos do mesmo jeito, e o espectro confirma por outro caminho:
+
+| | sub | grave | médio-grave | médio |
+|---|---|---|---|---|
+| Clone Instant | 0% | 4% | 22% | 69% |
+| Clone Professional | 11% | 22% | 27% | 39% |
+| O quarto com a TV ligada | 57% | 31% | 9% | 2% |
+
+O clone novo deslocou energia para as bandas graves, na direção do perfil do
+cômodo. Aprendeu o ambiente junto com a voz, e a reverberação subiu junto.
+
+**Mais material não compensa material pior.** E isso dá um critério objetivo de
+aceitação para o próximo clone: medir o piso de ruído do áudio gerado e comparar
+com o do clone anterior, em vez de decidir de ouvido.
 
 ## Infraestrutura
 

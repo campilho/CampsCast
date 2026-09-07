@@ -104,6 +104,95 @@ ruído. O sem perdas é o bom: mostra o ruído real e entrega o detalhe completo
 **Nunca compare arquivos de codificação diferente.** O script avisa quando você
 tenta.
 
+### Dois cômodos, dois aparelhos, ao mesmo tempo
+
+Apartamento em Moema, São Paulo, sob a rota de Congonhas. Segunda-feira feriado,
+16h, sem avião passando durante as tomadas. Sala e quarto têm sacada com cortina
+fechada, e a distância até a porta era praticamente a mesma nas duas.
+
+| Cômodo | Vidro da sacada | Outra fonte |
+|---|---|---|
+| Sala | duplo, do piso ao teto | adega com motor, do outro lado |
+| Quarto | só na parte de cima; embaixo, entrada de ar aberta | — |
+
+Cada par foi gravado **simultaneamente**, começando e terminando nos mesmos
+segundos, o que permite comparar aparelhos sem que a sala mude no meio.
+
+| Cenário | Ruído | Espectro | Desvio no tempo |
+|---|---|---|---|
+| MacBook, quarto | −60,2 dBFS | 80% sub, 14% grave | 2,3 dB |
+| MacBook, sala | −61,4 dBFS | 67% sub, 21% grave | 3,1 dB |
+| iPhone 16, quarto | −54,9 dBFS | 52% sub, 34% grave | 2,8 dB |
+| iPhone 16, sala | −50,0 dBFS | 28% sub, 55% médio-grave | 2,3 dB |
+
+**Estes números não comparam aparelhos.** dBFS é relativo ao fundo de escala de
+cada aparelho, e ganhos diferentes tornam a comparação sem sentido. Ver
+[aprendizados](aprendizados.md#dbfs-não-atravessa-aparelhos).
+
+Que as gravações são do mesmo ambiente foi verificado correlacionando os
+envelopes de nível das tomadas simultâneas: **r = 0,86** no quarto. Ainda assim
+o desvio entre aparelhos foi de **+5,3 dB no quarto e +11,4 dB na sala** — se
+fosse só ganho fixo seria igual nos dois, então havia mais alguma coisa na sala.
+
+### A fonte tonal: 239,56 Hz
+
+A banda médio-grave da sala destoava (55% da energia, contra 11% no quarto).
+Refinando a resolução espectral para 0,67 Hz, apareceu um tom único:
+
+| Cenário | 239,56 Hz | Destaque sobre o piso local |
+|---|---|---|
+| iPhone, sala | −57,8 dBFS | +32 dB |
+| MacBook, sala | −77,3 dBFS | +25 dB |
+| iPhone, quarto | −75,9 dBFS | +18 dB |
+| MacBook, quarto | −87,7 dBFS | +16 dB |
+
+**Mesma frequência exata nos quatro arquivos** — fonte única no apartamento,
+audível no quarto através da parede. 239,56 Hz é 4× a frequência da rede
+elétrica brasileira (59,89 Hz), assinatura de motor de indução: a adega.
+
+É som no ar, não interferência elétrica. Interferência daria o mesmo nível para
+o mesmo aparelho nos dois cômodos; o MacBook lê **10,4 dB a menos no quarto**,
+o que só acontece por distância acústica.
+
+**Conclusão que inverte a intuição.** Pelo nível médio os dois cômodos empatam
+no MacBook (−61,4 contra −60,2, dentro da margem), e a sala tem vidro melhor
+contra o aeroporto. Mas a sala tem um tom fixo dentro da banda da voz, e tom
+fixo é pior que ronco largo para clonagem: o modelo aprende como se fosse
+timbre. A diferença decisiva é que **o defeito da sala se desliga na tomada e o
+do quarto não** — a fresta de ventilação é permanente, e o feriado silencioso
+foi o melhor caso, não o normal.
+
+### Um transiente que parece bip e não é
+
+As tomadas simultâneas registraram picos no fim de cada gravação:
+
+| Momento | iPhone | MacBook | Diferença |
+|---|---|---|---|
+| Sala, 22,6 s | −24,5 dBFS (+25 dB) | −51,6 dBFS (+10 dB) | 15 dB |
+| Quarto, 31,8 s | −33,0 dBFS (+22 dB) | −49,3 dBFS (+13 dB) | 9 dB |
+
+Nenhum aparelho gravou o bip do outro. Aparece nos dois porque é som real, mas
+é muito mais forte no aparelho tocado: é **contato mecânico no corpo**, o dedo
+encerrando a gravação. Deixe três segundos de folga antes e depois de falar.
+
+### Tamanho de arquivo não é qualidade
+
+Os arquivos do iPhone saíram **12× maiores** que os do MacBook, ambos ALAC sem
+perdas, mesma sala e duração:
+
+| | Canais | Profundidade | Bitrate | Compressão do ALAC |
+|---|---|---|---|---|
+| MacBook | 1 | 16 bits | ~90 kbps | 8,5× |
+| iPhone 16 | 2 | 24 bits | ~1071 kbps | 2,1× |
+
+Estéreo dobra e 24 bits multiplicam por 1,5: 3× de dado bruto. Os outros 4×
+vêm da compressão. O ALAC comprime mal os 24 bits porque os 8 bits extras estão
+abaixo do piso de ruído do cômodo — capturam aleatoriedade, e aleatoriedade não
+comprime.
+
+**Nada disso vira qualidade aqui.** O `prep_voice_samples.py` converte para
+mono antes de subir, e bits abaixo do ruído da sala não carregam voz.
+
 ### Referência de comparação
 
 | Cenário | S/R |
@@ -116,6 +205,11 @@ Gravação caseira que chegue perto disso está excelente. É o teto prático.
 
 ## Cenários ainda não medidos
 
+- **Sala com a adega desligada na tomada** — o teste que fecha o caso dos
+  239,56 Hz e possivelmente elege a sala como melhor cômodo
+- **MacBook contra iPhone com a mesma fala, mesma distância, ao mesmo tempo** —
+  o único jeito de comparar os aparelhos; silêncio não serve
+- Quarto em dia útil, hora do rush, para medir o custo da fresta de ventilação
 - iPhone 17 Pro Max, mesma distância e sala
 - Microfone USB dinâmico com braço articulado
 - Sala tratada, ou gravação dentro do closet
