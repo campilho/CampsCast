@@ -479,6 +479,34 @@ Gravação caseira que chegue perto disso está excelente. É o teto prático.
 
 ---
 
+---
+
+## Referências sonoras
+
+As medições acima descrevem áudio; estes dois arquivos **são** o áudio. Mesmo
+roteiro, mesma voz, mesmo modelo de síntese — só muda a qualidade do material
+com que cada clone foi treinado.
+
+| | Ouvir | Piso nas pausas | Reverb | Treinado com |
+|---|---|---|---|---|
+| Clone **Instant** | [MP3](https://campscast.com.br/referencias/2026-09-04-instant.mp3) | **−90,4 dBFS** | 0,42 s | 2–3 min, amostra curta e limpa |
+| Clone **Professional** | [MP3](https://campscast.com.br/referencias/2026-09-04-professional-quarto-com-tv.mp3) | **−52,2 dBFS** | 0,64 s | 15 min, quarto com TV ligada na sala |
+
+**Trinta e oito decibéis de diferença, e o pior é o que teve mais material.**
+Ouça as pausas entre frases: o Instant entrega silêncio quase digital, o
+Professional entrega o quarto onde foi gravado — inclusive a reverberação, que
+subiu de 0,42 para 0,64 s.
+
+Para reproduzir a medição:
+
+```bash
+python3 scripts/check_recording.py --sintetico arquivo.mp3
+```
+
+O `--sintetico` existe porque voz gerada não faz pausa de dois segundos. Medir
+com a régua de gravação humana achata a diferença de 38 para 26 dB — ver
+[aprendizados](aprendizados.md).
+
 ## Cenários ainda não medidos
 
 - Quarto em dia útil, hora do rush, para medir o custo da fresta de ventilação
