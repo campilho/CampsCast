@@ -300,6 +300,46 @@ pelo ruído — não havia evidência de que o quarto tivesse piorado.
 **Nunca compare reverberação entre gravações de S/R diferente.** Vale a mesma
 disciplina já estabelecida para codec e para dBFS entre aparelhos.
 
+### Mais perto não é melhor: 10 cm perdeu para 20 cm
+
+Mesma sala, mesmo aparelho, mesma tarde, adega desligada:
+
+| Distância | Fala | Ruído | S/R | Pico | Crista |
+|---|---|---|---|---|---|
+| 20 cm | −30,1 dBFS | −63,7 dBFS | **33,6 dB** | −15,0 dBFS | 18,6 dB |
+| 10 cm | −29,5 dBFS | −58,7 dBFS | **29,3 dB** | −6,9 dBFS | **26,3 dB** |
+
+Metade da distância deveria render +6 dB de sinal. Rendeu **0,6 dB**, e custou
+5 dB no piso de ruído. Dois efeitos aparecem juntos a 10 cm:
+
+- **Plosivas.** Quatro estouros acima de 12 dB da mediana no arquivo de 10 cm,
+  nenhum nos de 20 cm. O pico subiu 8 dB sem que a fala subisse, e é por isso
+  que o fator de crista saltou de 18,6 para 26,3 dB.
+- **O microfone passa a ouvir você, não só sua voz.** O piso subiu 5 dB e mudou
+  de perfil: de 74% em sub (ronco da sala) para 56% em grave, 60–120 Hz, faixa
+  de corpo e respiração. A tentativa de confirmar respiração por periodicidade
+  foi inconclusiva, então a origem exata fica em aberto.
+
+**Fator de crista é o indicador barato de plosiva:** 18–20 dB é fala firme,
+acima de 25 dB são estouros isolados sobre fala baixa.
+
+### O que separava a melhor gravação do projeto
+
+| | Fala | Ruído | S/R | Pico | Crista |
+|---|---|---|---|---|---|
+| Melhor arquivo (quarto) | **−23,6 dBFS** | −62,5 dBFS | **38,9 dB** | −7,8 dBFS | 19,7 dB |
+| Sala, 10 cm | −29,5 dBFS | −58,7 dBFS | 29,3 dB | −6,9 dBFS | 26,3 dB |
+| Sala, 20 cm | −30,1 dBFS | −63,7 dBFS | 33,6 dB | −15,0 dBFS | 18,6 dB |
+
+O melhor arquivo e o de 10 cm têm **o mesmo pico** (−7,8 contra −6,9 dBFS) e
+**5,9 dB de diferença na fala média**. Mesmo pico, média muito mais alta: no
+melhor arquivo a voz era alta e constante; no de 10 cm era baixa com estouros.
+
+A distância já estava igualada e a diferença permaneceu. **O que faltava não era
+proximidade, era projeção de voz** — a variável que não aparece em nenhuma
+especificação de equipamento e que valeu mais que sala, aparelho e distância
+somados.
+
 ### Referência de comparação
 
 | Cenário | S/R |

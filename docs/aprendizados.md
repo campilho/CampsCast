@@ -358,3 +358,20 @@ de validade, e vale a pena descobri-la antes de comparar, não depois.**
 
 O jeito de descobrir é barato e sempre o mesmo — pegue um arquivo bom, degrade
 uma variável de cada vez, e veja o que a métrica faz.
+
+### Projeção de voz vale mais que sala, aparelho e distância
+
+Perseguimos a qualidade por três caminhos: trocar de cômodo (13 a 17 dB),
+desligar a adega (9 dB no aparelho sensível), aproximar o microfone. O terceiro
+não só não ajudou como piorou — 10 cm rendeu 4 dB a menos de S/R que 20 cm,
+por plosivas e por captar o corpo de quem fala.
+
+Comparando a melhor gravação já feita com a de 10 cm: **mesmo pico, 5,9 dB de
+diferença na fala média.** Uma tinha voz alta e constante, a outra voz baixa com
+estouros. Nenhum ajuste de posição corrige isso.
+
+O fator de crista denuncia qual é qual sem precisar ouvir: 18–20 dB é fala
+firme, acima de 25 dB são estouros isolados sobre fala baixa.
+
+**Antes de comprar microfone, meça a própria voz.** A variável que mais pesou
+não está em nenhuma ficha técnica.
