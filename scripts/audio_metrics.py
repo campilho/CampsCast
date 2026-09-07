@@ -181,9 +181,18 @@ def analisa(caminho: pathlib.Path) -> dict:
     MIN = int(2.0 / JANELA)
     idx_sil = []
     if len(ns) >= MIN:
-        mais_silencioso = min(max(ns[i:i + MIN]) for i in range(len(ns) - MIN + 1))
-        LIMIAR = mais_silencioso + 3.0
-        idx_sil = [i for i, v in enumerate(ns) if v <= LIMIAR]
+        k = min(range(len(ns) - MIN + 1), key=lambda i: max(ns[i:i + MIN]))
+        LIMIAR = max(ns[k:k + MIN]) + 3.0
+        # Cresce a partir desse trecho e só por vizinhança, sem colher janelas
+        # espalhadas pelo arquivo. Janelas soltas caem nas pausas entre
+        # palavras, que trazem respiração e sopro — mediram +22 dB de agudo
+        # que não existiam na sala, num arquivo com 5s de silêncio declarado.
+        a, b = k, k + MIN
+        while a > 0 and ns[a - 1] <= LIMIAR:
+            a -= 1
+        while b < len(ns) and ns[b] <= LIMIAR:
+            b += 1
+        idx_sil = list(range(a, b))
 
     if idx_sil:
         piso = sum(ns[i] for i in idx_sil) / len(idx_sil)
