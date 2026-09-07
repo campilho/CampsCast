@@ -417,6 +417,58 @@ adega desligada, entrega o mesmo piso de forma repetível.
 **Para material de clonagem, piso repetível vale mais que piso ocasionalmente
 melhor** — quinze minutos de gravação atravessam várias condições de rua.
 
+### O perfil da rua: quanto tempo o cômodo fica utilizável
+
+Quarto sob a rota de Congonhas, noite de feriado, TV da sala com fone de ouvido.
+Dois trechos de 30 s de silêncio, um com avião se aproximando e outro com uma
+moto passando:
+
+| Trecho | Médio | Mínimo | Máximo | Espectro |
+|---|---|---|---|---|
+| Avião ainda longe | −56,9 dBFS | −63,1 | −49,0 | 47% sub, 50% grave |
+| Moto passando | **−49,2 dBFS** | −60,8 | −39,2 | 15% sub, **82% grave** |
+
+**A moto foi 7,7 dB pior que o avião se aproximando**, ao contrário do que o
+ouvido de quem gravou registrou. Fonte grave e sustentada é subestimada na
+escuta e domina na medição.
+
+Distribuição do nível ao longo dos 62 s:
+
+```
+abaixo de -62 dBFS:   1% do tempo
+abaixo de -60 dBFS:   6% do tempo
+abaixo de -58 dBFS:  18% do tempo
+abaixo de -56 dBFS:  35% do tempo
+abaixo de -54 dBFS:  48% do tempo
+```
+
+O piso com a rua vazia é **−59,5 dBFS**, praticamente o mesmo −60,4 medido às
+17h. Ou seja: o cômodo não se degradou ao longo da noite; ele oscila. As
+tomadas que mediram −53 pegaram trânsito, e as que mediram −58 pegaram janela
+limpa.
+
+**Consequência de planejamento: não espere silêncio.** Abaixo de −60 dBFS são
+6% do tempo, e um bloco de dois minutos quase sempre atravessa alguma coisa.
+Grave mais blocos e deixe a medição escolher, em vez de tentar acertar a janela.
+
+### Blocos de gravação da sessão
+
+Mesma técnica em todos: quarto, iPhone na mão com capa, borda inferior apontada
+logo abaixo do lábio, ~20 cm.
+
+| Bloco | Fala | Ruído | S/R |
+|---|---|---|---|
+| 1 | −21,4 dBFS | −54,6 dBFS | 33,2 dB |
+| 2 | −22,6 dBFS | −53,2 dBFS | 30,6 dB |
+| 3 | −22,1 dBFS | — | não verificável |
+| 4 | −23,8 dBFS | −58,2 dBFS | **34,4 dB** |
+| 5 | −23,6 dBFS | −57,5 dBFS | **33,9 dB** |
+
+O nível de fala variou **2,4 dB em cinco blocos**, e a variação de S/R vem toda
+do ruído, isto é, da rua no momento de cada tomada. Consistência entre blocos
+vale mais que perfeição em um deles: o clone aprende a média, e média de
+material consistente sai mais limpa que média de material desigual.
+
 ### Referência de comparação
 
 | Cenário | S/R |

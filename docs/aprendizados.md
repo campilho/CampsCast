@@ -417,3 +417,29 @@ primeiros blocos perto de zero — para fixar a referência baixo demais.
 
 Referência de "normal" em sinal que varia tem que ser janelada. Agora é o menor
 fundo dos últimos três minutos, com os dois primeiros segundos descartados.
+
+### O ouvido subestima fonte grave e sustentada
+
+Gravando dois trechos de silêncio, quem gravou julgou pior o que tinha um avião
+se aproximando e melhor o que tinha "uma moto ao fundo, não muito alta". A
+medição inverteu: a moto ficou **7,7 dB acima**, com 82% da energia entre 60 e
+120 Hz.
+
+É o mesmo mecanismo que já tinha aparecido com a TV do cômodo ao lado e com o
+motor da adega: grave atravessa parede, o ouvido o descarta como fundo, e o
+microfone o registra inteiro. A diferença aqui é que o erro de julgamento
+aconteceu **com a fonte à vista**, não escondida atrás de uma parede.
+
+Prático: para decidir se pode gravar, olhe o medidor, não o ouvido.
+
+### Ruído de rua não é piso, é distribuição
+
+O piso do quarto parecia ter piorado 7 dB ao longo da noite. Não piorou: com a
+rua vazia ele volta a −59,5 dBFS, contra −60,4 medidos horas antes. O que muda
+é **quanto do tempo** ele está lá — abaixo de −60 dBFS são 6% do tempo, abaixo
+de −58 são 18%.
+
+Uma única medição de trinta segundos não caracteriza um cômodo com rua; ela
+amostra um instante. Para planejar gravação é preciso a distribuição, e a
+conclusão que sai dela é oposta à intuição: **não espere a janela silenciosa,
+grave mais blocos e deixe a medição escolher.**
