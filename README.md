@@ -5,23 +5,51 @@
 > Roda localmente num MacBook Pro M3, com Claude Code em modo headless,
 > TTS na ElevenLabs e publicação via feed RSS em S3.
 
-**Status:** Fase 1 concluída em 05/09/2026 · Fase 2 em andamento · **Autor:** Camps · Detalhes de arquitetura em [PROJETO.md](PROJETO.md)
+**Status:** Fase 1 concluída em 05/09/2026 · Fase 2 em andamento (voz própria em produção desde 08/09) · **Autor:** Camps · Detalhes de arquitetura em [PROJETO.md](PROJETO.md)
 
 ---
 
 ## Como assinar
 
-```
-https://campscast.com.br/feed.xml
-```
+| Onde | Link |
+|---|---|
+| **Apple Podcasts** | [podcasts.apple.com/br/podcast/campscast](https://podcasts.apple.com/br/podcast/campscast/id6809631318) |
+| **Spotify** | busque por *CampsCast* |
+| **Pocket Casts** | busque por *CampsCast* |
+| **Podcast Index** | [podcastindex.org](https://podcastindex.org/search?q=campscast) |
+| **RSS direto** | `https://campscast.com.br/feed.xml` |
 
-Cole em qualquer app que aceite URL de RSS. Em breve também pelo nome, nos
-diretórios — Spotify, Pocket Casts e Podcast Index receberam a submissão em
-06/09/2026 e estão processando. A Apple Podcasts vem em seguida.
+O feed serve qualquer app que aceite URL de RSS.
 
 > O endereço antigo, `campscast.s3.us-east-1.amazonaws.com/feed.xml`, continua
 > funcionando para quem assinou antes da migração de domínio. Os dois servem o
 > mesmo feed.
+
+---
+
+## A voz
+
+Os episódios são narrados por uma clonagem profissional da voz do autor,
+treinada com 28 minutos gravados no celular, em blocos de dois minutos entre
+pousos do aeroporto de Congonhas.
+
+O caminho até lá está medido em [docs/benchmarks-audio.md](docs/benchmarks-audio.md):
+qual cômodo, qual aparelho, qual distância, com número em vez de impressão. A
+conclusão mais útil foi a menos intuitiva — **projeção de voz pesou mais que
+sala, aparelho e distância somados**, e aproximar o microfone de 20 para 10 cm
+piorou a gravação.
+
+E há a evidência direta de que **clonagem aprende tudo que está na amostra**.
+Mesmo roteiro, mesma voz, mesmo modelo; só muda a qualidade do material de
+treino:
+
+| | Ouvir | Piso nas pausas |
+|---|---|---|
+| Amostra curta e limpa | [MP3](https://campscast.com.br/referencias/2026-09-04-instant.mp3) | **−90,4 dBFS** |
+| 15 min gravados com a TV ligada na sala | [MP3](https://campscast.com.br/referencias/2026-09-04-professional-quarto-com-tv.mp3) | **−52,2 dBFS** |
+
+Trinta e oito decibéis de diferença, e o pior é o que teve cinco vezes mais
+material. Ouça as pausas entre as frases.
 
 ---
 
@@ -205,7 +233,9 @@ scripts/window.py       calcula a janela de notícias (ver seção abaixo)
 scripts/schedule.py     decide se o dia tem episódio (dias úteis, feriados)
 scripts/calibrate_pace.py  mede o ritmo real de fala e corrige a faixa de palavras
 scripts/audio_metrics.py  métricas de áudio (espectro, reverberação, dinâmica)
-scripts/check_recording.py avalia gravação; --sala mede ambiente, --markdown tabela
+scripts/check_recording.py avalia gravação; --sala mede ambiente, --sintetico p/ TTS
+scripts/monitor.py         medidor ao vivo no terminal enquanto você grava
+scripts/prep_voice_samples.py converte para .wav e audita a pasta antes do upload
 scripts/prep_voice_samples.py converte gravações para o formato que a ElevenLabs aceita
 scripts/s3.py           upload para o S3 (SigV4 em Python puro, sem AWS CLI)
 scripts/set_base_url.py troca o endereço público do feed, verificando antes

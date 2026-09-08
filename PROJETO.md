@@ -280,7 +280,7 @@ um dia útil não acrescentaria informação.
       | Spotify | no ar, testado no carro e no celular | 07/09/2026 |
       | Pocket Casts | no ar | 06/09/2026 |
       | Podcast Index | no ar | 06/09/2026 |
-      | Apple Podcasts | rascunho criado, aguardando processar para publicar | 07/09/2026 |
+      | Apple Podcasts | no ar, ID 6809631318 | 07/09/2026 |
 
 - [x] **Professional Voice Clone** — 28 minutos gravados em blocos de 2 minutos
       entre pousos de Congonhas, S/R ponderado 33,6 dB, nenhum bloco abaixo de

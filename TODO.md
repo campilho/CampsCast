@@ -26,10 +26,11 @@ Lista curta e datada. O planejamento de longo prazo vive em
       `GET /olympus/v1/providerSwitchRequests` → **409 Conflict**, ou seja, o
       registro já existia desde a primeira tentativa — o "Ocorreu um erro" da
       tela mentia. Recarregar a página revelou o estado real, já correto.
-- [ ] **Publicar o programa na Apple** — está em **Rascunho**. A Apple ainda
-      processa os detalhes do feed; quando terminar, é preciso voltar a
-      podcastsconnect.apple.com e clicar em **Publicar**. Não se publica
-      sozinho, e é o único passo que falta para fechar o critério da Fase 2.
+- [x] **Publicar o programa na Apple** — publicado em 07/09. Faltava também
+      preencher a frequência de atualização; sem ela o botão não conclui.
+      Confirmado no catálogo público pelo `itunes.apple.com/lookup?id=6809631318`.
+- [ ] **Corrigir a frequência na Apple** — está "Duas vezes por semana" e o
+      podcast sai em todo dia útil. Campo editável em Informações do programa.
 - [ ] **Conferir o Spotify** à noite — o show ainda responde 404, o que é
       esperado. Quando sair do ar 404, avisar para entrar no README.
 
