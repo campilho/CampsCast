@@ -20,19 +20,16 @@ Lista curta e datada. O planejamento de longo prazo vive em
       4. `python3 scripts/prep_voice_samples.py *.m4a` — converte e valida
 - [x] **Conta Apple** — e-mail principal trocado para fernando.campilho@gmail.com
       pelo painel do macOS (o navegador não permite); o domínio expirado saiu
-- [ ] **Apple Podcasts Connect** — ainda falha, mas por outro motivo. O console
-      mostra `GET /olympus/v1/providerSwitchRequests` → **409 Conflict**, e só
-      depois `/inbox/v1/inbox` → 403 e 401. O 409 é a causa: já existe registro
-      de provider para esta conta, provavelmente resto das tentativas de 06/09
-      que falharam no meio. A interface mostra apenas "Ocorreu um erro".
-      Testar, nesta ordem: (1) outro nome de conta, não `campscast`;
-      (2) janela anônima, sessão limpa, sem o token da sessão anterior;
-      (3) suporte, citando o endpoint e o status — não a mensagem da tela.
-      **Nota:** em 06/09 atribuí o erro ao domínio expirado. Era hipótese
-      circunstancial e estava errada; dois prints do console valeram mais que
-      uma noite de suposição.
-      e o e-mail principal, que está num domínio expirado. Depois, tentar o
-      Podcasts Connect de novo.
+- [x] **Apple Podcasts Connect** — conta criada (`campscast|272359553|1`) e
+      programa adicionado pelo feed RSS em 07/09. O diagnóstico de 06/09 estava
+      errado: não era o domínio expirado. O console mostrava
+      `GET /olympus/v1/providerSwitchRequests` → **409 Conflict**, ou seja, o
+      registro já existia desde a primeira tentativa — o "Ocorreu um erro" da
+      tela mentia. Recarregar a página revelou o estado real, já correto.
+- [ ] **Publicar o programa na Apple** — está em **Rascunho**. A Apple ainda
+      processa os detalhes do feed; quando terminar, é preciso voltar a
+      podcastsconnect.apple.com e clicar em **Publicar**. Não se publica
+      sozinho, e é o único passo que falta para fechar o critério da Fase 2.
 - [ ] **Conferir o Spotify** à noite — o show ainda responde 404, o que é
       esperado. Quando sair do ar 404, avisar para entrar no README.
 

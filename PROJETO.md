@@ -5,7 +5,7 @@
 > Roda localmente em um MacBook Pro M3, com Claude Code em modo headless,
 > TTS na ElevenLabs e publicação via feed RSS em S3.
 
-**Status:** Fase 1 concluída em 05/09/2026 · Fase 2 em andamento
+**Status:** Fase 1 concluída em 05/09/2026 · Fase 2 em andamento (voz própria adotada em 07/09; falta publicar na Apple)
 **Autor:** Camps
 **Licença:** MIT para o código, CC BY 4.0 para o conteúdo editorial
 
@@ -273,12 +273,19 @@ um dia útil não acrescentaria informação.
 - [x] **Domínio próprio** `campscast.com.br`, com Route 53, ACM e CloudFront
 - [x] **Alias de e-mail dedicado** `contato@campscast.com.br`
 - [x] Capa — `> CC` em conceito de terminal, 1400×1400
-- [x] Submissão ao **Spotify** — enviada em 06/09/2026, em processamento
-- [x] Submissão ao **Pocket Casts**
-- [x] Submissão ao **Podcast Index**
-- [ ] Submissão à **Apple Podcasts** — bloqueada: o Apple ID usa um e-mail em
-      domínio expirado, e o Podcasts Connect falha ao enviar a confirmação
-- [ ] **Professional Voice Clone** — guia de gravação em `docs/gravacao-voz.md`
+- [x] **Diretórios** — três no ar, um em rascunho:
+
+      | Diretório | Estado | Desde |
+      |---|---|---|
+      | Spotify | no ar, testado no carro e no celular | 07/09/2026 |
+      | Pocket Casts | no ar | 06/09/2026 |
+      | Podcast Index | no ar | 06/09/2026 |
+      | Apple Podcasts | rascunho criado, aguardando processar para publicar | 07/09/2026 |
+
+- [x] **Professional Voice Clone** — 28 minutos gravados em blocos de 2 minutos
+      entre pousos de Congonhas, S/R ponderado 33,6 dB, nenhum bloco abaixo de
+      30. Adotada em 07/09; obrigou a voltar ao `eleven_multilingual_v2` porque
+      o fine-tuning falhou nos modelos Flash e Turbo. Ver adendo ao ADR 0004.
 - [ ] README público caprichado, com os links dos diretórios
 - [ ] Refatorar para subagents do Claude Code (pesquisador / editor / publicador)
 - [ ] ADR de custos reais consolidado
