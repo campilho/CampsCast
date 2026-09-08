@@ -28,3 +28,6 @@ privado/
 amostras-voz/
 referencias/clones/*.mp3
 gravacoes/
+
+# binário do capturador de áudio, compilado sob demanda
+.cache/
