@@ -18,7 +18,19 @@ Lista curta e datada. O planejamento de longo prazo vive em
       2. Começar cada bloco com **10 segundos parado, em silêncio**
       3. Mesma posição e distância em todos os blocos
       4. `python3 scripts/prep_voice_samples.py *.m4a` — converte e valida
-- [ ] **Conta Apple** — trocar o e-mail de notificação (hoje é de outra pessoa)
+- [x] **Conta Apple** — e-mail principal trocado para fernando.campilho@gmail.com
+      pelo painel do macOS (o navegador não permite); o domínio expirado saiu
+- [ ] **Apple Podcasts Connect** — ainda falha, mas por outro motivo. O console
+      mostra `GET /olympus/v1/providerSwitchRequests` → **409 Conflict**, e só
+      depois `/inbox/v1/inbox` → 403 e 401. O 409 é a causa: já existe registro
+      de provider para esta conta, provavelmente resto das tentativas de 06/09
+      que falharam no meio. A interface mostra apenas "Ocorreu um erro".
+      Testar, nesta ordem: (1) outro nome de conta, não `campscast`;
+      (2) janela anônima, sessão limpa, sem o token da sessão anterior;
+      (3) suporte, citando o endpoint e o status — não a mensagem da tela.
+      **Nota:** em 06/09 atribuí o erro ao domínio expirado. Era hipótese
+      circunstancial e estava errada; dois prints do console valeram mais que
+      uma noite de suposição.
       e o e-mail principal, que está num domínio expirado. Depois, tentar o
       Podcasts Connect de novo.
 - [ ] **Conferir o Spotify** à noite — o show ainda responde 404, o que é
