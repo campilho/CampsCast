@@ -480,3 +480,35 @@ do arquivo nem o tamanho.
 Neste caso as métricas também denunciavam — S/R, pico, reverberação e dinâmica
 iguais até a casa decimal, o que não acontece entre duas gravações distintas.
 Coincidência exata em muitas casas é sinal de identidade, não de sorte.
+
+### `caffeinate` não impede o sono que a tampa fechada dispara
+
+O orquestrador roda `caffeinate -i -m -s -w $$` justamente para atravessar a
+madrugada. Não bastou: com a tampa fechada, a execução das 06:03 morreu aos 24
+minutos com *"Your computer went to sleep mid-response"*.
+
+`caffeinate -i` impede o sono por **ociosidade**. Fechar a tampa é outro
+caminho — o macOS trata como comando explícito do usuário e dorme mesmo com
+asserção ativa, a não ser que haja monitor externo e energia. Na bateria é
+ainda mais agressivo.
+
+Não há flag que resolva dentro do `caffeinate`. As saídas são todas fora dele:
+deixar a tampa aberta, `sudo pmset -a disablesleep 1` (o Mac nunca dorme, o que
+tem custo próprio), ou um fallback na nuvem.
+
+**O que salvou o dia foi o invariante da janela.** A execução manual das 06:30
+cobriu o dia certo, e a repescagem automática das 07:00 disparou depois e se
+conteve sozinha, reconhecendo que 2026-09-09 já estava coberto. Uma falha de
+infraestrutura não virou buraco nem episódio duplicado.
+
+### Estimar ritmo com um arquivo erra 3%
+
+`words_per_minute` foi para 145 a partir de um único episódio de teste gerado
+com a voz nova. Com três episódios reais, a mediana é **150** — 3% acima.
+
+Não é erro grave, mas mostra o limite de calibrar com n=1: a variação entre
+episódios (145 a 154 nos três) é maior que o desvio que se quer medir. O
+`calibrate_pace.py` exige dois episódios e usa mediana por isso.
+
+Ao trocar de voz, o caminho honesto é: estimar com um, rodar alguns dias, e
+remedir com `--desde` na data da troca.
