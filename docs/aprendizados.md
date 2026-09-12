@@ -512,3 +512,79 @@ episódios (145 a 154 nos três) é maior que o desvio que se quer medir. O
 
 Ao trocar de voz, o caminho honesto é: estimar com um, rodar alguns dias, e
 remedir com `--desde` na data da troca.
+
+### "Voz lenta" não era pausa, e velocidade não tem meio-termo
+
+Ouvintes acharam a voz clonada lenta. A hipótese natural era pausa demais entre
+frases, que daria para encurtar. A medição derrubou: nos episódios da voz nova
+as pausas acima de 150 ms ocupam 14% do tempo, com média de 0,35 s; na voz
+antiga ocupavam 15,5%, com média de 0,42 s. **A voz nova pausa menos.** O que
+mudou foi a articulação: sem contar pausas, ~174 palavras por minuto contra
+~180.
+
+O parâmetro `speed` da ElevenLabs também não resolveu, e não por falta de
+efeito. No mesmo trecho de 2,5 minutos:
+
+| `speed` | Palavras por minuto |
+|---|---|
+| 1,05 | 146 |
+| 1,10 | 167 |
+| 1,15 | 169 |
+
+De 1,05 para 1,10 a fala acelerou 14%; de 1,10 para 1,15, 1,4%. Na escuta,
+1,05 soou igual ao episódio no ar e os outros dois, rápidos demais. **Não houve
+valor intermediário utilizável**, e o número configurado não se traduz em
+ritmo proporcional. Parte do salto pode ser variação natural entre gerações —
+um trecho só não separa as duas causas.
+
+Duas lições. Antes de otimizar pausa, meça quanto do tempo é pausa. E um
+controle nominal de velocidade é uma promessa do fornecedor, não uma escala:
+teste em pontos e ouça.
+
+### Nome mantido à mão envelhece em silêncio
+
+A ficha técnica de cada episódio diz quem narrou. O nome vinha de um campo
+`_nome_falado` no `config/tts.json`, preenchido à mão. Quando o modelo trocou
+para o Multilingual v2, o `model_id` mudou e o campo não: **quatro episódios
+seguidos anunciaram "ElevenLabs Flash dois ponto cinco"**. Ninguém percebeu
+porque soava certo — só o autor, ouvindo com atenção.
+
+É o pior tipo de dado: uma cópia de outro dado, sem nada que obrigue as duas a
+andarem juntas. A correção foi eliminar a cópia. O nome falado agora é derivado
+do `model_id` em uso, e o nome do agente, do modelo passado ao `claude -p`, que
+passou a ser fixado explicitamente no orquestrador em vez de herdar o padrão da
+assinatura. Os registros das execuções headless confirmaram que o modelo em uso
+era `claude-opus-5` — medido, não suposto — antes de ele ir para a ficha.
+
+**Se um valor é função de outro, calcule; não armazene.**
+
+## Audiência
+
+Os números de audiência ficam em `privado/`, fora do repositório. Aqui fica só
+o método.
+
+### Painel com amostra pequena mente em percentual
+
+O primeiro painel do Spotify parecia dizer muita coisa — gênero, faixa etária,
+país, taxa de conclusão. Três armadilhas apareceram juntas:
+
+- **a unidade não é a que parece.** Todos os percentuais de demografia eram
+  múltiplos de 1 sobre o total de *plays*, não de pessoas. Com poucas dezenas
+  de plays, uma única escuta move um percentual em vários pontos, e as escutas
+  de teste do próprio autor entram na conta;
+- **a janela declarada não é a janela real.** "Últimos 30 dias" eram cinco
+  dias de presença no Spotify; o resto do gráfico era o programa não existir
+  lá;
+- **duas métricas do mesmo painel pareciam se contradizer** — conclusão baixa
+  contra consumo médio de dois terços do episódio. Não se contradiziam: a
+  conclusão do Spotify é *quem ouviu pelo menos 95%*, não a fração média
+  ouvida. Poucos terminam, a maioria ouve boa parte.
+
+O corte de 95% tem um efeito colateral próprio: quem sai durante o
+encerramento, que é recap e ficha técnica, não conta como concluído. A
+métrica pune o trecho menos essencial.
+
+É o mesmo erro que o projeto já cometeu com dBFS e com reverberação, agora num
+painel de terceiros: **uma métrica sem a condição de validade junto não diz
+nada.** Com amostra pequena, anote contagem absoluta e leia a definição antes
+de agir.

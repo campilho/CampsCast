@@ -1,66 +1,90 @@
-# TODO — fim de semana de 06 e 07/09/2026
+# TODO
 
-Lista curta e datada. O planejamento de longo prazo vive em
-[PROJETO.md](PROJETO.md); aqui é só o que está em cima da mesa.
+Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
+[PROJETO.md](PROJETO.md). Atualizada em 12/09/2026.
 
-## Hoje
+## Esta semana
 
-- [x] Medir a sala — descoberto que a TV do cômodo ao lado sobe o ruído de
-      −61 para −47 dBFS. Regravar tudo à noite, com a TV desligada.
-- [ ] **Gravar o material da voz profissional** — 30+ minutos, seguindo os seis
-      blocos de [docs/gravacao-voz.md](docs/gravacao-voz.md). É o item de maior
-      impacto perceptível para quem ouve, e o único que depende de silêncio em
-      casa. Gravar no iPhone, app Gravador, qualidade *Sem perdas*.
+- [ ] **Ouvir o episódio 12** (segunda, 14/09) — o primeiro com silêncio no
+      começo e no fim, número na abertura, encerramento só com a ficha técnica
+      e os nomes certos de quem escreveu e narrou
+- [ ] **Subir para o GitHub** os commits locais
+- [ ] **Rever o episódio 11 no Spotify** — saiu atrasado e o painel atualiza
+      com defasagem
+- [ ] **Anotar os minutos dos erros de "Anthropic"** — isolada a pronúncia sai
+      certa; o erro aparece no meio do texto. Com os minutos, gerar só aquelas
+      frases com e sem troca de grafia no `config/pronuncia.json`
+- [ ] **Conversar com quatro ou cinco ouvintes** — até onde ouvem, o que os
+      faria parar, e **se preferem Spotify ou Apple Podcasts**
+- [ ] **Decidir a chamada para seguir o podcast** — recomendação: uma frase no
+      encerramento, antes da despedida. Quem chega ao fim é justamente quem
+      gostou, e seguir é o que faz o app avisar do episódio novo
+- [ ] **Sexta, 18/09:** primeira anotação semanal em `privado/audiencia.md` e
+      remedir o ritmo com uma semana cheia:
+      `python3 scripts/calibrate_pace.py --desde 2026-09-08 --apply`
 
-      Protocolo por bloco:
-      1. `python3 scripts/check_recording.py silencio.m4a --sala` — se der
-         abaixo de −60 dBFS, pode gravar
-      2. Começar cada bloco com **10 segundos parado, em silêncio**
-      3. Mesma posição e distância em todos os blocos
-      4. `python3 scripts/prep_voice_samples.py *.m4a` — converte e valida
-- [x] **Conta Apple** — e-mail principal trocado para fernando.campilho@gmail.com
-      pelo painel do macOS (o navegador não permite); o domínio expirado saiu
-- [x] **Apple Podcasts Connect** — conta criada (`campscast|272359553|1`) e
-      programa adicionado pelo feed RSS em 07/09. O diagnóstico de 06/09 estava
-      errado: não era o domínio expirado. O console mostrava
-      `GET /olympus/v1/providerSwitchRequests` → **409 Conflict**, ou seja, o
-      registro já existia desde a primeira tentativa — o "Ocorreu um erro" da
-      tela mentia. Recarregar a página revelou o estado real, já correto.
-- [x] **Publicar o programa na Apple** — publicado em 07/09. Faltava também
-      preencher a frequência de atualização; sem ela o botão não conclui.
-      Confirmado no catálogo público pelo `itunes.apple.com/lookup?id=6809631318`.
-- [ ] **Corrigir a frequência na Apple** — está "Duas vezes por semana" e o
-      podcast sai em todo dia útil. Campo editável em Informações do programa.
-- [ ] **Conferir o Spotify** à noite — o show ainda responde 404, o que é
-      esperado. Quando sair do ar 404, avisar para entrar no README.
+## Operação
 
-## Quando o material da voz estiver pronto
+- [ ] **Pontualidade antes das 7h** — tampa aberta e na tomada. Três falhas por
+      sono em 10 e 11/09. Se falhar de novo, fallback na nuvem
+- [ ] **Agente escreve colado no teto** de palavras em vez de mirar o alvo;
+      episódios de ~9 min em vez de 8. Ajuste no `prompts/master.md`, se
+      quisermos episódios mais curtos
+- [ ] (opcional) **Chamado na ElevenLabs** pedindo retry do fine-tuning Flash
+      da voz `LvmWSbvGusgLWSQDKHJH` ("NaN losses", parou em 75,7%). Traria custo
+      pela metade e fala mais rápida; a velocidade fica como está por enquanto
 
-- [ ] Criar a Professional Voice Clone na ElevenLabs
-- [ ] Trocar `voice_id` em `config/tts.json`
-- [ ] `python3 scripts/tts.py --check` para validar
-- [ ] Gerar um episódio e **remedir o ritmo**:
-      `python3 scripts/calibrate_pace.py --desde <primeira data com a voz nova> --apply`
-- [ ] Comparar com a voz atual antes de adotar
+## Divulgação — mais adiante
 
-## Depois, sem pressa
-
-- [ ] README público caprichado, com os links dos diretórios já ativos
-- [ ] ADR consolidando os custos reais — ElevenLabs, S3, CloudFront, Route 53
+- [ ] **Plano de divulgação** — começar pelo LinkedIn, rede grande e quase toda
+      de tecnologia: posts frequentes contando a evolução do projeto, sempre
+      com os links do podcast
+- [ ] **Escolher o link principal** a divulgar, depois das conversas com
+      ouvintes (Spotify ou Apple)
 - [ ] Avaliar YouTube Music (confirmar disponibilidade no Brasil)
-- [ ] Cobrar feedback dos 4 beta testers
+
+## Estacionado até haver divulgação
+
+- [ ] **Frequência na Apple** — aparece "duas vezes por semana" para o público;
+      o podcast sai todo dia útil. A página Podcasts do Connect aparece vazia
+      sem motivo conhecido (só existe uma conta)
+- [ ] **Analytics da Apple** — zerado até alguém ouvir por lá
+- [ ] (opcional) **Contar downloads com o prefixo OP3** (`op3.dev`)
+
+## Fase 2 — o que resta
+
+- [ ] ADR consolidando os custos reais — começo de outubro, com as faturas de
+      setembro fechadas
 - [ ] Refatorar o agente em subagents: pesquisador, editor, publicador
 
-## Dívida técnica registrada
+## Dívida técnica
 
-- [ ] O smoke test move `episodes/` para se isolar. Já quase custou episódios
-      duas vezes; hoje tem abrigo dentro do repositório e auto-recuperação, mas
-      a correção certa é os testes não tocarem em dados reais — um diretório de
-      episódios configurável por variável de ambiente resolveria.
-- [ ] Polly e Chirp3 seguem sem comparação medida, pendentes no ADR 0001. Não
-      bloqueia nada: o Flash v2.5 está validado e barato.
+- [ ] O smoke test move `episodes/` para se isolar. A correção certa é os
+      testes não tocarem em dados reais — um diretório de episódios
+      configurável por variável de ambiente resolveria
+- [ ] Polly e Chirp3 seguem sem comparação medida, pendentes no ADR 0001
+- [ ] Apagar `gravacoes/descartadas/` quando quiser
 
-## Próxima execução automática
+## Longo prazo
 
-Segunda 07/09 é **feriado** e não terá episódio. A próxima é **terça, 08/09 às
-05:50**, cobrindo de sexta 04/09 a segunda 07/09 — quatro dias numa janela só.
+- [ ] **Downloads por arquivo** — quando passar de algo como 100 pessoas por
+      semana, ou houver conversa com patrocinador. Primeiro o OP3; o plano Pro
+      do CloudFront só se não bastar
+
+## Feito recentemente
+
+- [x] Silêncio de 1 s no começo e 3 s no fim de cada episódio (12/09)
+- [x] Número do episódio no front-matter, na abertura e na tag
+      `<itunes:episode>`; os 11 anteriores numerados (12/09)
+- [x] Encerramento só com a ficha técnica — sem recap e sem "o que observar"
+      (12/09)
+- [x] Nomes da ficha derivados dos modelos em uso; modelo do agente fixado
+      em `claude-opus-5` (12/09)
+- [x] Mapa de pronúncia em `config/pronuncia.json` (12/09)
+- [x] Velocidade testada a 1,05, 1,10 e 1,15 e descartada (12/09)
+- [x] Definição da conclusão do Spotify: ouviu pelo menos 95% (12/09)
+- [x] CloudFront gratuito investigado: sem dado por arquivo (12/09)
+- [x] Ritmo recalibrado com episódios reais: 150 ppm (10/09)
+- [x] Voz clonada profissional gravada, treinada e adotada (07/09)
+- [x] Apple Podcasts no ar, ID 6809631318 — os quatro diretórios respondem
+- [x] README com os links dos diretórios e a seção da voz
