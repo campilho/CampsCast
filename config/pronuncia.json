@@ -1,0 +1,4 @@
+{
+  "_leia": "Grafia escrita -> como o sintetizador deve ler. Só afeta o áudio: roteiro, contagem de palavras e feed seguem com a grafia original. Palavra inteira e sensível a maiúsculas.",
+  "substituicoes": {}
+}

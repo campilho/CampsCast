@@ -35,8 +35,9 @@ pausa de dias. Vive em `scripts/window.py`; cada roteiro grava `window_start` e
 `window_end` no front-matter, e é de lá que a execução seguinte parte.
 
 **Faixa de palavras.** Derivada do ritmo medido da voz (`words_per_minute` em
-`config/tts.json`), não fixa no prompt. Trocar de voz **ou de modelo** exige
-remedir com `scripts/calibrate_pace.py --apply`.
+`config/tts.json`), não fixa no prompt. Trocar de voz, de modelo **ou de velocidade**
+(`speed` em `voice_settings`) exige remedir com
+`scripts/calibrate_pace.py --apply`.
 
 **Sem dependências.** Nada de `pip install`. Duração de MP3 lendo frames MPEG,
 upload ao S3 assinando SigV4, tudo em biblioteca padrão. Quem clona precisa de
@@ -53,10 +54,11 @@ Agregador serve para descobrir, nunca para citar.
 | `run_episode.sh` | orquestrador; `--only`, `--skip`, `--dry-run`, `--force`, `--overwrite` |
 | `window.py` | calcula a janela de notícias |
 | `schedule.py` | decide se o dia tem episódio (dias úteis, feriados) |
-| `tts.py` | narra; `--check`, `--budget`, `--voice`, `--model`, `--list-voices`, `--voice-status` |
+| `tts.py` | narra; `--check`, `--budget`, `--voice`, `--model`, `--speed`, `--list-voices`, `--voice-status` |
 | `publish.py` | gera o feed e sobe |
 | `s3.py` | upload SigV4; `--print-policy`, `--print-iam-policy` |
 | `notify.py` | avisa que saiu |
+| `nomes.py` | nomes falados na ficha técnica e número do episódio |
 
 ### Diagnóstico e manutenção
 | Script | O que faz |
@@ -82,7 +84,8 @@ Agregador serve para descobrir, nunca para citar.
 | `config/briefing.md` | contrato editorial da semana |
 | `config/sources.yaml` | fontes, por camada |
 | `config/show.json` | metadados do podcast e do feed |
-| `config/tts.json` | voz, modelo, ritmo medido |
+| `config/tts.json` | voz, modelo, ritmo medido, silêncio no começo e no fim |
+| `config/pronuncia.json` | como o sintetizador deve ler nomes que ele erra; só muda o áudio |
 | `config/schedule.json` | dias de publicação, feriados, exceções |
 | `prompts/master.md` | o agente |
 

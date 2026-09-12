@@ -43,6 +43,9 @@ if [[ -f .env ]]; then
 fi
 
 CLAUDE_BIN="${CLAUDE_BIN:-claude}"
+# Modelo do agente fixado aqui, e não deixado no padrão da assinatura: a ficha
+# técnica diz em voz alta quem escreveu, e isso só é verdade por construção.
+CLAUDE_MODEL="${CLAUDE_MODEL:-claude-opus-5}"
 
 # ---------- args ----------
 EPISODE_DATE=""
@@ -122,12 +125,15 @@ eval "$WINDOW_EVAL"
 BUDGET_EVAL="$(python3 scripts/tts.py --budget 2>/dev/null)" || BUDGET_EVAL=""
 if [[ -n "$BUDGET_EVAL" ]]; then eval "$BUDGET_EVAL"; fi
 
-# ---------- ficha técnica do encerramento ----------
-# O agente cita o que narra o episódio. Sai da config, não de memória dele:
-# trocar de voz ou de modelo muda o texto falado sem ninguém editar o prompt.
-TTS_NOME="$(python3 -c "
-import json;d=json.load(open('config/tts.json'))
-print(d.get('_nome_falado', d['model_id']))" 2>/dev/null || echo "")"
+# ---------- ficha técnica e número do episódio ----------
+# O agente cita quem escreveu e quem narrou. Os nomes são derivados dos ids em
+# uso, nunca de um campo mantido à mão: o antigo _nome_falado continuou dizendo
+# "Flash 2.5" por quatro episódios depois da troca para o Multilingual v2.
+TTS_NOME="$(python3 scripts/nomes.py tts 2>/dev/null || echo "")"
+AGENTE_NOME="$(python3 scripts/nomes.py agente "$CLAUDE_MODEL" 2>/dev/null || echo "")"
+# O número é gravado no front-matter no dia em que o episódio nasce e nunca
+# recalculado: contar arquivos renumeraria tudo ao apagar um episódio.
+EPISODE_NUMBER="$(python3 scripts/nomes.py numero "$EPISODE_DATE" 2>/dev/null || echo "")"
 TTS_VOZ="$(python3 -c "
 import json;d=json.load(open('config/tts.json'))
 print(d.get('_voz_falada','uma voz sintetizada'))" 2>/dev/null || echo "")"
@@ -186,10 +192,12 @@ if stage_enabled research; then
 
   export EPISODE_DATE NEWS_WINDOW WINDOW_START WINDOW_END WINDOW_DAYS
   export WORD_MIN WORD_TARGET WORD_MAX WORDS_PER_MINUTE
-  export TTS_NOME TTS_VOZ
+  export TTS_NOME TTS_VOZ AGENTE_NOME EPISODE_NUMBER
+  [[ -n "$EPISODE_NUMBER" ]] || die "não foi possível calcular o número do episódio."
+  log "Episódio nº $EPISODE_NUMBER · escrito por ${AGENTE_NOME:-?} · narrado por ${TTS_NOME:-?}"
 
   if [[ $DRY_RUN -eq 1 ]]; then
-    log "DRY-RUN: $CLAUDE_BIN -p \"\$(cat prompts/master.md)\" --permission-mode acceptEdits"
+    log "DRY-RUN: $CLAUDE_BIN -p \"\$(cat prompts/master.md)\" --model $CLAUDE_MODEL --permission-mode acceptEdits"
   else
     # A etapa demora vários minutos e a saída do CLI só chega no fim, porque
     # precisa ser capturada inteira para ser validada. Sem isso o terminal fica
@@ -203,6 +211,7 @@ if stage_enabled research; then
     set +e
     AGENT_OUT="$(
       "$CLAUDE_BIN" -p "$(cat prompts/master.md)" \
+        --model "$CLAUDE_MODEL" \
         --permission-mode acceptEdits \
         --allowedTools "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch" \
         2>>"$LOG"

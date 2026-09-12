@@ -24,8 +24,11 @@ Decida sozinho e siga em frente. Nunca peça confirmação.
   - WORD_MIN / WORD_TARGET / WORD_MAX — faixa de palavras
   - WORDS_PER_MINUTE — ritmo medido dessa voz
 - Para a ficha técnica do encerramento:
-  - TTS_NOME — o sintetizador que vai narrar (ex.: "ElevenLabs Flash 2.5")
+  - AGENTE_NOME — o modelo que escreve este roteiro (ex.: "Claude Opus 5")
+  - TTS_NOME — o sintetizador que vai narrar (ex.: "ElevenLabs Multilingual v2")
   - TTS_VOZ — descrição da voz (ex.: "uma cópia sintética da voz do Camps")
+- O número do episódio vem em EPISODE_NUMBER: vai no front-matter e é dito na
+  abertura.
 
 ## Processo (nesta ordem, sem pular etapas)
 
@@ -48,7 +51,7 @@ Decida sozinho e siga em frente. Nunca peça confirmação.
    do corte de preço da OpenAI; hoje a resposta veio da Anthropic". Quem ouve
    todo dia percebe a continuidade, e quem chega hoje entende o contexto sem
    precisar voltar. Vale para desdobramento, contraste, confirmação de algo que
-   era rumor, e para promessa cumprida ("o que a gente disse para observar").
+   era rumor, e para promessa cumprida ("o que a empresa tinha anunciado saiu").
 
    Não force. Se não houver relação real, não invente ponte.
    O diretório `archive/` guarda execuções de teste que foram desfeitas de
@@ -142,6 +145,7 @@ narrado) e o corpo do roteiro (que É narrado, na íntegra).
 ```
 ---
 date: YYYY-MM-DD
+episode: <valor de EPISODE_NUMBER>
 window_start: <valor de WINDOW_START>
 window_end: <valor de WINDOW_END>
 title: <manchete do dia, até 70 caracteres>
@@ -166,9 +170,10 @@ Estrutura do corpo (siga esta ordem, sem escrever os rótulos entre colchetes):
 
 - COLD OPEN — uma frase com a manchete do dia. ~15 segundos.
 - ABERTURA — ~20 segundos, nesta forma:
-  "Bom dia. Aqui é o CampsCast, seu briefing de inteligência artificial. Eu sou
+  "Bom dia. Aqui é o CampsCast, episódio <número>, seu briefing de inteligência artificial. Eu sou
   um agente de IA, e esta é a voz do Camps, sintetizada. Hoje é <dia da
   semana>, <dia> de <mês> de <ano>."
+  O número é o de EPISODE_NUMBER, falado por extenso ("episódio doze").
   A data falada é a de EPISODE_DATE. Se a janela tiver mais de um dia, diga de
   quando são as notícias ("o que aconteceu desde sexta-feira").
   A frase sobre ser um agente é curta de propósito: quem ouve todo dia escuta
@@ -177,15 +182,16 @@ Estrutura do corpo (siga esta ordem, sem escrever os rótulos entre colchetes):
   2 a 3 minutos.
 - TÓPICO 2 — 2 a 3 minutos.
 - TÓPICO 3 — 1 a 2 minutos, ou o item do backlog com o aviso de data.
-- ENCERRAMENTO — recap em três frases, teaser do que observar hoje, e a ficha
-  técnica. ~45 segundos.
+- ENCERRAMENTO — só a ficha técnica e a despedida. ~20 segundos. Sem recap das
+  pautas e sem "o que observar hoje": o episódio acabou de dizer tudo, e o
+  formato não acompanha nada ao longo do dia.
 
   A ficha técnica fecha o episódio e usa os **números reais desta execução** —
   ela muda todo dia, e por isso não cansa como um aviso fixo cansaria. Diga,
   numa ou duas frases faladas naturalmente:
   - quantas páginas você leu e de quantas fontes distintas;
   - quantas pautas você avaliou e quantas entraram;
-  - quem escreveu e quem narrou, usando TTS_NOME e TTS_VOZ.
+  - quem escreveu e quem narrou, usando AGENTE_NOME, TTS_NOME e TTS_VOZ.
 
   **Os números têm de bater com o `research/<EPISODE_DATE>.md` que você acabou
   de escrever.** Conte ali: páginas lidas, domínios distintos, e a soma das que
@@ -194,12 +200,15 @@ Estrutura do corpo (siga esta ordem, sem escrever os rótulos entre colchetes):
 
   Exemplo do tom, não do texto — varie a cada dia:
   "Este episódio saiu de vinte e oito páginas em catorze fontes. Onze pautas
-  avaliadas, três no ar. Escrito por um agente do Claude Code e narrado pelo
-  ElevenLabs Flash dois ponto cinco, com uma cópia sintética da voz do Camps."
+  avaliadas, três no ar. Escrito pelo Claude Opus cinco, no Claude Code, e
+  narrado pelo ElevenLabs Multilingual versão dois, com uma cópia sintética da
+  voz do Camps."
 
-  Sobre citar o seu próprio modelo: só diga o nome se tiver certeza. Se não
-  tiver, diga "um agente do Claude Code" e pronto. Inventar a própria versão é
-  o tipo de detalhe errado que destrói a confiança no resto do episódio.
+  Os nomes vêm de AGENTE_NOME e TTS_NOME, calculados a partir dos modelos
+  realmente em uso. Use exatamente esses, nunca o que você acha que é. Se
+  AGENTE_NOME vier vazio, diga "um agente do Claude Code" e pronto: inventar a
+  própria versão é o tipo de detalhe errado que destrói a confiança no resto do
+  episódio.
 
   Termine com "até o próximo episódio", nunca com "até amanhã": não há episódio
   no sábado nem no domingo, e a promessa ficaria falsa em toda sexta-feira.

@@ -346,6 +346,58 @@ def strip_container(data: bytes) -> bytes:
     return body
 
 
+_BITRATES_MPEG1_L3 = [0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320]
+_TAXAS_MPEG1 = [44100, 48000, 32000]
+
+
+def silencio_mp3(referencia: bytes, segundos: float) -> bytes:
+    """Quadros MP3 de silêncio no mesmo formato do áudio de referência.
+
+    Sem folga entre episódios, o Spotify emenda o fim de um no começo do
+    anterior e parece o mesmo episódio. Não há codificador MP3 sem dependência,
+    então o silêncio é montado à mão: cabeçalho copiado do primeiro quadro real
+    e corpo zerado, que decodifica como amostras nulas. Só MPEG-1 Layer III;
+    qualquer outro formato devolve vazio em vez de arriscar um arquivo inválido.
+    """
+    if segundos <= 0:
+        return b""
+    i = next((k for k in range(len(referencia) - 3)
+              if referencia[k] == 0xFF and referencia[k + 1] & 0xFE == 0xFA), None)
+    if i is None:
+        return b""
+    h = bytearray(referencia[i:i + 4])
+    indice_bitrate, indice_taxa = h[2] >> 4, (h[2] >> 2) & 3
+    if not 0 < indice_bitrate < 15 or indice_taxa > 2:
+        return b""
+    h[2] &= 0xFD                                   # sem byte de enchimento
+    taxa = _TAXAS_MPEG1[indice_taxa]
+    tamanho = 144 * _BITRATES_MPEG1_L3[indice_bitrate] * 1000 // taxa
+    quadros = max(1, round(segundos * taxa / 1152))
+    return (bytes(h) + bytes(tamanho - 4)) * quadros
+
+
+PRONUNCIA = ROOT / "config" / "pronuncia.json"
+
+
+def carrega_pronuncia(caminho: pathlib.Path = PRONUNCIA) -> dict:
+    try:
+        return json.loads(caminho.read_text(encoding="utf-8")).get("substituicoes", {})
+    except FileNotFoundError:
+        return {}
+
+
+def aplica_pronuncia(texto: str, mapa: dict) -> str:
+    """Troca a grafia só no texto enviado ao sintetizador.
+
+    O roteiro, a contagem de palavras e o feed continuam com a grafia original.
+    A voz clonada aprende timbre, não como ler cada palavra: quem decide a
+    leitura de "Anthropic" é o modelo base, com as regras do português.
+    """
+    for escrito, falado in mapa.items():
+        texto = re.sub(rf"\b{re.escape(escrito)}\b", falado, texto)
+    return texto
+
+
 def synthesize(part: str, cfg: dict, api_key: str,
                previous_text: str | None, next_text: str | None) -> bytes:
     url = f"{API_BASE}/{cfg['voice_id']}?output_format={cfg['output_format']}"
@@ -398,6 +450,8 @@ def main() -> int:
     ap.add_argument("--voice", help="usa esta voz em vez da de config/tts.json "
                                     "(útil para comparar antes de decidir)")
     ap.add_argument("--model", help="usa este modelo em vez do de config/tts.json")
+    ap.add_argument("--speed", type=float,
+                    help="velocidade da fala, de 0.7 a 1.2; sobrescreve config/tts.json")
     ap.add_argument("--budget", action="store_true",
                     help="imprime a faixa de palavras desta voz (KEY=VALUE)")
     ap.add_argument("--voice-status", metavar="ID", nargs="?", const="",
@@ -418,6 +472,13 @@ def main() -> int:
     if args.model:
         cfg = {**cfg, "model_id": args.model}
         print(f"(modelo sobrescrito: {args.model})")
+    if args.speed is not None:
+        if not 0.7 <= args.speed <= 1.2:
+            print("ERRO: --speed precisa ficar entre 0.7 e 1.2, o limite da API.",
+                  file=sys.stderr)
+            return 2
+        cfg = {**cfg, "voice_settings": {**cfg["voice_settings"], "speed": args.speed}}
+        print(f"(velocidade sobrescrita: {args.speed})")
 
     if args.voice_status is not None:
         api_key = os.environ.get("ELEVENLABS_API_KEY", "").strip()
@@ -525,7 +586,9 @@ def main() -> int:
         print(f"ERRO: roteiro não encontrado: {script_path}", file=sys.stderr)
         return 1
 
-    body = to_speakable(strip_front_matter(script_path.read_text(encoding="utf-8")))
+    body = aplica_pronuncia(
+        to_speakable(strip_front_matter(script_path.read_text(encoding="utf-8"))),
+        carrega_pronuncia())
     if not body:
         print("ERRO: roteiro vazio depois de remover o front-matter.", file=sys.stderr)
         return 1
@@ -577,6 +640,10 @@ def main() -> int:
         nxt = parts[i + 1] if i + 1 < len(parts) else None
         print(f"  trecho {i + 1}/{len(parts)} ({len(part)} chars)…", flush=True)
         audio += strip_container(synthesize(part, cfg, api_key, prev, nxt))
+
+    antes = silencio_mp3(bytes(audio), float(cfg.get("silence_start_s", 0) or 0))
+    depois = silencio_mp3(bytes(audio), float(cfg.get("silence_end_s", 0) or 0))
+    audio = bytearray(antes) + audio + bytearray(depois)
 
     out_path.write_bytes(bytes(audio))
     try:

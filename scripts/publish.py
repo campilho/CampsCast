@@ -185,6 +185,7 @@ def collect_episodes() -> list[dict]:
             "audio_path": audio_path,
             "size": audio_path.stat().st_size,
             "duration": secs,
+            "episode": fm.get("episode"),
         })
     return eps
 
@@ -202,6 +203,10 @@ def build_feed(show: dict, eps: list[dict]) -> str:
             if ep["topics"] else show["subtitle"]
         )
         dur = f"    <itunes:duration>{hhmmss(ep['duration'])}</itunes:duration>\n" if ep["duration"] else ""
+        # Número pela tag, não no título: o título é o que converte impressão
+        # em play, e as listas no celular cortam por volta de 40 caracteres.
+        num = (f"    <itunes:episode>{int(str(ep['episode']))}</itunes:episode>\n"
+               if str(ep.get("episode") or "").isdigit() else "")
         url = f"{base}/audio/{ep['audio_path'].name}"
         items.append(
             "  <item>\n"
@@ -214,6 +219,7 @@ def build_feed(show: dict, eps: list[dict]) -> str:
             f"{dur}"
             f"    <itunes:explicit>{'true' if show['explicit'] else 'false'}</itunes:explicit>\n"
             f"    <itunes:episodeType>full</itunes:episodeType>\n"
+            f"{num}"
             "  </item>"
         )
 

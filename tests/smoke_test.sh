@@ -1187,6 +1187,121 @@ else
   bad "classificação por banda errou: $CLS"
 fi
 
+# ------------------------------------------ 14 silêncio, velocidade, pronúncia
+head_ "14. Silêncio entre episódios, velocidade e pronúncia"
+# Sem folga no fim, o Spotify emenda um episódio no anterior e parece o mesmo.
+# O silêncio é montado à mão a partir do cabeçalho real; precisa ter a duração
+# pedida e ser lido como MP3 válido pelo mesmo parser do feed.
+SIL="$(python3 - <<'PYSIL'
+import importlib.util, pathlib, sys, tempfile
+sys.path.insert(0, "scripts")
+spec = importlib.util.spec_from_file_location("tts", "scripts/tts.py")
+tts = importlib.util.module_from_spec(spec); spec.loader.exec_module(tts)
+from publish import mp3_duration_seconds
+erros = []
+ref = bytes.fromhex("fffb90c4") + bytes(413)          # quadro mono 128 kbps 44,1 kHz
+s = tts.silencio_mp3(ref, 1.0)
+if len(s) != 38 * 417: erros.append(f"tamanho {len(s)}")
+if s[:4] != bytes.fromhex("fffb90c4"): erros.append("cabeçalho")
+if any(s[k:k+4] != s[:4] for k in range(0, len(s), 417)): erros.append("quadro fora do passo")
+arq = pathlib.Path(tempfile.mkdtemp()) / "s.mp3"; arq.write_bytes(s * 3)
+d = mp3_duration_seconds(arq)
+if not d or abs(d - 3.0) > 0.1: erros.append(f"duração {d}")
+if tts.silencio_mp3(b"nao sou mp3", 1.0) != b"": erros.append("formato desconhecido não degradou")
+if tts.silencio_mp3(ref, 0) != b"": erros.append("zero segundos gerou quadros")
+m = {"Anthropic": "Antrópic"}
+if tts.aplica_pronuncia("A Anthropic e a Anthropics.", m) != "A Antrópic e a Anthropics.":
+    erros.append("pronúncia não respeita palavra inteira")
+print(";".join(erros) if erros else "ok")
+PYSIL
+)" || SIL="import falhou"
+if [[ "$SIL" == "ok" ]]; then
+  ok "silêncio MP3 com duração certa e pronúncia por palavra inteira"
+else
+  bad "silêncio/pronúncia: $SIL"
+fi
+if python3 scripts/tts.py --script tests/fixtures/sample-episode.md --speed 1.5 --dry-run >/dev/null 2>&1; then
+  bad "tts.py aceitou --speed fora do limite da API"
+else
+  ok "tts.py recusa --speed fora de 0.7–1.2"
+fi
+if python3 -c "import json;c=json.load(open('config/tts.json'));assert c['silence_end_s']>=1" 2>/dev/null; then
+  ok "config/tts.json tem folga de silêncio no fim"
+else
+  bad "config/tts.json sem silence_end_s"
+fi
+
+# ---------------------------------------- 15 número do episódio e ficha técnica
+head_ "15. Número do episódio e nomes da ficha técnica"
+# A ficha técnica disse "Flash 2.5" por quatro episódios depois da troca para o
+# Multilingual v2, porque o nome falado era um campo mantido à mão.
+NOM="$(python3 - <<'PYNOM'
+import importlib.util, json, pathlib, tempfile
+spec = importlib.util.spec_from_file_location("nomes", "scripts/nomes.py")
+m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+erros = []
+for k, v in {"claude-opus-5": "Claude Opus 5", "claude-fable-5-1": "Claude Fable 5.1",
+             "claude-haiku-4-5-20251001": "Claude Haiku 4.5"}.items():
+    if m.nome_agente(k) != v: erros.append(f"agente {k} -> {m.nome_agente(k)}")
+for k, v in {"eleven_multilingual_v2": "ElevenLabs Multilingual v2",
+             "eleven_flash_v2_5": "ElevenLabs Flash v2.5", "eleven_v3": "ElevenLabs v3"}.items():
+    if m.nome_tts(k) != v: erros.append(f"tts {k} -> {m.nome_tts(k)}")
+if "_nome_falado" in json.load(open("config/tts.json")):
+    erros.append("_nome_falado voltou ao config")
+d = pathlib.Path(tempfile.mkdtemp())
+def ep(data, n=None):
+    (d / f"{data}.md").write_text(f"---\ndate: {data}\n" + (f"episode: {n}\n" if n else "") + "---\nx\n")
+ep("2026-01-01", 1); ep("2026-01-02", 2)
+if m.proximo_numero("2026-01-05", d) != 3: erros.append("próximo não é o maior + 1")
+if m.proximo_numero("2026-01-02", d) != 2: erros.append("reexecução renumerou")
+(d / "2026-01-01.md").unlink()
+if m.proximo_numero("2026-01-05", d) != 3: erros.append("apagar episódio renumerou")
+e = pathlib.Path(tempfile.mkdtemp()); (e / "2026-01-01.md").write_text("---\ndate: 2026-01-01\n---\n")
+if m.proximo_numero("2026-01-02", e) != 2: erros.append("sem número gravado não contou os anteriores")
+reais = sorted(p for p in pathlib.Path("episodes").glob("*.md") if p.stem[:4].isdigit())
+nums = [m._numero_gravado(p) for p in reais]
+if None in nums or any(b <= a for a, b in zip(nums, nums[1:])):
+    erros.append(f"episódios reais sem número crescente: {nums}")
+print(";".join(erros) if erros else "ok")
+PYNOM
+)" || NOM="import falhou"
+if [[ "$NOM" == "ok" ]]; then
+  ok "nomes da ficha derivados dos ids; número não renumera"
+else
+  bad "nomes/número: $NOM"
+fi
+PUB="$(python3 - <<'PYPUB'
+import json, pathlib, sys
+sys.path.insert(0, "scripts")
+import publish
+show = json.load(open("config/show.json"))
+base = {"date": "2026-09-14", "title": "t", "topics": ["a"], "audio_path": pathlib.Path("audio/x.mp3"),
+        "size": 1, "duration": 60}
+com = publish.build_feed(show, [{**base, "episode": "12"}])
+sem = publish.build_feed(show, [base])
+print("ok" if "<itunes:episode>12</itunes:episode>" in com and "<itunes:episode>" not in sem else "falhou")
+PYPUB
+)" || PUB="erro"
+if [[ "$PUB" == "ok" ]]; then
+  ok "feed leva <itunes:episode> quando o roteiro tem número"
+else
+  bad "feed sem <itunes:episode> ($PUB)"
+fi
+if grep -q "EPISODE_NUMBER" prompts/master.md && grep -q "AGENTE_NOME" prompts/master.md \
+   && ! grep -qi "observar hoje: " prompts/master.md && ! grep -q "recap em três frases" prompts/master.md; then
+  ok "prompt: número na abertura, encerramento só com a ficha"
+else
+  bad "prompt sem número, sem AGENTE_NOME, ou ainda com recap"
+fi
+LOG14="logs/2026-09-14.log"; JA_EXISTIA=0; [[ -f "$LOG14" ]] && JA_EXISTIA=1
+DRY="$(bash scripts/run_episode.sh --date 2026-09-14 --dry-run 2>&1 || true)"
+[[ $JA_EXISTIA -eq 0 ]] && rm -f "$LOG14"
+if [[ "$DRY" == *"--model claude-opus-5"* && "$DRY" == *"Episódio nº "* ]]; then
+  ok "orquestrador fixa o modelo e anuncia o número"
+else
+  bad "dry-run sem --model ou sem número do episódio"
+fi
+
 # ------------------------------------------------------------------- resultado
 printf '\n\033[1m%s\033[0m\n' "Resultado: $PASS ok, $FAIL falha(s)"
 [[ $FAIL -eq 0 ]] || exit 1

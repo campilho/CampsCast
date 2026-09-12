@@ -14,6 +14,7 @@
   "words_per_minute": 150,
   "_nota_ritmo": "Medido por scripts/calibrate_pace.py em 3 episódios: mediana 150 ppm. Trocar de voz OU de modelo exige remedir — rode com --desde a partir do primeiro episódio da configuração nova.",
   "_nota_ajustes": "Espelham o painel da ElevenLabs (print de 24/08/2026): Speed no default, Stability 0.5, Similarity 0.75, Style Exaggeration em zero. Style acima de zero degrada a fidelidade de voz clonada — por isso zero, e não 0.10.",
-  "_nome_falado": "ElevenLabs Flash 2.5",
-  "_voz_falada": "uma cópia sintética da voz do Camps"
+  "_voz_falada": "uma cópia sintética da voz do Camps",
+  "silence_start_s": 1.0,
+  "silence_end_s": 3.0
 }
