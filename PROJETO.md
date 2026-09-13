@@ -1,11 +1,11 @@
-# 🎙️ [NOME DO PODCAST] — Briefing diário de IA, gerado por agentes
+# 🎙️ CampsCast — Briefing diário de IA, gerado por agentes
 
 > Podcast diário (dias úteis) com as principais notícias do mundo de IA do dia anterior,
 > pesquisado, roteirizado, narrado e publicado de forma autônoma por agentes de IA.
 > Roda localmente em um MacBook Pro M3, com Claude Code em modo headless,
 > TTS na ElevenLabs e publicação via feed RSS em S3.
 
-**Status:** Fase 1 concluída em 05/09/2026 · Fase 2 em andamento (voz própria adotada em 07/09; falta publicar na Apple)
+**Status:** Fase 1 concluída em 05/09/2026 · Fase 2 em andamento (voz própria e os quatro diretórios no ar; falta a divulgação) · Fases 3 e 4 planejadas
 **Autor:** Camps
 **Licença:** MIT para o código, CC BY 4.0 para o conteúdo editorial
 
@@ -20,6 +20,11 @@ podcast pronto para tocar no carro às 7h da manhã, via Android Auto.
 
 O projeto também é um laboratório público de engenharia de agentes: cada fase
 documenta decisões de arquitetura, custos reais e lições aprendidas.
+
+**Tudo é IA, e o episódio diz isso.** Pesquisa, roteiro e voz — e, nas próximas
+fases, vídeos, site e agentes com nome e papel — são feitos por IA, e isso é
+dito em voz alta em todo episódio. Nenhuma persona finge ser humana, e nada é
+publicado em nome do Camps sem a aprovação dele. É o mote do projeto.
 
 Princípio editorial central (inspirado no framework de curadoria de
 [Deborah Folloni](https://dfolloni.substack.com/p/como-acompanhar-noticias-de-ia-sem)):
@@ -40,7 +45,7 @@ Regras fixas que o agente deve respeitar:
 | Regra | Valor |
 |---|---|
 | Frequência | 1 episódio/dia, **apenas dias úteis** — dias, feriados e exceções em `config/schedule.json` |
-| Janela de notícias | Dia anterior. Na segunda-feira: sexta + sábado + domingo |
+| Janela de notícias | Do dia seguinte ao último já coberto até a véspera (`scripts/window.py`). Na segunda, sexta a domingo |
 | Duração | **5 a 10 minutos** (alvo ~8 min; nunca ultrapassar 10) |
 | Tópicos por episódio | **Máximo 3 tópicos relevantes** |
 | Excedente | Tópico relevante que não coube → vai para o **backlog** (`saved-items/`) |
@@ -48,20 +53,24 @@ Regras fixas que o agente deve respeitar:
 | Idioma | Português do Brasil, tom de conversa, sem jargão não explicado |
 | Prioridade máxima | Lançamento de modelo de fronteira dos principais players |
 
-Estrutura sugerida do roteiro (~950–1.200 palavras ≈ 8 min de fala):
+Estrutura do roteiro. A faixa de palavras não é fixa: sai do ritmo medido da
+voz de produção (`words_per_minute` em `config/tts.json`). Em 12/09/2026, a
+150 palavras por minuto, a faixa é de 825 a 1.425 palavras, com alvo de 1.200.
 
-> Calibrado com medição real em 23/08/2026: a voz de produção fala a **125
-> palavras por minuto**, não as ~160 que a estimativa original assumia.
-> 1.152 palavras renderam 9min11s. O teto de 10 minutos equivale a 1.250
-> palavras — por isso a faixa fecha em 1.200.
+> A primeira medição, em 23/08/2026, deu 125 palavras por minuto com a voz da
+> época; a estimativa original assumia ~160. Trocar de voz, de modelo ou de
+> velocidade exige remedir — ver `docs/aprendizados.md`.
 
 ```
+[silêncio]     1 s
 [COLD OPEN]    Uma frase com a manchete do dia. (15s)
-[ABERTURA]     Vinheta verbal + data. (15s)
+[ABERTURA]     Vinheta verbal com o número do episódio + data. (20s)
 [TÓPICO 1]     A notícia mais importante. O que é, por que importa, fonte. (2-3 min)
 [TÓPICO 2]     (2-3 min)
 [TÓPICO 3]     (1-2 min) — ou item do backlog, com aviso de data
-[ENCERRAMENTO] Recap em 3 frases + teaser do que observar hoje. (30s)
+[ENCERRAMENTO] Ficha técnica: páginas lidas, pautas avaliadas, quem escreveu
+               e quem narrou. Sem recap e sem "o que observar". (20s)
+[silêncio]     3 s — sem folga, o Spotify emenda no episódio anterior
 ```
 
 ---
@@ -82,7 +91,7 @@ Estrutura sugerida do roteiro (~950–1.200 palavras ≈ 8 min de fala):
       │                   └─ atualiza saved-items/ e covered-index.json
       │
       ▼
- tts.py ──► ElevenLabs API (modelo Flash v2.5, voz PT-BR) ──► audio/YYYY-MM-DD.mp3
+ tts.py ──► ElevenLabs API (Multilingual v2, voz clonada do Camps) ──► audio/YYYY-MM-DD.mp3
       │
       ▼
  publish.py ──► gera/atualiza feed.xml ──► aws s3 sync ──► bucket S3 (público-leitura)
@@ -251,14 +260,18 @@ em português do Brasil, de 5 a 10 minutos, publicado em dias úteis.
 - [x] `run_episode.sh` + `claude -p` headless funcionando manualmente
 - [x] Dedup por `covered-index.json` + leitura de episódios anteriores
 - [x] Backlog de itens guardados operante
-- [x] TTS ElevenLabs (Flash v2.5, voz clonada do Camps) — Polly e Chirp3
-      seguem pendentes no ADR 0001, sem bloquear
+- [x] TTS ElevenLabs (Flash v2.5, com clonagem Instant da voz do Camps) —
+      substituído na Fase 2 pela clonagem profissional no Multilingual v2.
+      Polly e Chirp3 seguem pendentes no ADR 0001, sem bloquear
 - [x] `feed.xml` + MP3 no S3, feed válido
-- [ ] launchd seg–sex 05:50 (Mac configurado: `pmset` para acordar/não hibernar)
+- [x] launchd seg–sex 05:50, com repescagem às 06:20 e 07:00
+      (`com.camps.campscast`), e `pmset` acordando o Mac às 05:45. Não resiste
+      à tampa fechada — ver notas operacionais e Fase 3
 - [x] Assinatura no Pocket Casts → funciona no celular. No EX30 o app do
-      Android Automotive não atualiza de forma confiável; a saída é o
+      Android Automotive não atualiza de forma confiável; a saída foi o
       diretório, na Fase 2
-- [x] URL compartilhada com 4 beta testers — feedback formal fica para a Fase 2
+- [x] URL compartilhada com 4 beta testers — o feedback formal virou conversa
+      direta com ouvintes (Fase 2) e formulário no site (Fase 3)
 
 **Critério de saída:** 5 episódios consecutivos publicados sem intervenção
 manual. **Encerrada em 05/09/2026 com 4** — 01, 02, 03 e 04/09, todos
@@ -266,14 +279,16 @@ disparados às 05:50 sem toque humano. O quinto cairia na segunda 07/09, que é
 feriado nacional; com a qualidade já validada nos testes do autor, esperar mais
 um dia útil não acrescentaria informação.
 
-### Fase 2 — Voz própria e publicação
+### Fase 2 — Voz própria, publicação e divulgação
+
+Entregue:
 
 - [x] **Instant Voice Clone** da voz do Camps narrando o episódio — antecipado
       ainda na Fase 1
 - [x] **Domínio próprio** `campscast.com.br`, com Route 53, ACM e CloudFront
 - [x] **Alias de e-mail dedicado** `contato@campscast.com.br`
 - [x] Capa — `> CC` em conceito de terminal, 1400×1400
-- [x] **Diretórios** — três no ar, um em rascunho:
+- [x] **Diretórios** — os quatro no ar:
 
       | Diretório | Estado | Desde |
       |---|---|---|
@@ -286,43 +301,155 @@ um dia útil não acrescentaria informação.
       entre pousos de Congonhas, S/R ponderado 33,6 dB, nenhum bloco abaixo de
       30. Adotada em 07/09; obrigou a voltar ao `eleven_multilingual_v2` porque
       o fine-tuning falhou nos modelos Flash e Turbo. Ver adendo ao ADR 0004.
-- [ ] README público caprichado, com os links dos diretórios
-- [ ] Refatorar para subagents do Claude Code (pesquisador / editor / publicador)
-- [ ] ADR de custos reais consolidado
+- [x] README público com os links dos diretórios e a seção da voz
+- [x] Qualidade de gravação medida e publicada — `docs/benchmarks-audio.md`, com
+      os MP3 de referência dos dois clones em `campscast.com.br/referencias/`
+- [x] Episódio com silêncio de 1 s no começo e 3 s no fim, número na abertura e
+      na tag `<itunes:episode>`, e encerramento só com a ficha técnica (12/09)
+- [x] Ficha técnica com nomes derivados dos modelos em uso; modelo do agente
+      fixado no orquestrador (12/09)
+- [x] Primeira leitura de audiência — Spotify, Apple e CloudFront. Números em
+      `privado/`; o método, em `docs/aprendizados.md`
+
+A fazer:
+
+- [ ] Conversar com quatro ou cinco ouvintes: até onde ouvem, o que os faria
+      parar, e se preferem Spotify ou Apple Podcasts
+- [ ] **Plano de divulgação** — primário no LinkedIn, com posts frequentes
+      sobre a evolução do projeto e sempre com os links; avaliar outros canais
+- [ ] **Avaliar o YouTube** como mais um canal, incluindo o YouTube Music para
+      o áudio
+- [ ] **Avaliar um site simples** em `campscast.com.br` — links para todos os
+      diretórios, descrição do projeto e link para o GitHub. Vira a âncora do
+      formulário da Fase 3. Hospedar custa quase nada no S3 e no CloudFront que
+      já existem; o trabalho é o conteúdo. Hoje a raiz do domínio responde 403
+- [ ] ADR de custos reais consolidado — inclui o custo do Claude por token,
+      base da decisão de onde rodar na Fase 3
 
 **Critério de saída:** podcast encontrável pelo nome nos principais diretórios,
-narrado com voz clonada profissional.
+narrado com voz clonada profissional — **atingido em 07/09** — e divulgação em
+andamento: plano publicado, primeiro ciclo de posts no LinkedIn rodando, e
+decisão tomada sobre site e YouTube.
 
-### Fase 3 — Formato entrevista, feedback e curadoria humana
-- [ ] **Professional Voice Clone** do Camps (guia de gravação em
-      `docs/gravacao-voz.md`) + segunda voz de catálogo →
-      formato entrevista: a voz de IA apresenta a notícia ou pergunta;
-      a voz do Camps analisa
+### Fase 3 — Presença multicanal, feedback e independência do Mac
+
+Formato e curadoria:
+
+- [ ] **Formato entrevista** — uma segunda voz, de catálogo, apresenta a notícia
+      ou pergunta; a voz do Camps analisa. A clonagem profissional já existe
+      desde a Fase 2
 - [ ] `analysis/` ativo: visões e pesquisas escritas pelo Camps, que o agente
       usa como material de análise nos episódios (o "assimilar" humano do funil)
-- [ ] Feedback dos ouvintes: alias de e-mail dedicado + Google Form (que
-      notifica o mesmo alias); agente lê via Gmail API antes de gerar,
-      incorpora sugestões de pauta e marca como processado
 - [ ] Camps revisa sugestões acumuladas antes de escrever análises novas
-- [ ] Capa oficial gerada no Midjourney
 - [ ] Sugestões de fontes dos ouvintes → `sources.yaml`
+
+Feedback:
+
+- [ ] **Formulário no site**, responsivo, além do e-mail `contato@`. Site
+      estático não recebe envio sozinho: precisa de um backend pequeno — uma
+      função na AWS gravando e notificando, por exemplo. O agente lê as
+      sugestões antes de gerar o episódio e as marca como processadas
+- [ ] **Avaliar WhatsApp e Instagram** como canais de feedback — só se as
+      conversas com ouvintes mostrarem demanda: cada canal a mais é mais uma
+      caixa para ler
+
+Vídeo:
+
+- [ ] **Instagram do podcast com shorts gerados por IA** — não diário; chamada
+      curta para a notícia do dia e para o podcast. É o passo para aprender a
+      usar modelos de vídeo, que hoje geram clipes de 5 a 8 segundos
+- [ ] **YouTube Shorts** com o mesmo material, no mesmo formato vertical.
+      Vídeos longos ficam de fora por enquanto
+
+Site:
+
+- [ ] **Site sofisticado feito com Claude Design**, desktop e mobile — um
+      showcase de IA: exemplos das vozes e dos vídeos, como o projeto funciona
+      por dentro, e caminho para visitantes técnicos contribuírem com pautas ou
+      código. Escopo a detalhar
+- [ ] Capa oficial gerada no Midjourney
+
+Operação:
+
+- [ ] **Rodar sem depender do Mac do Camps** — o mesmo pipeline da Fase 2, sem
+      redesenho; o redesenho em agentes é a Fase 4. Três caminhos em avaliação:
+
+      | | AWS | Mac mini emprestado | Mac mini comprado |
+      |---|---|---|---|
+      | Custo do Claude | por token, no Bedrock, cobrado pela AWS | assinatura Max, sem custo extra | assinatura Max, sem custo extra |
+      | Custo fixo | contêiner agendado, baixo | zero | compra do equipamento e energia |
+      | Mudança no pipeline | trocar o que é só do macOS | nenhuma | nenhuma |
+      | Disponibilidade | gerenciada | energia, internet e rotina da casa do irmão | energia e internet de casa |
+      | Segurança | segredos no cofre da AWS | chaves do projeto em máquina de outra pessoa; usuário macOS separado | máquina própria |
+      | Vitrine e Fase 4 | alinhado com o AgentCore | não | não |
+      | Reuso | pago por projeto | não é do Camps | agentes do livro 2081 e outros projetos agênticos |
+
+      Bases medidas em 12/09:
+
+      - **Uso do Claude por episódio**, somado dos registros das execuções
+        automáticas de 01 a 11/09: de 27 a 68 chamadas ao modelo. A entrada é
+        quase toda leitura de cache, de 1,5 a 8,5 milhões de tokens, mais 74 a
+        172 mil de cache escrito e 26 a 72 mil de saída. O volume mais que
+        dobrou de 01–04/09 para 08–11/09: o agente lê mais memória e mais
+        páginas. A conta em dólares fica para o ADR de custos.
+      - **Dependência de macOS:** só no orquestrador (5 ocorrências) e na
+        notificação (2). Narração, feed, janela, calendário e upload são
+        biblioteca padrão.
+      - **Cobrança:** a assinatura Max cobre o Claude Code logado na conta; a
+        API é cobrada à parte, por token, e o Bedrock é cobrado pela AWS.
+        Nenhum dos dois consome a cota do Max. No Mac mini do irmão, rodar com
+        a conta do Camps, não com a dele.
+
+      Decisão depois do ADR de custos, com o custo mensal do Claude no Bedrock
+      ao lado dos outros dois caminhos. Com o Mac mini, a AWS entra na Fase 4.
+
+**Critério de saída:** dez dias úteis seguidos publicados sem o Mac do Camps ligado;
+formulário no ar, com as sugestões chegando ao agente; site novo publicado.
+
+### Fase 4 — Agência de podcast autônoma na AWS
+
+O projeto vira vitrine de agentes de IA em nuvem, com tudo aberto no GitHub.
+Se a Fase 3 tiver escolhido o Mac mini, é aqui que a AWS entra.
+
+- [ ] **Rearquitetar em agentes especializados no Amazon Bedrock AgentCore** —
+      Runtime para hospedar, Gateway para expor ferramentas, Browser para a
+      pesquisa na web, Memory e Observability; conversa entre agentes por A2A.
+      O Claude Agent SDK é candidato natural para escrever os agentes que o
+      AgentCore hospeda
+- [ ] Claude Opus via Amazon Bedrock
+- [ ] **Tudo no GitHub:** código, pipelines, infraestrutura como código, prompts
+      e configuração dos agentes
+- [ ] Banco de dados de estatísticas — Spotify, Apple, downloads — e
+      monitoramento dos ouvintes
+- [ ] Agente de marketing gerando posts para atrair público, com aprovação
+      humana antes de publicar qualquer coisa em nome do Camps
+- [ ] Agente de FinOps acompanhando o custo de cada episódio
+- [ ] **Agentes com nome e papel:** o roteirista, o editor de vídeo, o de
+      marketing, o analista de FinOps, a apresentadora da segunda voz e o Camps
+      virtual
+
+**Critério de saída:** a definir quando a Fase 3 fechar.
 
 ### Ideias futuras (sem compromisso)
 - Episódio da tarde com tema variável (negócios, agentes, seguros)
-- Migração do orquestrador para Claude Agent SDK
-- Transcrição/show notes publicadas junto ao episódio
-- Fallback GitHub Actions para quando o Mac estiver indisponível
+- Transcrição e show notes publicadas junto ao episódio — alimentam o site
+- Vídeos longos no YouTube
+- Agência de produção de podcast autônoma oferecida para outros temas
 
 ---
 
-## 10. Custos estimados (Fase 1, 1 episódio/dia útil)
+## 10. Custos estimados (1 episódio/dia útil)
 
 | Item | Estimativa/mês |
 |---|---|
 | Claude (Max já contratado; headless usa a assinatura) | ~R$ 0 incremental |
-| ElevenLabs Flash (~8 min/dia útil ≈ 176 min/mês) | Starter US$ 5 → Creator US$ 22 conforme uso |
-| S3 + transferência (episódios de ~8 MB, poucos ouvintes) | < US$ 1 |
-| **Total incremental** | **~US$ 5–25/mês** |
+| ElevenLabs Creator — Multilingual v2 desde 08/09, ~4.600 créditos por episódio | US$ 22; 22 episódios usam ~77% da cota |
+| S3 + CloudFront (plano gratuito) + Route 53 | poucos dólares |
+| **Total incremental** | **~US$ 25/mês** |
+
+Valores reais consolidados ficam para o ADR de custos. Se o pipeline for para a
+AWS — na Fase 3 ou na 4 —, o Claude passa a ser cobrado por token no Bedrock, fora
+da assinatura: o maior item a medir antes de migrar.
 
 ---
 
@@ -337,7 +464,13 @@ sudo pmset repeat wakeorpoweron MTWRF 05:45:00
 sudo pmset -a disablesleep 1
 ```
 
-launchd: plist em `~/Library/LaunchAgents/com.camps.podcast.plist` com
-`StartCalendarInterval` seg–sex 05:50 chamando `scripts/run_episode.sh`.
+launchd: plist em `~/Library/LaunchAgents/com.camps.campscast.plist` com
+`StartCalendarInterval` seg–sex 05:50, repescagem às 06:20 e 07:00, chamando
+`scripts/run_episode.sh`.
+
+**Limite medido:** nem o `pmset` nem o `caffeinate` do orquestrador impedem o
+sono de tampa fechada. Três execuções morreram assim em 10 e 11/09, com as
+repescagens encontrando o Mac ainda dormindo. Enquanto o pipeline depender do
+Mac, a regra é tampa aberta e na tomada; a saída definitiva está na Fase 3.
 Logs em `logs/` com data — o agente pode ler o log da véspera para
 autodiagnóstico em caso de falha.

@@ -41,7 +41,9 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
       com os links do podcast
 - [ ] **Escolher o link principal** a divulgar, depois das conversas com
       ouvintes (Spotify ou Apple)
-- [ ] Avaliar YouTube Music (confirmar disponibilidade no Brasil)
+- [ ] **Avaliar o YouTube** como mais um canal, incluindo o YouTube Music
+- [ ] **Avaliar um site simples** em `campscast.com.br` — links dos diretórios,
+      descrição do projeto e GitHub; vira a âncora do formulário da Fase 3
 
 ## Estacionado até haver divulgação
 
@@ -54,8 +56,15 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
 ## Fase 2 — o que resta
 
 - [ ] ADR consolidando os custos reais — começo de outubro, com as faturas de
-      setembro fechadas
-- [ ] Refatorar o agente em subagents: pesquisador, editor, publicador
+      setembro fechadas. Inclui o custo do Claude por token, base da decisão de
+      onde rodar na Fase 3
+
+## Fase 3 — preparação
+
+- [ ] **Onde rodar sem o Mac do Camps** — AWS, Mac mini do irmão ou Mac mini
+      próprio. Avaliação no `PROJETO.md`, Fase 3. Conversar com o irmão sobre
+      acesso remoto e usuário separado; pesar a compra considerando os agentes
+      do livro 2081
 
 ## Dívida técnica
 
