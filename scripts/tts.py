@@ -398,6 +398,12 @@ def aplica_pronuncia(texto: str, mapa: dict) -> str:
     return texto
 
 
+# Custo exato de cada trecho, lido do cabeçalho character-cost. Antes o custo
+# saía da diferença do contador de cota da conta, que atualiza com atraso: os
+# logs registraram de 0,14 a 0,55 crédito por caractere para o mesmo modelo.
+CUSTOS_TRECHOS: list[int] = []
+
+
 def synthesize(part: str, cfg: dict, api_key: str,
                previous_text: str | None, next_text: str | None) -> bytes:
     url = f"{API_BASE}/{cfg['voice_id']}?output_format={cfg['output_format']}"
@@ -426,6 +432,9 @@ def synthesize(part: str, cfg: dict, api_key: str,
     for attempt in range(3):
         try:
             with urllib.request.urlopen(req, timeout=180) as resp:
+                custo = (resp.headers.get("character-cost") or "").strip()
+                if custo.isdigit():
+                    CUSTOS_TRECHOS.append(int(custo))
                 return resp.read()
         except urllib.error.HTTPError as e:
             detail = e.read().decode("utf-8", "replace")[:400]
@@ -450,6 +459,7 @@ def main() -> int:
     ap.add_argument("--voice", help="usa esta voz em vez da de config/tts.json "
                                     "(útil para comparar antes de decidir)")
     ap.add_argument("--model", help="usa este modelo em vez do de config/tts.json")
+    ap.add_argument("--metricas", help="grava caracteres, créditos e duração num JSON")
     ap.add_argument("--speed", type=float,
                     help="velocidade da fala, de 0.7 a 1.2; sobrescreve config/tts.json")
     ap.add_argument("--budget", action="store_true",
@@ -652,18 +662,28 @@ def main() -> int:
         mostrado = out_path          # --out fora do projeto, em teste
     print(f"OK {mostrado} {out_path.stat().st_size // 1024} KB")
 
+    caracteres = sum(len(p) for p in parts)
+    exato = bool(parts) and len(CUSTOS_TRECHOS) == len(parts)
+    spent = sum(CUSTOS_TRECHOS) if exato else None
     if used_before is not None:
         try:
-            print("Aguardando o contador de cota estabilizar…", flush=True)
-            settled = settled_character_count(api_key)
+            settled = None
+            if spent is None:
+                # Sem o cabeçalho, só resta esperar o contador de cota da conta.
+                print("Aguardando o contador de cota estabilizar…", flush=True)
+                settled = settled_character_count(api_key)
             sub = api_get("user/subscription", api_key)
             limit = sub.get("character_limit", 0)
-            used_now = settled if settled is not None else sub.get("character_count", 0)
-            spent = used_now - used_before
+            if spent is None:
+                used_now = settled if settled is not None else sub.get("character_count", 0)
+                spent = used_now - used_before
+            else:
+                used_now = used_before + spent
             left = max(0, limit - used_now)
             if spent > 0:
-                rate = spent / sum(len(p) for p in parts)
-                print(f"Custo: {spent} créditos ({rate:.2f} por caractere). "
+                rate = spent / caracteres
+                origem = "exato" if exato else "estimado pelo contador"
+                print(f"Custo: {spent} créditos ({rate:.2f} por caractere, {origem}). "
                       f"Restam {left} — dá para {left // spent} episódios.")
                 monthly = spent * BUSINESS_DAYS
                 share = monthly / limit if limit else 0
@@ -678,6 +698,21 @@ def main() -> int:
                           "com episódios longos — considere o eleven_flash_v2_5.")
         except Exception:
             pass
+    if args.metricas:
+        try:
+            from publish import mp3_duration_seconds
+            duracao = round(mp3_duration_seconds(out_path) or 0) or None
+        except Exception:
+            duracao = None
+        pathlib.Path(args.metricas).write_text(json.dumps({
+            "modelo": cfg["model_id"],
+            "voz": cfg["voice_id"],
+            "caracteres": caracteres,
+            "trechos": len(parts),
+            "creditos": spent if (spent or 0) > 0 else None,
+            "creditos_exatos": exato,
+            "audio_s": duracao,
+        }, ensure_ascii=False), encoding="utf-8")
     return 0
 
 

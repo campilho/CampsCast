@@ -10,7 +10,7 @@
     "use_speaker_boost": true,
     "speed": 1.0
   },
-  "_nota": "Voz: Instant Voice Clone do Camps. Modelo: Flash v2.5, adotado em 02/09/2026 por medição de volume — o Multilingual v2 perde nível ao longo de cada geração (queda de 2,6 dB em 2.100 caracteres), produzindo degraus audíveis nas costuras entre trechos. Ver docs/decisions/0004-volume-entre-trechos.md.",
+  "_nota": "Voz: Professional Voice Clone do Camps, adotada em 11/09/2026. Modelo: Multilingual v2 — o ADR 0004 havia reprovado esse modelo por perda de nível ao longo da geração, mas o fine-tuning só concluiu nele (Flash e Turbo falharam com NaN losses em 75,7%) e a medição contrariou o ADR: a voz nova varia 3,19 dB no Multilingual contra 6,84 dB da produção anterior em Flash. A deriva não acompanha uma voz com fine-tuning. Custo: 0,55 crédito por caractere, o dobro do Flash. Ver docs/decisions/0004-volume-entre-trechos.md e o adendo.",
   "words_per_minute": 150,
   "_nota_ritmo": "Medido por scripts/calibrate_pace.py em 3 episódios: mediana 150 ppm. Trocar de voz OU de modelo exige remedir — rode com --desde a partir do primeiro episódio da configuração nova.",
   "_nota_ajustes": "Espelham o painel da ElevenLabs (print de 24/08/2026): Speed no default, Stability 0.5, Similarity 0.75, Style Exaggeration em zero. Style acima de zero degrada a fidelidade de voz clonada — por isso zero, e não 0.10.",

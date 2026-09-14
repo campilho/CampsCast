@@ -481,20 +481,27 @@ Neste caso as métricas também denunciavam — S/R, pico, reverberação e din�
 iguais até a casa decimal, o que não acontece entre duas gravações distintas.
 Coincidência exata em muitas casas é sinal de identidade, não de sorte.
 
-### `caffeinate` não impede o sono que a tampa fechada dispara
+### Na bateria o `caffeinate` não segura o Mac; na tomada, segurou
 
-O orquestrador roda `caffeinate -i -m -s -w $$` justamente para atravessar a
-madrugada. Não bastou: com a tampa fechada, a execução das 06:03 morreu aos 24
-minutos com *"Your computer went to sleep mid-response"*.
+O orquestrador roda `caffeinate -i -m -s -w $$` para atravessar a madrugada.
+Em 10 e 11/09 não bastou: três execuções morreram com *"Your computer went to
+sleep mid-response"*. A primeira leitura, registrada aqui na época, foi que nada
+dentro do `caffeinate` resolve tampa fechada. **Estava incompleta.**
 
-`caffeinate -i` impede o sono por **ociosidade**. Fechar a tampa é outro
-caminho — o macOS trata como comando explícito do usuário e dorme mesmo com
-asserção ativa, a não ser que haja monitor externo e energia. Na bateria é
-ainda mais agressivo.
+O registro de execução, cruzado com o `pmset -g log`, mostrou a diferença:
 
-Não há flag que resolva dentro do `caffeinate`. As saídas são todas fora dele:
-deixar a tampa aberta, `sudo pmset -a disablesleep 1` (o Mac nunca dorme, o que
-tem custo próprio), ou um fallback na nuvem.
+| Execução | Energia | O que o log mostra |
+|---|---|---|
+| 09/09, concluída | tomada | tampa fechada desde 23:09; sistema em DarkWake a noite toda, nenhum sono durante a execução |
+| 10/09, falhou | bateria | DarkWake às 06:03:16, "Entering Sleep" dois segundos depois |
+| 11/09, duas falhas | bateria | o mesmo padrão, às 06:01 e às 07:06 |
+
+O manual do `caffeinate` explica: `-s` *"is valid only when system is running on
+AC power"*. Na bateria, o launchd acorda o Mac num despertar de manutenção para
+rodar a tarefa perdida, e o sistema volta a dormir antes de o agente terminar.
+
+**A regra que importa é estar na tomada.** Tampa aberta segue como margem de
+segurança até mais noites confirmarem — por enquanto é um caso só na tomada.
 
 **O que salvou o dia foi o invariante da janela.** A execução manual das 06:30
 cobriu o dia certo, e a repescagem automática das 07:00 disparou depois e se
@@ -558,6 +565,53 @@ era `claude-opus-5` — medido, não suposto — antes de ele ir para a ficha.
 
 **Se um valor é função de outro, calcule; não armazene.**
 
+### Login expirado sai com código 0
+
+Testando o formato de saída do `claude -p` para outra finalidade, a resposta
+veio: *"Failed to authenticate: OAuth session expired and could not be
+refreshed"* — **com código de saída 0.** O orquestrador procurava "Not logged
+in" e "authentication" para diagnosticar login; "authenticate" não casava. A
+execução seguinte teria falhado com "Roteiro não foi criado", mensagem que
+aponta para o lugar errado.
+
+Foi achado por acaso, um dia antes da produção. Agora a saída vem em JSON, e
+`is_error` vira falha independente do código; o padrão da mensagem também foi
+ampliado, e o smoke test cobre os dois formatos.
+
+**Código de saída não é sinal confiável de sucesso de uma ferramenta de
+terceiros.** Confira o conteúdo.
+
+### Custo lido do saldo da conta variava quatro vezes
+
+O `tts.py` media o custo de narração pela diferença do contador de créditos da
+conta, antes e depois, esperando até 90 segundos para ele estabilizar. Os logs
+registraram, para o mesmo modelo, de **0,14 a 0,55 crédito por caractere**: o
+contador atualiza com atraso, e a espera nem sempre bastava.
+
+A ElevenLabs devolve o custo exato de cada requisição no cabeçalho
+`character-cost`. Somando por trecho, o custo é exato e a espera acaba.
+
+**Meça a operação, não a variação do saldo.** Diferença de saldo mistura atraso,
+outras operações e arredondamento.
+
+### O log de energia do macOS precisou de três leituras
+
+Para registrar se o Mac ficou parado durante a execução, o `registro.py` lê o
+`pmset -g log`. As duas primeiras regras erraram, e cada uma foi desmentida pelos
+próprios dados:
+
+1. **"Wake Requests" contado como despertar.** É um pedido de despertar
+   agendado. As falhas por sono apareciam com 3 segundos parados.
+2. **DarkWake contado como sono.** DarkWake é o sistema acordado com a tela
+   apagada; processos rodam. O episódio de 09/09 aparecia dormindo a execução
+   inteira — e concluído, com 68 chamadas ao modelo.
+3. **Parado é de "Entering Sleep" até o próximo despertar**, DarkWake ou Wake. Uma
+   linha do tipo Sleep que diz "Entering DarkWake state" também não é sono.
+
+Com a terceira regra, as falhas mostram 99% do tempo parado e as execuções
+concluídas, zero. **Uma métrica nova só está validada quando bate com um desfecho
+conhecido** — aqui, execução que concluiu não pode ter dormido.
+
 ## Audiência
 
 Os números de audiência ficam em `privado/`, fora do repositório. Aqui fica só
@@ -588,3 +642,47 @@ métrica pune o trecho menos essencial.
 painel de terceiros: **uma métrica sem a condição de validade junto não diz
 nada.** Com amostra pequena, anote contagem absoluta e leia a definição antes
 de agir.
+
+### O culpado não era o login; era o sono e o DNS
+
+Depois de três falhas seguidas às 5h50, a suspeita recaiu sobre a sessão do
+Claude Code — até porque um teste manual, no mesmo período, devolveu *"OAuth
+session expired and could not be refreshed"*. A hipótese era confortável e
+estava errada. Os logs das execuções que falharam dizem outra coisa:
+
+```
+API Error: Your computer went to sleep mid-response.
+API Error: Can't reach the API server — check your internet or DNS (ENOTFOUND)
+```
+
+Nenhuma das falhas de produção foi de autenticação. Duas foram o Mac dormindo
+na bateria no meio da resposta, e uma foi o DNS ainda não estar de pé quando o
+agendador disparou, segundos depois de a máquina acordar. A expiração do login
+existiu, mas apareceu num teste manual e foi corrigida com um `/login` — nunca
+derrubou um episódio.
+
+A correção do DNS é uma espera de até um minuto pela resolução de
+`api.anthropic.com` antes de chamar o agente, que avisa e segue em vez de
+abortar. A do sono é a tomada.
+
+**A mensagem de erro que você viu por último não é a causa da falha que você
+está investigando.** Leia o log da falha, não o da sua memória.
+
+### Aviso que só chega na tela de casa não é aviso
+
+O pipeline avisava por notificação nativa do macOS — que ninguém vê estando a
+mil quilômetros — e o caminho de e-mail estava configurado pela metade:
+`SMTP_HOST` e `SMTP_PORT` preenchidos, `NOTIFY_TO`, `SMTP_USER` e `SMTP_PASS`
+vazios. O `notify.py` cai para o macOS em silêncio quando falta qualquer um
+deles, então a lacuna nunca apareceu. Pior: a notificação só rodava na etapa
+final, depois do sucesso. **Falha não avisava nada.**
+
+A saída foi inverter o sentido do aviso. Em vez de a máquina empurrar uma
+mensagem para fora, ela deixa um `estado.json` público no S3 — credencial que
+já existia — dizendo como terminou a execução, em que etapa e por quê. Um vigia
+externo lê esse arquivo de onde estiver. Isso cobre o caso que nenhum aviso
+saído do Mac cobre: **o Mac não ter rodado.**
+
+Como o arquivo é público, o motivo da falha é higienizado: caminho de usuário
+vira `/Users/<usuario>`, sequências longas que pareçam token viram `<omitido>`,
+e o texto é truncado.

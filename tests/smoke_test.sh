@@ -17,6 +17,14 @@ TMP_EP="episodes/${FIXTURE_DATE}.md"
 TMP_AUDIO="audio/${FIXTURE_DATE}.mp3"
 FEED_BAK=""
 
+# O registro de execução nunca escreve no arquivo real durante o teste: toda
+# execução do orquestrador aqui dentro vai para um arquivo temporário.
+METRICAS_REAL_ANTES="$(shasum metricas/execucoes.jsonl 2>/dev/null || echo ausente)"
+export METRICAS_ARQ="$(mktemp)"
+export REGISTRO_SEM_SONO=1
+# Sem isto o orquestrador publicaria estado no S3 de produção a cada teste.
+export ESTADO_ARQ="$(mktemp)"
+
 ok()   { printf '  \033[32m✓\033[0m %s\n' "$1"; PASS=$((PASS+1)); }
 bad()  { printf '  \033[31m✗\033[0m %s\n' "$1"; FAIL=$((FAIL+1)); }
 head_() { printf '\n\033[1m%s\033[0m\n' "$1"; }
@@ -793,6 +801,7 @@ bp = bucket_policy("meu-bucket")
 recursos = bp["Statement"][0]["Resource"]
 assert recursos == [
     "arn:aws:s3:::meu-bucket/feed.xml",
+    "arn:aws:s3:::meu-bucket/estado.json",
     "arn:aws:s3:::meu-bucket/cover.jpg",
     "arn:aws:s3:::meu-bucket/audio/*",
     "arn:aws:s3:::meu-bucket/referencias/*",
@@ -1300,6 +1309,247 @@ if [[ "$DRY" == *"--model claude-opus-5"* && "$DRY" == *"Episódio nº "* ]]; th
   ok "orquestrador fixa o modelo e anuncia o número"
 else
   bad "dry-run sem --model ou sem número do episódio"
+fi
+
+# ----------------------------------------------- 16 registro de execução e custo
+# A ficha técnica falada já anunciou o modelo errado por quatro episódios. A
+# descrição pública do podcast repetiu o mesmo erro por mais tempo, porque
+# ninguém a relê. Nome de versão em texto que não é derivado do config vira
+# mentira na primeira troca: proíbe-se.
+if python3 - <<'FIM'
+import json, re, sys
+d = json.load(open("config/show.json"))
+alvo = d["description"] + " " + d.get("subtitle", "")
+proibido = re.findall(r"(?i)(flash\s*v?2\.?5|multilingual\s*v?2|turbo\s*v?2|eleven_[a-z0-9_]+)", alvo)
+if proibido:
+    print("versão de modelo na descrição pública:", proibido)
+    sys.exit(1)
+FIM
+then
+  ok "descrição pública não cita versão de modelo de TTS"
+else
+  bad "descrição pública cita versão de modelo — vira mentira na próxima troca"
+fi
+
+head_ "16. Registro de execução e custo"
+REG="$(python3 - <<'PYREG'
+import json, os, pathlib, subprocess, sys, tempfile, time
+erros = []
+d = pathlib.Path(tempfile.mkdtemp())
+def grava(nome, obj):
+    p = d / nome
+    p.write_text(obj if isinstance(obj, str) else json.dumps(obj))
+    return p
+def resultado(p):
+    return subprocess.run([sys.executable, "scripts/registro.py", "resultado", str(p)],
+                          capture_output=True, text=True)
+r = resultado(grava("ok.json", {"result": "OK episodes/x.md 1 00:01", "is_error": False, "usage": {}}))
+if r.returncode != 0 or r.stdout.strip() != "OK episodes/x.md 1 00:01": erros.append("resultado ok")
+if resultado(grava("erro.json", {"result": "Failed to authenticate", "is_error": True, "usage": {}})).returncode != 4:
+    erros.append("is_error não virou falha")
+if resultado(grava("texto.json", "OK episodes/x.md 1 00:01")).returncode != 3:
+    erros.append("texto puro não caiu no reserva")
+inicio = time.time() - 100
+agente = grava("agente.json", {"result": "OK", "is_error": False, "num_turns": 7, "total_cost_usd": 1.5,
+    "duration_api_ms": 60000, "session_id": "sem-transcricao", "usage": {"input_tokens": 9},
+    "modelUsage": {"claude-opus-5": {"inputTokens": 10, "outputTokens": 20, "cacheReadInputTokens": 300, "cacheCreationInputTokens": 40},
+                   "claude-haiku": {"inputTokens": 1, "outputTokens": 2, "cacheReadInputTokens": 3, "cacheCreationInputTokens": 4}}})
+tts = grava("tts.json", {"creditos": 4600, "creditos_exatos": True, "caracteres": 8300})
+velho = grava("velho.json", {"indice_pautas_bytes": 1})
+os.utime(velho, (inicio - 3600, inicio - 3600))
+destino = d / "execucoes.jsonl"
+subprocess.run([sys.executable, "scripts/registro.py", "fecha", "--data", "2026-01-02", "--estado", "ok",
+    "--inicio", str(inicio), "--pesquisa", str(inicio + 10), "--narracao", str(inicio + 80),
+    "--agente", str(agente), "--tts", str(tts), "--indicadores", str(velho), "--modelo", "claude-opus-5"],
+    env={**os.environ, "METRICAS_ARQ": str(destino)}, capture_output=True, check=True)
+l = json.loads(destino.read_text().splitlines()[-1])
+if l["claude"]["cache_lido"] != 303: erros.append(f"soma entre modelos: {l['claude']['cache_lido']}")
+if l["claude"]["custo_estimado_usd"] != 1.5: erros.append("custo estimado")
+if l["elevenlabs"]["creditos"] != 4600: erros.append("créditos")
+if l["indicadores"] is not None: erros.append("aproveitou arquivo de outra execução")
+if set(l["etapas_s"]) != {"pesquisa", "narracao"} or l["etapas_s"]["pesquisa"] != 70:
+    erros.append(f"etapas {l['etapas_s']}")
+print(";".join(erros) if erros else "ok")
+PYREG
+)" || REG="import falhou"
+if [[ "$REG" == "ok" ]]; then
+  ok "registro lê o JSON do agente, soma modelos e ignora arquivo de outra execução"
+else
+  bad "registro: $REG"
+fi
+
+# Sono pelo pmset: trecho real das falhas de 11/09. "Wake Requests" não é
+# despertar (o primeiro cálculo registrou 3 s onde houve 14 min), e DarkWake é
+# sistema acordado de tela apagada (o segundo pôs para dormir uma execução que
+# concluiu). Parado é só de "Entering Sleep" até o próximo despertar.
+SONO="$(python3 - <<'PYSONO'
+import datetime as dt, importlib.util
+spec = importlib.util.spec_from_file_location("registro", "scripts/registro.py")
+r = importlib.util.module_from_spec(spec); spec.loader.exec_module(r)
+log = """2026-09-11 06:50:00 -0300 Wake                	Wake from Normal Sleep [CDNVA] : due to lid
+2026-09-11 06:55:00 -0300 Sleep               	Entering Sleep state due to 'Clamshell Sleep'
+2026-09-11 07:06:39 -0300 DarkWake            	DarkWake from Deep Idle [CDNP] : due to NUB.SPMI0
+2026-09-11 07:06:41 -0300 Sleep               	Entering Sleep state due to 'Sleep Service Back to Sleep'
+2026-09-11 07:06:44 -0300 Wake Requests       	[*process=dasd request=SleepService deltaSecs=915]
+2026-09-11 07:21:20 -0300 Wake                	Wake from Deep Idle [CDNVA] : due to lid
+"""
+D = lambda s: dt.datetime.fromisoformat("2026-09-11T" + s)
+erros = []
+s = r.calcula_sono(log, D("07:06:39"), D("07:21:21"))
+if s != {"vezes": 1, "segundos": 879}: erros.append(f"falha real: {s}")
+segurado = """2026-09-09 05:40:00 -0300 Sleep               	Entering Sleep state due to 'Clamshell Sleep'
+2026-09-09 05:50:00 -0300 DarkWake            	DarkWake from Deep Idle [CDNP] : due to RTC Using AC
+"""
+s = r.calcula_sono(segurado, dt.datetime.fromisoformat("2026-09-09T05:50:02"), dt.datetime.fromisoformat("2026-09-09T06:08:39"))
+if s != {"vezes": 0, "segundos": 0}: erros.append(f"DarkWake segurado pelo caffeinate: {s}")
+s = r.calcula_sono(log, D("06:51:00"), D("06:54:00"))
+if s != {"vezes": 0, "segundos": 0}: erros.append(f"acordado: {s}")
+if r.calcula_sono(log, D("06:00:00"), D("06:10:00")) is not None: erros.append("antes do log não é None")
+print(";".join(erros) if erros else "ok")
+PYSONO
+)" || SONO="import falhou"
+if [[ "$SONO" == "ok" ]]; then
+  ok "sono: Wake Requests não acorda; DarkWake é acordado de tela apagada"
+else
+  bad "cálculo de sono: $SONO"
+fi
+
+# Ponta a ponta: o orquestrador com um agente falso que responde em JSON.
+FAKE_REG="$(mktemp -d)"
+cat > "$FAKE_REG/claude" <<'STUB'
+#!/bin/sh
+cat > episodes/2026-08-25.md <<'MD'
+---
+date: 2026-08-25
+window_start: 2026-08-24
+window_end: 2026-08-24
+title: teste
+words: 10
+estimated_duration: 0:04
+topics: []
+from_backlog: []
+---
+
+Corpo de teste.
+MD
+printf '%s' '{"type":"result","is_error":false,"result":"OK episodes/2026-08-25.md 10 00:04","num_turns":3,"total_cost_usd":0.25,"session_id":"sem-transcricao","usage":{"input_tokens":1},"modelUsage":{"claude-opus-5":{"inputTokens":1,"outputTokens":2,"cacheReadInputTokens":30,"cacheCreationInputTokens":4}}}'
+STUB
+chmod +x "$FAKE_REG/claude"
+OUT_REG="$(CLAUDE_BIN="$FAKE_REG/claude" bash scripts/run_episode.sh --date 2026-08-25 --only research 2>&1 || true)"
+ULTIMA="$(tail -1 "$METRICAS_ARQ" 2>/dev/null)"
+rm -f episodes/2026-08-25.md
+if [[ "$OUT_REG" == *"Concluído"* && "$ULTIMA" == *'"estado": "ok"'* && "$ULTIMA" == *'"cache_lido": 30'* ]]; then
+  ok "orquestrador lê a saída em JSON e grava a execução no registro"
+else
+  bad "execução com agente em JSON não foi registrada como ok"
+fi
+
+# Login expirado sai com código 0 e só a mensagem denuncia. Foi assim em 13/09.
+cat > "$FAKE_REG/claude" <<'STUB'
+#!/bin/sh
+printf '%s' '{"type":"result","is_error":true,"result":"Failed to authenticate: OAuth session expired and could not be refreshed","usage":{}}'
+exit 0
+STUB
+OUT_EXP="$(CLAUDE_BIN="$FAKE_REG/claude" bash scripts/run_episode.sh --date 2026-08-25 --only research 2>&1 || true)"
+ULTIMA="$(tail -1 "$METRICAS_ARQ" 2>/dev/null)"
+printf '#!/bin/sh\necho "Failed to authenticate: OAuth session expired and could not be refreshed"\nexit 0\n' > "$FAKE_REG/claude"
+OUT_TXT="$(CLAUDE_BIN="$FAKE_REG/claude" bash scripts/run_episode.sh --date 2026-08-25 --only research 2>&1 || true)"
+rm -rf "$FAKE_REG"
+if [[ "$OUT_EXP" == *"não autenticado"* && "$OUT_TXT" == *"não autenticado"* && "$ULTIMA" == *'"estado": "falhou"'* ]]; then
+  ok "login expirado com código 0 vira diagnóstico, em JSON e em texto, e falha registrada"
+else
+  bad "login expirado com código 0 passou despercebido"
+fi
+rm -f episodes/2026-08-25.md logs/2026-08-25.log logs/2026-08-2[345]-*.json
+
+if [[ "$(shasum metricas/execucoes.jsonl 2>/dev/null || echo ausente)" == "$METRICAS_REAL_ANTES" ]]; then
+  ok "smoke test não tocou no registro real"
+else
+  bad "smoke test escreveu em metricas/execucoes.jsonl"
+fi
+
+# --------------------------------------------- 17. estado público da execução
+head_ "17. Estado público da execução"
+
+EST_TMP="$(mktemp)"
+python3 scripts/estado.py --data 2026-09-14 --estado falhou --etapa pesquisa \
+  --motivo "falhou em /Users/alguem/CampsCast/logs/x.log com sk_abcdefghijklmnopqrstuvwxyz012345" \
+  --saida "$EST_TMP" >/dev/null 2>&1
+EST="$(cat "$EST_TMP")"
+if [[ "$EST" != *"/Users/alguem"* && "$EST" != *"sk_abcdefghijklmnopqrstuvwxyz012345"* \
+      && "$EST" == *"<usuario>"* && "$EST" == *"<omitido>"* ]]; then
+  ok "estado público não vaza caminho de usuário nem token"
+else
+  bad "estado público vazou caminho ou token: $EST"
+fi
+
+python3 scripts/estado.py --data 2026-09-14 --estado ok --etapa concluido \
+  --saida "$EST_TMP" >/dev/null 2>&1
+EST_OK="$(cat "$EST_TMP")"
+if [[ "$EST_OK" == *'"episodio"'* && "$EST_OK" == *'"motivo": ""'* ]]; then
+  ok "estado de sucesso aponta o episódio e não carrega motivo"
+else
+  bad "estado de sucesso saiu errado: $EST_OK"
+fi
+
+# Motivo longo não pode virar um objeto público de tamanho imprevisível.
+LONGO="$(python3 -c 'print("erro " * 200)')"
+python3 scripts/estado.py --data 2026-09-14 --estado falhou --etapa narracao \
+  --motivo "$LONGO" --saida "$EST_TMP" >/dev/null 2>&1
+if [[ $(wc -c < "$EST_TMP") -lt 600 ]]; then
+  ok "motivo longo é truncado"
+else
+  bad "motivo longo passou inteiro ($(wc -c < "$EST_TMP") bytes)"
+fi
+rm -f "$EST_TMP"
+
+# O estado só serve se for legível de fora; a policy tem de incluí-lo.
+if python3 scripts/s3.py --print-policy --bucket exemplo 2>/dev/null | grep -q "exemplo/estado.json"; then
+  ok "bucket policy publica o estado.json"
+else
+  bad "bucket policy não inclui estado.json — o vigia externo receberia 403"
+fi
+
+# ESTADO_ARQ existe justamente para que o teste seguinte não suba nada.
+EST_RUN="$(mktemp)"
+FAKE_EST="$(mktemp -d)"
+printf '#!/bin/sh\nexit 7\n' > "$FAKE_EST/claude"
+chmod +x "$FAKE_EST/claude"
+ESTADO_ARQ="$EST_RUN" CLAUDE_BIN="$FAKE_EST/claude" \
+  bash scripts/run_episode.sh --date 2026-08-26 --only research >/dev/null 2>&1 || true
+EST_FALHA="$(cat "$EST_RUN" 2>/dev/null)"
+rm -rf "$FAKE_EST"; rm -f "$EST_RUN"
+rm -f episodes/2026-08-26.md logs/2026-08-26.log logs/2026-08-26-*.json
+if [[ "$EST_FALHA" == *'"estado": "falhou"'* && "$EST_FALHA" == *'"etapa": "pesquisa"'* ]]; then
+  ok "falha na pesquisa publica estado com a etapa onde parou"
+else
+  bad "falha na pesquisa não publicou estado: ${EST_FALHA:-<vazio>}"
+fi
+
+# espera_rede nunca pode abortar o pipeline, mesmo sem resolver nada.
+SAIDA_REDE="$(
+  set +e
+  source /dev/stdin <<'FIM' 2>&1
+log() { printf '%s\n' "$*"; }
+espera_rede() {
+  local tentativas=${1:-12} i
+  for ((i = 1; i <= tentativas; i++)); do
+    if python3 -c "import socket; socket.getaddrinfo('nao.existe.invalid', 443)" 2>/dev/null; then
+      return 0
+    fi
+    sleep 0
+  done
+  log "AVISO: DNS não resolveu; seguindo assim mesmo."
+  return 0
+}
+espera_rede 1
+echo "rc=$?"
+FIM
+)"
+if [[ "$SAIDA_REDE" == *"rc=0"* && "$SAIDA_REDE" == *"AVISO"* ]]; then
+  ok "espera de rede avisa e segue em vez de abortar"
+else
+  bad "espera de rede não seguiu: $SAIDA_REDE"
 fi
 
 # ------------------------------------------------------------------- resultado

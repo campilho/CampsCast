@@ -265,8 +265,8 @@ em português do Brasil, de 5 a 10 minutos, publicado em dias úteis.
       Polly e Chirp3 seguem pendentes no ADR 0001, sem bloquear
 - [x] `feed.xml` + MP3 no S3, feed válido
 - [x] launchd seg–sex 05:50, com repescagem às 06:20 e 07:00
-      (`com.camps.campscast`), e `pmset` acordando o Mac às 05:45. Não resiste
-      à tampa fechada — ver notas operacionais e Fase 3
+      (`com.camps.campscast`), e `pmset` acordando o Mac às 05:45. Na bateria não
+      resiste — ver notas operacionais e Fase 3
 - [x] Assinatura no Pocket Casts → funciona no celular. No EX30 o app do
       Android Automotive não atualiza de forma confiável; a saída foi o
       diretório, na Fase 2
@@ -310,6 +310,10 @@ Entregue:
       fixado no orquestrador (12/09)
 - [x] Primeira leitura de audiência — Spotify, Apple e CloudFront. Números em
       `privado/`; o método, em `docs/aprendizados.md`
+- [x] Registro diário de execução e custo em `metricas/execucoes.jsonl` —
+      horários por etapa, sono do Mac, tokens do Claude, créditos exatos da
+      ElevenLabs e tamanho da memória que o agente lê. Unidades brutas, não
+      dinheiro. Histórico desde 26/08 reconstruído dos logs (13/09)
 
 A fazer:
 
@@ -368,6 +372,13 @@ Site:
       por dentro, e caminho para visitantes técnicos contribuírem com pautas ou
       código. Escopo a detalhar
 - [ ] Capa oficial gerada no Midjourney
+
+FinOps:
+
+- [ ] **Relatório de custos** a partir de `metricas/execucoes.jsonl` — custo
+      por episódio em dólar e em reais, com a tabela de preços datada, e
+      gráficos ao lado do que cresce: índice de pautas, páginas lidas,
+      chamadas ao modelo. Versão beta do agente de FinOps da Fase 4
 
 Operação:
 
@@ -468,9 +479,11 @@ launchd: plist em `~/Library/LaunchAgents/com.camps.campscast.plist` com
 `StartCalendarInterval` seg–sex 05:50, repescagem às 06:20 e 07:00, chamando
 `scripts/run_episode.sh`.
 
-**Limite medido:** nem o `pmset` nem o `caffeinate` do orquestrador impedem o
-sono de tampa fechada. Três execuções morreram assim em 10 e 11/09, com as
-repescagens encontrando o Mac ainda dormindo. Enquanto o pipeline depender do
-Mac, a regra é tampa aberta e na tomada; a saída definitiva está na Fase 3.
+**Limite medido:** na bateria, o `caffeinate -s` não vale, e o Mac volta a dormir
+segundos depois de o launchd acordá-lo. Foi assim nas três falhas de 10 e 11/09.
+Na tomada, com a tampa fechada, a execução de 09/09 concluiu com o sistema em
+DarkWake a noite toda. Enquanto o pipeline depender do Mac, a regra é **na
+tomada** — tampa aberta como margem até mais noites confirmarem. A saída
+definitiva está na Fase 3.
 Logs em `logs/` com data — o agente pode ler o log da véspera para
 autodiagnóstico em caso de falha.

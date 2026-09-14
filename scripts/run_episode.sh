@@ -84,7 +84,38 @@ fi
 mkdir -p logs
 LOG="logs/${EPISODE_DATE}.log"
 log() { printf '[%s] %s\n' "$(date +%H:%M:%S)" "$*" | tee -a "$LOG"; }
-die() { log "ERRO: $*"; exit 1; }
+die() { ULTIMO_ERRO="$*"; log "ERRO: $*"; exit 1; }
+
+# ---------- registro de execução e custo ----------
+# Uma linha por execução em metricas/execucoes.jsonl (scripts/registro.py):
+# horários de cada etapa, sono do Mac, tokens do Claude, créditos da ElevenLabs
+# e o tamanho da memória que o agente lê. Só entra execução que chegou a
+# trabalhar — dia sem episódio e repescagem sem nada a fazer não viram linha.
+# Nunca derruba o pipeline: falha no registro vai para o log e segue.
+T_INICIO="$(date +%s)"
+REGISTRAR=0; CONCLUIDO=0; ULTIMO_ERRO=""; ETAPA_ATUAL="inicio"
+T_PESQUISA=""; T_NARRACAO=""; T_PUBLICACAO=""; T_AVISO=""
+BASE_REGISTRO="logs/${EPISODE_DATE}-${T_INICIO}"
+finaliza() {
+  local rc=$?
+  local estado="falhou"
+  if [[ $rc -eq 0 && $CONCLUIDO -eq 1 ]]; then estado="ok"; fi
+  if [[ $REGISTRAR -eq 1 && $DRY_RUN -eq 0 ]]; then
+    python3 scripts/registro.py fecha --data "$EPISODE_DATE" --estado "$estado" \
+      --inicio "$T_INICIO" --pesquisa "$T_PESQUISA" --narracao "$T_NARRACAO" \
+      --publicacao "$T_PUBLICACAO" --aviso "$T_AVISO" --modelo "${CLAUDE_MODEL:-}" \
+      --agente "${BASE_REGISTRO}-agente.json" --tts "${BASE_REGISTRO}-tts.json" \
+      --indicadores "${BASE_REGISTRO}-indicadores.json" --erro "$ULTIMO_ERRO" \
+      >>"$LOG" 2>&1 || true
+    # Estado público no S3. É o único aviso que chega a quem está longe do Mac:
+    # notificação do macOS morre na tela de casa. Sucesso também sobe — vigia
+    # que só enxerga fracasso não distingue "falhou" de "nem chegou a rodar".
+    python3 scripts/estado.py --data "$EPISODE_DATE" --estado "$estado" \
+      --etapa "$ETAPA_ATUAL" --motivo "$ULTIMO_ERRO" >>"$LOG" 2>&1 || true
+  fi
+  exit $rc
+}
+trap finaliza EXIT
 
 stage_enabled() {
   local s="$1"
@@ -95,6 +126,23 @@ stage_enabled() {
 run() {
   if [[ $DRY_RUN -eq 1 ]]; then log "DRY-RUN: $*"; return 0; fi
   "$@"
+}
+
+# Em 11/09 uma repescagem morreu com ENOTFOUND logo depois de o Mac acordar: o
+# agendador dispara antes de o Wi-Fi voltar. Esperar o DNS resolver custa
+# segundos e evita perder a janela inteira. Nunca aborta — se não resolver,
+# segue e deixa o erro real aparecer.
+espera_rede() {
+  local tentativas=${1:-12} i
+  for ((i = 1; i <= tentativas; i++)); do
+    if python3 -c "import socket; socket.getaddrinfo('api.anthropic.com', 443)" 2>/dev/null; then
+      [[ $i -gt 1 ]] && log "Rede respondeu depois de $(( (i - 1) * 5 ))s de espera."
+      return 0
+    fi
+    sleep 5
+  done
+  log "AVISO: DNS de api.anthropic.com não resolveu em $(( tentativas * 5 ))s; seguindo assim mesmo."
+  return 0
 }
 
 # ---------- há episódio hoje? ----------
@@ -181,6 +229,11 @@ fi
 # ---------- 1. pesquisa + roteiro (agente) ----------
 if stage_enabled research; then
   log "── [1/4] Pesquisa e roteiro (claude -p headless)"
+  REGISTRAR=1; T_PESQUISA="$(date +%s)"; ETAPA_ATUAL="pesquisa"
+  if [[ $DRY_RUN -eq 0 ]]; then
+    python3 scripts/registro.py indicadores --data "$EPISODE_DATE" \
+      > "${BASE_REGISTRO}-indicadores.json" 2>/dev/null || true
+  fi
 
   if ! command -v "$CLAUDE_BIN" >/dev/null 2>&1; then
     MSG="'$CLAUDE_BIN' não encontrado no PATH. Instale o Claude Code CLI (npm i -g @anthropic-ai/claude-code) ou defina CLAUDE_BIN no .env."
@@ -197,7 +250,7 @@ if stage_enabled research; then
   log "Episódio nº $EPISODE_NUMBER · escrito por ${AGENTE_NOME:-?} · narrado por ${TTS_NOME:-?}"
 
   if [[ $DRY_RUN -eq 1 ]]; then
-    log "DRY-RUN: $CLAUDE_BIN -p \"\$(cat prompts/master.md)\" --model $CLAUDE_MODEL --permission-mode acceptEdits"
+    log "DRY-RUN: $CLAUDE_BIN -p \"\$(cat prompts/master.md)\" --model $CLAUDE_MODEL --output-format json --permission-mode acceptEdits"
   else
     # A etapa demora vários minutos e a saída do CLI só chega no fim, porque
     # precisa ser capturada inteira para ser validada. Sem isso o terminal fica
@@ -208,10 +261,13 @@ if stage_enabled research; then
       --log "$LOG" --prefix "           " --quiet 2>/dev/null &
     WATCHER_PID=$!
 
+    espera_rede
+
     set +e
-    AGENT_OUT="$(
+    AGENT_RAW="$(
       "$CLAUDE_BIN" -p "$(cat prompts/master.md)" \
         --model "$CLAUDE_MODEL" \
+        --output-format json \
         --permission-mode acceptEdits \
         --allowedTools "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch" \
         2>>"$LOG"
@@ -223,13 +279,28 @@ if stage_enabled research; then
       kill "$WATCHER_PID" 2>/dev/null || true
       wait "$WATCHER_PID" 2>/dev/null || true
     fi
+    # A saída vem em JSON, com tokens e custo; o texto final do agente fica no
+    # campo result. Stub de teste ou CLI antigo devolve texto puro, que vale como
+    # está. JSON com is_error vira falha mesmo com código 0: login expirado sai
+    # com rc=0 e só a mensagem denuncia.
+    printf '%s\n' "$AGENT_RAW" > "${BASE_REGISTRO}-agente.json"
+    set +e
+    AGENT_OUT="$(python3 scripts/registro.py resultado "${BASE_REGISTRO}-agente.json" 2>/dev/null)"
+    RC_JSON=$?
+    set -e
+    case $RC_JSON in
+      0) ;;
+      4) if [[ $AGENT_RC -eq 0 ]]; then AGENT_RC=1; fi ;;
+      *) AGENT_OUT="$AGENT_RAW" ;;
+    esac
     log "Agente retornou: ${AGENT_OUT:-<vazio>} (rc=$AGENT_RC)"
 
     # Falta de login é o tropeço mais comum na primeira execução: instalar o
     # CLI não autentica, e o armazenamento de credenciais dele é separado do
     # app desktop. Vale diagnosticar em vez de repassar o erro cru.
     if [[ "$AGENT_OUT" == *"Not logged in"* || "$AGENT_OUT" == *"/login"* \
-          || "$AGENT_OUT" == *"Invalid API key"* || "$AGENT_OUT" == *"authentication"* ]]; then
+          || "$AGENT_OUT" == *"Invalid API key"* || "$AGENT_OUT" == *"authentication"* \
+          || "$AGENT_OUT" == *"Failed to authenticate"* || "$AGENT_OUT" == *"OAuth"* ]]; then
       log "──────────────────────────────────────────────────────────────"
       log "O Claude Code CLI está instalado mas não autenticado."
       log "Rode uma vez, no Terminal (é interativo):"
@@ -256,10 +327,12 @@ fi
 # ---------- 2. TTS ----------
 if stage_enabled tts; then
   log "── [2/4] TTS (ElevenLabs)"
+  REGISTRAR=1; T_NARRACAO="$(date +%s)"; ETAPA_ATUAL="narracao"
   if [[ $DRY_RUN -eq 0 && ! -f "$SCRIPT_PATH" ]]; then
     die "Sem roteiro em $SCRIPT_PATH para narrar."
   fi
-  run python3 scripts/tts.py --script "$SCRIPT_PATH" --out "$AUDIO_PATH" 2>&1 | tee -a "$LOG"
+  run python3 scripts/tts.py --script "$SCRIPT_PATH" --out "$AUDIO_PATH" \
+    --metricas "${BASE_REGISTRO}-tts.json" 2>&1 | tee -a "$LOG"
   log "Áudio: $AUDIO_PATH"
 else
   log "── [2/4] TTS — PULADA"
@@ -268,6 +341,7 @@ fi
 # ---------- 3. publicação ----------
 if stage_enabled publish; then
   log "── [3/4] Publicação (feed.xml + S3)"
+  REGISTRAR=1; T_PUBLICACAO="$(date +%s)"; ETAPA_ATUAL="publicacao"
   run python3 scripts/publish.py --date "$EPISODE_DATE" 2>&1 | tee -a "$LOG"
 else
   log "── [3/4] Publicação — PULADA"
@@ -276,9 +350,12 @@ fi
 # ---------- 4. notificação ----------
 if stage_enabled notify; then
   log "── [4/4] Notificação"
+  T_AVISO="$(date +%s)"; ETAPA_ATUAL="aviso"
   run python3 scripts/notify.py --date "$EPISODE_DATE" --script "$SCRIPT_PATH" --audio "$AUDIO_PATH" 2>&1 | tee -a "$LOG"
 else
   log "── [4/4] Notificação — PULADA"
 fi
 
+ETAPA_ATUAL="concluido"
+CONCLUIDO=1
 log "════ Concluído ════"

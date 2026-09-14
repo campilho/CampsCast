@@ -247,6 +247,7 @@ def bucket_policy(bucket: str) -> dict:
             "Action": "s3:GetObject",
             "Resource": [
                 f"arn:aws:s3:::{bucket}/feed.xml",
+                f"arn:aws:s3:::{bucket}/estado.json",
                 f"arn:aws:s3:::{bucket}/cover.jpg",
                 f"arn:aws:s3:::{bucket}/audio/*",
                 f"arn:aws:s3:::{bucket}/referencias/*",
