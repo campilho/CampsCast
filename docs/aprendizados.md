@@ -686,3 +686,37 @@ saído do Mac cobre: **o Mac não ter rodado.**
 Como o arquivo é público, o motivo da falha é higienizado: caminho de usuário
 vira `/Users/<usuario>`, sequências longas que pareçam token viram `<omitido>`,
 e o texto é truncado.
+
+### O vigia deu alarme falso lendo respostas de 16 horas antes
+
+Na segunda, 14/09, o episódio 12 saiu às 06:06 e foi publicado sem erro. Às
+08:08 o vigia na nuvem mandou push dizendo que o episódio não tinha saído. As
+duas leituras dele:
+
+```
+feed.xml     → mais recente = "Anthropic nomeia sete labs chineses…"
+                              Fri, 11 Sep 2026 06:00:00 +0000
+estado.json  → HTTP 403
+```
+
+As duas estavam erradas — e são, palavra por palavra, as respostas que o mesmo
+vigia recebeu no teste de encanamento de domingo, 13/09 às 18:55. Naquele
+momento as duas estavam **certas**: o episódio de sexta era o mais novo e a
+policy do bucket ainda não liberava o `estado.json`. A camada de fetch devolveu
+as respostas de domingo em vez de ir buscar. O `WebFetch` documenta cache de 15
+minutos por URL; isso foi muito além disso, mas a coincidência exata das duas
+leituras não deixa outra explicação razoável. Descartado o CloudFront: o feed
+sai com `cache-control: max-age=300`, e minutos depois do alarme as duas URLs
+respondiam certo pelo domínio, pelo S3 direto e pelo próprio `WebFetch`.
+
+O cache foi o gatilho, mas o alarme falso foi decisão de lógica: o prompt
+tratava "feed sem hoje" como verdade absoluta e 403 no estado como benigno, de
+modo que **duas leituras impossíveis de confirmar produziam uma afirmação
+confiante**. O conserto tem três partes: cache-buster com a hora da execução na
+URL, `estado.json` como fonte primária em vez de detalhe opcional, e confirmação
+por segundo caminho antes de alarmar — sem confirmação, o vigia diz "não
+consegui confirmar", não "não saiu".
+
+**Vigia que não distingue "está quebrado" de "não consegui ver" gasta o crédito
+do alarme.** Quem recebe três alarmes falsos para de acreditar no quarto, que é
+o verdadeiro.
