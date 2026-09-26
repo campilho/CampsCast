@@ -1,17 +1,39 @@
 # TODO
 
 Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
-[PROJETO.md](PROJETO.md). Atualizada em 13/09/2026.
+[PROJETO.md](PROJETO.md). Atualizada em 26/09/2026.
 
 ## Esta semana
 
+- [x] ~~Trocar o agente para Claude Opus 5.5~~ — feito em 26/09, com
+      `--effort high` fixado: o Opus 5 rodava em `high` sem ninguém pedir, e o
+      padrão do 5.5 é `medium`. CLI em 2.1.283. Episódio de 25/09 refeito num
+      sandbox para comparar; números e critério de revisão no
+      [ADR 0005](docs/decisions/0005-agente-no-opus-5-5.md)
+- [ ] **Ouvir os dois episódios de 25/09** em `privado/comparacao-opus-5-5/` —
+      mesmas três pautas; o 5.5 leu 51 páginas contra 19 e custou 11% a mais
+      que o Opus 5 naquele dia (mas 16% abaixo da mediana da semana dele)
+- [ ] **Decidir se a abertura de segunda, 28/09, anuncia a troca de modelo** —
+      caberia em `config/briefing.md`, contrato da semana; a ficha técnica já
+      se ajusta sozinha
+- [ ] **Sábado, 03/10: revisar o ADR 0005** com cinco dias de produção —
+      mediana de custo contra US$ 8,66 do Opus 5; acima de +15% sem ganho
+      audível, testar `--effort medium`
+- [ ] **Fim de semana de 03/10: macOS 27**, depois da revisão — uma mudança
+      por vez. Depois de atualizar: smoke test, ensaio, `pmset -g custom`,
+      `launchctl list | grep campscast` e um episódio completo no sandbox
+- [ ] (opcional) **App Store sem atualização automática** — o Xcode 27 se
+      instalou sozinho em 15/09 e travou o `git` pela licença
+- [ ] **Commitar os episódios de 14 a 25/09** — o repositório público parou
+      em 13/09
 - [x] ~~Refazer o login do Claude Code no terminal~~ — feito; a credencial
       renova sozinha e as falhas de 10 e 11/09 não eram de login (eram sono e
       DNS)
 - [ ] **Antes de viajar, segunda à noite** (volta na semana seguinte):
-      - [ ] liberar `estado.json` na policy do bucket:
-            `python3 scripts/s3.py --print-policy` e colar no console do S3.
-            Sem isso o vigia enxerga o feed mas não o motivo da falha
+      - [x] ~~liberar `estado.json` na policy do bucket~~ — verificado em
+            14/09: responde 200 tanto por `campscast.com.br/estado.json` quanto
+            direto no S3. O 403 que o vigia relatou nesse dia era resposta
+            velha em cache, não a policy
       - [ ] `claude setup-token` para um token longo, imune à rotação da sessão
       - [ ] deixar o Remote Control de pé: `claude --remote-control CampsCast`,
             e **testar pelo iPhone ainda em casa**

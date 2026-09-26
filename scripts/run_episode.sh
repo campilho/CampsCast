@@ -45,7 +45,12 @@ fi
 CLAUDE_BIN="${CLAUDE_BIN:-claude}"
 # Modelo do agente fixado aqui, e não deixado no padrão da assinatura: a ficha
 # técnica diz em voz alta quem escreveu, e isso só é verdade por construção.
-CLAUDE_MODEL="${CLAUDE_MODEL:-claude-opus-5}"
+CLAUDE_MODEL="${CLAUDE_MODEL:-claude-opus-5-5}"
+# Esforço fixado pelo mesmo motivo. As transcrições mostram que o Opus 5 rodou
+# em "high" em todas as chamadas; o padrão do Opus 5.5 na API é "medium", um
+# degrau abaixo. Trocar de modelo sem fixar isto trocaria duas coisas de uma
+# vez, e qualquer diferença no episódio ficaria sem dono.
+CLAUDE_EFFORT="${CLAUDE_EFFORT:-high}"
 
 # ---------- args ----------
 EPISODE_DATE=""
@@ -250,7 +255,7 @@ if stage_enabled research; then
   log "Episódio nº $EPISODE_NUMBER · escrito por ${AGENTE_NOME:-?} · narrado por ${TTS_NOME:-?}"
 
   if [[ $DRY_RUN -eq 1 ]]; then
-    log "DRY-RUN: $CLAUDE_BIN -p \"\$(cat prompts/master.md)\" --model $CLAUDE_MODEL --output-format json --permission-mode acceptEdits"
+    log "DRY-RUN: $CLAUDE_BIN -p \"\$(cat prompts/master.md)\" --model $CLAUDE_MODEL --effort $CLAUDE_EFFORT --output-format json --permission-mode acceptEdits"
   else
     # A etapa demora vários minutos e a saída do CLI só chega no fim, porque
     # precisa ser capturada inteira para ser validada. Sem isso o terminal fica
@@ -267,6 +272,7 @@ if stage_enabled research; then
     AGENT_RAW="$(
       "$CLAUDE_BIN" -p "$(cat prompts/master.md)" \
         --model "$CLAUDE_MODEL" \
+        --effort "$CLAUDE_EFFORT" \
         --output-format json \
         --permission-mode acceptEdits \
         --allowedTools "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch" \

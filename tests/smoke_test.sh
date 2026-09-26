@@ -1305,10 +1305,34 @@ fi
 LOG14="logs/2026-09-14.log"; JA_EXISTIA=0; [[ -f "$LOG14" ]] && JA_EXISTIA=1
 DRY="$(bash scripts/run_episode.sh --date 2026-09-14 --dry-run 2>&1 || true)"
 [[ $JA_EXISTIA -eq 0 ]] && rm -f "$LOG14"
-if [[ "$DRY" == *"--model claude-opus-5"* && "$DRY" == *"Episódio nº "* ]]; then
-  ok "orquestrador fixa o modelo e anuncia o número"
+if [[ "$DRY" == *"--model claude-opus-5-5 "* && "$DRY" == *"--effort high "* && "$DRY" == *"Episódio nº "* ]]; then
+  ok "orquestrador fixa modelo e esforço e anuncia o número"
 else
-  bad "dry-run sem --model ou sem número do episódio"
+  bad "dry-run sem --model, sem --effort ou sem número do episódio"
+fi
+
+# O esforço padrão muda de um modelo para outro. Só a transcrição diz qual foi
+# usado de fato; o registro tem de ler de lá.
+if python3 - <<'FIM'
+import json, pathlib, sys, tempfile
+sys.path.insert(0, "scripts")
+from registro import contagem_transcricao
+linhas = [
+    {"effort": "high", "message": {"id": "m1", "model": "claude-opus-5-5",
+     "usage": {"input_tokens": 10, "output_tokens": 5}}},
+    {"effort": "high", "message": {"id": "m2", "model": "claude-opus-5-5",
+     "usage": {"input_tokens": 3, "output_tokens": 2}}},
+]
+with tempfile.NamedTemporaryFile("w", suffix=".jsonl", delete=False) as f:
+    f.write("\n".join(json.dumps(l) for l in linhas))
+r = contagem_transcricao(pathlib.Path(f.name))
+assert r["esforco"] == "high", r
+assert r["chamadas"] == 2 and r["entrada"] == 13, r
+FIM
+then
+  ok "registro lê o esforço real da transcrição"
+else
+  bad "registro não extraiu o esforço da transcrição"
 fi
 
 # ----------------------------------------------- 16 registro de execução e custo

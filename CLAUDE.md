@@ -4,7 +4,7 @@ Podcast diário de IA em português, escrito e narrado por agentes, publicado em
 dias úteis. Rodando em produção desde 24/08/2026.
 
 > **Antes de mexer em qualquer coisa:** `bash tests/smoke_test.sh`
-> São 124 testes, offline, sem custo. Rode antes e depois de alterar.
+> São 125 testes, offline, sem custo. Rode antes e depois de alterar.
 
 ## Regra número um
 

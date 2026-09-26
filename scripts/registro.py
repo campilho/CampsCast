@@ -168,7 +168,7 @@ def sono(inicio: dt.datetime, fim: dt.datetime) -> dict | None:
 # ------------------------------------------------------------------ claude
 def contagem_transcricao(caminho: pathlib.Path) -> dict | None:
     """Chamadas, tokens e ferramentas lidos da transcrição da sessão."""
-    ids, ferramentas = set(), {}
+    ids, ferramentas, esforcos = set(), {}, set()
     tot = {"entrada": 0, "cache_escrito": 0, "cache_lido": 0, "saida": 0}
     try:
         linhas = caminho.read_text(errors="ignore").splitlines()
@@ -176,9 +176,16 @@ def contagem_transcricao(caminho: pathlib.Path) -> dict | None:
         return None
     for l in linhas:
         try:
-            m = json.loads(l).get("message") or {}
+            entrada = json.loads(l)
         except Exception:
             continue
+        # O esforço fica no topo de cada entrada. Vale o que a transcrição diz,
+        # não o que o orquestrador pediu: foi assim que se descobriu que o
+        # Opus 5 rodava em "high" sem ninguém ter pedido.
+        if isinstance(entrada, dict) and entrada.get("effort"):
+            esforcos.add(str(entrada["effort"]))
+        m = entrada.get("message") if isinstance(entrada, dict) else None
+        m = m or {}
         if not isinstance(m, dict) or m.get("model") == "<synthetic>":
             continue
         for c in m.get("content") or []:
@@ -195,7 +202,8 @@ def contagem_transcricao(caminho: pathlib.Path) -> dict | None:
         return None
     return {"chamadas": len(ids), **tot,
             "buscas": ferramentas.get("WebSearch", 0),
-            "leituras": ferramentas.get("WebFetch", 0)}
+            "leituras": ferramentas.get("WebFetch", 0),
+            "esforco": ",".join(sorted(esforcos)) or None}
 
 
 def resumo_claude(dados: dict | None, modelo: str | None) -> dict | None:
