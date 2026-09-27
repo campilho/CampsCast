@@ -1,0 +1,11 @@
+{
+  "_nota": "Mudanças no próprio podcast que a abertura anuncia, em uma frase, de 'desde' a 'ate', inclusive. 'fato' é o que mudou; 'como_dizer' orienta o tom. A data de fim existe para o anúncio sumir sozinho. Vale para modelo do agente, voz, modelo de narração ou requisito novo.",
+  "novidades": [
+    {
+      "desde": "2026-09-28",
+      "ate": "2026-10-02",
+      "fato": "A partir do episódio 22, o roteiro passa a ser escrito pelo Claude Opus 5.5. O lançamento dele foi notícia aqui no episódio 19, em 23/09/2026 — episódio escrito pelo antecessor, o Claude Opus 5.",
+      "como_dizer": "Tom de upgrade do próprio agente, em primeira pessoa: 'o modelo que o meu antecessor, o Opus cinco, noticiou aqui no episódio dezenove'. No primeiro dia, 'a partir de hoje'; nos seguintes, 'desde segunda-feira'. Uma frase só."
+    }
+  ]
+}

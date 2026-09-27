@@ -6,7 +6,7 @@
 > TTS na ElevenLabs e publicação via feed RSS em S3.
 
 **Status:** Fase 1 concluída em 05/09/2026 · Fase 2 em andamento (voz própria e os quatro diretórios no ar; falta a divulgação) · Fases 3 e 4 planejadas
-**Autor:** Camps
+**Autor:** Fernando Campilho
 **Licença:** MIT para o código, CC BY 4.0 para o conteúdo editorial
 
 ---
@@ -24,7 +24,7 @@ documenta decisões de arquitetura, custos reais e lições aprendidas.
 **Tudo é IA, e o episódio diz isso.** Pesquisa, roteiro e voz — e, nas próximas
 fases, vídeos, site e agentes com nome e papel — são feitos por IA, e isso é
 dito em voz alta em todo episódio. Nenhuma persona finge ser humana, e nada é
-publicado em nome do Camps sem a aprovação dele. É o mote do projeto.
+publicado em nome do Fernando Campilho sem a aprovação dele. É o mote do projeto.
 
 Princípio editorial central (inspirado no framework de curadoria de
 [Deborah Folloni](https://dfolloni.substack.com/p/como-acompanhar-noticias-de-ia-sem)):
@@ -34,7 +34,7 @@ andares de cima. Notícia de veículo de imprensa já é derivada; o agente prio
 blogs oficiais dos labs, anúncios de hardware e a visão dos grandes investidores.
 O funil dela — **capturar → filtrar → assimilar → testar** — se traduz aqui em:
 o agente automatiza capturar e filtrar; assimilar e testar seguem humanos
-(as análises pessoais do Camps, que entram na Fase 3).
+(as análises pessoais do Fernando Campilho, que entram na Fase 3).
 
 ---
 
@@ -91,7 +91,7 @@ voz de produção (`words_per_minute` em `config/tts.json`). Em 12/09/2026, a
       │                   └─ atualiza saved-items/ e covered-index.json
       │
       ▼
- tts.py ──► ElevenLabs API (Multilingual v2, voz clonada do Camps) ──► audio/YYYY-MM-DD.mp3
+ tts.py ──► ElevenLabs API (Multilingual v2, voz clonada do Fernando Campilho) ──► audio/YYYY-MM-DD.mp3
       │
       ▼
  publish.py ──► gera/atualiza feed.xml ──► aws s3 sync ──► bucket S3 (público-leitura)
@@ -126,7 +126,7 @@ inteligência (o que buscar, o que cortar, o que guardar) é decisão do agente.
 │   └── 2026-08-24.md           # 1 roteiro por dia = memória do podcast
 ├── saved-items/
 │   └── backlog.md              # itens relevantes que não couberam (com data)
-├── analysis/                   # [Fase 3] visões e pesquisas do Camps
+├── analysis/                   # [Fase 3] visões e pesquisas do Fernando Campilho
 │   └── 2026-09-xx-tema.md
 ├── audio/                      # MP3 gerados (gitignored; ficam no S3)
 ├── scripts/
@@ -197,7 +197,7 @@ Regra do agente: **notícia só entra no episódio se tiver fonte primária**
 
 ## 7. Contrato do `config/briefing.md`
 
-Arquivo curto que o Camps edita quando quiser mudar o rumo — o agente lê a cada
+Arquivo curto que o Fernando Campilho edita quando quiser mudar o rumo — o agente lê a cada
 execução. Formato:
 
 ```markdown
@@ -260,7 +260,7 @@ em português do Brasil, de 5 a 10 minutos, publicado em dias úteis.
 - [x] `run_episode.sh` + `claude -p` headless funcionando manualmente
 - [x] Dedup por `covered-index.json` + leitura de episódios anteriores
 - [x] Backlog de itens guardados operante
-- [x] TTS ElevenLabs (Flash v2.5, com clonagem Instant da voz do Camps) —
+- [x] TTS ElevenLabs (Flash v2.5, com clonagem Instant da voz do Fernando Campilho) —
       substituído na Fase 2 pela clonagem profissional no Multilingual v2.
       Polly e Chirp3 seguem pendentes no ADR 0001, sem bloquear
 - [x] `feed.xml` + MP3 no S3, feed válido
@@ -283,7 +283,7 @@ um dia útil não acrescentaria informação.
 
 Entregue:
 
-- [x] **Instant Voice Clone** da voz do Camps narrando o episódio — antecipado
+- [x] **Instant Voice Clone** da voz do Fernando Campilho narrando o episódio — antecipado
       ainda na Fase 1
 - [x] **Domínio próprio** `campscast.com.br`, com Route 53, ACM e CloudFront
 - [x] **Alias de e-mail dedicado** `contato@campscast.com.br`
@@ -340,11 +340,11 @@ decisão tomada sobre site e YouTube.
 Formato e curadoria:
 
 - [ ] **Formato entrevista** — uma segunda voz, de catálogo, apresenta a notícia
-      ou pergunta; a voz do Camps analisa. A clonagem profissional já existe
+      ou pergunta; a voz do Fernando Campilho analisa. A clonagem profissional já existe
       desde a Fase 2
-- [ ] `analysis/` ativo: visões e pesquisas escritas pelo Camps, que o agente
+- [ ] `analysis/` ativo: visões e pesquisas escritas pelo Fernando Campilho, que o agente
       usa como material de análise nos episódios (o "assimilar" humano do funil)
-- [ ] Camps revisa sugestões acumuladas antes de escrever análises novas
+- [ ] Fernando Campilho revisa sugestões acumuladas antes de escrever análises novas
 - [ ] Sugestões de fontes dos ouvintes → `sources.yaml`
 
 Feedback:
@@ -382,7 +382,7 @@ FinOps:
 
 Operação:
 
-- [ ] **Rodar sem depender do Mac do Camps** — o mesmo pipeline da Fase 2, sem
+- [ ] **Rodar sem depender do Mac do Fernando Campilho** — o mesmo pipeline da Fase 2, sem
       redesenho; o redesenho em agentes é a Fase 4. Três caminhos em avaliação:
 
       | | AWS | Mac mini emprestado | Mac mini comprado |
@@ -393,7 +393,7 @@ Operação:
       | Disponibilidade | gerenciada | energia, internet e rotina da casa do irmão | energia e internet de casa |
       | Segurança | segredos no cofre da AWS | chaves do projeto em máquina de outra pessoa; usuário macOS separado | máquina própria |
       | Vitrine e Fase 4 | alinhado com o AgentCore | não | não |
-      | Reuso | pago por projeto | não é do Camps | agentes do livro 2081 e outros projetos agênticos |
+      | Reuso | pago por projeto | não é do Fernando Campilho | agentes do livro 2081 e outros projetos agênticos |
 
       Bases medidas em 12/09:
 
@@ -409,12 +409,12 @@ Operação:
       - **Cobrança:** a assinatura Max cobre o Claude Code logado na conta; a
         API é cobrada à parte, por token, e o Bedrock é cobrado pela AWS.
         Nenhum dos dois consome a cota do Max. No Mac mini do irmão, rodar com
-        a conta do Camps, não com a dele.
+        a conta do Fernando Campilho, não com a dele.
 
       Decisão depois do ADR de custos, com o custo mensal do Claude no Bedrock
       ao lado dos outros dois caminhos. Com o Mac mini, a AWS entra na Fase 4.
 
-**Critério de saída:** dez dias úteis seguidos publicados sem o Mac do Camps ligado;
+**Critério de saída:** dez dias úteis seguidos publicados sem o Mac do Fernando Campilho ligado;
 formulário no ar, com as sugestões chegando ao agente; site novo publicado.
 
 ### Fase 4 — Agência de podcast autônoma na AWS
@@ -433,10 +433,10 @@ Se a Fase 3 tiver escolhido o Mac mini, é aqui que a AWS entra.
 - [ ] Banco de dados de estatísticas — Spotify, Apple, downloads — e
       monitoramento dos ouvintes
 - [ ] Agente de marketing gerando posts para atrair público, com aprovação
-      humana antes de publicar qualquer coisa em nome do Camps
+      humana antes de publicar qualquer coisa em nome do Fernando Campilho
 - [ ] Agente de FinOps acompanhando o custo de cada episódio
 - [ ] **Agentes com nome e papel:** o roteirista, o editor de vídeo, o de
-      marketing, o analista de FinOps, a apresentadora da segunda voz e o Camps
+      marketing, o analista de FinOps, a apresentadora da segunda voz e o Fernando Campilho
       virtual
 
 **Critério de saída:** a definir quando a Fase 3 fechar.

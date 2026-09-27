@@ -73,6 +73,12 @@ para ser acaso, e vai na
 direção da regra de fonte primária do projeto. Se isso melhora o episódio é
 julgamento de ouvido, feito pelo autor.
 
+Uma segunda rodada do mesmo dia, horas depois e já com a abertura nova do
+[ADR 0006](0006-abertura-no-tom-nao-no-texto.md), custou US$ 6,60 em 120
+turnos — 9% abaixo da primeira. É a variação entre duas execuções do mesmo
+modelo no mesmo dia, e mostra o tamanho do ruído que a revisão de 03/10 vai
+ter de enxergar através.
+
 A pesquisa foi feita dois dias depois da original, com mais cobertura de 24/09
 disponível na web. Isso pode ter influenciado a escolha das páginas; não
 influencia o preço por token.

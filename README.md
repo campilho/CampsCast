@@ -5,7 +5,7 @@
 > Roda localmente num MacBook Pro M3, com Claude Code em modo headless,
 > TTS na ElevenLabs e publicação via feed RSS em S3.
 
-**Status:** Fase 1 concluída em 05/09/2026 · Fase 2 em andamento (voz própria em produção desde 08/09) · **Autor:** Camps · Detalhes de arquitetura em [PROJETO.md](PROJETO.md)
+**Status:** Fase 1 concluída em 05/09/2026 · Fase 2 em andamento (voz própria em produção desde 08/09) · **Autor:** Fernando Campilho · Detalhes de arquitetura em [PROJETO.md](PROJETO.md)
 
 ---
 
@@ -244,7 +244,7 @@ episodes/               1 roteiro por dia — é a memória do podcast
 research/               log de pesquisa: o que foi considerado e descartado
 saved-items/backlog.md  pautas relevantes que não couberam
 covered-index.json      dedup barato: o que já foi ao ar
-analysis/               [Fase 3] análises escritas pelo Camps
+analysis/               [Fase 3] análises escritas pelo Fernando Campilho
 audio/  feed/  logs/    gerados; fora do git
 docs/decisions/         ADRs
 docs/aprendizados.md    o que quebrou, por quê, e o que ficou de método

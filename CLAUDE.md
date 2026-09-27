@@ -4,7 +4,7 @@ Podcast diário de IA em português, escrito e narrado por agentes, publicado em
 dias úteis. Rodando em produção desde 24/08/2026.
 
 > **Antes de mexer em qualquer coisa:** `bash tests/smoke_test.sh`
-> São 125 testes, offline, sem custo. Rode antes e depois de alterar.
+> São 132 testes, offline, sem custo. Rode antes e depois de alterar.
 
 ## Regra número um
 
@@ -59,6 +59,9 @@ Agregador serve para descobrir, nunca para citar.
 | `s3.py` | upload SigV4; `--print-policy`, `--print-iam-policy` |
 | `notify.py` | avisa que saiu |
 | `nomes.py` | nomes falados na ficha técnica e número do episódio |
+| `novidades.py` | mudanças no podcast a anunciar na abertura, por janela de datas |
+| `chamada.py` | decide se o episódio convida a seguir o podcast (dias em `config/show.json`) |
+| `confere_roteiro.py` | confere o que a abertura e a ficha não podem deixar de dizer; registra, não bloqueia |
 
 ### Diagnóstico e manutenção
 | Script | O que faz |
@@ -88,6 +91,7 @@ Agregador serve para descobrir, nunca para citar.
 | `config/show.json` | metadados do podcast e do feed |
 | `config/tts.json` | voz, modelo, ritmo medido, silêncio no começo e no fim |
 | `config/pronuncia.json` | como o sintetizador deve ler nomes que ele erra; só muda o áudio |
+| `config/novidades.json` | mudanças a anunciar na abertura, cada uma com data de início e de fim |
 | `config/schedule.json` | dias de publicação, feriados, exceções |
 | `prompts/master.md` | o agente |
 

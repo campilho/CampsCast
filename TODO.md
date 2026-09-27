@@ -13,12 +13,27 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
 - [ ] **Ouvir os dois episódios de 25/09** em `privado/comparacao-opus-5-5/` —
       mesmas três pautas; o 5.5 leu 51 páginas contra 19 e custou 11% a mais
       que o Opus 5 naquele dia (mas 16% abaixo da mediana da semana dele)
-- [ ] **Decidir se a abertura de segunda, 28/09, anuncia a troca de modelo** —
-      caberia em `config/briefing.md`, contrato da semana; a ficha técnica já
-      se ajusta sozinha
+- [x] ~~Anunciar a troca de modelo na abertura~~ — de 28/09 a 02/10, via
+      `config/novidades.json`, em tom de upgrade ("o modelo que o meu antecessor
+      noticiou aqui no episódio dezenove")
+- [x] ~~Nova abertura e encerramento~~ — sem a voz na abertura, sem repetir a
+      data da janela, nome completo em vez do apelido, sem "Aqui é o CampsCast"
+      no fim; variação livre com conferência que registra
+      ([ADR 0006](docs/decisions/0006-abertura-no-tom-nao-no-texto.md))
+- [x] ~~Chamada para seguir o podcast~~ — depois da primeira pauta, terças e
+      quintas, a partir de 29/09; texto livre do agente
+- [ ] **Post no LinkedIn** — linha de base de audiência registrada em 26/09
+      (`privado/audiencia.md`); comparar em 03/10 e 10/10
+- [ ] **Decidir se o agente ganha um Bash mínimo** — as transcrições mostram
+      ele tentando `wc -w`, `window.py` e `tts.py --budget`, sempre negado;
+      conta palavras e calcula na mão. Liberar só comandos de leitura
+      (`--allowedTools "Bash(wc:*)"`, por exemplo) daria contagem exata
+- [ ] (ideia) **Detectar sozinho a troca de modelo ou de voz** e gerar a
+      novidade — exige gravar os modelos usados no front-matter
 - [ ] **Sábado, 03/10: revisar o ADR 0005** com cinco dias de produção —
       mediana de custo contra US$ 8,66 do Opus 5; acima de +15% sem ganho
-      audível, testar `--effort medium`
+      audível, testar `--effort medium`. Na mesma revisão, contar `avisos_roteiro`
+      no registro: quantas regras a abertura livre deixou cair
 - [ ] **Fim de semana de 03/10: macOS 27**, depois da revisão — uma mudança
       por vez. Depois de atualizar: smoke test, ensaio, `pmset -g custom`,
       `launchctl list | grep campscast` e um episódio completo no sandbox
@@ -102,7 +117,7 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
 
 ## Fase 3 — preparação
 
-- [ ] **Onde rodar sem o Mac do Camps** — AWS, Mac mini do irmão ou Mac mini
+- [ ] **Onde rodar sem o Mac do Fernando Campilho** — AWS, Mac mini do irmão ou Mac mini
       próprio. Avaliação no `PROJETO.md`, Fase 3. Conversar com o irmão sobre
       acesso remoto e usuário separado; pesar a compra considerando os agentes
       do livro 2081

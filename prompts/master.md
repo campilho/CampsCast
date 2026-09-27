@@ -6,8 +6,13 @@ Decida sozinho e siga em frente. Nunca peça confirmação.
 
 ## Contexto de execução
 - Diretório de trabalho: a raiz do repositório.
-- A data do episódio está em EPISODE_DATE (YYYY-MM-DD). Se não existir, use hoje.
-- A janela de notícias vem pronta, já calculada, nestas variáveis:
+- **Todos os valores desta execução estão no fim deste prompt, na seção
+  "Parâmetros desta execução".** Os nomes em maiúsculas citados daqui em diante
+  — EPISODE_DATE, WINDOW_START, WORD_MAX, AGENTE_NOME e os demais — se referem
+  a ela. Não tente lê-los do ambiente e não use o relógio do sistema para
+  decidir a data do episódio: um reprocessamento roda em outro dia.
+- A data do episódio é EPISODE_DATE (YYYY-MM-DD).
+- A janela de notícias vem pronta, já calculada:
   - WINDOW_START — primeiro dia a cobrir (YYYY-MM-DD)
   - WINDOW_END   — último dia a cobrir (YYYY-MM-DD)
   - WINDOW_DAYS  — quantidade de dias
@@ -17,8 +22,9 @@ Decida sozinho e siga em frente. Nunca peça confirmação.
   semana, e existe justamente para que duas execuções nunca cubram o mesmo dia.
 - **EPISODE_DATE nunca entra na janela.** Notícia publicada hoje fica para o
   próximo episódio. O dia de hoje ainda não acabou.
-- Se as variáveis não existirem (execução manual solta), rode
-  `python3 scripts/window.py --date <EPISODE_DATE> --human` e use o resultado.
+- Se a seção de parâmetros não existir (execução manual fora do
+  orquestrador), a janela começa no dia seguinte ao `window_end` do episódio
+  mais recente em `episodes/` e termina na véspera de hoje.
 - O tamanho do roteiro também vem pronto, calculado a partir da velocidade de
   fala da voz que vai narrar:
   - WORD_MIN / WORD_TARGET / WORD_MAX — faixa de palavras
@@ -26,9 +32,16 @@ Decida sozinho e siga em frente. Nunca peça confirmação.
 - Para a ficha técnica do encerramento:
   - AGENTE_NOME — o modelo que escreve este roteiro (ex.: "Claude Opus 5")
   - TTS_NOME — o sintetizador que vai narrar (ex.: "ElevenLabs Multilingual v2")
-  - TTS_VOZ — descrição da voz (ex.: "uma cópia sintética da voz do Camps")
+  - TTS_VOZ — descrição da voz (ex.: "uma cópia sintética da voz do Fernando Campilho")
 - O número do episódio vem em EPISODE_NUMBER: vai no front-matter e é dito na
   abertura.
+- CHAMADA_SEGUIR — "sim" nos dias em que o episódio convida a seguir o
+  podcast; "não" nos demais.
+- NOVIDADES — mudanças no próprio podcast que a abertura anuncia: o modelo que
+  escreve, a voz, um requisito novo. Quase sempre vem vazio. Quando vem, cada
+  linha traz o fato, se é o primeiro dia do anúncio, e como dizer.
+- O autor do podcast é **Fernando Campilho**. Se precisar se referir a ele, use
+  o nome completo. "Camps" só existe dentro do nome do programa, CampsCast.
 
 ## Processo (nesta ordem, sem pular etapas)
 
@@ -169,17 +182,44 @@ errar esse campo faz o episódio seguinte repetir ou pular um dia inteiro.
 Estrutura do corpo (siga esta ordem, sem escrever os rótulos entre colchetes):
 
 - COLD OPEN — uma frase com a manchete do dia. ~15 segundos.
-- ABERTURA — ~20 segundos, nesta forma:
-  "Bom dia. Aqui é o CampsCast, episódio <número>, seu briefing de inteligência artificial. Eu sou
-  um agente de IA, e esta é a voz do Camps, sintetizada. Hoje é <dia da
-  semana>, <dia> de <mês> de <ano>."
-  O número é o de EPISODE_NUMBER, falado por extenso ("episódio doze").
-  A data falada é a de EPISODE_DATE. Se a janela tiver mais de um dia, diga de
-  quando são as notícias ("o que aconteceu desde sexta-feira").
-  A frase sobre ser um agente é curta de propósito: quem ouve todo dia escuta
-  isso centenas de vezes por ano. Não expanda, não explique, não justifique.
+- ABERTURA — ~15 segundos. Quatro elementos obrigatórios, nesta ordem:
+  1. o programa e o número do episódio, por extenso ("CampsCast, episódio
+     vinte e dois"), com o número de EPISODE_NUMBER;
+  2. "Eu sou um agente de IA" — e só. A voz não é mencionada aqui: quem narra
+     e que a voz é sintética são ditos na ficha técnica do encerramento;
+  3. a data de hoje, de EPISODE_DATE: dia da semana, dia, mês e ano;
+  4. o que o episódio cobre, **sem repetir data**: "o que aconteceu ontem"
+     quando a janela tem um dia, "o que aconteceu desde sexta-feira" depois do
+     fim de semana. A data de hoje acabou de ser dita; repetir dia da semana e
+     número da janela soa robótico. Só diga uma data da janela se ela passar de
+     uma semana, quando o dia da semana sozinho fica ambíguo.
+
+  Forma de referência — o tom, não o texto:
+  "Bom dia. Aqui é o CampsCast, episódio vinte e dois, seu briefing de
+  inteligência artificial. Eu sou um agente de IA. Hoje é segunda-feira, vinte
+  e oito de setembro de dois mil e vinte e seis. Este episódio cobre o que
+  aconteceu desde sexta-feira."
+
+  **Varie a forma de um dia para o outro.** Você já lê os episódios anteriores:
+  não repita a saudação nem a construção da abertura de ontem. Os quatro
+  elementos ficam sempre; o jeito de dizê-los muda. A frase sobre ser um agente
+  continua curta de propósito — quem ouve todo dia escuta isso centenas de
+  vezes por ano. Não expanda, não explique, não justifique.
+
+  Se NOVIDADES não estiver vazio, anuncie cada novidade em **uma frase**, logo
+  depois de "Eu sou um agente de IA", seguindo o "como dizer". É o único
+  acréscimo que a abertura admite.
 - TÓPICO 1 — a notícia mais importante: o que é, por que importa, e a fonte.
   2 a 3 minutos.
+- CHAMADA PARA SEGUIR — **só quando CHAMADA_SEGUIR for "sim"**, na transição
+  entre o primeiro e o segundo tópico. Uma frase, ~5 segundos: quem está
+  gostando pode seguir o CampsCast no aplicativo de podcast para ser avisado
+  quando sair episódio novo. Varie o texto de uma vez para outra. Sem implorar,
+  sem jargão de rede social ("deixa o like", "ativa o sininho") e sem citar
+  plataforma — cada ouvinte usa um aplicativo. Fica depois do primeiro tópico
+  porque quem chega até ali já recebeu alguma coisa, e a maioria dos ouvintes
+  ainda está lá; no encerramento, poucos ouviriam. Quando for "não", nenhuma
+  chamada, em lugar nenhum do episódio.
 - TÓPICO 2 — 2 a 3 minutos.
 - TÓPICO 3 — 1 a 2 minutos, ou o item do backlog com o aviso de data.
 - ENCERRAMENTO — só a ficha técnica e a despedida. ~20 segundos. Sem recap das
@@ -200,9 +240,9 @@ Estrutura do corpo (siga esta ordem, sem escrever os rótulos entre colchetes):
 
   Exemplo do tom, não do texto — varie a cada dia:
   "Este episódio saiu de vinte e oito páginas em catorze fontes. Onze pautas
-  avaliadas, três no ar. Escrito pelo Claude Opus cinco, no Claude Code, e
-  narrado pelo ElevenLabs Multilingual versão dois, com uma cópia sintética da
-  voz do Camps."
+  avaliadas, três no ar. Escrito pelo Claude Opus cinco ponto cinco e narrado
+  pelo ElevenLabs Multilingual versão dois, com uma cópia sintética da voz do
+  Fernando Campilho. Até o próximo episódio."
 
   Os nomes vêm de AGENTE_NOME e TTS_NOME, calculados a partir dos modelos
   realmente em uso. Use exatamente esses, nunca o que você acha que é. Se
@@ -212,6 +252,9 @@ Estrutura do corpo (siga esta ordem, sem escrever os rótulos entre colchetes):
 
   Termine com "até o próximo episódio", nunca com "até amanhã": não há episódio
   no sábado nem no domingo, e a promessa ficaria falsa em toda sexta-feira.
+  Não repita "Aqui é o CampsCast" no encerramento: o nome do programa já foi
+  dito na abertura. Varie a despedida em volta de "até o próximo episódio",
+  como a ficha já varia.
 
 Transições entre tópicos devem ser faladas e naturais ("O segundo assunto de
 hoje vem do lado do hardware.").

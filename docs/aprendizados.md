@@ -720,3 +720,41 @@ consegui confirmar", não "não saiu".
 **Vigia que não distingue "está quebrado" de "não consegui ver" gasta o crédito
 do alarme.** Quem recebe três alarmes falsos para de acreditar no quarto, que é
 o verdadeiro.
+
+### As variáveis de ambiente nunca chegaram ao agente
+
+Desde a primeira semana, o orquestrador calcula a data, a janela, a faixa de
+palavras, o número do episódio e os nomes da ficha técnica, e exporta tudo para
+o `claude -p`. O prompt dizia: "a janela vem pronta nestas variáveis". **O agente
+nunca conseguiu ler nenhuma delas.** O Bash não está entre as ferramentas
+liberadas, e em modo headless toda tentativa volta negada — em todas as
+transcrições de produção conferidas, com o CLI antigo e com o novo:
+
+```
+$ echo "EPISODE_DATE=$EPISODE_DATE"   → Contains simple_expansion
+$ printenv EPISODE_DATE ...           → This command requires approval
+$ env | grep EPISODE                  → ... requires approval: env
+```
+
+O episódio saía certo mesmo assim, por dois motivos que ninguém tinha escolhido.
+O agente reconstruía sozinho o que precisava: a janela lendo o `window_end` do
+episódio anterior, o número somando um, os nomes pelo que sabe de si e lendo os
+scripts. E, em produção, a data do episódio é sempre hoje — de modo que a regra
+de reserva do prompt, "se EPISODE_DATE não existir, use hoje", dava a resposta
+certa por coincidência.
+
+A coincidência acabou num reprocessamento. Em 26/09, refazendo o episódio de
+25/09 num sandbox, o agente não leu a variável, obedeceu à reserva e gravou
+`2026-09-26.md`, com a janela esticada até 25/09 — o dia do próprio episódio,
+que nunca pode entrar. Não foi desobediência: foi o prompt contando com algo
+que o agente não enxerga.
+
+Agora o orquestrador escreve os valores no fim do próprio prompt, numa seção
+"Parâmetros desta execução", e o prompt proíbe usar o relógio do sistema para a
+data do episódio. O smoke test usa um agente falso que guarda o prompt recebido
+e confere se os valores estão lá.
+
+**Um mecanismo que funciona por reconstrução do agente não está funcionando —
+está sendo compensado.** A diferença só aparece no dia em que a reconstrução e a
+intenção divergem. Confira no transcript o que o agente de fato recebeu, não o
+que o orquestrador acredita ter mandado.

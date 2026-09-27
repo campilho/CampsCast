@@ -1576,6 +1576,175 @@ else
   bad "espera de rede não seguiu: $SAIDA_REDE"
 fi
 
+# ------------------------------------ 18. novidades e conferência do roteiro
+head_ "18. Novidades na abertura e conferência do roteiro"
+
+# Anúncio de mudança tem começo e fim: some sozinho, sem ninguém lembrar.
+NOV_TMP="$(mktemp)"
+cat > "$NOV_TMP" <<'FIM'
+{"novidades": [{"desde": "2026-09-28", "ate": "2026-10-02",
+  "fato": "Agora quem escreve é o Claude Opus 5.5.", "como_dizer": "uma frase"}]}
+FIM
+if python3 - "$NOV_TMP" <<'FIM'
+import sys, pathlib
+sys.path.insert(0, "scripts")
+from novidades import texto
+arq = pathlib.Path(sys.argv[1])
+assert texto("2026-09-25", arq) == "", "antes da janela"
+assert "primeiro dia" in texto("2026-09-28", arq), texto("2026-09-28", arq)
+assert "Opus 5.5" in texto("2026-10-02", arq) and "primeiro dia" not in texto("2026-10-02", arq)
+assert texto("2026-10-05", arq) == "", "depois da janela"
+assert texto("2026-09-28", pathlib.Path("/nao/existe.json")) == ""
+FIM
+then
+  ok "novidade entra na data de início, vale até a de fim e some sozinha"
+else
+  bad "janela de novidades errada"
+fi
+rm -f "$NOV_TMP"
+
+# A abertura e a ficha variam livremente; o que é compromisso de transparência
+# não pode sumir. A conferência só registra — é a medição da autonomia.
+ROT_TMP="$(mktemp)"
+cat > "$ROT_TMP" <<'FIM'
+---
+date: 2026-09-28
+episode: 22
+---
+Manchete do dia numa frase.
+
+Bom dia. Aqui é o CampsCast, episódio vinte e dois. Eu sou um agente de IA.
+
+Corpo do episódio.
+
+Escrito pelo Claude Opus cinco ponto cinco e narrado pelo ElevenLabs, com uma
+cópia sintética da voz do Fernando Campilho. Até o próximo episódio.
+FIM
+BOM="$(python3 scripts/confere_roteiro.py "$ROT_TMP" --numero 22 --agente "Claude Opus 5.5")"
+sed -i '' 's/Eu sou um agente de IA\.//; s/Até o próximo episódio\./Até amanhã./; s/voz do Fernando Campilho/voz do Camps/' "$ROT_TMP"
+RUIM="$(python3 scripts/confere_roteiro.py "$ROT_TMP" --numero 22 --agente "Claude Opus 5.5")"
+rm -f "$ROT_TMP"
+if [[ -z "$BOM" && "$RUIM" == *"agente de IA"* && "$RUIM" == *"até o próximo episódio"* \
+      && "$RUIM" == *"até amanhã"* && "$RUIM" == *"apelido"* ]]; then
+  ok "conferência aceita roteiro completo e aponta cada regra que caiu"
+else
+  bad "conferência errada — completo: '${BOM}' / incompleto: '${RUIM}'"
+fi
+
+if python3 - <<'FIM'
+import sys
+sys.path.insert(0, "scripts")
+from confere_roteiro import extenso, falado
+casos = {1: "um", 14: "catorze", 21: "vinte e um", 22: "vinte e dois",
+         100: "cem", 101: "cento e um", 250: "duzentos e cinquenta"}
+for n, e in casos.items():
+    assert extenso(n) == e, (n, extenso(n))
+assert falado("Claude Opus 5.5") == "Claude Opus cinco ponto cinco"
+assert falado("Claude Opus 5") == "Claude Opus cinco"
+FIM
+then
+  ok "número e versão por extenso, como o agente fala"
+else
+  bad "extenso errado"
+fi
+
+# De ponta a ponta: a novidade chega ao agente e o roteiro que ele escreve é
+# conferido e registrado. Um export esquecido falharia em silêncio.
+FAKE_CONF="$(mktemp -d)"
+cat > "$FAKE_CONF/novidades.json" <<'FIM'
+{"novidades": [{"desde": "2026-08-25", "ate": "2026-08-25",
+  "fato": "novidade de teste", "como_dizer": "uma frase"}]}
+FIM
+cat > "$FAKE_CONF/claude" <<STUB
+#!/bin/sh
+printf '%s' "\$NOVIDADES" > "$FAKE_CONF/recebeu.txt"
+cat > episodes/2026-08-25.md <<'MD'
+---
+date: 2026-08-25
+window_start: 2026-08-24
+window_end: 2026-08-24
+title: teste
+---
+
+Bom dia, episódio um. Corpo sem o aviso de agente. Até o próximo episódio.
+MD
+printf '%s' '{"type":"result","is_error":false,"result":"OK episodes/2026-08-25.md 10 00:04","num_turns":1,"usage":{"input_tokens":1}}'
+STUB
+chmod +x "$FAKE_CONF/claude"
+NOVIDADES_ARQ="$FAKE_CONF/novidades.json" CLAUDE_BIN="$FAKE_CONF/claude" \
+  bash scripts/run_episode.sh --date 2026-08-25 --only research >/dev/null 2>&1 || true
+RECEBEU="$(cat "$FAKE_CONF/recebeu.txt" 2>/dev/null)"
+ULTIMA="$(tail -1 "$METRICAS_ARQ" 2>/dev/null)"
+rm -rf "$FAKE_CONF"; rm -f episodes/2026-08-25.md logs/2026-08-25.log logs/2026-08-25-*.json
+if [[ "$RECEBEU" == *"novidade de teste"* && "$ULTIMA" == *'"avisos_roteiro": ['*"agente de IA"* ]]; then
+  ok "novidade chega ao agente, e regra quebrada no roteiro vai para o registro"
+else
+  bad "novidade não chegou (${RECEBEU:-vazio}) ou aviso não foi registrado"
+fi
+
+# O agente nunca conseguiu ler as variáveis de ambiente: sem Bash liberado, todo
+# env/printenv/echo volta "requires approval" (visto em todas as transcrições de
+# produção). Os valores precisam estar escritos no próprio prompt.
+FAKE_PROMPT="$(mktemp -d)"
+cat > "$FAKE_PROMPT/novidades.json" <<'FIM'
+{"novidades": [{"desde": "2026-08-25", "ate": "2026-08-25",
+  "fato": "novidade que tem de estar no prompt", "como_dizer": "uma frase"}]}
+FIM
+cat > "$FAKE_PROMPT/claude" <<STUB
+#!/bin/sh
+printf '%s' "\$2" > "$FAKE_PROMPT/prompt.txt"
+printf '%s' '{"type":"result","is_error":true,"result":"parado de propósito","usage":{}}'
+STUB
+chmod +x "$FAKE_PROMPT/claude"
+NOVIDADES_ARQ="$FAKE_PROMPT/novidades.json" CLAUDE_BIN="$FAKE_PROMPT/claude" \
+  bash scripts/run_episode.sh --date 2026-08-25 --only research >/dev/null 2>&1 || true
+PROMPT_RECEBIDO="$(cat "$FAKE_PROMPT/prompt.txt" 2>/dev/null)"
+rm -rf "$FAKE_PROMPT"; rm -f logs/2026-08-25.log logs/2026-08-25-*.json
+if [[ "$PROMPT_RECEBIDO" == *"## Parâmetros desta execução"* \
+      && "$PROMPT_RECEBIDO" == *"EPISODE_DATE: 2026-08-25"* \
+      && "$PROMPT_RECEBIDO" == *"WINDOW_START: "* && "$PROMPT_RECEBIDO" == *"AGENTE_NOME: "* \
+      && "$PROMPT_RECEBIDO" == *"CHAMADA_SEGUIR: "* \
+      && "$PROMPT_RECEBIDO" == *"novidade que tem de estar no prompt"* ]]; then
+  ok "data, janela, nomes e novidades chegam escritos no prompt do agente"
+else
+  bad "parâmetros não chegaram no prompt do agente"
+fi
+
+# Chamada para seguir: dias fixos na configuração, texto livre no roteiro.
+SHOW_TMP="$(mktemp)"
+printf '%s' '{"chamada_para_seguir": {"desde": "2026-09-29", "dias": ["terça", "quinta"]}}' > "$SHOW_TMP"
+if python3 - "$SHOW_TMP" <<'FIM'
+import sys, pathlib
+sys.path.insert(0, "scripts")
+from chamada import chamada_para_seguir as c
+arq = pathlib.Path(sys.argv[1])
+assert c("2026-09-22", arq) is False, "terça antes do início"
+assert c("2026-09-28", arq) is False, "segunda"
+assert c("2026-09-29", arq) is True, "terça"
+assert c("2026-09-30", arq) is False, "quarta"
+assert c("2026-10-01", arq) is True, "quinta"
+assert c("2026-09-29", pathlib.Path("/nao/existe.json")) is False
+FIM
+then
+  ok "chamada para seguir só nas terças e quintas, a partir da data de início"
+else
+  bad "dias da chamada para seguir errados"
+fi
+rm -f "$SHOW_TMP"
+
+ROT_CTA="$(mktemp)"
+printf -- '---\nepisode: 23\n---\nCampsCast, episódio vinte e três. Eu sou um agente de IA.\nPrimeira pauta.\nSe está gostando, siga o CampsCast no seu aplicativo.\nFicha: Claude Opus cinco ponto cinco, cópia sintética da voz. Até o próximo episódio.\n' > "$ROT_CTA"
+COM_SIM="$(python3 scripts/confere_roteiro.py "$ROT_CTA" --numero 23 --agente "Claude Opus 5.5" --chamada sim)"
+COM_NAO="$(python3 scripts/confere_roteiro.py "$ROT_CTA" --numero 23 --agente "Claude Opus 5.5" --chamada não)"
+sed -i '' '/siga o CampsCast/d' "$ROT_CTA"
+SEM_SIM="$(python3 scripts/confere_roteiro.py "$ROT_CTA" --numero 23 --agente "Claude Opus 5.5" --chamada sim)"
+rm -f "$ROT_CTA"
+if [[ -z "$COM_SIM" && "$COM_NAO" == *"chamada"* && "$SEM_SIM" == *"chamada"* ]]; then
+  ok "conferência cobra a chamada no dia dela e acusa fora do dia"
+else
+  bad "conferência da chamada errada — '${COM_SIM}' / '${COM_NAO}' / '${SEM_SIM}'"
+fi
+
 # ------------------------------------------------------------------- resultado
 printf '\n\033[1m%s\033[0m\n' "Resultado: $PASS ok, $FAIL falha(s)"
 [[ $FAIL -eq 0 ]] || exit 1

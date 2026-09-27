@@ -299,6 +299,9 @@ def cmd_fecha(a) -> int:
         "episodio": episodio(a.data),
         "indicadores": ind,
         "erro": a.erro or None,
+        # None: o roteiro não foi conferido nesta execução. []: conferido, limpo.
+        "avisos_roteiro": ([l for l in a.avisos.splitlines() if l.strip()]
+                           if a.conferido == "1" else None),
     }
     registra(linha)
     print(f"Registro: {a.estado}, {linha['duracao_s']} s → {arquivo()}")
@@ -436,7 +439,8 @@ def main() -> int:
     for campo in ("data", "estado", "inicio"):
         f.add_argument(f"--{campo}", required=True)
     for campo in ("fim", "pesquisa", "narracao", "publicacao", "aviso",
-                  "agente", "tts", "indicadores", "modelo", "erro"):
+                  "agente", "tts", "indicadores", "modelo", "erro",
+                  "conferido", "avisos"):
         f.add_argument(f"--{campo}", default="")
     r = sub.add_parser("resultado"); r.add_argument("arquivo")
     i = sub.add_parser("indicadores"); i.add_argument("--data", required=True)

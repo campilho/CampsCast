@@ -99,6 +99,7 @@ die() { ULTIMO_ERRO="$*"; log "ERRO: $*"; exit 1; }
 # Nunca derruba o pipeline: falha no registro vai para o log e segue.
 T_INICIO="$(date +%s)"
 REGISTRAR=0; CONCLUIDO=0; ULTIMO_ERRO=""; ETAPA_ATUAL="inicio"
+AVISOS_ROTEIRO=""; ROTEIRO_CONFERIDO=0
 T_PESQUISA=""; T_NARRACAO=""; T_PUBLICACAO=""; T_AVISO=""
 BASE_REGISTRO="logs/${EPISODE_DATE}-${T_INICIO}"
 finaliza() {
@@ -111,6 +112,7 @@ finaliza() {
       --publicacao "$T_PUBLICACAO" --aviso "$T_AVISO" --modelo "${CLAUDE_MODEL:-}" \
       --agente "${BASE_REGISTRO}-agente.json" --tts "${BASE_REGISTRO}-tts.json" \
       --indicadores "${BASE_REGISTRO}-indicadores.json" --erro "$ULTIMO_ERRO" \
+      --conferido "$ROTEIRO_CONFERIDO" --avisos "$AVISOS_ROTEIRO" \
       >>"$LOG" 2>&1 || true
     # Estado público no S3. É o único aviso que chega a quem está longe do Mac:
     # notificação do macOS morre na tela de casa. Sucesso também sobe — vigia
@@ -250,12 +252,54 @@ if stage_enabled research; then
 
   export EPISODE_DATE NEWS_WINDOW WINDOW_START WINDOW_END WINDOW_DAYS
   export WORD_MIN WORD_TARGET WORD_MAX WORDS_PER_MINUTE
-  export TTS_NOME TTS_VOZ AGENTE_NOME EPISODE_NUMBER
+  # Mudanças no próprio podcast que a abertura anuncia (config/novidades.json).
+  # Cada uma tem data de fim, então o anúncio some sozinho.
+  NOVIDADES="$(python3 scripts/novidades.py "$EPISODE_DATE" 2>>"$LOG" || true)"
+  if [[ -n "$NOVIDADES" ]]; then
+    log "Novidade na abertura: $(printf '%s' "$NOVIDADES" | head -1 | cut -c3-100)…"
+  fi
+  # Chamada para seguir o podcast: dias em config/show.json, texto do agente.
+  CHAMADA_SEGUIR="$(python3 scripts/chamada.py "$EPISODE_DATE" 2>>"$LOG" || echo "não")"
+  if [[ "$CHAMADA_SEGUIR" == "sim" ]]; then
+    log "Dia de chamada para seguir o podcast, depois da primeira pauta."
+  fi
+  export TTS_NOME TTS_VOZ AGENTE_NOME EPISODE_NUMBER NOVIDADES CHAMADA_SEGUIR
   [[ -n "$EPISODE_NUMBER" ]] || die "não foi possível calcular o número do episódio."
   log "Episódio nº $EPISODE_NUMBER · escrito por ${AGENTE_NOME:-?} · narrado por ${TTS_NOME:-?}"
 
+  # Os valores vão escritos no prompt, não só no ambiente. O agente nunca
+  # conseguiu lê-los de lá: sem Bash liberado, todo env/printenv/echo das
+  # transcrições de produção voltou "requires approval". O episódio saía certo
+  # porque o agente reconstruía tudo e porque, em produção, a data do episódio
+  # é sempre hoje. Num reprocessamento a coincidência acaba — foi assim que um
+  # teste de 26/09 gravou o episódio de 25 com a data e a janela erradas.
+  PARAMETROS="## Parâmetros desta execução
+
+Calculados pelo orquestrador. São a fonte da verdade: use exatamente estes
+valores, sem recalcular e sem consultar o relógio do sistema.
+
+- EPISODE_DATE: $EPISODE_DATE
+- EPISODE_NUMBER: $EPISODE_NUMBER
+- WINDOW_START: $WINDOW_START
+- WINDOW_END: $WINDOW_END
+- WINDOW_DAYS: $WINDOW_DAYS
+- NEWS_WINDOW: $NEWS_WINDOW
+- WORD_MIN: ${WORD_MIN:-}
+- WORD_TARGET: ${WORD_TARGET:-}
+- WORD_MAX: ${WORD_MAX:-}
+- WORDS_PER_MINUTE: ${WORDS_PER_MINUTE:-}
+- AGENTE_NOME: ${AGENTE_NOME:-}
+- TTS_NOME: ${TTS_NOME:-}
+- TTS_VOZ: ${TTS_VOZ:-}
+- CHAMADA_SEGUIR: ${CHAMADA_SEGUIR:-não}
+- NOVIDADES: ${NOVIDADES:-(nenhuma)}"
+  PROMPT_AGENTE="$(cat prompts/master.md)
+
+$PARAMETROS"
+
   if [[ $DRY_RUN -eq 1 ]]; then
-    log "DRY-RUN: $CLAUDE_BIN -p \"\$(cat prompts/master.md)\" --model $CLAUDE_MODEL --effort $CLAUDE_EFFORT --output-format json --permission-mode acceptEdits"
+    log "Parâmetros no prompt: $(printf '%s' "$PARAMETROS" | grep -c '^- ') valores"
+    log "DRY-RUN: $CLAUDE_BIN -p \"\$(cat prompts/master.md) + parâmetros\" --model $CLAUDE_MODEL --effort $CLAUDE_EFFORT --output-format json --permission-mode acceptEdits"
   else
     # A etapa demora vários minutos e a saída do CLI só chega no fim, porque
     # precisa ser capturada inteira para ser validada. Sem isso o terminal fica
@@ -270,7 +314,7 @@ if stage_enabled research; then
 
     set +e
     AGENT_RAW="$(
-      "$CLAUDE_BIN" -p "$(cat prompts/master.md)" \
+      "$CLAUDE_BIN" -p "$PROMPT_AGENTE" \
         --model "$CLAUDE_MODEL" \
         --effort "$CLAUDE_EFFORT" \
         --output-format json \
@@ -326,6 +370,23 @@ if stage_enabled research; then
     die "Roteiro não foi criado em $SCRIPT_PATH."
   fi
   log "Roteiro: $SCRIPT_PATH"
+
+  # Abertura e encerramento variam livremente; o que é compromisso de
+  # transparência é conferido aqui. Não bloqueia, registra: é a medição de
+  # quanto a liberdade do agente custa em regra quebrada.
+  if [[ $DRY_RUN -eq 0 ]]; then
+    ARGS_CONF=("$SCRIPT_PATH")
+    [[ -n "${EPISODE_NUMBER:-}" ]] && ARGS_CONF+=(--numero "$EPISODE_NUMBER")
+    [[ -n "${AGENTE_NOME:-}" ]] && ARGS_CONF+=(--agente "$AGENTE_NOME")
+    [[ -n "${CHAMADA_SEGUIR:-}" ]] && ARGS_CONF+=(--chamada "$CHAMADA_SEGUIR")
+    AVISOS_ROTEIRO="$(python3 scripts/confere_roteiro.py "${ARGS_CONF[@]}" 2>>"$LOG" || true)"
+    ROTEIRO_CONFERIDO=1
+    if [[ -n "$AVISOS_ROTEIRO" ]]; then
+      while IFS= read -r aviso; do log "AVISO no roteiro: $aviso"; done <<< "$AVISOS_ROTEIRO"
+    else
+      log "Roteiro conferido: abertura e ficha técnica com tudo o que é obrigatório."
+    fi
+  fi
 else
   log "── [1/4] Pesquisa — PULADA"
 fi
