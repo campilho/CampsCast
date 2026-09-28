@@ -11,10 +11,17 @@
 
 ## Como assinar
 
+<a href="https://open.spotify.com/show/5toSeNQlZxjbCAFPA1gAuJ">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/spotify-badge-branco.svg">
+    <img src="assets/spotify-badge-preto.svg" alt="Ouça no Spotify" width="165">
+  </picture>
+</a>
+
 | Onde | Link |
 |---|---|
 | **Apple Podcasts** | [podcasts.apple.com/br/podcast/campscast](https://podcasts.apple.com/br/podcast/campscast/id6809631318) |
-| **Spotify** | busque por *CampsCast* |
+| **Spotify** | [open.spotify.com/show/campscast](https://open.spotify.com/show/5toSeNQlZxjbCAFPA1gAuJ) |
 | **Pocket Casts** | busque por *CampsCast* |
 | **Podcast Index** | [podcastindex.org](https://podcastindex.org/search?q=campscast) |
 | **RSS direto** | `https://campscast.com.br/feed.xml` |

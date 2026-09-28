@@ -1,9 +1,21 @@
 # TODO
 
 Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
-[PROJETO.md](PROJETO.md). Atualizada em 26/09/2026.
+[PROJETO.md](PROJETO.md). Atualizada em 27/09/2026.
 
-## Esta semana
+## Esta semana — fechar a Fase 2
+
+A Fase 2 fecha quando estas três estiverem feitas; a Fase 3 abre no fim de
+semana de 03/10. YouTube e site passaram para a Fase 3.
+
+- [ ] **Conversar com os primeiros ouvintes** — segunda, 28/09
+- [ ] **Post de lançamento no LinkedIn** — terça, 29/09
+- [ ] **ADR de custos** com setembro fechado — fim de semana de 03/10, junto com
+      a revisão do ADR 0005
+- [ ] **Resgatar o crédito de US$ 250 do Claude Code na nuvem até 07/10** — vence
+      em 04/11; é o que paga o piloto, primeiro item da Fase 3
+
+## Feito nesta semana e pendências menores
 
 - [x] ~~Trocar o agente para Claude Opus 5.5~~ — feito em 26/09, com
       `--effort high` fixado: o Opus 5 rodava em `high` sem ninguém pedir, e o
@@ -22,8 +34,12 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
       ([ADR 0006](docs/decisions/0006-abertura-no-tom-nao-no-texto.md))
 - [x] ~~Chamada para seguir o podcast~~ — depois da primeira pauta, terças e
       quintas, a partir de 29/09; texto livre do agente
-- [ ] **Post no LinkedIn** — linha de base de audiência registrada em 26/09
-      (`privado/audiencia.md`); comparar em 03/10 e 10/10
+- [ ] **Post de lançamento no LinkedIn, terça 29/09, 11h** — rascunho e série
+      semanal em `privado/divulgacao.md`; antes, trocar a citação pela frase
+      exata do episódio de segunda. Linha de base de audiência registrada em
+      26/09; comparar em 03/10 e 10/10
+- [x] ~~Link do Spotify no README~~ — `open.spotify.com/show/5toSeNQlZxjbCAFPA1gAuJ`,
+      com "l" minúsculo depois de `NQ`
 - [ ] **Decidir se o agente ganha um Bash mínimo** — as transcrições mostram
       ele tentando `wc -w`, `window.py` e `tts.py --budget`, sempre negado;
       conta palavras e calcula na mão. Liberar só comandos de leitura
@@ -90,16 +106,13 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
       da voz `LvmWSbvGusgLWSQDKHJH` ("NaN losses", parou em 75,7%). Traria custo
       pela metade e fala mais rápida; a velocidade fica como está por enquanto
 
-## Divulgação — mais adiante
+## Divulgação
 
-- [ ] **Plano de divulgação** — começar pelo LinkedIn, rede grande e quase toda
-      de tecnologia: posts frequentes contando a evolução do projeto, sempre
-      com os links do podcast
-- [ ] **Escolher o link principal** a divulgar, depois das conversas com
-      ouvintes (Spotify ou Apple)
-- [ ] **Avaliar o YouTube** como mais um canal, incluindo o YouTube Music
-- [ ] **Avaliar um site simples** em `campscast.com.br` — links dos diretórios,
-      descrição do projeto e GitHub; vira a âncora do formulário da Fase 3
+- [x] ~~Plano de divulgação~~ — LinkedIn, um post por terça: lançamento em
+      29/09 e cinco posts sobre as Fases 1 e 2 até 03/11. Rascunhos e regras em
+      `privado/divulgacao.md`
+- [x] ~~Link principal~~ — Spotify, onde está toda a audiência medida; a Apple
+      segue como segundo link. Rever depois das conversas com ouvintes
 
 ## Estacionado até haver divulgação
 

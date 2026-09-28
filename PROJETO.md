@@ -292,7 +292,7 @@ Entregue:
 
       | Diretório | Estado | Desde |
       |---|---|---|
-      | Spotify | no ar, testado no carro e no celular | 07/09/2026 |
+      | Spotify | no ar, testado no carro e no celular; [página do programa](https://open.spotify.com/show/5toSeNQlZxjbCAFPA1gAuJ) | 07/09/2026 |
       | Pocket Casts | no ar | 06/09/2026 |
       | Podcast Index | no ar | 06/09/2026 |
       | Apple Podcasts | no ar, ID 6809631318 | 07/09/2026 |
@@ -314,6 +314,19 @@ Entregue:
       horários por etapa, sono do Mac, tokens do Claude, créditos exatos da
       ElevenLabs e tamanho da memória que o agente lê. Unidades brutas, não
       dinheiro. Histórico desde 26/08 reconstruído dos logs (13/09)
+- [x] **Vigia na nuvem** — rotina diária às 08:07 que lê o feed e um
+      `estado.json` público escrito no fim de cada execução, e avisa por e-mail
+      e push. Não depende do Mac, então cobre também o Mac desligado (13/09).
+      Nove episódios seguidos publicados sem ninguém em casa (15 a 25/09)
+- [x] **Agente no Claude Opus 5.5**, com o esforço fixado em `high` — o Opus 5
+      rodava em `high` sem ninguém pedir, e o padrão do 5.5 é `medium`. Ver
+      ADR 0005, com revisão marcada para 03/10 (26/09)
+- [x] **Parâmetros escritos no prompt** — o agente nunca tinha conseguido ler as
+      variáveis de ambiente; o episódio saía certo por coincidência (26/09)
+- [x] **Abertura e encerramento no tom, não no texto**, com conferência
+      automática do que é obrigatório; **novidades** anunciadas na abertura com
+      data de fim; **chamada para seguir** depois da primeira pauta, às terças e
+      quintas. Ver ADR 0006 (26/09)
 
 A fazer:
 
@@ -321,19 +334,19 @@ A fazer:
       parar, e se preferem Spotify ou Apple Podcasts
 - [ ] **Plano de divulgação** — primário no LinkedIn, com posts frequentes
       sobre a evolução do projeto e sempre com os links; avaliar outros canais
-- [ ] **Avaliar o YouTube** como mais um canal, incluindo o YouTube Music para
-      o áudio
-- [ ] **Avaliar um site simples** em `campscast.com.br` — links para todos os
-      diretórios, descrição do projeto e link para o GitHub. Vira a âncora do
-      formulário da Fase 3. Hospedar custa quase nada no S3 e no CloudFront que
-      já existem; o trabalho é o conteúdo. Hoje a raiz do domínio responde 403
-- [ ] ADR de custos reais consolidado — inclui o custo do Claude por token,
-      base da decisão de onde rodar na Fase 3
+- [ ] ADR de custos reais consolidado, com setembro fechado — inclui o custo do
+      Claude por token, base da decisão de onde rodar na Fase 3
+- [x] Botão oficial "Ouça no Spotify" no README, que troca de cor com o tema do
+      GitHub (27/09)
+
+YouTube e site saíram da Fase 2 em 27/09 e foram para a Fase 3: nenhum dos dois
+bloqueia a divulgação, que começa pelo LinkedIn apontando para o Spotify e para
+o GitHub.
 
 **Critério de saída:** podcast encontrável pelo nome nos principais diretórios,
-narrado com voz clonada profissional — **atingido em 07/09** — e divulgação em
-andamento: plano publicado, primeiro ciclo de posts no LinkedIn rodando, e
-decisão tomada sobre site e YouTube.
+narrado com voz clonada profissional — **atingido em 07/09** —, primeiro post de
+divulgação no ar, conversas com os primeiros ouvintes feitas e ADR de custos
+escrito com o mês fechado. Previsão: fim da semana de 28/09 a 02/10.
 
 ### Fase 3 — Presença multicanal, feedback e independência do Mac
 
@@ -364,9 +377,17 @@ Vídeo:
       usar modelos de vídeo, que hoje geram clipes de 5 a 8 segundos
 - [ ] **YouTube Shorts** com o mesmo material, no mesmo formato vertical.
       Vídeos longos ficam de fora por enquanto
+- [ ] **Avaliar o YouTube** como canal do episódio inteiro, incluindo o YouTube
+      Music para o áudio (veio da Fase 2)
 
 Site:
 
+- [ ] **Site simples** em `campscast.com.br` — links para todos os diretórios,
+      descrição do projeto e link para o GitHub. Vira a âncora do formulário.
+      Hospedar custa quase nada no S3 e no CloudFront que já existem; o
+      trabalho é o conteúdo. Hoje a raiz do domínio responde 403. Os botões
+      oficiais do Spotify já estão em `assets/` — no site funcionam como link,
+      coisa que um post do LinkedIn não permite (veio da Fase 2)
 - [ ] **Site sofisticado feito com Claude Design**, desktop e mobile — um
       showcase de IA: exemplos das vozes e dos vídeos, como o projeto funciona
       por dentro, e caminho para visitantes técnicos contribuírem com pautas ou
@@ -413,6 +434,27 @@ Operação:
 
       Decisão depois do ADR de custos, com o custo mensal do Claude no Bedrock
       ao lado dos outros dois caminhos. Com o Mac mini, a AWS entra na Fase 4.
+
+- [ ] **Primeiro item da Fase 3: piloto no Claude Code na nuvem** — uma quarta
+      opção, que apareceu em 27/09 e pode resolver antes das outras. Levantado
+      na documentação oficial:
+
+      | | Situação |
+      |---|---|
+      | Agenda | rotina com preset de dias úteis, no fuso local; marcar minutos depois da hora cheia, que atrasa |
+      | Custo | desconta dos mesmos limites do Max que o Mac usa hoje; só cobra à parte se ligar créditos de uso. Há um teto diário de execuções de rotina por conta |
+      | Crédito de lançamento | US$ 250 para sessões na nuvem, **separado dos limites do Max**; resgatar até 07/10, vence em 04/11 |
+      | ElevenLabs | chave guardada como "API credential" do ambiente, no cabeçalho `xi-api-key`; o código nunca a vê |
+      | S3 | **o obstáculo**: a assinatura SigV4 é calculada com a chave secreta dentro do código, e o proxy só anexa cabeçalho pronto. Ou a chave entra como variável de ambiente — visível a quem usa o ambiente, mitigada pelo usuário IAM que só faz PUT neste bucket —, ou o upload sai da sessão, por exemplo para um GitHub Actions com segredo próprio |
+      | Estado | a máquina é descartável; episódios, pesquisas, índice, backlog e registro precisam ser commitados e enviados ao fim de cada execução. Gravar na `main` é permitido se ela não for protegida e os commits forem do autor |
+      | Orquestrador | hoje o launchd chama `run_episode.sh`, que chama `claude -p`. Na rotina, a própria sessão é o agente: a preparação e a publicação precisam virar passos que ela executa, ou sair dela |
+      | Maturidade | rotinas ainda em *research preview*, sem garantia de horário — o Mac também não tem, e o vigia já cobre as duas |
+
+      Plano: resgatar o crédito, montar o ambiente e rodar **em paralelo ao Mac,
+      sem publicar**, por uma semana, comparando roteiro, custo e horário.
+      O crédito cobre o piloto: a mediana de US$ 8,66 por episódio vezes os
+      cerca de 26 dias úteis até 04/11 dá uns US$ 225, se a conta do crédito
+      seguir o preço de API — o que ainda não está confirmado.
 
 **Critério de saída:** dez dias úteis seguidos publicados sem o Mac do Fernando Campilho ligado;
 formulário no ar, com as sugestões chegando ao agente; site novo publicado.

@@ -31,3 +31,6 @@ gravacoes/
 
 # binário do capturador de áudio, compilado sob demanda
 .cache/
+
+# Pacotes baixados (ex.: botões do Spotify). O que vale fica extraído em assets/.
+*.zip
