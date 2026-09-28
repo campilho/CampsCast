@@ -359,6 +359,46 @@ Formato e curadoria:
       usa como material de análise nos episódios (o "assimilar" humano do funil)
 - [ ] Fernando Campilho revisa sugestões acumuladas antes de escrever análises novas
 - [ ] Sugestões de fontes dos ouvintes → `sources.yaml`
+- [ ] **Memória de longo prazo em camadas** — ideia do autor, 27/09: recente
+      na íntegra, e o antigo resumido por semana, depois por mês, e um dia por
+      trimestre e ano, para o podcast poder dizer "no ano passado, quando saiu
+      o modelo X, a preocupação era esta; hoje está resolvida". Ajustes
+      discutidos:
+      - **Repetição e narrativa são memórias diferentes.** Para não repetir
+        pauta, resumo não serve — "semana de lançamentos da OpenAI" não
+        responde se o GPT-6 Astra já foi ao ar. Isso pede uma linha por pauta,
+        para sempre (~150 bytes; ~110 K por ano). Os resumos servem à narrativa
+        e à continuidade
+      - **Nada se apaga — decidido em 27/09.** Os roteiros são a fonte; os
+        resumos são derivados. O que sai é o que o agente lê todo dia, não o
+        que existe no disco. Em alguns anos, o acervo é um registro de como a
+        IA evoluiu, dia a dia
+      - **Resumo aponta para o original.** Cada um cita os episódios de onde
+        veio, e antes de falar do passado no ar o agente relê o roteiro
+        original: a regra de fonte primária vale também para a própria memória.
+        Resumo de resumo perde e inventa detalhe, e isso fica protegido
+      - **Fios em aberto**, à parte dos resumos por tempo — item próprio,
+        abaixo
+      - **Resumo tem conferência.** Gerado por modelo, precisa de verificação
+        determinística, por exemplo: toda pauta da semana aparece citada no
+        resumo semanal
+      - **Curto prazo com tamanho medido.** Quinze dias na íntegra seriam uns
+        onze roteiros, mais que o dobro dos cinco lidos hoje. Decidir pelo
+        custo medido, não pelo número redondo
+      Vale comparar com o módulo de memória do AgentCore, previsto na Fase 4.
+- [ ] **Fios em aberto** — arquivo próprio, no molde do backlog: preocupações,
+      promessas e previsões que apareceram no ar, cada uma com data, episódio de
+      origem e situação (aberta, cumprida, desmentida, resolvida). O agente
+      acrescenta quando surge e atualiza quando uma notícia nova fecha um fio —
+      e aí conta a história no ar. É o que torna possível dizer "a preocupação
+      de um ano atrás foi resolvida"; achar isso relendo doze resumos mensais
+      seria caro e incerto. Tamanho acompanhado no registro de execução, como
+      o índice e o backlog, para não virar o próximo arquivo que cresce sem
+      limite; fio resolvido e já contado sai da leitura diária
+- [ ] (ideia) **Linha do tempo da IA** — projeto paralelo que nasce do acervo:
+      modelos, hardware, benchmarks, regulação e empresas, datados e com fonte
+      primária, extraídos do índice de pautas e dos roteiros. Só é possível
+      porque nada se apaga
 
 Feedback:
 

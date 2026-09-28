@@ -12,6 +12,15 @@ semana de 03/10. YouTube e site passaram para a Fase 3.
 - [ ] **Post de lançamento no LinkedIn** — terça, 29/09
 - [ ] **ADR de custos** com setembro fechado — fim de semana de 03/10, junto com
       a revisão do ADR 0005
+- [ ] **Semana de 05/10, abrindo a Fase 3: revisar a memória do agente** —
+      medido em 27/09: o
+      índice de pautas foi de 67 K para 181 K em onze dias, lido inteiro todo
+      dia, e cada pauta nova é maior que a anterior (750 bytes em agosto, ~4.000
+      em setembro). O Opus 5 passou a ler só trechos em 25/09 (memória com
+      buracos); o Opus 5.5 lê tudo (custo crescente). Estimativa, a medir: o
+      índice já seria ~40% da leitura de cache. Na Fase 3 do PROJETO.md:
+      memória em camadas, fios em aberto e a linha do tempo da IA. Depois da
+      revisão do Opus 5.5, para não misturar duas mudanças
 - [ ] **Resgatar o crédito de US$ 250 do Claude Code na nuvem até 07/10** — vence
       em 04/11; é o que paga o piloto, primeiro item da Fase 3
 
