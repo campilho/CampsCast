@@ -4,7 +4,7 @@ Podcast diário de IA em português, escrito e narrado por agentes, publicado em
 dias úteis. Rodando em produção desde 24/08/2026.
 
 > **Antes de mexer em qualquer coisa:** `bash tests/smoke_test.sh`
-> São 132 testes, offline, sem custo. Rode antes e depois de alterar.
+> São 137 testes, offline, sem custo. Rode antes e depois de alterar.
 
 ## Regra número um
 
@@ -61,6 +61,8 @@ Agregador serve para descobrir, nunca para citar.
 | `nomes.py` | nomes falados na ficha técnica e número do episódio |
 | `novidades.py` | mudanças no podcast a anunciar na abertura, por janela de datas |
 | `chamada.py` | decide se o episódio convida a seguir o podcast (dias em `config/show.json`) |
+| `pautas.py` | lista compacta do que já foi ao ar, uma linha por pauta, escrita no prompt |
+| `confere_backlog.py` | confere se o backlog guarda só pauta ativa; registra, não bloqueia |
 | `confere_roteiro.py` | confere o que a abertura e a ficha não podem deixar de dizer; registra, não bloqueia |
 
 ### Diagnóstico e manutenção
@@ -72,6 +74,7 @@ Agregador serve para descobrir, nunca para citar.
 | `set_base_url.py` | troca o endereço do feed, verificando antes; `--resolve` |
 | `install_launchd.sh` | instala o agendamento com os caminhos reais da máquina |
 | `registro.py` | registro diário de execução e custo em `metricas/execucoes.jsonl`; `mostra`, `reconstroi` |
+| `memoria_custo.py` | reparte o cache lido de cada execução entre prompt, índice, backlog, roteiros e web |
 | `estado.py` | publica `estado.json` no S3 dizendo como a execução terminou; é o que o vigia externo lê |
 
 ### Clonagem de voz

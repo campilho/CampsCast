@@ -48,13 +48,22 @@ Decida sozinho e siga em frente. Nunca peça confirmação.
 1. Leia `config/briefing.md` — é o contrato editorial e tem precedência sobre
    suas preferências. Leia também `config/sources.yaml`.
 
-2. Memória. Leia `covered-index.json` — o índice inteiro, que guarda **tudo que
-   já foi ao ar desde o primeiro episódio** — e os **5 arquivos mais recentes**
-   de `episodes/`, na íntegra.
+2. Memória. A memória longa já está no fim deste prompt, na seção "Pautas já
+   cobertas": **tudo que foi ao ar desde o primeiro episódio**, uma linha por
+   pauta, com data, título e fonte. Ela vem inteira e substitui a leitura do
+   `covered-index.json` — **não leia o índice inteiro**: ele passou do limite
+   de uma leitura, e lido aos pedaços deixa buracos. Quando uma candidata
+   parecer ligada a alguma linha da lista, busque o detalhe daquela pauta no
+   `covered-index.json` com Grep, pelo título ou por um termo dele.
+   Leia também os **5 arquivos mais recentes** de `episodes/`, na íntegra.
 
-   Os dois têm papéis diferentes. O índice é memória longa e barata: título,
-   fonte, data e resumo de cada pauta, para sempre. Os 5 roteiros são memória
-   curta e rica: o texto completo, para você saber o que já foi dito e como.
+   Os dois têm papéis diferentes. A lista é memória longa e barata: o que já
+   foi ao ar, para sempre. Os 5 roteiros são memória curta e rica: o texto
+   completo, para você saber o que já foi dito e como.
+
+   Se a seção "Pautas já cobertas" não existir ou disser que está
+   indisponível, consulte o `covered-index.json` por busca: os títulos com Grep
+   e o final do arquivo com Read.
 
    Você NÃO pode repetir pauta já coberta, salvo desdobramento novo — e nesse
    caso diga explicitamente o que mudou desde a última vez.
@@ -69,9 +78,10 @@ Decida sozinho e siga em frente. Nunca peça confirmação.
    Não force. Se não houver relação real, não invente ponte.
    O diretório `archive/` guarda execuções de teste que foram desfeitas de
    propósito: **não conta como cobertura**. Se uma pauta aparece lá mas não
-   está em `covered-index.json`, ela está livre para entrar.
+   está em "Pautas já cobertas", ela está livre para entrar.
 
-3. Leia `saved-items/backlog.md`.
+3. Leia `saved-items/backlog.md` — só ele. O histórico do que já saiu do
+   backlog, em `saved-items/historico/`, não entra nesta leitura.
 
 4. Pesquisa. Percorra as fontes na ordem `scan_order` de `sources.yaml`:
    labs → hardware → investors. Use busca na web e leitura das páginas.
@@ -104,10 +114,32 @@ Decida sozinho e siga em frente. Nunca peça confirmação.
      colchete no texto que vai ser narrado.
    - Nunca leia URLs em voz alta. Cite a fonte pelo nome ("no blog oficial da
      Anthropic").
+   - Nome de empresa sempre com artigo, inclusive em lista: "a Anthropic e a
+     OpenAI", nunca "Anthropic e OpenAI". Sem o artigo, o sintetizador já leu
+     "Anthropic" como palavra inglesa, com a tônica no fim.
 
 7. Atualize `covered-index.json` (acrescente as pautas cobertas hoje) e
    `saved-items/backlog.md` (adicione o que sobrou, remova o que usou, pode os
    itens vencidos).
+
+   No índice, só acrescente — nunca reescreva o arquivo inteiro. A última
+   linha de "Pautas já cobertas" diz a partir de que linha ler: leia o final
+   do arquivo dali com Read e acrescente as pautas de hoje com Edit, no mesmo
+   formato das anteriores. O título é o que entra na lista dos próximos
+   episódios: escreva-o de modo que identifique a pauta sozinho.
+
+   No backlog fica **só pauta ativa**, no formato do cabeçalho. Não escreva
+   relatório de revisão nem lista do que foi podado dentro dele: esse arquivo
+   é relido em toda execução. Cada item que sai — usado no episódio, vencido
+   ou fundido em outro — é apagado do `backlog.md` e ganha **uma linha** em
+   `saved-items/historico/<AAAA-MM de EPISODE_DATE>.md`, no fim do arquivo:
+
+   `- EPISODE_DATE | título | usado, vencido ou fundido | motivo em poucas palavras`
+
+   Se o arquivo do mês não existir, crie com um título
+   (`# Histórico do backlog — <mês> de <ano>`) e a primeira linha. Lições sobre
+   fontes e método não vão para o histórico: vão para as Observações do
+   `research/<EPISODE_DATE>.md`.
 
 8. Escreva `research/<EPISODE_DATE>.md` — o log de pesquisa. Ele existe para que
    um humano consiga auditar suas decisões editoriais depois, sem ter que

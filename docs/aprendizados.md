@@ -101,6 +101,56 @@ prompt manda contar do `research/` que o agente acabou de escrever, não estimar
 de memória. Sem isso ele arredondava: disse "vinte páginas" onde o rastro
 mostrava 22.
 
+### A memória que o agente "lê inteira" parou de caber, e ninguém viu
+
+O prompt mandava ler o `covered-index.json` inteiro. A ferramenta Read do
+Claude Code recusa mais de 25 mil tokens por chamada, e o índice passou disso
+em setembro: cada pauta foi de ~750 bytes em agosto para 3 a 5 KB, quase tudo
+resumo (54%) e notas (34%). As transcrições de 22/09 a 02/10 mostram o que
+aconteceu:
+
+- o Opus 5 lia em quatro ou cinco pedaços, com tentativas recusadas no meio
+  ("File content exceeds maximum allowed tokens");
+- a partir de 25/09, e em quatro dos cinco primeiros dias do Opus 5.5, o agente
+  leu só o começo, um Grep dos títulos e o fim. O meio do período ficava fora
+  da memória. O TODO registrava o contrário — "o Opus 5.5 lê tudo" —, a partir
+  de um dia só.
+
+Nada quebrou de forma visível, e a integridade se manteve: o agente só
+acrescenta com Edit, e o índice nunca perdeu uma pauta no git. Mas o custo
+também era escondido. Um trecho lido no começo é relido em todas as chamadas
+seguintes, então pesa o tamanho vezes as chamadas que vêm depois — em 29/09,
+único dia de leitura inteira, o índice sozinho foi 47% do cache lido. O
+`memoria_custo.py` faz essa conta a partir das transcrições.
+
+A correção separou as duas memórias que o projeto já tinha discutido: para não
+repetir pauta bastam data, título e fonte. Essa lista é derivada do índice a
+cada execução, ~11 KB para 78 pautas, e vai escrita no prompt, como os
+parâmetros, para chegar inteira sem depender de o agente ler. O detalhe fica
+no índice, consultado por busca.
+
+**Instrução que manda ler um arquivo que cresce é um limite com data marcada.**
+E "o agente lê X" é afirmação sobre a transcrição, não sobre o prompt.
+
+O mesmo levantamento achou o backlog com 39 KB, dos quais só ~10 são pautas
+ativas: o resto é o registro dos itens podados, que o agente mantém dentro do
+próprio arquivo e relê todo dia. Foi para `saved-items/historico/`, um arquivo
+por mês, e o `confere_backlog.py` avisa se voltar.
+
+### Ensaio disparado de dentro de outra sessão não é o ambiente de produção
+
+O ensaio da memória nova (03/10) foi disparado de dentro de uma sessão do
+Claude Code no app, e o `claude -p` herdou as variáveis dela —
+`CLAUDECODE`, `CLAUDE_CODE_ENTRYPOINT`, ferramentas de terminal, outra URL de
+API. O launchd passa só o `PATH`. Dois efeitos medidos: a primeira chamada ao
+modelo foi de 45 mil tokens contra 27 mil na produção do mesmo dia, dos quais
+a mudança testada explicava uns 5 mil; e o Bash, sempre negado em produção,
+funcionou — o agente listou diretórios e leu arquivos que não leria.
+
+O comportamento que se queria ver ficou válido; o custo, não. **Ensaio que
+mede custo precisa do ambiente de produção, não só do código de produção:**
+`env -i` com o que o plist define.
+
 ### O agente conta palavras sem ferramenta, e conta certo
 
 Ele não tem Bash, então não roda `wc -w`; as transcrições mostram a tentativa
@@ -133,6 +183,24 @@ O `eleven_multilingual_v2` perde nível ao longo de cada geração — 2,6 dB em
 2.100 caracteres, criando dente de serra nas costuras. O `flash_v2_5` é plano
 (0,29 dB), mais alto, mais rápido e metade do preço. Ver
 [ADR 0004](decisions/0004-volume-entre-trechos.md).
+
+### Erro de pronúncia não se reproduz sob encomenda
+
+No episódio 25, "que Anthropic e OpenAI já usam" saiu com a tônica no fim, e
+"a Anthropic disse", dois minutos depois, saiu certo. Para achar a frase no
+áudio, as emendas entre trechos da narração servem de régua: cada resposta da
+ElevenLabs começa com alguns milissegundos de silêncio digital, amostras
+exatamente em zero, que a fala natural nunca produz. Com as três emendas
+achadas, a posição de cada palavra dentro do próprio trecho deu o tempo com
+um ou dois segundos de erro.
+
+Gerada de novo, sozinha e duas vezes, a frase errada saiu certa. A síntese
+não é determinística, e o erro depende também do contexto que a requisição
+leva. Nos roteiros, 104 de 107 ocorrências têm artigo, e a única sem artigo
+desde a voz nova era a errada; o autor lembra de outros erros, então o artigo
+não explica tudo. Ficou a regra mais barata — empresa sempre com artigo, que
+já é o português natural — e o `config/pronuncia.json` vazio. Se voltar a
+errar, a grafia de pronúncia já tem teste gravado para comparar.
 
 ### Contador de cota é assíncrono
 
@@ -355,9 +423,14 @@ episódios: uma por interrupção no meio do cleanup, outra por SIGPIPE
 (`smoke_test.sh | head -3`) que rodou o cleanup com a saída quebrada e produziu
 nomes de arquivo com lixo dentro.
 
-Hoje o abrigo fica dentro do repositório, com auto-recuperação e validação de
-nome. **A correção certa continua pendente:** os testes não deveriam tocar em
-dados reais.
+Por um tempo o abrigo ficou dentro do repositório, com auto-recuperação e
+validação de nome. A correção certa veio em 03/10: a suíte se copia para uma
+pasta temporária, sem episódios, áudio nem dados pessoais, e roda lá. O mesmo
+levantamento achou um segundo caso do padrão — o teste de precedência
+escrevia no `.env` real e o restaurava no fim. Um invólucro confere, antes e
+depois, que episódios, `.env`, índice, backlog e registro não mudaram.
+**Isolar movendo o dado real é trocar um risco por outro; isolar copiando o
+ambiente não deixa nada para devolver.**
 
 ### Reverberação medida com pouco sinal é ruído, não sala
 

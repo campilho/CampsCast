@@ -2,7 +2,7 @@
 
 - **Status:** provedor e plano aceitos. **A escolha de modelo foi revista em
   02/09/2026 — ver [ADR 0004](0004-volume-entre-trechos.md).** Comparação com
-  Polly/Chirp3 pendente
+  Polly/Chirp3 **dispensada em 03/10/2026** — ver adendo no fim
 - **Data:** 2026-08-23
 - **Contexto:** Fase 1 do CampsCast
 
@@ -281,3 +281,15 @@ Roteiro de referência: `tests/fixtures/sample-episode.md`.
   antes de subir de plano.
 - Se a comparação mostrar Polly como suficiente, ela vira o provedor da Fase 1 e
   a decisão é revista quando a clonagem virar requisito.
+
+## Adendo — 03/10/2026: comparação com Polly e Chirp 3 dispensada
+
+A comparação medida com Amazon Polly e Google Chirp 3 ficou pendente desde a
+Fase 1 e não vai ser feita. A ElevenLabs atravessou as duas fases como previsto:
+clonagem Instant, depois Professional, narrando todos os episódios desde 07/09.
+Nas conversas com os primeiros ouvintes, a maioria achou a voz boa e natural; a
+queixa que se repete é o ritmo, que é das amostras gravadas, não do provedor
+(ver `docs/aprendizados.md`). Polly segue sem clonagem e Chirp 3 com clonagem
+restrita, os mesmos motivos de 23/08. Uma voz nova, com gravações melhores,
+fica para a Fase 4; se o provedor for reavaliado, é ali.
+

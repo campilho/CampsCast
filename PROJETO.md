@@ -191,7 +191,11 @@ Regra do agente: **notícia só entra no episódio se tiver fonte primária**
   fonte, resumo de 2 linhas e prazo de validade (default: 5 dias úteis).
   Ao usar um item do backlog, o roteiro **avisa a data** ("notícia de 3 dias atrás,
   mas relevante demais para passar em branco") e o item é removido.
-- Ao final de cada execução, o agente reescreve o índice e poda itens vencidos.
+- Ao final de cada execução, o agente acrescenta as pautas do dia ao índice e poda
+  itens vencidos.
+- **Histórico do backlog** (desde 03/10): o que sai — usado, vencido ou fundido —
+  ganha uma linha em `saved-items/historico/AAAA-MM.md`, que o agente não relê.
+  Até 02/10 esse registro crescia dentro do próprio backlog.
 
 ---
 
@@ -398,6 +402,11 @@ Formato e curadoria:
         onze roteiros, mais que o dobro dos cinco lidos hoje. Decidir pelo
         custo medido, não pelo número redondo
       Vale comparar com o módulo de memória do AgentCore, previsto na Fase 4.
+
+      **Primeiro passo feito em 03/10:** a linha por pauta existe, derivada do
+      índice a cada execução (`scripts/pautas.py`) e escrita no prompt. Medido
+      antes: o índice não cabia mais numa leitura e o agente via só o começo,
+      os títulos e o fim. Ver `docs/aprendizados.md`
 - [ ] **Fios em aberto** — arquivo próprio, no molde do backlog: preocupações,
       promessas e previsões que apareceram no ar, cada uma com data, episódio de
       origem e situação (aberta, cumprida, desmentida, resolvida). O agente

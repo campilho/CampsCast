@@ -415,7 +415,8 @@ def cmd_mostra(a) -> int:
         return 0
     mmss = lambda s: f"{int(s) // 60}:{int(s) % 60:02d}" if s is not None else "—"
     print(f"{'data':11}{'estado':8}{'total':>7}{'pesquisa':>9}{'narração':>9}{'dormiu':>8}"
-          f"{'chamadas':>9}{'cache lido':>12}{'saída':>8}{'créditos':>9}{'US$ est.':>9}{'índice':>8}")
+          f"{'chamadas':>9}{'cache lido':>12}{'saída':>8}{'créditos':>9}{'US$ est.':>9}{'índice':>8}"
+          f"{'backlog':>9}")
     for l in linhas:
         et, tr, cl = l.get("etapas_s") or {}, l.get("claude_transcricao") or {}, l.get("claude") or {}
         el, ind, so = l.get("elevenlabs") or {}, l.get("indicadores") or {}, l.get("mac_dormiu")
@@ -427,7 +428,8 @@ def cmd_mostra(a) -> int:
               f"{tr.get('chamadas', '—'):>9}{(f'{tr[chr(99)+chr(97)+chr(99)+chr(104)+chr(101)+chr(95)+chr(108)+chr(105)+chr(100)+chr(111)]:,}' if tr.get('cache_lido') is not None else '—'):>12}"
               f"{(f'{tr[chr(115)+chr(97)+chr(105)+chr(100)+chr(97)]:,}' if tr.get('saida') is not None else '—'):>8}"
               f"{cred_txt:>9}{(f'{usd:.2f}' if isinstance(usd, (int, float)) and usd else '—'):>9}"
-              f"{(str(round(ind['indice_pautas_bytes'] / 1024)) + ' KB' if ind.get('indice_pautas_bytes') else '—'):>8}")
+              f"{(str(round(ind['indice_pautas_bytes'] / 1024)) + ' KB' if ind.get('indice_pautas_bytes') else '—'):>8}"
+              f"{(str(round(ind['backlog_bytes'] / 1024)) + ' KB' if ind.get('backlog_bytes') else '—'):>9}")
     print("\n~ créditos estimados pelo contador de cota, anteriores ao registro exato")
     return 0
 

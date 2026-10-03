@@ -293,9 +293,26 @@ valores, sem recalcular e sem consultar o relógio do sistema.
 - TTS_VOZ: ${TTS_VOZ:-}
 - CHAMADA_SEGUIR: ${CHAMADA_SEGUIR:-não}
 - NOVIDADES: ${NOVIDADES:-(nenhuma)}"
+
+  # Memória longa: uma linha por pauta já coberta, derivada do covered-index.json.
+  # O índice inteiro não cabe mais numa leitura do agente, e o meio do período
+  # ficava de fora. Escrita no prompt, a lista chega inteira todo dia.
+  if PAUTAS="$(python3 scripts/pautas.py 2>>"$LOG")"; then
+    log "Pautas já cobertas no prompt: $(printf '%s\n' "$PAUTAS" | grep -c '^- ') linhas, $(printf '%s' "$PAUTAS" | wc -c | tr -d ' ') bytes"
+  else
+    PAUTAS="(indisponível: não foi possível ler o covered-index.json. Consulte o arquivo por busca, título a título, antes de escolher as pautas.)"
+    log "AVISO: lista de pautas indisponível; o agente vai consultar o índice direto."
+  fi
   PROMPT_AGENTE="$(cat prompts/master.md)
 
-$PARAMETROS"
+$PARAMETROS
+
+## Pautas já cobertas
+
+Tudo que já foi ao ar, desde o primeiro episódio: data em que foi ao ar,
+título e domínio da fonte. Derivado do covered-index.json nesta execução.
+
+$PAUTAS"
 
   if [[ $DRY_RUN -eq 1 ]]; then
     log "Parâmetros no prompt: $(printf '%s' "$PARAMETROS" | grep -c '^- ') valores"
@@ -380,6 +397,14 @@ $PARAMETROS"
     [[ -n "${AGENTE_NOME:-}" ]] && ARGS_CONF+=(--agente "$AGENTE_NOME")
     [[ -n "${CHAMADA_SEGUIR:-}" ]] && ARGS_CONF+=(--chamada "$CHAMADA_SEGUIR")
     AVISOS_ROTEIRO="$(python3 scripts/confere_roteiro.py "${ARGS_CONF[@]}" 2>>"$LOG" || true)"
+    # O backlog deve guardar só pauta ativa; o histórico de saídas mora em
+    # saved-items/historico/. Os avisos vão para o registro junto com os do roteiro.
+    AVISOS_BACKLOG="$(python3 scripts/confere_backlog.py "${BACKLOG_ARQ:-saved-items/backlog.md}" \
+      --data "$EPISODE_DATE" 2>>"$LOG" || true)"
+    if [[ -n "$AVISOS_BACKLOG" ]]; then
+      AVISOS_ROTEIRO="${AVISOS_ROTEIRO:+$AVISOS_ROTEIRO
+}$AVISOS_BACKLOG"
+    fi
     ROTEIRO_CONFERIDO=1
     if [[ -n "$AVISOS_ROTEIRO" ]]; then
       while IFS= read -r aviso; do log "AVISO no roteiro: $aviso"; done <<< "$AVISOS_ROTEIRO"

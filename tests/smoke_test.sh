@@ -9,13 +9,44 @@
 set -uo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+# A suíte roda numa cópia temporária do repositório, sem episódios, áudio, logs
+# nem dados pessoais. Antes ela movia episodes/*.md para um abrigo e devolvia no
+# fim, e escrevia no .env real para testar precedência: duas vezes quase custou
+# episódios (interrupção no meio do cleanup; SIGPIPE com `| head`), e impedia
+# rodar a suíte com o pipeline em andamento. Na cópia, nada do real é tocado, e
+# o invólucro abaixo confere isso antes e depois.
+if [[ -z "${SMOKE_SANDBOX:-}" ]]; then
+  impressao_do_real() {
+    ( cd "$ROOT" && { ls -l episodes; shasum .env covered-index.json \
+        saved-items/backlog.md metricas/execucoes.jsonl 2>/dev/null; } ) | shasum
+  }
+  ANTES="$(impressao_do_real)"
+  SANDBOX="$(mktemp -d "${TMPDIR:-/tmp}/campscast-smoke.XXXXXX")"
+  trap 'rm -rf "$SANDBOX"' EXIT INT TERM HUP
+  rsync -a --exclude '.git/' --exclude 'audio/' --exclude 'logs/' \
+    --exclude 'privado/' --exclude 'gravacoes/' --exclude 'referencias/' \
+    --exclude 'amostras-voz/' --exclude '.cache/' --exclude '.smoke-backup/' \
+    --exclude 'episodes/*.md' --exclude 'feed/feed.xml' --exclude '*.zip' \
+    "$ROOT/" "$SANDBOX/"
+  mkdir -p "$SANDBOX/audio" "$SANDBOX/logs" "$SANDBOX/episodes" "$SANDBOX/feed"
+  SMOKE_SANDBOX="$SANDBOX" SMOKE_ORIGEM="$ROOT" bash "$SANDBOX/tests/smoke_test.sh" "$@"
+  RC=$?
+  if [[ "$(impressao_do_real)" != "$ANTES" ]]; then
+    printf '\n\033[31m✗ o repositório real mudou durante a suíte\033[0m (episódios, .env, índice,\n' >&2
+    printf '  backlog ou registro). Se o pipeline rodou ao mesmo tempo, é ele; senão, é bug.\n' >&2
+    RC=1
+  else
+    printf '  \033[32m✓\033[0m repositório real intacto: episódios, .env, índice, backlog e registro\n'
+  fi
+  exit $RC
+fi
 cd "$ROOT"
 
 PASS=0; FAIL=0
 FIXTURE_DATE="1970-01-01"
 TMP_EP="episodes/${FIXTURE_DATE}.md"
 TMP_AUDIO="audio/${FIXTURE_DATE}.mp3"
-FEED_BAK=""
 
 # O registro de execução nunca escreve no arquivo real durante o teste: toda
 # execução do orquestrador aqui dentro vai para um arquivo temporário.
@@ -28,88 +59,6 @@ export ESTADO_ARQ="$(mktemp)"
 ok()   { printf '  \033[32m✓\033[0m %s\n' "$1"; PASS=$((PASS+1)); }
 bad()  { printf '  \033[31m✗\033[0m %s\n' "$1"; FAIL=$((FAIL+1)); }
 head_() { printf '\n\033[1m%s\033[0m\n' "$1"; }
-
-# O abrigo dos episódios reais fica DENTRO do repositório, com nome fixo.
-# Antes era um mktemp em /var/folders: quando o cleanup foi interrompido no
-# meio, os episódios sumiram de episodes/ e não havia como saber onde procurar.
-# Aqui é visível, previsível e recuperável na execução seguinte.
-EP_BACKUP="$ROOT/.smoke-backup"
-
-# Nome de episódio é sempre YYYY-MM-DD.md. Validar antes de mover, nos dois
-# sentidos, impede que lixo vire nome de arquivo: numa execução morta por
-# SIGPIPE (`smoke_test.sh | head -3`), o cleanup rodou com a saída quebrada e
-# produziu episódios chamados "2026-08-31.md\n  ✓ arquivo .env.example".
-nome_de_episodio_valido() {
-  [[ "$1" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}\.md$ ]]
-}
-
-restaurar_episodios() {
-  [[ -d "$EP_BACKUP" ]] || return 0
-  local f nome
-  for f in "$EP_BACKUP"/*.md; do
-    [[ -e "$f" ]] || continue
-    nome="${f##*/}"
-    if ! nome_de_episodio_valido "$nome"; then
-      printf '\033[31mAbrigo com nome inesperado, deixado intacto:\033[0m %s\n' \
-        "$f" >&2
-      continue
-    fi
-    # Nunca sobrescrever episódio que já esteja no lugar: se ele existe agora,
-    # é mais recente que o abrigo.
-    if [[ -e "episodes/$nome" ]]; then
-      rm -f "$f"
-    else
-      mv "$f" "episodes/$nome"
-    fi
-  done
-  rmdir "$EP_BACKUP" 2>/dev/null || true
-}
-
-cleanup() {
-  # Apaga só o que a própria suíte criou. A versão anterior fazia
-  # `rm -f episodes/*.md` antes de restaurar — uma janela em que os episódios
-  # só existiam no abrigo. Morrer ali significava perdê-los de vista.
-  rm -f "$TMP_EP" "$TMP_AUDIO"
-  if [[ -n "$FEED_BAK" && -f "$FEED_BAK" ]]; then
-    mv "$FEED_BAK" feed/feed.xml
-  else
-    rm -f feed/feed.xml
-  fi
-  restaurar_episodios
-}
-# INT e TERM também: Ctrl-C no meio da suíte não pode deixar episódio fora.
-trap cleanup EXIT INT TERM HUP PIPE
-
-# Auto-recuperação: se uma execução anterior morreu antes de restaurar, os
-# episódios ainda estão no abrigo. Devolve antes de qualquer outra coisa.
-if [[ -d "$EP_BACKUP" ]] && compgen -G "$EP_BACKUP/*.md" >/dev/null; then
-  printf '\033[33mRecuperando episódios de uma execução anterior interrompida.\033[0m\n' >&2
-  restaurar_episodios
-fi
-
-# A suíte move episodes/*.md para se isolar. Se um pipeline estiver gravando um
-# episódio nesse intervalo, os dois se atropelam — e o episódio real pode se
-# perder. Melhor recusar do que arriscar.
-if pgrep -f "claude -p" >/dev/null 2>&1; then
-  printf '\033[31mAbortado:\033[0m há um pipeline rodando (claude -p).\n' >&2
-  printf 'A suíte isola episodes/ e atropelaria a gravação do episódio.\n' >&2
-  printf 'Espere terminar — acompanhe com: python3 scripts/watch_agent.py\n' >&2
-  exit 2
-fi
-
-# A suíte precisa ser hermética: episódios reais mudam o cálculo da janela e
-# disparam a guarda de sobreposição. Saem de cena aqui e voltam no cleanup.
-mkdir -p "$EP_BACKUP"
-for f in episodes/*.md; do
-  [[ -e "$f" ]] || continue
-  nome="${f##*/}"
-  if nome_de_episodio_valido "$nome"; then
-    mv "$f" "$EP_BACKUP/$nome"
-  else
-    printf '\033[31mArquivo com nome inesperado em episodes/, não tocado:\033[0m %s\n' \
-      "$f" >&2
-  fi
-done
 
 # ---------------------------------------------------------------- 1 estrutura
 head_ "1. Estrutura do repositório"
@@ -1267,7 +1216,8 @@ if m.proximo_numero("2026-01-02", d) != 2: erros.append("reexecução renumerou"
 if m.proximo_numero("2026-01-05", d) != 3: erros.append("apagar episódio renumerou")
 e = pathlib.Path(tempfile.mkdtemp()); (e / "2026-01-01.md").write_text("---\ndate: 2026-01-01\n---\n")
 if m.proximo_numero("2026-01-02", e) != 2: erros.append("sem número gravado não contou os anteriores")
-reais = sorted(p for p in pathlib.Path("episodes").glob("*.md") if p.stem[:4].isdigit())
+origem = pathlib.Path(__import__("os").environ.get("SMOKE_ORIGEM", "."))
+reais = sorted(p for p in (origem / "episodes").glob("*.md") if p.stem[:4].isdigit())
 nums = [m._numero_gravado(p) for p in reais]
 if None in nums or any(b <= a for a, b in zip(nums, nums[1:])):
     erros.append(f"episódios reais sem número crescente: {nums}")
@@ -1743,6 +1693,137 @@ if [[ -z "$COM_SIM" && "$COM_NAO" == *"chamada"* && "$SEM_SIM" == *"chamada"* ]]
   ok "conferência cobra a chamada no dia dela e acusa fora do dia"
 else
   bad "conferência da chamada errada — '${COM_SIM}' / '${COM_NAO}' / '${SEM_SIM}'"
+fi
+
+head_ "19. Memória do agente"
+
+# O covered-index.json deixou de caber numa leitura (a ferramenta Read recusa
+# mais de 25 mil tokens), e o agente passou a ver só começo, títulos e fim. A
+# lista compacta é derivada do índice e vai escrita no prompt, inteira.
+IDX_TMP="$(mktemp)"
+cat > "$IDX_TMP" <<'FIM'
+{
+  "version": 1,
+  "items": [
+    {"episode": "2026-08-24", "title": "Primeira pauta de teste", "source_url": "https://www.anthropic.com/news/x", "summary": "resumo longo que não entra"},
+    {"episode": "2026-09-15", "title": "Pauta do meio, que a leitura parcial perdia", "source_url": "https://openai.com/index/y"},
+    {"episode": "2026-10-02", "title": "Última pauta de teste", "source_url": ""}
+  ]
+}
+FIM
+LISTA="$(PAUTAS_INDICE="$IDX_TMP" python3 scripts/pautas.py)"
+if [[ "$(printf '%s\n' "$LISTA" | grep -c '^- ')" == 3 \
+      && "$LISTA" == *"- 2026-09-15 | Pauta do meio, que a leitura parcial perdia | openai.com"* \
+      && "$LISTA" == *"| anthropic.com"* && "$LISTA" == *"| sem fonte"* \
+      && "$LISTA" != *"resumo longo"* \
+      && "$LISTA" == *"tem 8 linhas"* && "$LISTA" == *"a partir da linha 1."* ]]; then
+  ok "lista compacta traz toda pauta numa linha, sem resumo, e diz onde o índice termina"
+else
+  bad "lista compacta errada: ${LISTA:-vazia}"
+fi
+
+FAKE_MEM="$(mktemp -d)"
+cat > "$FAKE_MEM/claude" <<STUB
+#!/bin/sh
+printf '%s' "\$2" > "$FAKE_MEM/prompt.txt"
+printf '%s' '{"type":"result","is_error":true,"result":"parado de propósito","usage":{}}'
+STUB
+chmod +x "$FAKE_MEM/claude"
+PAUTAS_INDICE="$IDX_TMP" CLAUDE_BIN="$FAKE_MEM/claude" \
+  bash scripts/run_episode.sh --date 2026-08-25 --only research >/dev/null 2>&1 || true
+PROMPT_MEM="$(cat "$FAKE_MEM/prompt.txt" 2>/dev/null)"
+rm -rf "$FAKE_MEM"; rm -f logs/2026-08-25.log logs/2026-08-25-*.json
+if [[ "$PROMPT_MEM" == *"## Pautas já cobertas"* \
+      && "$PROMPT_MEM" == *"Pauta do meio, que a leitura parcial perdia"* \
+      && "$PROMPT_MEM" == *"3 pautas."* ]]; then
+  ok "toda pauta já coberta chega escrita no prompt do agente"
+else
+  bad "lista de pautas não chegou ao prompt"
+fi
+
+PAUTAS_INDICE="/nao/existe.json" python3 scripts/pautas.py >/dev/null 2>&1; RC_PAUTAS=$?
+FAKE_MEM="$(mktemp -d)"
+cat > "$FAKE_MEM/claude" <<STUB
+#!/bin/sh
+printf '%s' "\$2" > "$FAKE_MEM/prompt.txt"
+printf '%s' '{"type":"result","is_error":true,"result":"parado de propósito","usage":{}}'
+STUB
+chmod +x "$FAKE_MEM/claude"
+PAUTAS_INDICE="/nao/existe.json" CLAUDE_BIN="$FAKE_MEM/claude" \
+  bash scripts/run_episode.sh --date 2026-08-25 --only research >/dev/null 2>&1 || true
+PROMPT_MEM="$(cat "$FAKE_MEM/prompt.txt" 2>/dev/null)"
+rm -rf "$FAKE_MEM"; rm -f logs/2026-08-25.log logs/2026-08-25-*.json
+if [[ $RC_PAUTAS -ne 0 && "$PROMPT_MEM" == *"## Pautas já cobertas"* \
+      && "$PROMPT_MEM" == *"indisponível"* ]]; then
+  ok "sem índice legível, o agente é avisado e a execução segue"
+else
+  bad "falha da lista de pautas não foi tratada (rc=$RC_PAUTAS)"
+fi
+rm -f "$IDX_TMP"
+
+# O backlog guardava, dentro dele, o registro de tudo que saiu: 28 dos 39 KB,
+# relidos todo dia. O histórico foi para saved-items/historico/; a conferência
+# registra (não bloqueia) item vencido que ficou e texto fora do formato.
+BKL_DIR="$(mktemp -d)"
+cat > "$BKL_DIR/limpo.md" <<'FIM'
+# Backlog
+
+```
+## <título da pauta>
+- validade: YYYY-MM-DD
+```
+
+---
+
+## Pauta ativa
+- data_original: 2026-10-01
+- fonte: Lab — https://exemplo.com
+- validade: 2026-10-08
+- resumo: duas linhas
+  de resumo.
+FIM
+cp "$BKL_DIR/limpo.md" "$BKL_DIR/sujo.md"
+cat >> "$BKL_DIR/sujo.md" <<'FIM'
+
+## Pauta vencida
+- validade: 2026-10-02
+- resumo: ficou para trás.
+
+---
+
+Podados na execução de 02/10:
+- Uma pauta antiga — venceu.
+FIM
+LIMPO="$(python3 scripts/confere_backlog.py "$BKL_DIR/limpo.md" --data 2026-10-05)"
+SUJO="$(python3 scripts/confere_backlog.py "$BKL_DIR/sujo.md" --data 2026-10-05)"
+if [[ -z "$LIMPO" && "$SUJO" == *"vencido em 2026-10-02"*"Pauta vencida"* \
+      && "$SUJO" == *"fora do formato"*"Podados na execução"* \
+      && "$(printf '%s\n' "$SUJO" | grep -c '^backlog: ')" == 2 ]]; then
+  ok "conferência do backlog aceita pauta ativa e aponta vencido e histórico de volta"
+else
+  bad "conferência do backlog errada — limpo: '${LIMPO}' / sujo: '${SUJO}'"
+fi
+
+FAKE_BKL="$(mktemp -d)"
+cat > "$FAKE_BKL/claude" <<STUB
+#!/bin/sh
+cat > episodes/2026-08-25.md <<'MD'
+---
+episode: 2
+---
+CampsCast, episódio dois. Eu sou um agente de IA. Uma pauta. Ficha: Claude Opus cinco ponto cinco, cópia sintética da voz. Até o próximo episódio.
+MD
+printf '%s' '{"type":"result","is_error":false,"result":"OK episodes/2026-08-25.md 10 00:04","num_turns":1,"usage":{"input_tokens":1}}'
+STUB
+chmod +x "$FAKE_BKL/claude"
+BACKLOG_ARQ="$BKL_DIR/sujo.md" CLAUDE_BIN="$FAKE_BKL/claude" \
+  bash scripts/run_episode.sh --date 2026-08-25 --only research >/dev/null 2>&1 || true
+ULTIMA="$(tail -1 "$METRICAS_ARQ" 2>/dev/null)"
+rm -rf "$FAKE_BKL" "$BKL_DIR"; rm -f episodes/2026-08-25.md logs/2026-08-25.log logs/2026-08-25-*.json
+if [[ "$ULTIMA" == *'"avisos_roteiro": ['*"backlog: "*"fora do formato"* ]]; then
+  ok "aviso da conferência do backlog chega ao registro"
+else
+  bad "aviso do backlog não chegou ao registro: ${ULTIMA:-vazio}"
 fi
 
 # ------------------------------------------------------------------- resultado
