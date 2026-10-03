@@ -34,6 +34,17 @@ O feed serve qualquer app que aceite URL de RSS.
 
 ---
 
+## Marcos
+
+| Data | |
+|---|---|
+| 24/08/2026 | Primeiro episódio no ar |
+| 06–07/09 | Nos diretórios: Pocket Casts e Podcast Index, depois Spotify e Apple Podcasts |
+| 08/09 | Primeiro episódio narrado pela voz clonada profissional do autor |
+| 15–25/09 | Nove episódios seguidos publicados sem ninguém em casa |
+| 28/09 | O agente passa a ser o Claude Opus 5.5 e anuncia o próprio upgrade no ar: "o modelo que o meu antecessor noticiou aqui no episódio dezenove" |
+| 01/10 | O [post de lançamento no LinkedIn](https://www.linkedin.com/posts/fernandocampilho_ontem-o-apresentador-do-meu-podcast-anunciou-share-7510711037797752833-sHT2) é destacado pelo LinkedIn News na matéria ["Novos agentes, modelos e IPOs: as conversas da semana sobre IA"](https://www.linkedin.com/news/story/novos-agentes-modelos-e-ipos-as-conversas-da-semana-sobre-ia-7629556/) |
+
 ## A voz
 
 Os episódios são narrados por uma clonagem profissional da voz do autor,

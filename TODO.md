@@ -1,17 +1,25 @@
 # TODO
 
 Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
-[PROJETO.md](PROJETO.md). Atualizada em 27/09/2026.
+[PROJETO.md](PROJETO.md). Atualizada em 03/10/2026.
 
 ## Esta semana — fechar a Fase 2
 
-A Fase 2 fecha quando estas três estiverem feitas; a Fase 3 abre no fim de
-semana de 03/10. YouTube e site passaram para a Fase 3.
+Falta só o ADR de custos; a Fase 3 abre na semana de 05/10. YouTube e site
+passaram para a Fase 3.
 
-- [ ] **Conversar com os primeiros ouvintes** — segunda, 28/09
-- [ ] **Post de lançamento no LinkedIn** — terça, 29/09
-- [ ] **ADR de custos** com setembro fechado — fim de semana de 03/10, junto com
-      a revisão do ADR 0005
+- [x] ~~Conversar com os primeiros ouvintes~~ — a maioria achou a voz boa e
+      natural; a queixa que se repete é o ritmo (regravação na Fase 3)
+- [x] ~~Post de lançamento no LinkedIn~~ — 29/09, 5.693 pessoas alcançadas;
+      **destacado pelo LinkedIn News em 01/10** (marcos no README, provas em
+      `privado/conquistas/`)
+- [x] ~~Revisão do ADR 0005~~ — Opus 5.5 confirmado: custo mediano caiu 49%,
+      execução de 10 a 14 min, nenhum roteiro com regra quebrada
+- [x] ~~macOS 27~~ — atualizado em 03/10; testes, ensaio, ElevenLabs, token do
+      Claude e S3 verificados no mesmo dia
+- [ ] **ADR de custos** com setembro fechado — aguardando do autor: plano e preço
+      da ElevenLabs, fatura da AWS de setembro, custo anual do domínio e valor
+      do Max
 - [ ] **Semana de 05/10, abrindo a Fase 3: revisar a memória do agente** —
       medido em 27/09: o
       índice de pautas foi de 67 K para 181 K em onze dias, lido inteiro todo
@@ -21,8 +29,14 @@ semana de 03/10. YouTube e site passaram para a Fase 3.
       índice já seria ~40% da leitura de cache. Na Fase 3 do PROJETO.md:
       memória em camadas, fios em aberto e a linha do tempo da IA. Depois da
       revisão do Opus 5.5, para não misturar duas mudanças
-- [ ] **Resgatar o crédito de US$ 250 do Claude Code na nuvem até 07/10** — vence
-      em 04/11; é o que paga o piloto, primeiro item da Fase 3
+- [ ] **Resgatar o crédito de US$ 250 do Claude Code na nuvem até quarta, 07/10**
+      — vence em 04/11; é o que paga o piloto, primeiro item da Fase 3
+- [ ] **Relatório mensal de audiência** — primeiro fim de semana de cada mês, em
+      `privado/audiencia.md`: exportação diária do Spotify, print da tela
+      principal (seguidores) e print da tabela de episódios, cuja exportação
+      vem sem números. O de setembro foi feito em 03/10
+- [ ] **Copiar os 15 comentários do post** para `privado/audiencia.md` — são o
+      primeiro retorno de ouvintes em escala
 
 ## Feito nesta semana e pendências menores
 

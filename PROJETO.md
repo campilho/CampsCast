@@ -330,8 +330,10 @@ Entregue:
 
 A fazer:
 
-- [ ] Conversar com quatro ou cinco ouvintes: até onde ouvem, o que os faria
-      parar, e se preferem Spotify ou Apple Podcasts
+- [x] Conversas com os primeiros ouvintes — a maioria achou a voz boa e
+      natural; o ritmo é a queixa que se repete (03/10)
+- [x] Post de lançamento no LinkedIn (29/09), destacado pelo LinkedIn News em
+      01/10; série semanal às terças em andamento
 - [ ] **Plano de divulgação** — primário no LinkedIn, com posts frequentes
       sobre a evolução do projeto e sempre com os links; avaliar outros canais
 - [ ] ADR de custos reais consolidado, com setembro fechado — inclui o custo do
@@ -351,6 +353,14 @@ escrito com o mês fechado. Previsão: fim da semana de 28/09 a 02/10.
 ### Fase 3 — Presença multicanal, feedback e independência do Mac
 
 Formato e curadoria:
+
+- [ ] **Avaliar regravar as amostras de voz num ritmo um pouco mais rápido** e
+      treinar uma voz nova. Os ouvintes aprovaram a voz, mas o ritmo é a queixa
+      que se repete; ouvida a 1,1× no Spotify, fica boa. O parâmetro `speed` da
+      ElevenLabs não serve — piorou a voz no teste de 12/09 — e a medição
+      mostra que a lentidão é de articulação (~174 palavras por minuto sem
+      pausas, contra ~180 da voz anterior), herdada das amostras. Uma voz nova
+      exige remedir o ritmo com `calibrate_pace.py --apply`
 
 - [ ] **Formato entrevista** — uma segunda voz, de catálogo, apresenta a notícia
       ou pergunta; a voz do Fernando Campilho analisa. A clonagem profissional já existe

@@ -1,6 +1,6 @@
 # ADR 0005 — Agente no Claude Opus 5.5, com esforço fixado
 
-- **Status:** aceito, provisório — revisão em 03/10/2026, com cinco dias de produção
+- **Status:** aceito — confirmado na revisão de 03/10/2026 (adendo no fim)
 - **Data:** 2026-09-26
 
 ## Contexto
@@ -105,3 +105,30 @@ semana do Opus 5, pelo registro em `metricas/execucoes.jsonl`:
   implícito do Opus 5.
 - A ficha técnica falada diz "Claude Opus cinco ponto cinco", por extenso — o
   nome vem de `nomes.py`, derivado do id do modelo, e não precisou de ajuste.
+
+## Adendo — 03/10/2026: a revisão, com cinco dias de produção
+
+| | Opus 5, 14–25/09 (10 execuções) | Opus 5.5, 28/09–02/10 (5 execuções) |
+|---|---|---|
+| Custo do agente, mediana | US$ 8,66 | **US$ 4,41** (de 3,77 a 4,64) |
+| Turnos | 77 a 123 | 73 a 104 |
+| Leitura de cache | 4,9 a 10,0 mi | 4,4 a 6,9 mi |
+| Páginas lidas | 19 a 36 | 23 a 45 |
+| Duração da execução | 15 a 19 min | 10 a 14 min |
+| Esforço medido na transcrição | `high` | `high` |
+| Roteiros com aviso da conferência | — | 0 de 5 |
+
+**Critério cumprido com folga: o custo caiu 49%.** A decisão vira definitiva.
+
+O sandbox de 25/09 tinha sugerido o contrário porque, naquela execução, o
+agente abriu 51 páginas. Em produção, o Opus 5.5 lê um volume parecido com o
+do Opus 5; a queda vem do preço — a leitura de cache, que é a maior parte da
+conta, custa US$ 0,20 por milhão de tokens contra US$ 0,50. A comparação de um
+episódio contra um episódio, feita em 26/09, errou a direção: era ruído de uma
+execução, exatamente o risco que este ADR registrou ao marcar a revisão.
+
+Os cinco episódios também foram os primeiros com abertura livre, anúncio de
+novidade e chamada para seguir (ADR 0006): nenhum deixou cair regra.
+
+O que continua crescendo é a memória: o índice de pautas foi de 189 K para
+227 K na semana. É o primeiro item da Fase 3.
