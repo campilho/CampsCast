@@ -3,117 +3,77 @@
 Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
 [PROJETO.md](PROJETO.md). Atualizada em 03/10/2026.
 
-## Fase 2 — concluída em 03/10/2026
+## Fase 3 — abre na semana de 05/10
 
-A Fase 3 abre na semana de 05/10. YouTube e site passaram para a Fase 3.
+- [x] ~~Resgatar o crédito de US$ 250 do Claude Code na nuvem~~ — resgatado em
+      03/10. Expira às 04:59 (horário de Brasília) de 05/11. **Não vale para
+      Projects nem para Routines**, segundo a tela do resgate: só sessões na
+      nuvem. Isso muda o plano do piloto — ver abaixo
+- [x] ~~Acesso do Claude Code na nuvem ao GitHub~~ — 03/10: Claude GitHub App
+      instalado na conta pessoal `campilho`, no modo "Apenas sessões na nuvem",
+      com acesso **só ao repositório `campilho/CampsCast`**. A verificação de
+      status do repositório no claude.ai passou
+- [ ] **Revisar a memória do agente** — primeiro item. Medido em 03/10: o
+      `covered-index.json` tem 241 KB (67 KB em 14/09) e cresce uns 9 KB por
+      dia útil; o `saved-items/backlog.md` tem 40 KB e não aparece no registro.
+      Os dois são lidos inteiros todo dia. Antes de redesenhar, medir quanto
+      do cache lido vem deles — os ~40% do índice ainda são estimativa. Desenho
+      já discutido no PROJETO.md: memória em camadas, fios em aberto e a linha
+      do tempo da IA
+- [ ] **Piloto no Claude Code na nuvem** — como o crédito não cobre Routines,
+      decidir entre: sessão na nuvem disparada de outro jeito, que gasta o
+      crédito; ou rotina, que desconta dos limites do Max. Antes de montar,
+      confirmar na documentação como uma sessão na nuvem pode ser agendada.
+      O obstáculo conhecido continua sendo a chave do S3 (SigV4) dentro da
+      sessão
+- [ ] **Onde rodar sem o Mac do Fernando Campilho** — AWS, Mac mini do irmão ou
+      Mac mini próprio, se o piloto na nuvem não resolver. Avaliação no
+      `PROJETO.md`, Fase 3. Conversar com o irmão sobre acesso remoto e usuário
+      separado; pesar a compra considerando os agentes do livro 2081
 
-- [x] ~~Conversar com os primeiros ouvintes~~ — a maioria achou a voz boa e
-      natural; a queixa que se repete é o ritmo (regravação na Fase 3)
-- [x] ~~Post de lançamento no LinkedIn~~ — 29/09, 5.693 pessoas alcançadas;
-      **destacado pelo LinkedIn News em 01/10** (marcos no README, provas em
-      `privado/conquistas/`)
-- [x] ~~Revisão do ADR 0005~~ — Opus 5.5 confirmado: custo mediano caiu 49%,
-      execução de 10 a 14 min, nenhum roteiro com regra quebrada
-- [x] ~~macOS 27~~ — atualizado em 03/10; testes, ensaio, ElevenLabs, token do
-      Claude e S3 verificados no mesmo dia
-- [x] ~~ADR de custos~~ — [ADR 0007](docs/decisions/0007-custo-por-episodio.md):
-      R$ 6,25 por episódio é o que o CampsCast acrescenta; R$ 32,12 com a
-      assinatura do Claude inteira. Revisão mensal junto do relatório de
-      audiência
-- [ ] **Semana de 05/10, abrindo a Fase 3: revisar a memória do agente** —
-      medido em 27/09: o
-      índice de pautas foi de 67 K para 181 K em onze dias, lido inteiro todo
-      dia, e cada pauta nova é maior que a anterior (750 bytes em agosto, ~4.000
-      em setembro). O Opus 5 passou a ler só trechos em 25/09 (memória com
-      buracos); o Opus 5.5 lê tudo (custo crescente). Estimativa, a medir: o
-      índice já seria ~40% da leitura de cache. Na Fase 3 do PROJETO.md:
-      memória em camadas, fios em aberto e a linha do tempo da IA. Depois da
-      revisão do Opus 5.5, para não misturar duas mudanças
-- [ ] **Resgatar o crédito de US$ 250 do Claude Code na nuvem até quarta, 07/10**
-      — vence em 04/11; é o que paga o piloto, primeiro item da Fase 3
+## Recorrente
+
 - [ ] **Relatório mensal de audiência** — primeiro fim de semana de cada mês, em
-      `privado/audiencia.md`: exportação diária do Spotify, print da tela
-      principal (seguidores) e print da tabela de episódios, cuja exportação
-      vem sem números. O de setembro foi feito em 03/10
-- [x] ~~Copiar os 15 comentários do post~~ — em `privado/audiencia.md`: a voz
-      convence, o valor percebido é tempo, há pedido de formato de uma hora, e
-      o apresentador do RESUMIDO defendeu curadoria humana com análise
-- [ ] **Decidir sobre a extensão Claude in Chrome** — serve para tarefas
-      acompanhadas em sites que permitem; **não usar no LinkedIn**, cujos termos
-      proíbem extensões que automatizam ou extraem dados do site
+      `privado/audiencia.md`: exportação diária do Spotify, tela principal
+      (seguidores) e tabela de episódios. O de setembro foi feito em 03/10.
+      Junto, a revisão mensal de custos do
+      [ADR 0007](docs/decisions/0007-custo-por-episodio.md)
+- [ ] **Leitura do Spotify for Creators pela extensão Claude in Chrome** —
+      testada em 03/10 e funcionou: com o login feito no Chrome, a extensão
+      leu a tela principal (plays, seguidores, tempo de consumo, público) e a
+      tabela de episódios **com os números**, que a exportação traz vazios. A
+      extensão só enxerga as abas que ela mesma abre, então abre o painel numa
+      aba nova, com o login do Chrome. A tabela pagina de 25 em 25. Validar
+      no relatório de novembro, substituindo o print da tabela. **Não usar no
+      LinkedIn**, cujos termos proíbem extensões que automatizam ou extraem
+      dados do site
+- [ ] O painel do Spotify for Creators tem um **"Programa sem título"** vazio
+      ao lado do CampsCast, e é ele que abre primeiro. Apagar, se não tiver uso
 
-## Feito nesta semana e pendências menores
+## Pendências menores
 
-- [x] ~~Trocar o agente para Claude Opus 5.5~~ — feito em 26/09, com
-      `--effort high` fixado: o Opus 5 rodava em `high` sem ninguém pedir, e o
-      padrão do 5.5 é `medium`. CLI em 2.1.283. Episódio de 25/09 refeito num
-      sandbox para comparar; números e critério de revisão no
-      [ADR 0005](docs/decisions/0005-agente-no-opus-5-5.md)
 - [ ] **Ouvir os dois episódios de 25/09** em `privado/comparacao-opus-5-5/` —
       mesmas três pautas; o 5.5 leu 51 páginas contra 19 e custou 11% a mais
       que o Opus 5 naquele dia (mas 16% abaixo da mediana da semana dele)
-- [x] ~~Anunciar a troca de modelo na abertura~~ — de 28/09 a 02/10, via
-      `config/novidades.json`, em tom de upgrade ("o modelo que o meu antecessor
-      noticiou aqui no episódio dezenove")
-- [x] ~~Nova abertura e encerramento~~ — sem a voz na abertura, sem repetir a
-      data da janela, nome completo em vez do apelido, sem "Aqui é o CampsCast"
-      no fim; variação livre com conferência que registra
-      ([ADR 0006](docs/decisions/0006-abertura-no-tom-nao-no-texto.md))
-- [x] ~~Chamada para seguir o podcast~~ — depois da primeira pauta, terças e
-      quintas, a partir de 29/09; texto livre do agente
-- [ ] **Post de lançamento no LinkedIn, terça 29/09, 11h** — rascunho e série
-      semanal em `privado/divulgacao.md`; antes, trocar a citação pela frase
-      exata do episódio de segunda. Linha de base de audiência registrada em
-      26/09; comparar em 03/10 e 10/10
-- [x] ~~Link do Spotify no README~~ — `open.spotify.com/show/5toSeNQlZxjbCAFPA1gAuJ`,
-      com "l" minúsculo depois de `NQ`
+- [ ] **Ouvir o episódio 12** (segunda, 14/09) — o primeiro com silêncio no
+      começo e no fim, número na abertura, encerramento só com a ficha técnica
+      e os nomes certos de quem escreveu e narrou
+- [ ] **Remedir o ritmo com semanas cheias** — o `words_per_minute` ainda é
+      o de 3 episódios (150):
+      `python3 scripts/calibrate_pace.py --desde 2026-09-08 --apply`
+- [ ] **Perguntar a ouvintes se preferem Spotify ou Apple Podcasts** — a
+      pergunta segue em aberto em `privado/audiencia.md`
 - [ ] **Decidir se o agente ganha um Bash mínimo** — as transcrições mostram
       ele tentando `wc -w`, `window.py` e `tts.py --budget`, sempre negado;
       conta palavras e calcula na mão. Liberar só comandos de leitura
       (`--allowedTools "Bash(wc:*)"`, por exemplo) daria contagem exata
 - [ ] (ideia) **Detectar sozinho a troca de modelo ou de voz** e gerar a
       novidade — exige gravar os modelos usados no front-matter
-- [ ] **Sábado, 03/10: revisar o ADR 0005** com cinco dias de produção —
-      mediana de custo contra US$ 8,66 do Opus 5; acima de +15% sem ganho
-      audível, testar `--effort medium`. Na mesma revisão, contar `avisos_roteiro`
-      no registro: quantas regras a abertura livre deixou cair
-- [ ] **Fim de semana de 03/10: macOS 27**, depois da revisão — uma mudança
-      por vez. Depois de atualizar: smoke test, ensaio, `pmset -g custom`,
-      `launchctl list | grep campscast` e um episódio completo no sandbox
-- [ ] (opcional) **App Store sem atualização automática** — o Xcode 27 se
-      instalou sozinho em 15/09 e travou o `git` pela licença
-- [ ] **Commitar os episódios de 14 a 25/09** — o repositório público parou
-      em 13/09
-- [x] ~~Refazer o login do Claude Code no terminal~~ — feito; a credencial
-      renova sozinha e as falhas de 10 e 11/09 não eram de login (eram sono e
-      DNS)
-- [ ] **Antes de viajar, segunda à noite** (volta na semana seguinte):
-      - [x] ~~liberar `estado.json` na policy do bucket~~ — verificado em
-            14/09: responde 200 tanto por `campscast.com.br/estado.json` quanto
-            direto no S3. O 403 que o vigia relatou nesse dia era resposta
-            velha em cache, não a policy
-      - [ ] `claude setup-token` para um token longo, imune à rotação da sessão
-      - [ ] deixar o Remote Control de pé: `claude --remote-control CampsCast`,
-            e **testar pelo iPhone ainda em casa**
-      - [ ] Mac na tomada, tampa aberta
-- [ ] **Ouvir o episódio 12** (segunda, 14/09) — o primeiro com silêncio no
-      começo e no fim, número na abertura, encerramento só com a ficha técnica
-      e os nomes certos de quem escreveu e narrou
-- [ ] **Subir para o GitHub** os commits locais
-- [ ] **Rever o episódio 11 no Spotify** — saiu atrasado e o painel atualiza
-      com defasagem
 - [ ] **Anotar os minutos dos erros de "Anthropic"** — isolada a pronúncia sai
       certa; o erro aparece no meio do texto. Com os minutos, gerar só aquelas
       frases com e sem troca de grafia no `config/pronuncia.json`
-- [ ] **Conversar com quatro ou cinco ouvintes** — até onde ouvem, o que os
-      faria parar, e **se preferem Spotify ou Apple Podcasts**
-- [ ] **Decidir a chamada para seguir o podcast** — recomendação: uma frase no
-      encerramento, antes da despedida. Quem chega ao fim é justamente quem
-      gostou, e seguir é o que faz o app avisar do episódio novo
-- [ ] **Sexta, 18/09:** primeira anotação semanal em `privado/audiencia.md`,
-      olhar o registro de custos (`python3 scripts/registro.py mostra`) e
-      remedir o ritmo com uma semana cheia:
-      `python3 scripts/calibrate_pace.py --desde 2026-09-08 --apply`
+- [ ] (opcional) **App Store sem atualização automática** — o Xcode 27 se
+      instalou sozinho em 15/09 e travou o `git` pela licença
 
 ## Operação
 
@@ -123,6 +83,10 @@ A Fase 3 abre na semana de 05/10. YouTube e site passaram para a Fase 3.
 - [x] ~~Vigia externo~~ — rotina na nuvem `Vigia do CampsCast (08:07 BRT)`,
       dias úteis, lê `feed.xml` e `estado.json` e avisa por e-mail e push. Não
       depende do Mac, então também cobre o caso de o Mac não ter ligado
+- [ ] **Antes da próxima viagem:** `claude setup-token` para um token longo,
+      imune à rotação da sessão; Remote Control de pé
+      (`claude --remote-control CampsCast`), testado pelo iPhone ainda em casa;
+      Mac na tomada, tampa aberta
 - [ ] **Preencher `NOTIFY_TO`, `SMTP_USER` e `SMTP_PASS`** no `.env`, ou tirar
       as variáveis pela metade. Hoje o `notify.py` cai calado na notificação do
       macOS, que não sai da tela de casa
@@ -135,6 +99,7 @@ A Fase 3 abre na semana de 05/10. YouTube e site passaram para a Fase 3.
 
 ## Datas fixas
 
+- [ ] **05/11/2026, 04:59 — o crédito de US$ 250 da nuvem expira**
 - [ ] **05/08/2027 — renovar `campscast.com.br`** no registro.br (R$ 40 por
       ano), um mês antes do vencimento em 05/09/2027
 - [ ] **Até 05/08/2027 — decidir o `campscast.com`**, que não é usado e renova
@@ -150,6 +115,7 @@ A Fase 3 abre na semana de 05/10. YouTube e site passaram para a Fase 3.
       `privado/divulgacao.md`
 - [x] ~~Link principal~~ — Spotify, onde está toda a audiência medida; a Apple
       segue como segundo link. Rever depois das conversas com ouvintes
+- [ ] Comparar a audiência com a linha de base de 26/09 em 10/10
 
 ## Estacionado até haver divulgação
 
@@ -158,19 +124,6 @@ A Fase 3 abre na semana de 05/10. YouTube e site passaram para a Fase 3.
       sem motivo conhecido (só existe uma conta)
 - [ ] **Analytics da Apple** — zerado até alguém ouvir por lá
 - [ ] (opcional) **Contar downloads com o prefixo OP3** (`op3.dev`)
-
-## Fase 2 — o que resta
-
-- [ ] ADR consolidando os custos reais — começo de outubro, com as faturas de
-      setembro fechadas. Inclui o custo do Claude por token, base da decisão de
-      onde rodar na Fase 3
-
-## Fase 3 — preparação
-
-- [ ] **Onde rodar sem o Mac do Fernando Campilho** — AWS, Mac mini do irmão ou Mac mini
-      próprio. Avaliação no `PROJETO.md`, Fase 3. Conversar com o irmão sobre
-      acesso remoto e usuário separado; pesar a compra considerando os agentes
-      do livro 2081
 
 ## Dívida técnica
 
@@ -186,22 +139,29 @@ A Fase 3 abre na semana de 05/10. YouTube e site passaram para a Fase 3.
       semana, ou houver conversa com patrocinador. Primeiro o OP3; o plano Pro
       do CloudFront só se não bastar
 
-## Feito recentemente
+## Fase 2 — concluída em 03/10/2026
 
-- [x] Registro diário de execução e custo em `metricas/execucoes.jsonl`, com
-      o histórico desde 26/08 reconstruído dos logs (13/09)
-- [x] Silêncio de 1 s no começo e 3 s no fim de cada episódio (12/09)
-- [x] Número do episódio no front-matter, na abertura e na tag
-      `<itunes:episode>`; os 11 anteriores numerados (12/09)
-- [x] Encerramento só com a ficha técnica — sem recap e sem "o que observar"
-      (12/09)
-- [x] Nomes da ficha derivados dos modelos em uso; modelo do agente fixado
-      em `claude-opus-5` (12/09)
-- [x] Mapa de pronúncia em `config/pronuncia.json` (12/09)
-- [x] Velocidade testada a 1,05, 1,10 e 1,15 e descartada (12/09)
-- [x] Definição da conclusão do Spotify: ouviu pelo menos 95% (12/09)
-- [x] CloudFront gratuito investigado: sem dado por arquivo (12/09)
-- [x] Ritmo recalibrado com episódios reais: 150 ppm (10/09)
-- [x] Voz clonada profissional gravada, treinada e adotada (07/09)
-- [x] Apple Podcasts no ar, ID 6809631318 — os quatro diretórios respondem
-- [x] README com os links dos diretórios e a seção da voz
+- [x] Conversas com os primeiros ouvintes — a maioria achou a voz boa e
+      natural; a queixa que se repete é o ritmo (regravação na Fase 3)
+- [x] Post de lançamento no LinkedIn — 29/09, 5.693 pessoas alcançadas;
+      **destacado pelo LinkedIn News em 01/10** (marcos no README, provas em
+      `privado/conquistas/`). Os 15 comentários estão em `privado/audiencia.md`
+- [x] Agente no Claude Opus 5.5 (26/09) e revisão do
+      [ADR 0005](docs/decisions/0005-agente-no-opus-5-5.md) (03/10): custo
+      mediano caiu 49%, execução de 10 a 14 min, nenhum roteiro com regra
+      quebrada
+- [x] Nova abertura e encerramento, novidades na abertura e chamada para
+      seguir às terças e quintas
+      ([ADR 0006](docs/decisions/0006-abertura-no-tom-nao-no-texto.md))
+- [x] macOS 27 — atualizado em 03/10; testes, ensaio, ElevenLabs, token do
+      Claude e S3 verificados no mesmo dia
+- [x] [ADR 0007](docs/decisions/0007-custo-por-episodio.md) — R$ 6,25 por
+      episódio é o que o CampsCast acrescenta; R$ 32,12 com a assinatura do
+      Claude inteira
+- [x] Episódios commitados e enviados ao GitHub até 02/10
+- [x] Episódio 11 conferido no painel do Spotify em 03/10 — aparece
+      normalmente; o atraso era só a defasagem do painel
+- [x] Registro diário de execução e custo em `metricas/execucoes.jsonl`, vigia
+      externo, silêncio no começo e no fim, número do episódio, ficha técnica
+      com nomes derivados dos modelos, mapa de pronúncia, voz clonada
+      profissional e Apple Podcasts no ar

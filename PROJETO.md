@@ -495,18 +495,26 @@ Operação:
       |---|---|
       | Agenda | rotina com preset de dias úteis, no fuso local; marcar minutos depois da hora cheia, que atrasa |
       | Custo | desconta dos mesmos limites do Max que o Mac usa hoje; só cobra à parte se ligar créditos de uso. Há um teto diário de execuções de rotina por conta |
-      | Crédito de lançamento | US$ 250 para sessões na nuvem, **separado dos limites do Max**; resgatar até 07/10, vence em 04/11 |
+      | Crédito de lançamento | US$ 250 para sessões na nuvem, **separado dos limites do Max**. Resgatado em 03/10; expira às 04:59 (horário de Brasília) de 05/11. A tela do resgate diz que **não vale para Projects nem para Routines** |
+      | GitHub | Claude GitHub App instalado em 03/10 na conta pessoal `campilho`, no modo "Apenas sessões na nuvem", com acesso só a `campilho/CampsCast`. A verificação de status do repositório passou |
       | ElevenLabs | chave guardada como "API credential" do ambiente, no cabeçalho `xi-api-key`; o código nunca a vê |
       | S3 | **o obstáculo**: a assinatura SigV4 é calculada com a chave secreta dentro do código, e o proxy só anexa cabeçalho pronto. Ou a chave entra como variável de ambiente — visível a quem usa o ambiente, mitigada pelo usuário IAM que só faz PUT neste bucket —, ou o upload sai da sessão, por exemplo para um GitHub Actions com segredo próprio |
       | Estado | a máquina é descartável; episódios, pesquisas, índice, backlog e registro precisam ser commitados e enviados ao fim de cada execução. Gravar na `main` é permitido se ela não for protegida e os commits forem do autor |
       | Orquestrador | hoje o launchd chama `run_episode.sh`, que chama `claude -p`. Na rotina, a própria sessão é o agente: a preparação e a publicação precisam virar passos que ela executa, ou sair dela |
       | Maturidade | rotinas ainda em *research preview*, sem garantia de horário — o Mac também não tem, e o vigia já cobre as duas |
 
-      Plano: resgatar o crédito, montar o ambiente e rodar **em paralelo ao Mac,
-      sem publicar**, por uma semana, comparando roteiro, custo e horário.
-      O crédito cobre o piloto: a mediana de US$ 8,66 por episódio vezes os
-      cerca de 26 dias úteis até 04/11 dá uns US$ 225, se a conta do crédito
-      seguir o preço de API — o que ainda não está confirmado.
+      Plano: montar o ambiente e rodar **em paralelo ao Mac, sem publicar**, por
+      uma semana, comparando roteiro, custo e horário.
+
+      **O crédito não paga a rotina.** A conta original supunha que sim: a
+      mediana de US$ 8,66 por episódio vezes os cerca de 26 dias úteis dava uns
+      US$ 225. No resgate, em 03/10, a tela avisou que o crédito não vale para
+      Routines. Ficam dois caminhos: rotina descontando dos limites do Max,
+      como o Mac já faz; ou sessão na nuvem iniciada de outro modo, que gasta o
+      crédito. Com o Opus 5.5 a US$ 4,41 de mediana, o crédito daria para uns
+      56 episódios, se seguir o preço de API, o que ainda não está confirmado.
+      Antes de escolher, conferir na documentação como uma sessão na nuvem pode
+      ser disparada sem rotina.
 
 **Critério de saída:** dez dias úteis seguidos publicados sem o Mac do Fernando Campilho ligado;
 formulário no ar, com as sugestões chegando ao agente; site novo publicado.
