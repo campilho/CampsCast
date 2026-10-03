@@ -107,4 +107,4 @@ Segredos em `.env` (gitignored). Anotações pessoais em `privado/` (gitignored)
 
 ## Estado
 
-Fase 1 concluída. Fase 2 em andamento — ver `TODO.md` e `PROJETO.md`.
+Fases 1 e 2 concluídas (05/09 e 03/10/2026). Fase 3 a partir de 05/10 — ver `TODO.md` e `PROJETO.md`.

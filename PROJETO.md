@@ -5,7 +5,7 @@
 > Roda localmente em um MacBook Pro M3, com Claude Code em modo headless,
 > TTS na ElevenLabs e publicação via feed RSS em S3.
 
-**Status:** Fase 1 concluída em 05/09/2026 · Fase 2 em andamento (voz própria e os quatro diretórios no ar; falta a divulgação) · Fases 3 e 4 planejadas
+**Status:** Fase 1 concluída em 05/09/2026 · Fase 2 concluída em 03/10/2026 · Fase 3 a partir de 05/10 · Fase 4 planejada
 **Autor:** Fernando Campilho
 **Licença:** MIT para o código, CC BY 4.0 para o conteúdo editorial
 
@@ -279,7 +279,7 @@ disparados às 05:50 sem toque humano. O quinto cairia na segunda 07/09, que é
 feriado nacional; com a qualidade já validada nos testes do autor, esperar mais
 um dia útil não acrescentaria informação.
 
-### Fase 2 — Voz própria, publicação e divulgação
+### Fase 2 — Voz própria, publicação e divulgação — concluída em 03/10/2026
 
 Entregue:
 
@@ -336,8 +336,10 @@ A fazer:
       01/10; série semanal às terças em andamento
 - [ ] **Plano de divulgação** — primário no LinkedIn, com posts frequentes
       sobre a evolução do projeto e sempre com os links; avaliar outros canais
-- [ ] ADR de custos reais consolidado, com setembro fechado — inclui o custo do
-      Claude por token, base da decisão de onde rodar na Fase 3
+- [x] **ADR 0007 — custo por episódio** (03/10): R$ 6,25 é o que o CampsCast
+      acrescenta; R$ 32,12 se a assinatura do Claude fosse só para ele. A preço
+      de API, o Claude daria ~US$ 97 por mês no Opus 5.5 — base da decisão de
+      onde rodar na Fase 3
 - [x] Botão oficial "Ouça no Spotify" no README, que troca de cor com o tema do
       GitHub (27/09)
 

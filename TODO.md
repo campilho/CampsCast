@@ -3,10 +3,9 @@
 Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
 [PROJETO.md](PROJETO.md). Atualizada em 03/10/2026.
 
-## Esta semana — fechar a Fase 2
+## Fase 2 — concluída em 03/10/2026
 
-Falta só o ADR de custos; a Fase 3 abre na semana de 05/10. YouTube e site
-passaram para a Fase 3.
+A Fase 3 abre na semana de 05/10. YouTube e site passaram para a Fase 3.
 
 - [x] ~~Conversar com os primeiros ouvintes~~ — a maioria achou a voz boa e
       natural; a queixa que se repete é o ritmo (regravação na Fase 3)
@@ -17,10 +16,10 @@ passaram para a Fase 3.
       execução de 10 a 14 min, nenhum roteiro com regra quebrada
 - [x] ~~macOS 27~~ — atualizado em 03/10; testes, ensaio, ElevenLabs, token do
       Claude e S3 verificados no mesmo dia
-- [ ] **ADR de custos** — rascunho em
-      [ADR 0007](docs/decisions/0007-custo-por-episodio.md): R$ 6,11 por
-      episódio sem AWS e sem Claude. Faltam a fatura da AWS de setembro e o
-      valor cobrado pelo Max
+- [x] ~~ADR de custos~~ — [ADR 0007](docs/decisions/0007-custo-por-episodio.md):
+      R$ 6,25 por episódio é o que o CampsCast acrescenta; R$ 32,12 com a
+      assinatura do Claude inteira. Revisão mensal junto do relatório de
+      audiência
 - [ ] **Semana de 05/10, abrindo a Fase 3: revisar a memória do agente** —
       medido em 27/09: o
       índice de pautas foi de 67 K para 181 K em onze dias, lido inteiro todo

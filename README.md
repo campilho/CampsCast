@@ -5,7 +5,7 @@
 > Roda localmente num MacBook Pro M3, com Claude Code em modo headless,
 > TTS na ElevenLabs e publicação via feed RSS em S3.
 
-**Status:** Fase 1 concluída em 05/09/2026 · Fase 2 em andamento (voz própria em produção desde 08/09) · **Autor:** Fernando Campilho · Detalhes de arquitetura em [PROJETO.md](PROJETO.md)
+**Status:** Fase 1 concluída em 05/09/2026 · Fase 2 concluída em 03/10/2026 · Fase 3 a partir de 05/10 · **Autor:** Fernando Campilho · Detalhes de arquitetura em [PROJETO.md](PROJETO.md)
 
 ---
 
