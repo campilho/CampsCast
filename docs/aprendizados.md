@@ -101,6 +101,16 @@ prompt manda contar do `research/` que o agente acabou de escrever, não estimar
 de memória. Sem isso ele arredondava: disse "vinte páginas" onde o rastro
 mostrava 22.
 
+### O agente conta palavras sem ferramenta, e conta certo
+
+Ele não tem Bash, então não roda `wc -w`; as transcrições mostram a tentativa
+negada todo dia. A suspeita era que o `words` do front-matter fosse estimativa,
+e ele alimenta a calibração de ritmo. Em 03/10, contando o corpo dos 19
+roteiros da voz nova, 14 batem exatamente e nos outros 5 o desvio é de 1 a 3
+palavras.
+Liberar um Bash mínimo só para contar deixou de ter motivo. Vale para este
+modelo e este tamanho de texto; trocar de modelo pede conferir de novo.
+
 ### Deixe o agente registrar o descarte
 
 `research/AAAA-MM-DD.md` lista o que entrou **e o que foi descartado, com

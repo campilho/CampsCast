@@ -58,22 +58,13 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
 - [ ] **Ouvir o episódio 12** (segunda, 14/09) — o primeiro com silêncio no
       começo e no fim, número na abertura, encerramento só com a ficha técnica
       e os nomes certos de quem escreveu e narrou
-- [ ] **Remedir o ritmo com semanas cheias** — o `words_per_minute` ainda é
-      o de 3 episódios (150):
-      `python3 scripts/calibrate_pace.py --desde 2026-09-08 --apply`
 - [ ] **Perguntar a ouvintes se preferem Spotify ou Apple Podcasts** — a
       pergunta segue em aberto em `privado/audiencia.md`
-- [ ] **Decidir se o agente ganha um Bash mínimo** — as transcrições mostram
-      ele tentando `wc -w`, `window.py` e `tts.py --budget`, sempre negado;
-      conta palavras e calcula na mão. Liberar só comandos de leitura
-      (`--allowedTools "Bash(wc:*)"`, por exemplo) daria contagem exata
 - [ ] (ideia) **Detectar sozinho a troca de modelo ou de voz** e gerar a
       novidade — exige gravar os modelos usados no front-matter
 - [ ] **Anotar os minutos dos erros de "Anthropic"** — isolada a pronúncia sai
       certa; o erro aparece no meio do texto. Com os minutos, gerar só aquelas
       frases com e sem troca de grafia no `config/pronuncia.json`
-- [ ] (opcional) **App Store sem atualização automática** — o Xcode 27 se
-      instalou sozinho em 15/09 e travou o `git` pela licença
 
 ## Operação
 
@@ -84,8 +75,8 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
       dias úteis, lê `feed.xml` e `estado.json` e avisa por e-mail e push. Não
       depende do Mac, então também cobre o caso de o Mac não ter ligado
 - [ ] **Antes da próxima viagem:** `claude setup-token` para um token longo,
-      imune à rotação da sessão; Remote Control de pé
-      (`claude --remote-control CampsCast`), testado pelo iPhone ainda em casa;
+      imune à rotação da sessão; Remote Control
+      ligado na sessão do app (testado pelo Android S24 em 03/10, funcionou);
       Mac na tomada, tampa aberta
 - [ ] **Preencher `NOTIFY_TO`, `SMTP_USER` e `SMTP_PASS`** no `.env`, ou tirar
       as variáveis pela metade. Hoje o `notify.py` cai calado na notificação do
@@ -159,6 +150,12 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
       episódio é o que o CampsCast acrescenta; R$ 32,12 com a assinatura do
       Claude inteira
 - [x] Episódios commitados e enviados ao GitHub até 02/10
+- [x] Ritmo remedido em 03/10 com os 19 episódios da voz nova no
+      Multilingual (08/09 a 02/10): **152 ppm**, faixa de 836 a 1.444 palavras,
+      alvo 1.216. A contagem de palavras do agente bateu com a do texto, então
+      o Bash mínimo para contar palavras deixou de ser necessário
+- [x] App Store sem atualização automática (03/10) — o Xcode 27 tinha se
+      instalado sozinho em 15/09 e travado o `git` pela licença
 - [x] Episódio 11 conferido no painel do Spotify em 03/10 — aparece
       normalmente; o atraso era só a defasagem do painel
 - [x] Registro diário de execução e custo em `metricas/execucoes.jsonl`, vigia
