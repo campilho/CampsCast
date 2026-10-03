@@ -522,6 +522,17 @@ Se a Fase 3 tiver escolhido o Mac mini, é aqui que a AWS entra.
       O Claude Agent SDK é candidato natural para escrever os agentes que o
       AgentCore hospeda
 - [ ] Claude Opus via Amazon Bedrock
+- [ ] **Avaliar o Agent Toolkit for AWS** nas sessões de desenvolvimento — visto
+      em 03/10 num banner do console. Instala o AWS CLI, faz `aws login` pelo
+      navegador (credencial de 12 horas, renovável por 90 dias), registra um
+      servidor MCP "aws-mcp" no Claude Code e acrescenta skills e um arquivo de
+      regras. Ajuda onde a AWS muda rápido — Bedrock e AgentCore. Mas as
+      instruções não descrevem nenhuma restrição concreta: o agente fica com
+      as permissões do perfil logado. Usar só com um perfil dedicado e
+      limitado, de leitura por padrão, e nunca no pipeline de produção, que
+      segue sem AWS CLI e com o usuário que só grava no bucket (ADR 0002). Ler
+      o arquivo de regras antes de aceitar: ele entra nas instruções de toda
+      sessão
 - [ ] **Tudo no GitHub:** código, pipelines, infraestrutura como código, prompts
       e configuração dos agentes
 - [ ] Banco de dados de estatísticas — Spotify, Apple, downloads — e
