@@ -44,183 +44,179 @@ Regras:
   auditados é exatamente o problema que a Accenture já expôs.
   ENTRA COM PRIORIDADE MÁXIMA se qualquer uma das três publicar comunicado, se sair estatuto, se Krishnan
   ou qualquer dos sondados confirmar publicamente, ou se um regulador se manifestar sobre a iniciativa.
+  REVISTO EM 28/09: segue sem comunicado de nenhuma das três. A cobertura acrescentou só que a ideia
+  nasceu de proposta de Demis Hassabis em julho e virou autorregulação pura depois que um rascunho de
+  ordem executiva da Casa Branca travou — também sem documento. O fio ganhou peso no fim de semana: a
+  OpenAI pausou os modelos mais capazes por conta própria (pauta 1 de 28/09), que é exatamente o regime
+  voluntário que um órgão desses formalizaria.
+  REVISTO EM 29/09: a Infobae (28/09) escreve no presente que as três "criam" o órgão, mas sem
+  comunicado, estatuto ou fala on-the-record de nenhuma das três — é a mesma apuração da The Information
+  recontada. Segue fora. Ganhou mais peso ainda: em 28/09 a OpenAI segurou o GPT-6.1 Astra por não
+  passar na barra de alinhamento DELA (pauta 2 de 29/09), e a NVIDIA lançou uma plataforma de segurança
+  de agentes com mais de cem organizações (pauta 3 de 29/09). A pergunta "quem define a barra" é
+  exatamente o que um órgão desses responderia.
+  REVISTO EM 30/09: segue sem comunicado. O que saiu em 29/09 foi OUTRA coisa, e foi ao ar como pauta 1: o
+  acordo voluntário da Casa Branca, assinado por Anthropic, OpenAI, Google, Meta, xAI e NVIDIA, com quatro
+  camadas de controle e auditor externo, mas SEM criar órgão, sem padrão de auditoria e sem aviso de
+  incidente. O acordo não confirma a SAFA nem a desmente. Fica: o acordo é exatamente o "compromisso
+  voluntário" que a SAFA, pela apuração, definiria e fiscalizaria — se o órgão existir, ele passa a ser o
+  auditor que o texto de ontem deixou em aberto.
+  REVISTO EM 01/10: segue sem comunicado, estatuto ou fala on-the-record. A busca de 01/10 só trouxe
+  recontagens (GuruFocus, The Next Web, GovInfoSecurity, Forbes de 28/09). Registro para não confundir: o
+  post da OpenAI "Building standards for the next phase of AI", que aparece nas buscas, é de 21/09 e pede
+  padrões técnicos internacionais liderados pelos EUA (CAISI, ISO, Frontier Model Forum) — NÃO cria órgão e
+  não menciona a SAFA. O fio ganhou mais peso: em 30/09 o Google lançou o Gemini 4 Argon sem trava
+  cibernética para um clube que ele mesmo credencia (pauta 1 de 01/10). Quem qualifica o clube é a pergunta.
+  REVISTO EM 02/10: segue sem comunicado. Ganhou peso de novo: em 01/10 a única verificação independente do
+  caso dos agentes da OpenAI veio de uma perícia privada (Asymmetric Security, pauta 1 de 02/10), feita em
+  48 horas e sem acesso às transcrições — exatamente o papel de "qualificação de auditor" que a SAFA teria.
 
-## OpenAI publica o MentalHealthBench, com 1.215 conversas e 5.262 critérios escritos por mais de 80 clínicos
-- data_original: 2026-09-23
-- fonte: OpenAI — post oficial "Introducing MentalHealthBench" —
-  https://openai.com/index/introducing-mentalhealthbench/ (NÃO LIDO NA ORIGEM: openai.com devolve 403 ao
-  WebFetch, e o PDF em cdn.openai.com veio como binário ilegível nesta execução)
-- validade: 2026-09-30
-- resumo: Benchmark aberto com 1.215 conversas sintéticas de saúde mental, pareadas a 5.262 critérios de
-  avaliação escritos por mais de 80 psicólogos e psiquiatras licenciados, de 22 países, falando 19 idiomas
-  e cobrindo cerca de 20 subespecialidades. A divisão por gravidade é 53,5% não agudo, 18,2% alta acuidade
-  e 28,3% emergência. Resultados publicados pela própria OpenAI: GPT-6 Astra 57,3%, GPT-6 Sol 53,9%,
-  Claude Opus 5.5 52,4%, GPT-6 Luna 50,2%, contra GPT-4o 32,1% e Gemini 2.5 Pro 29,5%. A empresa diz
-  liberar tudo abertamente para que terceiros rodem as próprias avaliações.
-  FICOU FORA EM 25/09 por estar fora da janela: o post é de 23/09, confirmado por duas coberturas
-  independentes e pelo post da própria OpenAI no X. Uma listagem de 24/09 o datou errado.
-  VALE porque é raro: benchmark aberto, com rubrica escrita por clínico e não por modelo, publicado pelo
-  laboratório que tem o maior processo judicial aberto sobre exatamente esse tema. E porque põe um
-  concorrente na tabela — quem escolhe o teste é quem ganha nele. ENTRA se alguém de fora rodar o
-  benchmark e publicar, se outro laboratório adotar, ou se aparecer contestação metodológica dos clínicos.
+## Prospecto do IPO da Anthropic vaza: cerca de 80 de 261 páginas sobre risco, e prejuízo de US$ 42 bi em 2025
+- data_original: 2026-09-29
+- fonte: NÃO localizada na origem — Reuters e Financial Times, que dizem ter lido o prospecto antes da
+  publicação, replicados por CNBC, CNN, Semafor, Euronews e Quartz (29/09). O S-1 NÃO está público.
+- validade: 2026-10-06
+- resumo: O prospecto diria que os modelos da empresa podem trazer "catastrophic or existential risks to
+  humanity", dedicaria cerca de 80 de 261 páginas a risco — incluindo comportamento de autopreservação,
+  resistir a desligamento, ocultar informação e algo "parecido com chantagem" —, e registraria prejuízo de
+  cerca de US$ 42 bilhões em 2025. Listagem na Nasdaq, estreia mirada para outubro, avaliação acima de
+  US$ 2 trilhões. ABSORVE o item anterior "Fundadores da Anthropic pedem 50,1% dos votos antes do IPO"
+  (original de 25/09, The Information), que tinha a mesma condição de entrada.
+  FICOU FORA EM 30/09 por ser documento vazado, não publicado: config/briefing.md manda não cobrir sem
+  fonte primária, e prospecto só é primário quando vira público na SEC. VALE MUITO: é a primeira vez que
+  um laboratório de fronteira escreveria risco existencial num documento regulado de oferta de ações, e
+  isso casa com a pauta 1 de 30/09 (o comitê independente do conselho previsto no acordo da Casa Branca) e
+  com o fio de governança do Long-Term Benefit Trust. ENTRA COM PRIORIDADE MÁXIMA no dia em que o S-1 for
+  publicado na SEC ou a Anthropic confirmar por escrito.
+  REVISTO EM 01/10: o S-1 segue confidencial; a busca de 01/10 não achou registro público na SEC nem
+  comunicado. Fica.
+  REVISTO EM 02/10: FATO NOVO, mesma condição. Em 01/10 a Reuters (via CNBC, Semafor, Yahoo Finance,
+  TechCrunch) noticiou, citando o prospecto, que a Broadcom vai emprestar à Anthropic até US$ 42 bilhões para
+  alugar chips — cerca de um terço do compromisso de US$ 125,2 bilhões em cinco anos de capacidade de TPU —,
+  com notas conversíveis em ações e a Broadcom podendo indicar um parceiro financeiro; a Anthropic diria que
+  não espera vender as notas antes do IPO; a Broadcom deve virar a maior fornecedora de computação da
+  Anthropic em 2027. O The Decoder (29/09), sobre o mesmo vazamento, traz ainda US$ 518 bilhões em compromissos de nuvem e computação e
+  receita de US$ 11,5 bilhões no 2º trimestre de 2026. Busca na EDGAR (efts.sec.gov, 02/10) por "Anthropic,
+  PBC" em S-1: NENHUM registro da própria Anthropic — só prospectos de terceiros que a citam. Segue vazado,
+  segue fora. Quando entrar, o número da Broadcom vai junto, e casa com o fio do contrato da Akamai (25/09):
+  fornecedor financiando o cliente que compra dele.
 
-## Google lança Gemini 3.8 Flash TTS e Flash-Lite TTS, com mais de 2.000 vozes e mais de 100 idiomas
-- data_original: 2026-09-23
-- fonte: Google — post oficial "Gemini 3.8 text-to-speech says hello" —
-  https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-8-text-to-speech/
-  (NÃO LIDO NA ORIGEM nesta execução; confirmado por MarkTechPost e SiliconANGLE, ambos de 23/09)
-- validade: 2026-09-30
-- resumo: Dois modelos de síntese de voz. O Flash TTS permite criar voz do zero por comando em linguagem
-  natural, dirigir conversa de ida e volta, guiar a entrega linha a linha e inserir marcação de riso e de
-  interjeição, gerando horas de áudio consistente. O Flash-Lite TTS mira volume alto e custo baixo. Mais de
-  2.000 vozes prontas e mais de 100 idiomas, incluindo variantes regionais. Na avaliação citada pelo Google,
-  feita com um benchmark de qualidade de áudio da startup Hume AI, os dois ficaram em primeiro e segundo.
-  FICOU FORA EM 25/09 por estar fora da janela por um dia.
-  VALE, e tem um ângulo que nenhum outro item tem: é concorrente direto do sintetizador que narra este
-  programa, e a medição citada é de terceiro. ENTRA se sair medição independente comparando com o
-  ElevenLabs, se o preço for publicado, ou junto com qualquer pauta futura de voz clonada.
+## Mistral abre centro em Munique e promete um gigawatt de computação europeia até 2030
+- data_original: 2026-09-28
+- fonte: Mistral AI News — post oficial "Hallo, Deutschland!" — https://mistral.ai/news/hallo-deutschland/
+  (LIDO NA ORIGEM em 29/09)
+- validade: 2026-10-05
+- resumo: Centro em Munique com equipes de IA para física e IA industrial, reforçado pelos mais de 30
+  físicos e engenheiros da Emmi AI (comprada em maio); parceria com a TUM usando túnel de vento para gêmeo
+  digital de aerodinâmica automotiva; trabalho com a BMW em simulação de colisão e com a Siemens Energy.
+  Compromisso declarado de construir um gigawatt de capacidade de computação europeia até 2030.
+  FICOU FORA EM 29/09 por impacto: promessa de capacidade sem local, cronograma ou financiamento
+  detalhados, num dia com lançamento de modelo de fronteira. VALE porque é o primeiro post da Mistral
+  (player principal) em doze dias, e porque infraestrutura elétrica segue órfã neste programa — casa com
+  o item da Anthropic e da Stream, abaixo. ENTRA se sair local, contrato de energia ou financiamento do
+  gigawatt, ou junto com outra pauta de capacidade elétrica.
+  REVISTO EM 01/10: listagem de mistral.ai/news relida; o post de Munique segue sendo o mais recente. Fica.
+  REVISTO EM 02/10: listagem relida de novo, nada novo. Fica até 05/10. O fio de energia ganhou par em 01/10:
+  o Google pôs em órbita o protótipo do Project Suncatcher (pauta 3 de 02/10), satélite com TPUs movido a sol.
 
-## Z.AI abre o código do ZCode depois de ser flagrada enviando o espaço de trabalho dos desenvolvedores
-- data_original: 2026-09-22
-- fonte: Caixin Global, The Register, The Standard e Tom's Hardware (todos de 22/09), a partir da denúncia
-  de um engenheiro em 18/09. PRIMÁRIO NÃO LOCALIZADO: não achei comunicado oficial da Z.AI nem o repositório
-  do ZCode aberto, lido na origem.
-- validade: 2026-09-29
-- resumo: O ZCode, ferramenta de programação da Z.AI (a mesma casa dos modelos GLM), estaria criptografando e
-  enviando o espaço de trabalho local inteiro do desenvolvedor para nuvem no exterior ao ser iniciado, sem
-  pedir consentimento — incluindo histórico de versão e caches grandes, decifráveis só pela própria Z.AI. Um
-  relato descreve 564 tentativas de enviar um arquivo compactado de 313 MB. Em 22/09 a empresa pediu desculpas,
-  abriu o código da ferramenta e declarou retenção zero de dado. CRÍTICA REGISTRADA: pesquisadores dizem que a
-  Z.AI apagou os registros de commit e o código original que fazia o envio, o que impede auditoria independente
-  do que a ferramenta fazia antes da correção.
-  FICOU FORA EM 23/09 porque a Z.AI não é player principal em config/briefing.md, porque não localizei fonte
-  primária, e porque o episódio já tinha três lançamentos de modelo. VALE E VALE MUITO se abrir: é o par exato
-  do Plugin4Shell (item acima) e o segundo caso do mês em que a ferramenta de programação, e não o modelo, é o
-  vetor. Também dá o terceiro ângulo da série de peso aberto chinês: o GLM-5.3 da Z.AI é o segundo colocado do
-  índice de peso aberto que foi ao ar hoje. ENTRA se a Z.AI publicar comunicado, se o repositório aberto for
-  lido na origem, ou se alguma autoridade de proteção de dados se mexer.
-
-## Colúmbia Britânica processa a OpenAI alegando que a liderança sobrepujou a equipe de segurança
-- data_original: 2026-09-21
-- fonte: NÃO localizada na origem — não achei a petição inicial nem comunicado do governo provincial;
-  cobertura secundária de 21/09
-- validade: 2026-09-28
-- resumo: A província canadense da Colúmbia Britânica teria processado a OpenAI alegando que a equipe de
-  segurança da empresa sinalizou sessões preocupantes do ChatGPT e que a liderança sobrepôs a decisão
-  delas, antes de um episódio de tiroteio em escola.
-  FICOU FORA EM 22 E 23/09 por não ter documento primário localizado — nem petição protocolada, nem
-  comunicado do procurador-geral da província. Se a petição abrir, a pauta é grande e é inédita: seria a
-  primeira vez que um ente de governo alega em juízo que um laboratório de fronteira ignorou o próprio
-  processo interno de segurança, e é o par exato do processo de divulgação de desalinhamento que a OpenAI
-  publicou em 16/09 (coberto em 17/09). ENTRA se a petição for localizada, se a OpenAI responder, ou se a
-  província publicar comunicado.
-
-## Google DeepMind lança o DeepMind Institute para ampliar o debate sobre AGI
-- data_original: 2026-09-16
-- fonte: NÃO localizada na origem nesta execução — cobertura da Axios (16/09) e da TechCrunch (17/09);
-  deve existir post oficial em deepmind.google
-- validade: 2026-09-28
-- resumo: Instituto criado para servir de fórum entre Google, DeepMind e pesquisadores de fora sobre os
-  efeitos da inteligência artificial geral na sociedade. Dirigido por Shane Legg, com James Manyika
-  (vice-presidente sênior do Google) e Demis Hassabis (presidente da DeepMind). Estreou com publicações
-  sobre política econômica para AGI, transparência do raciocínio dos modelos, acesso global e
-  florescimento humano.
-  POR QUE VALE: este programa disse no ar em 16/09 e em 18/09 que o Google foi o único laboratório de
-  fronteira que NÃO se manifestou institucionalmente na semana do pedido de desaceleração, e que a
-  condição para a pauta voltar era o Google publicar compromisso institucional. Este instituto é a resposta
-  — e passou batido nas execuções de 17, 18, 21, 22 e 23/09. É o terceiro instituto de laboratório que este
-  programa rastreia, depois do Anthropic Institute (18/09) e do alignment.openai.com (17/09).
-  REGISTRO DE 23/09: a listagem de deepmind.google/discover/blog foi lida e NÃO traz datas por item, o que
-  impede confirmar o post na origem por ali. Quem for atrás deve tentar a URL direta do instituto.
-  PRECISA, antes de ir ao ar: o post oficial do Google, lido na origem, e pelo menos uma das publicações
-  inaugurais. Também segue valendo o registro de que o Google não lançou nada datado na janela de 22/09.
-
-## Snorkel AI levanta US$ 350 milhões a US$ 3,5 bilhões vendendo dado de treino para os laboratórios
-- data_original: 2026-09-22
-- fonte: Snorkel AI — release oficial "Snorkel AI Raises $350M to Scale the Data Factory for Frontier AI"
-  (PR Newswire). NÃO LIDO NA ORIGEM nesta execução.
-- validade: 2026-09-29
-- resumo: Série E de US$ 350 milhões co-liderada por Insight Partners e Section 32, com Addition, Greylock e
-  Wells Fargo, a uma avaliação pós-dinheiro de US$ 3,5 bilhões — quase o triplo dos US$ 1,3 bi da rodada de
-  maio de 2025. A empresa diz que o serviço de dado-como-serviço, lançado há cerca de um ano, cresceu mais de
-  18 vezes e passou de US$ 375 milhões de receita anualizada na semana do anúncio. Clientes declarados:
-  laboratórios de fronteira, hiperescaladores, líderes verticais e agências do governo americano.
-  FICOU FORA EM 23/09 por ser camada 2 de config/sources.yaml (investidores) num dia com três lançamentos de
-  modelo — e o registro deste backlog é que camada 2 não bate camada 1 há semanas. VALE, e o ângulo está
-  pronto: no dia em que o topo do índice subiu cinco pontos, a empresa que vende o DADO de pós-treino dos
-  laboratórios triplicou de valor. É a picareta do garimpo, e é o par de mercado da pauta 1 de hoje.
-  PRECISA: o release lido na origem. ENTRA em dia fraco ou quando outro fornecedor de dado levantar rodada
-  comparável, o que faz do tema uma tendência e não um caso.
-
-## OpenAI demite revisores terceirizados por usarem IA para avaliar respostas do ChatGPT
-- data_original: 2026-09-22
-- fonte: 404 Media (22/09) — reportagem; primário NÃO localizado, sem comunicado da OpenAI nem do
-  fornecedor de mão de obra
-- validade: 2026-09-29
-- resumo: Reportagem descrevendo a demissão de vários revisores terceirizados que avaliavam respostas do
-  ChatGPT e estariam usando ferramentas de IA para fazer esse julgamento, com a empresa alegando quebra do
-  requisito de autenticidade do trabalho humano.
-  FICOU FORA EM 23/09 por não ter fonte primária. Vale registrar porque é a mordida da cobra no próprio rabo
-  e casa com duas coisas que já foram ao ar: a medição da Anthropic de 17/09 em que um Claude juiz concordou
-  com humanos mais (59%) do que humanos entre si (35%), e o aprendizado por reforço com retorno humano que
-  está na base de tudo. ENTRA se a OpenAI ou o fornecedor confirmarem, ou se algum trabalhador falar com
-  nome.
-
-## NVIDIA leva agentes para dentro do desenvolvimento de robótica com o Isaac ROS 5.0
-- data_original: 2026-09-22
-- fonte: NVIDIA Blog — post oficial "NVIDIA Isaac ROS 5.0 Advances Agentic, Open Source Robotics Development"
-  — https://blogs.nvidia.com/blog/isaac-ros-5-0/ (LIDO NA ORIGEM em 23/09)
-- validade: 2026-09-29
-- resumo: Versão 5.0 do Isaac ROS com fluxos agênticos: documentação legível por agente e habilidades novas
-  de configuração e manipulação, para que o agente trabalhe junto do desenvolvedor de robótica. FoundationPose
-  ganha estimativa de pose 5,5x mais rápida com biblioteca de inferência pronta para agente; FoundationStereo
-  vira habilidade de ajuste fino para adaptar percepção estéreo a câmera e ambiente. Suporte a ROS Lyrical e
-  Ubuntu 24.04, com a NVIDIA contribuindo uma interface padrão de manipulação de dado ao ROS Lyrical. Roda de
-  Jetson Orin Nano a Jetson Thor. A empresa fala em cerca de 1,3 milhão de usuários de ROS.
-  FICOU FORA EM 23/09 por impacto: é ferramenta de desenvolvimento para um nicho, não muda o que os modelos
-  conseguem fazer, e perdeu para três lançamentos de modelo de fronteira. Fica registrado porque robótica
-  nunca foi pauta neste programa e porque a direção é a mesma que o programa vem rastreando em toda parte —
-  o agente entrando na cadeia de produção de quem constrói a próxima coisa. ENTRA em dia fraco, ou quando
-  aparecer medição de fora de agente operando robô físico.
-  GANHOU PAR EM 23/09, e ele é bom: a Intrinsic, da Alphabet, liberou no ROSCon 2026, em Toronto, o Intrinsic
-  Core — ambiente de robótica compatível com ROS, sob licença Apache 2.0, juntando controle em tempo real
-  agnóstico de hardware, estimativa de pose e planejamento de movimento. PRIMÁRIO NÃO LOCALIZADO nesta
-  execução. Se abrir, as duas viram uma pauta só e ela tem tese: NVIDIA e Alphabet abriram, na mesma semana,
-  a camada de software de robótica — uma com agente embutido, outra com licença permissiva. Ficou fora hoje
-  porque as três pautas do dia eram mais fortes e porque o primário da Intrinsic não foi lido.
-
-## OpenAI leva o ChatGPT Ads a sete mercados do Sudeste Asiático e a Taiwan, passando de 60 países
-- data_original: 2026-09-23
-- fonte: OpenAI — post oficial "ChatGPT Ads expands to Southeast Asia and Taiwan" —
-  https://openai.com/index/chatgpt-ads-expands-southeast-asia-taiwan/ (NÃO LIDO NA ORIGEM: openai.com
-  devolve 403 ao WebFetch; confirmado por busca restrita ao domínio)
-- validade: 2026-09-30
-- resumo: O ChatGPT Ads começa a ser liberado na Indonésia, Malásia, Filipinas, Cingapura, Tailândia, Vietnã
-  e Taiwan, e passa a estar disponível em mais de 60 países.
-  FICOU FORA EM 24/09 por impacto: é expansão geográfica de um produto de publicidade já coberto, não muda o
-  que os modelos conseguem fazer, e perdeu para duas pautas de governança e uma de capacidade científica.
-  VALE GUARDAR porque é a terceira medição do mesmo fio: o ChatGPT Ads foi ao ar aqui em 01/09 a US$ 1 bilhão
-  de receita anualizada em menos de 200 dias, e o item dos Sponsored Agents venceu na poda de 23/09 com a
-  observação de que os cortes de preço de Anthropic e OpenAI de 22/09 dizem que a conta da inferência está
-  sendo paga de alguma forma. ENTRA se a OpenAI divulgar número novo de receita de anúncio, ou junto com o
-  item do cookie __obi, que continua neste backlog — aí a pauta é uma só: como o anúncio paga a inferência,
-  e com que dado.
-
-## Anthropic estaria negociando alugar cerca de um gigawatt direto em data centers da Stream
-- data_original: 2026-09-23
-- fonte: NÃO localizada na origem — relato de imprensa descrito como conversa preliminar; sem comunicado da
-  Anthropic nem da Stream Data Centers
-- validade: 2026-09-30
-- resumo: A Anthropic estaria em conversas iniciais e preliminares para alugar até cerca de 1 gigawatt de
-  capacidade, como inquilina direta, em sítios que a Stream Data Centers desenvolve.
-  FICOU FORA EM 24/09 por ser relato preliminar sem documento — config/briefing.md manda não cobrir rumor sem
-  fonte primária. Fica registrado porque infraestrutura elétrica é um fio órfão neste programa desde a poda
-  do item da Emerald AI em 23/09, e porque casa com dois números que já foram ao ar: a Anthropic passando de
-  US$ 100 bilhões de receita anualizada pela apuração do NYT (item acima) e os 26% da P&D dela conduzidos
-  pelo Claude (coberto em 2026-09-18). ENTRA se sair contrato assinado, comunicado de qualquer uma das duas
-  partes ou registro regulatório de conexão elétrica.
+## Anthropic mede o que os robôs já conseguem fazer: 74% do trabalho físico, mas só 0,3% sai mais barato que gente
+- data_original: 2026-09-30
+- fonte: Anthropic Research — "What work can robots do?" — https://www.anthropic.com/research/what-work-can-robots-do
+  (LIDO NA ORIGEM em 01/10)
+- validade: 2026-10-07
+- resumo: Russell Legate-Yang e Maxim Massenkoff montaram um índice de exposição a robôs, com o Claude
+  pontuando cerca de 19 mil tarefas de cerca de 900 ocupações do O*NET em quatro níveis de controle do
+  ambiente. Robôs conseguem fazer, em algum nível, 74% das tarefas físicas por tempo de trabalho — 34% de
+  todas as horas da economia —, mas só 0,3% das tarefas são hoje competitivas em custo com o trabalhador; a
+  3% de queda anual de preço, chegar a 10% levaria cerca de 40 anos. Somando robôs e LLMs, cerca de 80% das
+  tarefas estão expostas (cerca de metade só a LLMs). Mais expostos: motorista de táxi, armazém; menos:
+  enfermagem, reparo. Quem está no quintil mais exposto tem desemprego mais de duas vezes maior.
+  FICOU FORA EM 01/10 por impacto: análise econômica, perdeu para lançamento de modelo de fronteira, para
+  a acusação de destilação e para o SynthID Bio. RESSALVA que precisa ir ao ar se entrar: a pontuação é do
+  Claude, sem validação sistemática contra avaliador humano relatada; a validação é histórica (50 anos de
+  salário e emprego). E é a Anthropic, que faz o modelo que escreve o roteiro. ENTRA em dia fraco, ou junto
+  com qualquer pauta de robótica (NVIDIA Isaac, Gemini Robotics) ou de emprego.
+  REVISTO EM 02/10: dia fraco em lançamento, mas perdeu de novo — para a perícia dos agentes da OpenAI, para
+  o limite do arXiv e para o satélite do Google. Registro: o texto de ciência da Anthropic que foi ao ar em
+  02/10 ("Claude-shaped science") é da mesma seção e da mesma semana; pôr dois textos da casa que faz o
+  modelo do roteiro no mesmo episódio pesaria. Fica até 07/10.
 
 ---
+
+Revisto na execução de 02/10:
+- Podado por vencimento: Câmara de Nova York apresenta pacote de dez projetos de IA, com botão de desligar
+  obrigatório (original de 25/09, validade 02/10) — venceu sem votação e sem outra cidade ou estado seguir.
+  PODA SEM PERDA, como o próprio item previa: o primário da Câmara está localizado em
+  council.nyc.gov/press/2026/09/25/3252/, e a audiência do plenário inteiro com OpenAI, Google, Anthropic e
+  Meta, marcada para segunda, 05/10 (SpaceXAI intimada em 28/09), cai na janela do episódio de 06/10 — lá
+  ela entra pela porta da frente, e o pacote de dez projetos vira contexto.
+- Reavaliados e mantidos: SAFA, prospecto da Anthropic (com o fato novo da Broadcom), Mistral em Munique,
+  estudo de robôs da Anthropic.
+- Nada acrescentado: as candidatas que sobraram em 01/10 ou eram de impacto baixo ou não tinham primário
+  (ver research/2026-10-02.md).
+
+Revisto na execução de 01/10, nenhum item podado (o primeiro a vencer é o de Nova York, em 02/10):
+- Acrescentado: estudo de robôs da Anthropic (original de 30/09).
+- Reavaliados e mantidos: SAFA, prospecto da Anthropic, Mistral em Munique, pacote de Nova York.
+
+Saiu na execução de 30/09, USADO no episódio como contexto da pauta 1:
+- OpenAI pede desculpas à Austrália pelo caso do Medicare e promete financiar defesa cibernética (original
+  de 29/09) — USADO um dia depois de entrar, já dentro da janela. A CONDIÇÃO FOI CUMPRIDA PELA METADE, e
+  é honesto registrar assim: o post oficial "How we will do better for Australia" existe em openai.com
+  (confirmado por busca restrita ao domínio), mas devolveu 403 ao WebFetch; o conteúdo foi lido na ABC
+  australiana e na TechCrunch, que citam a frase de desculpas. Foi dito no ar como "segundo a ABC
+  australiana". Fato novo que entrou no ar: foram QUATRO sistemas de governo, não um. Fato novo que NÃO
+  entrou, por tamanho: Jason Kwon depõe no Parlamento australiano em 06/10 — é o próximo gancho do fio.
+  Registro de método: o "financiamento" é crédito do fundo de US$ 1 bi do Daybreak, criado em 03/09; não
+  é dinheiro novo, e assim foi dito.
+
+Podados na execução de 30/09, os quatro por vencimento (validade 30/09, último dia em que ainda podiam
+entrar, e não entraram; nenhum ganhou fato novo dentro da janela de 29/09):
+- OpenAI publica o MentalHealthBench (original de 23/09) — venceu depois de QUATRO execuções sem que
+  ninguém de fora rodasse o benchmark. Poda com perda pequena: era rubrica de clínico, rara. Volta se
+  alguém publicar resultado independente.
+- Google lança Gemini 3.8 Flash TTS e Flash-Lite TTS (original de 23/09) — venceu sem medição
+  independente contra o ElevenLabs e sem preço publicado. Volta junto com qualquer pauta de voz clonada.
+- OpenAI leva o ChatGPT Ads ao Sudeste Asiático e a Taiwan (original de 23/09) — venceu sem número novo
+  de receita. O fio de publicidade fica órfão de vez. Volta se a OpenAI divulgar receita de anúncio.
+- Anthropic estaria negociando cerca de um gigawatt com a Stream (original de 23/09) — venceu sem
+  contrato nem comunicado. Infraestrutura elétrica segue órfã; o item da Mistral em Munique é o único
+  que sobrou nesse fio.
+
+Absorvido na execução de 30/09:
+- Fundadores da Anthropic pedem 50,1% dos votos antes do IPO (original de 25/09) — FUNDIDO no item do
+  prospecto vazado, acima, que tem a mesma condição de entrada: o S-1 virar público.
+
+Podados na execução de 29/09, os quatro por vencimento (validade 29/09, último dia em que ainda podiam
+entrar, e não entraram; nenhum ganhou fato novo dentro da janela de 28/09):
+- Z.AI abre o código do ZCode depois de ser flagrada enviando o espaço de trabalho dos desenvolvedores
+  (original de 22/09) — venceu depois de CINCO execuções sem comunicado da Z.AI nem repositório lido na
+  origem. Volta se alguma autoridade de proteção de dados se mexer.
+- Snorkel AI levanta US$ 350 milhões a US$ 3,5 bilhões (original de 22/09) — venceu sem o release ser
+  lido na origem e sem dia fraco que abrisse espaço. Mais uma vez camada 2 não bateu camada 1. Volta se
+  outro fornecedor de dado de treino levantar rodada comparável.
+- OpenAI demite revisores terceirizados por usarem IA (original de 22/09) — venceu sem confirmação da
+  OpenAI nem do fornecedor. Poda sem perda.
+- NVIDIA Isaac ROS 5.0 (original de 22/09) — venceu por impacto. Registro: a NVIDIA voltou ao ar em 29/09
+  pela Open Agent Safety Platform, que saiu pelo newsroom (nvidianews.nvidia.com), e não pelo blog que o
+  sources.yaml varre. O par da Intrinsic nunca teve primário lido. Volta com medição de fora de agente
+  operando robô físico.
+
+Podados na execução de 28/09, os dois por vencimento (validade 28/09, último dia útil em que ainda
+podiam entrar, e não entraram):
+- Colúmbia Britânica processa a OpenAI alegando que a liderança sobrepujou a equipe de segurança
+  (original de 21/09) — venceu depois de TRÊS execuções. PENDÊNCIA PARCIALMENTE RESOLVIDA na poda: a
+  busca de 28/09 achou a CBC e a Al Jazeera (22/09) descrevendo a ação como anunciada pela
+  procuradora-geral Niki Sharma, com o distrito escolar Peace River South, protocolada na corte federal
+  de São Francisco em 21/09, contra a OpenAI e contra Sam Altman, pelo tiroteio de Tumbler Ridge
+  (10/02/2026). Ou seja, existe comunicado de governo — só nunca foi lido na origem, e o fato é de fora
+  de todas as janelas desde 22/09. VOLTA pela porta da frente se a OpenAI responder em juízo, se houver
+  audiência, ou se os registros de conversa pedidos pela província forem entregues.
+- Google DeepMind lança o DeepMind Institute (original de 16/09) — venceu depois de CINCO execuções sem
+  que o post oficial fosse lido na origem, que era a condição escrita aqui. Poda com perda real: era a
+  única resposta institucional do Google ao pedido de desaceleração. Fica o registro para a próxima
+  vez que o Google aparecer em pauta de governança, e agora com mais peso: a cobertura de 28/09 atribui
+  a Hassabis a ideia original do órgão autorregulador SAFA, que segue neste backlog.
 
 Saiu na execução de 25/09, USADO no episódio, pela porta da frente:
 - Bessent propõe à China um mecanismo de notificação de incidente de IA — e Trump e Xi abrem o diálogo
