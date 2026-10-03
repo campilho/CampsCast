@@ -17,9 +17,10 @@ passaram para a Fase 3.
       execução de 10 a 14 min, nenhum roteiro com regra quebrada
 - [x] ~~macOS 27~~ — atualizado em 03/10; testes, ensaio, ElevenLabs, token do
       Claude e S3 verificados no mesmo dia
-- [ ] **ADR de custos** com setembro fechado — aguardando do autor: plano e preço
-      da ElevenLabs, fatura da AWS de setembro, custo anual do domínio e valor
-      do Max
+- [ ] **ADR de custos** — rascunho em
+      [ADR 0007](docs/decisions/0007-custo-por-episodio.md): R$ 6,11 por
+      episódio sem AWS e sem Claude. Faltam a fatura da AWS de setembro e o
+      valor cobrado pelo Max
 - [ ] **Semana de 05/10, abrindo a Fase 3: revisar a memória do agente** —
       medido em 27/09: o
       índice de pautas foi de 67 K para 181 K em onze dias, lido inteiro todo
@@ -35,8 +36,12 @@ passaram para a Fase 3.
       `privado/audiencia.md`: exportação diária do Spotify, print da tela
       principal (seguidores) e print da tabela de episódios, cuja exportação
       vem sem números. O de setembro foi feito em 03/10
-- [ ] **Copiar os 15 comentários do post** para `privado/audiencia.md` — são o
-      primeiro retorno de ouvintes em escala
+- [x] ~~Copiar os 15 comentários do post~~ — em `privado/audiencia.md`: a voz
+      convence, o valor percebido é tempo, há pedido de formato de uma hora, e
+      o apresentador do RESUMIDO defendeu curadoria humana com análise
+- [ ] **Decidir sobre a extensão Claude in Chrome** — serve para tarefas
+      acompanhadas em sites que permitem; **não usar no LinkedIn**, cujos termos
+      proíbem extensões que automatizam ou extraem dados do site
 
 ## Feito nesta semana e pendências menores
 
@@ -128,6 +133,16 @@ passaram para a Fase 3.
 - [ ] (opcional) **Chamado na ElevenLabs** pedindo retry do fine-tuning Flash
       da voz `LvmWSbvGusgLWSQDKHJH` ("NaN losses", parou em 75,7%). Traria custo
       pela metade e fala mais rápida; a velocidade fica como está por enquanto
+
+## Datas fixas
+
+- [ ] **05/08/2027 — renovar `campscast.com.br`** no registro.br (R$ 40 por
+      ano), um mês antes do vencimento em 05/09/2027
+- [ ] **Até 05/08/2027 — decidir o `campscast.com`**, que não é usado e renova
+      sozinho na GoDaddy em 05/09/2027 por R$ 174,98: redirecionar para o
+      `.com.br` ou desligar a renovação
+- ElevenLabs renova todo dia 23, no plano Creator mensal. O anual fica para
+  depois das próximas fases, que podem mudar o consumo
 
 ## Divulgação
 
