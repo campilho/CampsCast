@@ -25,11 +25,10 @@ relatório do autor. Tudo ensaiado, mas um ensaio é um dia só.
       `memoria/autor/2026-W41.md` e se o push do vigia trouxe a linha
       "RELATÓRIO DA SEMANA". Pedir `/relatorio` e decidir o que estiver
       pendente
-- [ ] **Novidade na abertura** — nenhuma programada; o anúncio do Opus 5.5
-      saiu sozinho em 02/10. Candidata, agora que o ensaio confirmou: a memória
-      — "passo a ter à mão tudo o que já foi ao ar, e acompanho promessas e
-      preocupações até o desfecho". Se for, decidir o texto e as datas em
-      `config/novidades.json`
+- [x] **Novidade na abertura** (04/10) — a memória nova, de 05/10 a 09/10 em
+      `config/novidades.json`: "a partir de hoje estou testando uma memória
+      nova: lembro de tudo o que já passou por aqui e fico de olho nas
+      perguntas que ficaram sem resposta", em teste e sem jargão
 - [ ] **`scripts/ensaio.sh`** — automatizar o que foi feito à mão em 03/10:
       copiar o repositório no estado de um dia, rodar com `env -i` e o `PATH`
       do plist, desviar registro e estado. Sem o ambiente do launchd, o custo
@@ -72,14 +71,31 @@ mil tokens da ferramenta Read.
 - [x] ~~Acesso do Claude Code na nuvem ao GitHub~~ — 03/10: Claude GitHub App
       na conta pessoal `campilho`, modo "Apenas sessões na nuvem", **só no
       repositório `campilho/CampsCast`**
-- [ ] **Piloto no Claude Code na nuvem** — como o crédito não cobre Routines,
-      decidir entre sessão na nuvem disparada de outro jeito, que gasta o
-      crédito, ou rotina, que desconta dos limites do Max. Antes, confirmar na
-      documentação como agendar uma sessão na nuvem. Obstáculo conhecido: a
-      chave do S3 (SigV4) dentro da sessão. **Tem de ir junto:** o passo de
-      resumos da memória e o relatório do autor de sexta (ADR 0008)
-- [ ] **Onde rodar sem o Mac do Fernando Campilho** — AWS, Mac mini do irmão
-      ou Mac mini próprio, se o piloto na nuvem não resolver. Avaliação no
+- [ ] **Piloto no Claude Code na nuvem** — desenho no
+      [ADR 0009](docs/decisions/0009-piloto-na-nuvem.md) (04/10): rotina às
+      04:00, antes do Mac, num ramo próprio (`piloto`) refeito a cada dia da
+      `main`, publicando num bucket de testes; uma semana em paralelo,
+      comparando roteiro, custo e horário. O crédito de US$ 250 não paga a
+      rotina e fica para o desenvolvimento na nuvem. Etapas:
+      - [ ] **P0 — credencial da AWS que não é a raiz** (autor): MFA na raiz,
+            IAM Identity Center com usuário administrador, conjunto de
+            permissões `CampsCastAgente` e perfil `campscast-agente` na CLI;
+            depois o plugin `aws-core` do Agent Toolkit for AWS
+      - [ ] **P1 — o pipeline local passa a comitar e enviar** o que produz
+            (lista fechada de caminhos), com teste e ensaio
+      - [ ] **P2 — bucket `campscast-piloto`** e usuário que só grava nele
+      - [ ] **P3 — ajustes de código:** `tts.py` com credencial gerenciada,
+            `BASE_URL` no `publish.py`, perfil `piloto`, `compara_piloto.py`
+      - [ ] **P4 — ambiente na nuvem** (autor): rede, credencial da ElevenLabs
+            em `xi-api-key`, variáveis do bucket de testes; proteção da `main`
+      - [ ] **P5 — primeira execução manual na nuvem:** testar a rede e se o
+            `claude -p` funciona dentro da sessão (forma A ou B)
+      - [ ] **P6 — uma semana de rotina** e comparação diária
+      **Tem de ir junto:** o passo de resumos da memória e o relatório de
+      sexta (ADR 0008)
+- [ ] **Onde rodar sem o Mac do Fernando Campilho** — AWS (plano B no ADR
+      0009: EventBridge, Fargate, Bedrock), Mac mini do irmão ou Mac mini
+      próprio, se o piloto na nuvem não resolver. Avaliação no
       `PROJETO.md`. Conversar com o irmão sobre acesso remoto e usuário
       separado; pesar a compra considerando os agentes do livro 2081
 
@@ -114,7 +130,11 @@ mil tokens da ferramenta Read.
 - [ ] **Sugestões de tema dos ouvintes** — depois do site e do formulário: a
       sugestão entra em `memoria/temas-sugeridos.md` com "por ouvinte", e o
       autor decide como decide as do agente
-- Site, formulário, vídeos e regravação da voz: ver Fase 3 no `PROJETO.md`
+- [ ] **Site, beta 1** — rascunho de estrutura em [docs/site.md](docs/site.md)
+      (04/10): uma página com player do último episódio, como funciona,
+      números, últimos episódios, temas, história, formulário e seção técnica;
+      etapas S1 a S5 e quatro decisões abertas. Visual com o Claude Design
+- Vídeos e regravação da voz: ver Fase 3 no `PROJETO.md`
 
 ## Recorrente
 

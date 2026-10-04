@@ -6,6 +6,12 @@
       "ate": "2026-10-02",
       "fato": "A partir do episódio 22, o roteiro passa a ser escrito pelo Claude Opus 5.5. O lançamento dele foi notícia aqui no episódio 19, em 23/09/2026 — episódio escrito pelo antecessor, o Claude Opus 5.",
       "como_dizer": "Tom de upgrade do próprio agente, em primeira pessoa: 'o modelo que o meu antecessor, o Opus cinco, noticiou aqui no episódio dezenove'. No primeiro dia, 'a partir de hoje'; nos seguintes, 'desde segunda-feira'. Uma frase só."
+    },
+    {
+      "desde": "2026-10-05",
+      "ate": "2026-10-09",
+      "fato": "A partir do episódio 27, o agente trabalha com uma memória nova, em teste: tem à mão tudo o que já foi ao ar desde o primeiro episódio, acompanha os grandes temas do programa e fica de olho nas perguntas que ficaram em aberto — promessas, prazos, preocupações — para contar quando elas voltarem a ser notícia.",
+      "como_dizer": "Uma frase, em primeira pessoa, sem jargão técnico (nada de 'índice', 'camadas' ou 'arquivo'). Dizer que está em teste. No primeiro dia, 'a partir de hoje estou testando uma memória nova: lembro de tudo o que já passou por aqui e fico de olho nas perguntas que ficaram sem resposta'; nos seguintes, 'desde segunda'. Não prometer que vai acertar sempre."
     }
   ]
 }

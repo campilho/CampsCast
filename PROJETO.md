@@ -500,7 +500,8 @@ Operação:
       Decisão depois do ADR de custos, com o custo mensal do Claude no Bedrock
       ao lado dos outros dois caminhos. Com o Mac mini, a AWS entra na Fase 4.
 
-- [ ] **Primeiro item da Fase 3: piloto no Claude Code na nuvem** — uma quarta
+- [ ] **Primeiro item da Fase 3: piloto no Claude Code na nuvem** — desenho
+      fechado no [ADR 0009](docs/decisions/0009-piloto-na-nuvem.md) em 04/10. Uma quarta
       opção, que apareceu em 27/09 e pode resolver antes das outras. Levantado
       na documentação oficial:
 
@@ -547,7 +548,9 @@ Se a Fase 3 tiver escolhido o Mac mini, é aqui que a AWS entra.
       em 03/10 num banner do console. Instala o AWS CLI, faz `aws login` pelo
       navegador (credencial de 12 horas, renovável por 90 dias), registra um
       servidor MCP "aws-mcp" no Claude Code e acrescenta skills e um arquivo de
-      regras. Ajuda onde a AWS muda rápido — Bedrock e AgentCore. Mas as
+      regras. (Conferido em 04/10, no ADR 0009: saiu em maio de 2026, não é
+      novo; a sessão do `aws login` vai até 12 horas, e os 90 dias são o teto do
+      IAM Identity Center.) Ajuda onde a AWS muda rápido — Bedrock e AgentCore. Mas as
       instruções não descrevem nenhuma restrição concreta: o agente fica com
       as permissões do perfil logado. Usar só com um perfil dedicado e
       limitado, de leitura por padrão, e nunca no pipeline de produção, que
