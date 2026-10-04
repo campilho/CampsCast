@@ -122,14 +122,53 @@ em que o piloto publica no bucket de testes sem intervenção, com roteiros sem
 regra quebrada e custo dentro de ±20% do Mac. Depois disso, inverter: a nuvem
 publica de verdade e o Mac vira a reserva por uma semana.
 
-### 5. Onde entra o crédito de US$ 250
+### 5. Onde fica cada segredo — o ambiente é o `.env` da nuvem
 
-Não paga a rotina. Serve às sessões na nuvem que não são rotina: montar e
-depurar o piloto, as execuções manuais de teste e o ensaio na nuvem. Uma
-alternativa seria o Mac disparar o piloto com `claude --cloud` às 04:00 — gasta
-o crédito em vez do Max —, mas aí o piloto depende do Mac para começar, que é
-justamente o que ele quer eliminar. Fica como plano de contingência se o uso
-do Max apertar.
+A rotina não vê o `.env` do Mac. O equivalente é o **ambiente** da nuvem,
+configurado uma vez em claude.ai e herdado por toda execução:
+
+| Hoje no `.env` | No ambiente da nuvem | Quem vê |
+|---|---|---|
+| `ELEVENLABS_API_KEY` | **credencial gerenciada**, cabeçalho `xi-api-key`, só para `api.elevenlabs.io`; o proxy acrescenta a chave na saída | ninguém — nem o código, nem o agente |
+| `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` | **variáveis do ambiente**, do usuário que só grava no bucket de testes | quem usa o ambiente: só a conta do autor |
+| `S3_BUCKET`, `AWS_REGION`, endereço do feed de testes | variáveis do ambiente | não são segredo |
+| SMTP e `NOTIFY_*` | não precisa | — |
+| login do Claude | a própria rotina, na conta do autor | — |
+
+A chave da AWS não pode ser credencial gerenciada porque o upload ao S3 é
+assinado no código com a chave secreta, e o proxy só acrescenta um cabeçalho
+pronto. O risco fica limitado porque ela só grava no bucket de testes.
+
+**Repositório privado para segredos, não.** Uma rotina aceita mais de um
+repositório — "one or more GitHub repositories", e cada um é clonado —, mas
+segredo em git fica no histórico para sempre, é lido pelo GitHub App e vai
+junto com qualquer sessão que tenha acesso. Um repositório privado só faria
+sentido para **dados** privados (como `privado/audiencia.md`), se um dia um
+agente na nuvem precisar deles; o piloto não precisa.
+
+### 6. Onde entra o crédito de US$ 250
+
+Não paga a rotina: rotinas descontam do uso do Max. Paga **qualquer sessão
+na nuvem aberta por uma pessoa** até 05/11 — em claude.ai/code, no app com
+"Cloud", ou com `claude --cloud`. No CampsCast, isso quer dizer:
+
+- **montar e depurar o piloto** (P5): as primeiras execuções são manuais, numa
+  sessão na nuvem;
+- **o desenvolvimento de outubro que não depende do Mac** — C2, código do site,
+  `ensaio.sh` —, com a vantagem de rodar com o Mac fechado e em paralelo;
+- **não** o que precisa do Mac: `privado/`, `.env`, áudio, extensão do Chrome.
+
+Para levar trabalho entre os dois lados: `claude --cloud "tarefa"` cria uma
+sessão nova na nuvem, que clona o GitHub no ramo atual — enviar os commits
+antes; `claude --teleport` traz uma sessão da nuvem para o terminal, com o
+ramo e a conversa, como cópia. Uma sessão de terminal em andamento não vai
+para a nuvem pela CLI; no app desktop, vai pelo menu "Open in"
+([Use Claude Code in the cloud](https://code.claude.com/docs/en/claude-code-on-the-web)).
+
+Uma alternativa seria o Mac disparar o piloto diário com `claude --cloud` às
+04:00 — gasta o crédito em vez do Max —, mas aí o piloto depende do Mac para
+começar, que é justamente o que ele quer eliminar. Fica como contingência se o
+uso do Max apertar.
 
 ## Plano B: AWS, e a primeira visão da Fase 4
 

@@ -179,7 +179,11 @@ mil tokens da ferramenta Read.
 - [ ] **Sexta, 09/10/2026 — primeiro relatório do autor automático**
 - [ ] **Até 17/10/2026 — ler os primeiros resumos semanais** (C2), de 24/08 a
       09/10, antes de o agente passar a usá-los; depois, só a conferência
-- [ ] **05/11/2026, 04:59 — o crédito de US$ 250 da nuvem expira**
+- [ ] **05/11/2026, 04:59 — o crédito de US$ 250 da nuvem expira.** Não paga
+      a rotina do piloto (essa sai do Max); paga as sessões na nuvem abertas à
+      mão. Usar no desenvolvimento de outubro que não depende do Mac — P5 do
+      piloto, C2, código do site, `ensaio.sh` — com `claude --cloud` ou o app
+      em "Cloud" (ADR 0009, seção 6)
 - [ ] **Até 07/11/2026 — ler o resumo mensal de setembro** (piloto do C3) e o
       de outubro
 - [ ] **03/01/2027 — Apple Podcasts: sem nenhum acesso, sair** (ver Divulgação)
