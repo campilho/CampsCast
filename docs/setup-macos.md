@@ -288,7 +288,7 @@ sudo pmset -c sleep 0
 ```
 
 ```bash
-sudo pmset repeat wakeorpoweron MTWRF 05:45:00
+sudo pmset repeat wakeorpoweron MTWRF 04:55:00
 ```
 
 Conferir:

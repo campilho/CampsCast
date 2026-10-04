@@ -78,7 +78,7 @@ voz de produção (`words_per_minute` em `config/tts.json`). Em 12/09/2026, a
 ## 3. Arquitetura
 
 ```
- launchd (seg-sex, 05:50)
+ launchd (seg-sex, 05:00)
       │
       ▼
  run_episode.sh ──► claude -p "$(cat prompts/master.md)"   [Claude Code headless]
@@ -593,16 +593,17 @@ da assinatura: o maior item a medir antes de migrar.
 ## 11. Notas operacionais (Mac como runner)
 
 ```bash
-# Não dormir na tomada + agendar despertar (seg-sex 05:45)
+# Não dormir na tomada + agendar despertar (seg-sex 04:55)
 sudo pmset -c sleep 0
-sudo pmset repeat wakeorpoweron MTWRF 05:45:00
+sudo pmset repeat wakeorpoweron MTWRF 04:55:00
 
 # Alternativa agressiva (tampa fechada sem monitor): desabilita sleep de vez
 sudo pmset -a disablesleep 1
 ```
 
 launchd: plist em `~/Library/LaunchAgents/com.camps.campscast.plist` com
-`StartCalendarInterval` seg–sex 05:50, repescagem às 06:20 e 07:00, chamando
+`StartCalendarInterval` seg–sex 05:00, repescagem às 06:00 e 07:00 (até 03/10/2026,
+05:50, 06:20 e 07:00; antecipado para o episódio estar no Spotify antes das 6h), chamando
 `scripts/run_episode.sh`.
 
 **Limite medido:** na bateria, o `caffeinate -s` não vale, e o Mac volta a dormir

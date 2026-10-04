@@ -73,7 +73,7 @@ mkdir -p "$HOME/Library/LaunchAgents" "$ROOT/logs"
   # dormindo, rede fora, fonte no ar — a segunda ou a terceira pega.
   echo '  <key>StartCalendarInterval</key><array>'
   for d in $DIAS; do
-    for hm in "5 50" "6 20" "7 00"; do
+    for hm in "5 00" "6 00" "7 00"; do
       set -- $hm
       echo "    <dict><key>Weekday</key><integer>$d</integer><key>Hour</key><integer>$1</integer><key>Minute</key><integer>$2</integer></dict>"
     done
@@ -95,7 +95,7 @@ echo "  projeto : $ROOT"
 echo "  claude  : $CLAUDE_BIN"
 echo "  python3 : $PY_BIN"
 echo "  dias    : weekdays $DIAS de config/schedule.json"
-echo "  horário : 05:50 (repescagem 06:20 e 07:00)"
+echo "  horário : 05:00 (repescagem 06:00 e 07:00)"
 echo
 echo "Disparar agora:  launchctl kickstart -k gui/$UID_NUM/$LABEL"
 echo "Ver status    :  launchctl list | grep campscast"

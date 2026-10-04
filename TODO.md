@@ -9,8 +9,12 @@ Em 03/10 entrou de uma vez: lista de pautas no prompt, histórico do backlog
 fora da leitura, temas, fios, sugestões de tema, conferência de repetição e o
 relatório do autor. Tudo ensaiado, mas um ensaio é um dia só.
 
+- [ ] **Antes de segunda — despertar do Mac às 04:55** (precisa de senha, só
+      o autor roda): `sudo pmset repeat wakeorpoweron MTWRF 04:55:00`. O
+      launchd já foi para 05:00, com repescagem às 06:00 e 07:00, e o vigia
+      para 07:30 (o agendador marcou 07:36)
 - [ ] **Segunda, 05/10 — primeiro episódio com a memória nova.** Depois das
-      08:07: o vigia disse "tudo certo"? Olhar os avisos no registro
+      07:30: o vigia disse "tudo certo"? Olhar os avisos no registro
       (`python3 scripts/registro.py mostra`) e se o agente mexeu em temas,
       fios ou sugestões (Observações do `research/2026-10-05.md`)
 - [ ] **Quinta, 08/10 — custo da memória nova em produção:**
@@ -92,6 +96,12 @@ mil tokens da ferramenta Read.
       primeira pauta e passa muito rápido. Pausa maior antes e depois, e rever
       a orientação do texto. A pausa pode vir do mesmo mecanismo dos
       capítulos: a chamada narrada sozinha, com silêncio montado pelo `tts.py`
+- [ ] **Capa própria por episódio** — no carro, a capa aparece grande, e hoje
+      é a mesma em todos. O feed aceita `<itunes:image>` em cada episódio;
+      conferir se o Spotify usa essa imagem quando o programa vem por RSS (a
+      Apple usa). Se usar: gerar uma imagem por dia a partir da manchete, com
+      a identidade da capa atual, e medir o custo. Conversa com o item de
+      vídeos e Instagram, que também vai usar modelo de imagem
 - [ ] **Rever a ficha técnica do encerramento** — a ideia fica, mas está longa
       (~85 palavras, uns 35 s) e pode cansar quem ouve todo dia. Tirar do ar o
       "cinco delas bloqueadas na leitura". **O relatório de fontes que falham
@@ -132,8 +142,9 @@ mil tokens da ferramenta Read.
 - [x] ~~Vigia externo~~ — rotina na nuvem `Vigia do CampsCast (08:07 BRT)`,
       dias úteis, lê `estado.json` e `feed.xml` e avisa por e-mail e push.
       Atualizado em 03/10: lê só pelo WebFetch — o alarme de 29/09 foi o proxy
-      da nuvem barrando o `curl` — e, no último episódio da semana, avisa do
-      relatório do autor
+      da nuvem barrando o `curl` —, no último episódio da semana avisa do
+      relatório do autor, e passou para 07:30, antes de o autor começar a
+      trabalhar
 - [ ] **Antes da próxima viagem:** `claude setup-token` para um token longo;
       Remote Control ligado na sessão do app (testado pelo Android S24 em
       03/10); Mac na tomada, tampa aberta
@@ -199,6 +210,10 @@ mil tokens da ferramenta Read.
       referência, não teto rígido
 - [x] Pontualidade — desde 14/09, com o Mac na tomada, os 15 episódios
       começaram às 05:50 e terminaram até 06:11, sem sono no meio
+- [x] Horário antecipado para 05:00, repescagem às 06:00 e 07:00 — o autor
+      ouve entre 6h e 7h, a caminho da academia ou do trabalho, e o Spotify
+      lê o feed de tempos em tempos: publicar mais cedo dá folga. O vigia
+      passou de 08:07 para 07:30
 - [x] App Store sem atualização automática — o Xcode 27 tinha se instalado
       sozinho em 15/09 e travado o `git` pela licença
 - [x] Polly e Chirp 3 — comparação dispensada, adendo no ADR 0001

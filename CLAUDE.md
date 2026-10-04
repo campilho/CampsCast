@@ -16,7 +16,7 @@ testadas e caíram.
 ## Pipeline
 
 ```
-launchd (seg-sex 05:50, repescagem 06:20 e 07:00)
+launchd (seg-sex 05:00, repescagem 06:00 e 07:00)
   └─ scripts/run_episode.sh
        ├─ [1] claude -p prompts/master.md  → episodes/AAAA-MM-DD.md
        │                                   → research/AAAA-MM-DD.md

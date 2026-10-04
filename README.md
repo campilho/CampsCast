@@ -74,7 +74,7 @@ material. Ouça as pausas entre as frases.
 ## Pipeline
 
 ```
-launchd (seg–sex, 05:50)
+launchd (seg–sex, 05:00)
    └─► scripts/run_episode.sh
          ├─ [1] claude -p prompts/master.md   → episodes/YYYY-MM-DD.md
          ├─ [2] scripts/tts.py                → audio/YYYY-MM-DD.mp3
@@ -310,11 +310,11 @@ launchctl list | grep campscast
 launchctl kickstart -k gui/$(id -u)/com.camps.campscast
 ```
 
-O Mac precisa estar acordado às 05:50 em dias úteis:
+O Mac precisa estar acordado às 05:00 em dias úteis:
 
 ```bash
 sudo pmset -c sleep 0
-sudo pmset repeat wakeorpoweron MTWRF 05:45:00
+sudo pmset repeat wakeorpoweron MTWRF 04:55:00
 ```
 
 ---
