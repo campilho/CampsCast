@@ -4,7 +4,7 @@ Podcast diário de IA em português, escrito e narrado por agentes, publicado em
 dias úteis. Rodando em produção desde 24/08/2026.
 
 > **Antes de mexer em qualquer coisa:** `bash tests/smoke_test.sh`
-> São 137 testes, offline, sem custo. Rode antes e depois de alterar.
+> São 146 testes, offline, sem custo. Rode antes e depois de alterar.
 
 ## Regra número um
 
@@ -63,6 +63,9 @@ Agregador serve para descobrir, nunca para citar.
 | `chamada.py` | decide se o episódio convida a seguir o podcast (dias em `config/show.json`) |
 | `pautas.py` | lista compacta do que já foi ao ar, uma linha por pauta, escrita no prompt |
 | `confere_backlog.py` | confere se o backlog guarda só pauta ativa; registra, não bloqueia |
+| `confere_fios.py` | confere fios (teto de 20, marcos, datas) e temas (teto de 10); registra |
+| `confere_repeticao.py` | avisa pauta do dia com link já usado antes; ignora páginas de listagem |
+| `relatorio.py` | relatório semanal do autor: decisões pendentes, temas, fios, fontes que falharam, avisos; `--semana`, `--fecha-semana` |
 | `confere_roteiro.py` | confere o que a abertura e a ficha não podem deixar de dizer; registra, não bloqueia |
 
 ### Diagnóstico e manutenção
@@ -96,7 +99,12 @@ Agregador serve para descobrir, nunca para citar.
 | `config/pronuncia.json` | como o sintetizador deve ler nomes que ele erra; só muda o áudio |
 | `config/novidades.json` | mudanças a anunciar na abertura, cada uma com data de início e de fim |
 | `config/schedule.json` | dias de publicação, feriados, exceções |
+| `memoria/temas.md` | temas: questões de fundo que não fecham; criados pelo autor |
+| `memoria/temas-sugeridos.md` | sugestões de tema (do agente; no futuro, de ouvintes) que o autor aprova ou recusa |
+| `memoria/fios.md` | fios em aberto: promessas, previsões e preocupações à espera de desfecho ([ADR 0008](docs/decisions/0008-memoria-em-camadas.md)) |
 | `prompts/master.md` | o agente |
+
+Relatório da semana: comando `/relatorio` (`.claude/commands/relatorio.md`).
 
 Segredos em `.env` (gitignored). Anotações pessoais em `privado/` (gitignored).
 

@@ -12,6 +12,9 @@
 #   scripts/run_episode.sh --overwrite           # regrava um episódio existente
 #   scripts/run_episode.sh --force               # roda em dia sem episódio
 #
+# Etapas: research, tts, publish, relatorio (só no último episódio da semana),
+# notify.
+#
 # Janela de notícias: calculada por scripts/window.py a partir do último dia já
 # coberto por algum episódio. Rodar no sábado ou no domingo é permitido e não
 # duplica pauta — a execução seguinte simplesmente começa de onde esta parou.
@@ -117,8 +120,12 @@ finaliza() {
     # Estado público no S3. É o único aviso que chega a quem está longe do Mac:
     # notificação do macOS morre na tela de casa. Sucesso também sobe — vigia
     # que só enxerga fracasso não distingue "falhou" de "nem chegou a rodar".
+    # Array vazio + set -u quebra no bash 3.2 do macOS; daí a forma ${a[@]+...}.
+    ARGS_ESTADO=()
+    [[ -s "${BASE_REGISTRO}-relatorio.json" ]] && ARGS_ESTADO+=(--relatorio "${BASE_REGISTRO}-relatorio.json")
     python3 scripts/estado.py --data "$EPISODE_DATE" --estado "$estado" \
-      --etapa "$ETAPA_ATUAL" --motivo "$ULTIMO_ERRO" >>"$LOG" 2>&1 || true
+      --etapa "$ETAPA_ATUAL" --motivo "$ULTIMO_ERRO" ${ARGS_ESTADO[@]+"${ARGS_ESTADO[@]}"} \
+      >>"$LOG" 2>&1 || true
   fi
   exit $rc
 }
@@ -401,10 +408,17 @@ $PAUTAS"
     # saved-items/historico/. Os avisos vão para o registro junto com os do roteiro.
     AVISOS_BACKLOG="$(python3 scripts/confere_backlog.py "${BACKLOG_ARQ:-saved-items/backlog.md}" \
       --data "$EPISODE_DATE" 2>>"$LOG" || true)"
-    if [[ -n "$AVISOS_BACKLOG" ]]; then
-      AVISOS_ROTEIRO="${AVISOS_ROTEIRO:+$AVISOS_ROTEIRO
-}$AVISOS_BACKLOG"
-    fi
+    # Fios em aberto (ADR 0008) e pauta repetida pelo link — também só registram.
+    AVISOS_FIOS="$(python3 scripts/confere_fios.py "${FIOS_ARQ:-memoria/fios.md}" \
+      --temas "${TEMAS_ARQ:-memoria/temas.md}" \
+      --sugestoes "${SUGESTOES_ARQ:-memoria/temas-sugeridos.md}" \
+      --data "$EPISODE_DATE" 2>>"$LOG" || true)"
+    AVISOS_REPETICAO="$(python3 scripts/confere_repeticao.py "$SCRIPT_PATH" \
+      --indice "${PAUTAS_INDICE:-covered-index.json}" --data "$EPISODE_DATE" 2>>"$LOG" || true)"
+    for extra in "$AVISOS_BACKLOG" "$AVISOS_FIOS" "$AVISOS_REPETICAO"; do
+      [[ -n "$extra" ]] && AVISOS_ROTEIRO="${AVISOS_ROTEIRO:+$AVISOS_ROTEIRO
+}$extra"
+    done
     ROTEIRO_CONFERIDO=1
     if [[ -n "$AVISOS_ROTEIRO" ]]; then
       while IFS= read -r aviso; do log "AVISO no roteiro: $aviso"; done <<< "$AVISOS_ROTEIRO"
@@ -437,6 +451,21 @@ if stage_enabled publish; then
   run python3 scripts/publish.py --date "$EPISODE_DATE" 2>&1 | tee -a "$LOG"
 else
   log "── [3/4] Publicação — PULADA"
+fi
+
+# ---------- relatório do autor (último episódio da semana) ----------
+# Junta o que pede decisão e o que deu errado na semana (scripts/relatorio.py).
+# Não bloqueia nada: falhar aqui não derruba um episódio já publicado. O resumo,
+# só com contagens, vai no estado.json, e o vigia na nuvem avisa no celular.
+if stage_enabled relatorio && [[ $DRY_RUN -eq 0 ]] \
+    && python3 scripts/relatorio.py --fecha-semana "$EPISODE_DATE" 2>>"$LOG"; then
+  SEMANA="$(python3 -c "import datetime as d; a,s,_=d.date.fromisoformat('$EPISODE_DATE').isocalendar(); print(f'{a}-W{s:02d}')")"
+  if python3 scripts/relatorio.py --data "$EPISODE_DATE" --saida "memoria/autor/${SEMANA}.md" \
+      --resumo "${BASE_REGISTRO}-relatorio.json" >/dev/null 2>>"$LOG"; then
+    log "Relatório do autor: memoria/autor/${SEMANA}.md"
+  else
+    log "AVISO: relatório do autor falhou; o episódio não é afetado."
+  fi
 fi
 
 # ---------- 4. notificação ----------

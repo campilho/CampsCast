@@ -407,6 +407,10 @@ Formato e curadoria:
       índice a cada execução (`scripts/pautas.py`) e escrita no prompt. Medido
       antes: o índice não cabia mais numa leitura e o agente via só o começo,
       os títulos e o fim. Ver `docs/aprendizados.md`
+
+      **Plano completo de camadas no
+      [ADR 0008](docs/decisions/0008-memoria-em-camadas.md)** (03/10): acervo
+      sem fim, leitura com teto, em etapas de C1 a C7.
 - [ ] **Fios em aberto** — arquivo próprio, no molde do backlog: preocupações,
       promessas e previsões que apareceram no ar, cada uma com data, episódio de
       origem e situação (aberta, cumprida, desmentida, resolvida). O agente

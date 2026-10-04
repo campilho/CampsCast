@@ -14,6 +14,7 @@ Este script lê a transcrição que o Claude Code grava em ~/.claude/projects/
     base      prompt, sistema e ferramentas, presentes desde a primeira chamada
     indice    tudo que veio do covered-index.json
     backlog   saved-items/backlog.md e o histórico em saved-items/historico/
+    fios      memoria/: fios em aberto, fechados e temas
     roteiros  episodes/
     web       WebFetch e WebSearch
     outros    o resto (config, research, scripts)
@@ -39,7 +40,7 @@ import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-CATEGORIAS = ("indice", "backlog", "roteiros", "web", "outros")
+CATEGORIAS = ("indice", "backlog", "fios", "roteiros", "web", "outros")
 
 
 def transcricoes_dir() -> pathlib.Path:
@@ -51,6 +52,8 @@ def categoria(nome: str, entrada) -> str:
     s = json.dumps(entrada, ensure_ascii=False)
     if "covered-index" in s:
         return "indice"
+    if "memoria/fios" in s or "memoria/temas" in s:
+        return "fios"
     if "backlog" in s or "saved-items/historico" in s:
         return "backlog"
     if re.search(r"episodes/", s):

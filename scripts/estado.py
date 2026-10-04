@@ -98,9 +98,19 @@ def main() -> int:
     ap.add_argument("--etapa", default="")
     ap.add_argument("--motivo", default="")
     ap.add_argument("--saida", help="grava num arquivo local em vez de subir")
+    ap.add_argument("--relatorio", help="resumo do relatório semanal (relatorio.py --resumo)")
     args = ap.parse_args()
 
     corpo = monta(args.data, args.estado, args.etapa, args.motivo)
+    # Às sextas, o resumo do relatório do autor vai junto: é por ele que o vigia
+    # na nuvem avisa que saiu. Só a semana e contagens — o arquivo é público.
+    if args.relatorio:
+        try:
+            r = json.loads(pathlib.Path(args.relatorio).read_text(encoding="utf-8"))
+            corpo["relatorio"] = {k: v for k, v in r.items()
+                                  if k == "semana" or isinstance(v, int)}
+        except Exception:
+            pass
     texto = json.dumps(corpo, ensure_ascii=False, indent=1)
 
     destino = args.saida or os.environ.get("ESTADO_ARQ")

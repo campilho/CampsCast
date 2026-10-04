@@ -92,10 +92,24 @@ def indicadores(data: str, raiz: pathlib.Path = RAIZ) -> dict:
     anteriores = sorted(p for p in (raiz / "episodes").glob("*.md")
                         if _DATA.fullmatch(p.stem) and p.stem < data)[-5:]
     tamanho = lambda p: p.stat().st_size if p.exists() else None
+    fios = pathlib.Path(os.environ.get("FIOS_ARQ") or raiz / "memoria" / "fios.md")
+    temas = pathlib.Path(os.environ.get("TEMAS_ARQ") or raiz / "memoria" / "temas.md")
+    abertos = n_temas = None
+    try:
+        sys.path.insert(0, str(RAIZ / "scripts"))
+        from confere_fios import contagem, contagem_temas
+        abertos = contagem(fios.read_text(encoding="utf-8"))
+        n_temas = contagem_temas(temas.read_text(encoding="utf-8"))
+    except Exception:
+        pass
     return {
         "indice_pautas_bytes": tamanho(indice),
         "indice_pautas_itens": itens,
         "backlog_bytes": tamanho(raiz / "saved-items" / "backlog.md"),
+        "fios_bytes": tamanho(fios),
+        "fios_abertos": abertos,
+        "temas_bytes": tamanho(temas),
+        "temas": n_temas,
         "roteiros_lidos_bytes": sum(p.stat().st_size for p in anteriores),
         "prompt_bytes": tamanho(raiz / "prompts" / "master.md"),
     }

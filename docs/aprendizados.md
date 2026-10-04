@@ -751,6 +751,30 @@ abortar. A do sono é a tomada.
 **A mensagem de erro que você viu por último não é a causa da falha que você
 está investigando.** Leia o log da falha, não o da sua memória.
 
+### O vigia não enxergava o podcast pelo shell, e quase ninguém percebeu
+
+Em 29/09 o vigia mandou "não consegui confirmar". O log da execução mostra o
+motivo: o `curl` saiu pelo proxy do ambiente na nuvem e voltou "CONNECT tunnel
+failed, response 403" para as três URLs, antes de chegar ao S3 ou ao domínio.
+Relendo as outras execuções da semana, o `curl` falhou em **todas**; nos dias
+bons, o vigia desistiu do shell por conta própria e leu pelo WebFetch, que
+funciona. Em 29/09 ele não tentou. O prompt agora manda usar só o WebFetch.
+
+A regra de 14/09 — sem confirmação, dizer "não consegui confirmar", nunca "não
+saiu" — fez o trabalho dela: o aviso foi inútil, mas não foi falso. **Uma
+ferramenta que funciona por improviso do agente está quebrada; o log de uma
+execução bem-sucedida mostra isso tão bem quanto o de uma falha.**
+
+### Array vazio derruba o bash do macOS
+
+O `/bin/bash` do macOS é a versão 3.2, de 2007. Nela, `"${arr[@]}"` com o array
+vazio e `set -u` é "variável não definida", e o script morre. O passo novo do
+relatório passava um argumento opcional ao `estado.py` por array: em todo dia
+sem relatório — quatro de cada cinco — o `estado.json` deixaria de ser
+publicado, e o vigia acusaria falha de segunda a quinta. O teste que já
+existia para a publicação do estado pegou antes de ir ao ar. A forma que
+funciona em qualquer bash é `${arr[@]+"${arr[@]}"}`.
+
 ### Aviso que só chega na tela de casa não é aviso
 
 O pipeline avisava por notificação nativa do macOS — que ninguém vê estando a

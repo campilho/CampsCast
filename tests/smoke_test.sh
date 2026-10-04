@@ -1826,6 +1826,258 @@ else
   bad "aviso do backlog não chegou ao registro: ${ULTIMA:-vazio}"
 fi
 
+head_ "20. Fios em aberto e repetição de pauta"
+
+# Fios em aberto (ADR 0008): preocupações, promessas e previsões acompanhadas
+# até o desfecho. A conferência registra, não bloqueia.
+FIO_DIR="$(mktemp -d)"; mkdir -p "$FIO_DIR/episodes"
+for d in 2026-09-14 2026-09-25 2026-09-28; do printf -- '---\ndate: %s\n---\nx\n' "$d" > "$FIO_DIR/episodes/$d.md"; done
+cat > "$FIO_DIR/bom.md" <<'FIM'
+# Fios em aberto
+
+```
+## F-NNN · <título curto>
+- situação: aberto
+```
+
+---
+
+## F-001 · Agentes fora do controle
+- aberto: 2026-09-14 (ep. 12)
+- pergunta: quando a pausa acaba?
+- marcos:
+  - 2026-09-25 (ep. 21) — Austrália
+  - 2026-09-28 (ep. 22) — pausa
+- situação: aberto
+- rever até: 2026-12-31
+FIM
+cp "$FIO_DIR/bom.md" "$FIO_DIR/ruim.md"
+cat >> "$FIO_DIR/ruim.md" <<'FIM'
+
+## F-001 · Repetido e já resolvido
+- aberto: 2026-09-14 (ep. 12)
+- pergunta: x
+- marcos:
+  - 2026-09-14 (ep. 12) — a
+  - 2026-09-25 (ep. 21) — b
+  - 2026-09-28 (ep. 22) — c
+  - 2026-09-30 (ep. 24) — d, episódio que não existe
+- situação: resolvido
+- rever até: 2026-10-01
+
+## F-003 · Sem campos
+- pergunta: falta tudo
+FIM
+BOM="$(python3 scripts/confere_fios.py "$FIO_DIR/bom.md" --data 2026-10-05 --episodios "$FIO_DIR/episodes")"
+RUIM="$(python3 scripts/confere_fios.py "$FIO_DIR/ruim.md" --data 2026-10-05 --episodios "$FIO_DIR/episodes")"
+if [[ -z "$BOM" && "$RUIM" == *"F-001 repetido"* && "$RUIM" == *"fechado"* \
+      && "$RUIM" == *"mais de 3 marcos"* && "$RUIM" == *"rever até 2026-10-01"* \
+      && "$RUIM" == *"2026-09-30"*"não existe"* && "$RUIM" == *"F-003"*"aberto"* ]]; then
+  ok "conferência dos fios aceita fio bem formado e aponta cada problema"
+else
+  bad "conferência dos fios errada — bom: '${BOM}' / ruim: '${RUIM}'"
+fi
+
+# Temas: questões de fundo que nunca fecham, criadas pelo autor. Guardam um
+# estado reescrito e os episódios recentes; os fios apontam para eles, e não
+# o contrário — a lista de fios de um tema é calculada, não armazenada.
+cat > "$FIO_DIR/temas.md" <<'FIM'
+# Temas
+
+---
+
+## T-01 · Desacelerar a fronteira
+- desde: 2026-09-14 (ep. 12)
+- pergunta de fundo: a corrida pode desacelerar?
+- estado (2026-09-28): pausa da OpenAI.
+- recentes: 2026-09-25 (ep. 21), 2026-09-28 (ep. 22)
+
+## T-02 · Tema do autor, ainda sem episódio
+- desde: 2026-10-03 (criado pelo autor)
+- pergunta de fundo: ainda sem pauta no ar
+- estado (2026-10-03): aguardando a primeira pauta.
+- recentes:
+FIM
+python3 - "$FIO_DIR" <<'PYF'
+import sys, pathlib
+d = pathlib.Path(sys.argv[1])
+t = (d / "bom.md").read_text().replace("- situação: aberto", "- temas: T-01, T-09\n- situação: aberto")
+(d / "com_tema.md").write_text(t)
+PYF
+printf '%s\n' "$(cat "$FIO_DIR/temas.md")" "" "## T-01 · Repetido" "- desde: 2026-09-30 (ep. 24)" \
+  "- recentes: 2026-09-14 (ep. 12), 2026-09-25 (ep. 21), 2026-09-28 (ep. 22), 2026-09-14 (ep. 12)" > "$FIO_DIR/temas_ruins.md"
+TBOM="$(python3 scripts/confere_fios.py "$FIO_DIR/bom.md" --temas "$FIO_DIR/temas.md" --data 2026-10-05 --episodios "$FIO_DIR/episodes")"
+TRUIM="$(python3 scripts/confere_fios.py "$FIO_DIR/com_tema.md" --temas "$FIO_DIR/temas_ruins.md" --data 2026-10-05 --episodios "$FIO_DIR/episodes")"
+if [[ -z "$TBOM" && "$TRUIM" == *"temas: T-01 repetido"* && "$TRUIM" == *"T-01 sem pergunta de fundo, estado"* \
+      && "$TRUIM" == *"mais de 3 recentes"* && "$TRUIM" == *"2026-09-30"*"não existe"* \
+      && "$TRUIM" == *"F-001 aponta para T-09"* ]]; then
+  ok "conferência dos temas aceita tema do autor sem episódio e aponta problemas e fio órfão"
+else
+  bad "conferência dos temas errada — bom: '${TBOM}' / ruim: '${TRUIM}'"
+fi
+
+# Sugestões de tema: o agente sugere, o autor decide. No futuro, ouvintes também.
+cat > "$FIO_DIR/sugestoes.md" <<'FIM'
+# Temas sugeridos
+
+---
+
+## S-001 · A energia como limite da IA
+- sugerido: 2026-09-28 (ep. 22), pelo agente
+- pergunta de fundo: a falta de energia vai frear a corrida?
+- por quê: três pautas esbarraram nisso
+- situação: pendente
+
+## S-002 · Recusada
+- sugerido: 2026-09-25 (ep. 21), pelo agente
+- pergunta de fundo: x
+- por quê: y
+- situação: recusado
+- motivo: é pauta, não tema
+FIM
+cp "$FIO_DIR/sugestoes.md" "$FIO_DIR/sugestoes_ruins.md"
+printf '\n## S-002 · Repetida\n- sugerido: 2026-09-30 (ep. 24), pelo agente\n- situação: talvez\n' >> "$FIO_DIR/sugestoes_ruins.md"
+SBOM="$(python3 scripts/confere_fios.py "$FIO_DIR/bom.md" --sugestoes "$FIO_DIR/sugestoes.md" --data 2026-10-05 --episodios "$FIO_DIR/episodes")"
+SRUIM="$(python3 scripts/confere_fios.py "$FIO_DIR/bom.md" --sugestoes "$FIO_DIR/sugestoes_ruins.md" --data 2026-10-05 --episodios "$FIO_DIR/episodes")"
+if [[ -z "$SBOM" && "$SRUIM" == *"sugestões: S-002 repetida"* && "$SRUIM" == *"situação desconhecida: talvez"* \
+      && "$SRUIM" == *"S-002 sem pergunta de fundo, por quê"* && "$SRUIM" == *"2026-09-30"*"não existe"* ]]; then
+  ok "conferência das sugestões de tema aceita pendente e recusada, e aponta problemas"
+else
+  bad "conferência das sugestões errada — bom: '${SBOM}' / ruim: '${SRUIM}'"
+fi
+
+# Relatório do autor: o que pede decisão e o que deu errado na semana, num
+# lugar só. Serve ao /relatorio e ao passo automático de sexta.
+REL_DIR="$(mktemp -d)"; mkdir -p "$REL_DIR/episodes"
+printf -- '---\ndate: 2026-09-28\nepisode: 22\ntitle: Pauta da segunda\n---\nx\n' > "$REL_DIR/episodes/2026-09-28.md"
+printf '%s\n' '{"data": "2026-09-28", "estado": "ok", "claude": {"custo_estimado_usd": 3.77}, "elevenlabs": {"creditos": 4237}, "episodio": {"numero": 22, "palavras": 1339, "audio_s": 529}, "indicadores": {"fios_bytes": 4800, "fios_abertos": 1}, "avisos_roteiro": ["fios: F-001 passou do rever até 2026-09-27"]}' \
+  > "$REL_DIR/metricas.jsonl"
+python3 - "$FIO_DIR" "$REL_DIR" <<'PYF'
+import sys, pathlib
+f, r = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2])
+t = (f / "bom.md").read_text().replace("- rever até: 2026-12-31", "- rever até: 2026-10-01")
+t = t.replace("  - 2026-09-28 (ep. 22) — pausa", "  - 2026-09-28 (ep. 22) — pausa\n  - 2026-10-02 (ep. 26) — perícia")
+(r / "fios.md").write_text(t)
+(r / "temas.md").write_text((f / "temas.md").read_text())
+(r / "sugestoes.md").write_text((f / "sugestoes.md").read_text())
+PYF
+METRICAS_ARQ="$REL_DIR/metricas.jsonl" FIOS_ARQ="$REL_DIR/fios.md" TEMAS_ARQ="$REL_DIR/temas.md" \
+SUGESTOES_ARQ="$REL_DIR/sugestoes.md" EPISODIOS_DIR="$REL_DIR/episodes" \
+  python3 scripts/relatorio.py --data 2026-10-02 --saida "$REL_DIR/rel.md" --resumo "$REL_DIR/resumo.json" >/dev/null 2>&1
+REL="$(cat "$REL_DIR/rel.md" 2>/dev/null)"; RESUMO="$(cat "$REL_DIR/resumo.json" 2>/dev/null)"
+if [[ "$REL" == *"2026-W40"* && "$REL" == *"Pauta da segunda"* && "$REL" == *"S-001"*"energia"* \
+      && "$REL" != *"S-002"* && "$REL" == *"F-001"*"2026-10-01"* && "$REL" == *"T-01"* \
+      && "$REL" == *"passou do rever até"* && "$RESUMO" == *'"sugestoes_pendentes": 1'* \
+      && "$RESUMO" == *'"fios_vencidos": 1'* && "$RESUMO" == *'"episodios": 1'* ]]; then
+  ok "relatório do autor junta episódios, decisões pendentes, temas, fios e avisos da semana"
+else
+  bad "relatório do autor errado: ${RESUMO:-sem resumo} / $(printf '%s' "$REL" | head -c 300)"
+fi
+
+# O resumo do relatório vai para o estado.json público, só com contagens: é
+# por ele que o vigia na nuvem avisa no celular que o relatório saiu.
+ESTADO_REL="$(python3 scripts/estado.py --data 2026-10-02 --estado ok --etapa concluido \
+  --relatorio "$REL_DIR/resumo.json" --saida "$REL_DIR/estado.json" 2>/dev/null)"
+rm -rf "$REL_DIR"
+if [[ "$ESTADO_REL" == *'"relatorio": {'* && "$ESTADO_REL" == *'"semana": "2026-W40"'* ]]; then
+  ok "estado.json leva o resumo do relatório semanal, só com contagens"
+else
+  bad "estado.json sem o resumo do relatório: ${ESTADO_REL:-vazio}"
+fi
+
+# O relatório sai no último episódio da semana, que o calendário decide: na
+# semana da Sexta-feira Santa de 2026, é a quinta.
+F_QUI="$(python3 scripts/relatorio.py --fecha-semana 2026-08-27; echo $?)"
+F_SEX="$(python3 scripts/relatorio.py --fecha-semana 2026-08-28; echo $?)"
+F_SANTA="$(python3 scripts/relatorio.py --fecha-semana 2026-04-02; echo $?)"
+if [[ "$F_QUI" == 1 && "$F_SEX" == 0 && "$F_SANTA" == 0 ]]; then
+  ok "relatório fecha a semana na sexta, ou na quinta quando a sexta é feriado"
+else
+  bad "fechamento de semana errado — quinta $F_QUI, sexta $F_SEX, quinta santa $F_SANTA"
+fi
+
+FAKE_SEX="$(mktemp -d)"
+cat > "$FAKE_SEX/claude" <<STUB
+#!/bin/sh
+cat > episodes/2026-08-28.md <<'MD'
+---
+episode: 2
+title: Sexta de teste
+---
+CampsCast, episódio dois. Eu sou um agente de IA. Uma pauta. Ficha: Claude Opus cinco ponto cinco, cópia sintética da voz. Até o próximo episódio.
+MD
+printf '%s' '{"type":"result","is_error":false,"result":"OK episodes/2026-08-28.md 10 00:04","num_turns":1,"usage":{"input_tokens":1}}'
+STUB
+chmod +x "$FAKE_SEX/claude"
+: > "$ESTADO_ARQ"
+CLAUDE_BIN="$FAKE_SEX/claude" bash scripts/run_episode.sh --date 2026-08-28 --only research,relatorio >/dev/null 2>&1 || true
+ESTADO_SEX="$(cat "$ESTADO_ARQ" 2>/dev/null)"; REL_SEX="$(cat memoria/autor/2026-W35.md 2>/dev/null)"
+rm -rf "$FAKE_SEX" memoria/autor/2026-W35.md; rm -f episodes/2026-08-28.md logs/2026-08-28.log logs/2026-08-28-*.json
+if [[ "$REL_SEX" == *"semana 2026-W35"* && "$ESTADO_SEX" == *'"relatorio": {'*'"semana": "2026-W35"'* ]]; then
+  ok "na sexta, o orquestrador grava o relatório do autor e põe o resumo no estado.json"
+else
+  bad "passo do relatório de sexta falhou — relatório: ${REL_SEX:0:80} / estado: ${ESTADO_SEX:-vazio}"
+fi
+
+# Repetição de pauta por link: rede de segurança para quando a lista no prompt
+# tiver teto. As pautas do próprio dia já estão no índice e não contam.
+cat > "$FIO_DIR/indice.json" <<'FIM'
+{"items": [
+  {"episode": "2026-09-14", "title": "Pauta antiga", "source_url": "https://www.openai.com/index/coisa/"},
+  {"episode": "2026-10-05", "title": "Pauta de hoje", "source_url": "https://anthropic.com/news/nova"},
+  {"episode": "2026-08-20", "title": "Mesmo link, mais antiga ainda", "source_url": "https://openai.com/index/coisa"},
+  {"episode": "2026-08-24", "title": "Listagem genérica", "source_url": "https://developers.openai.com/changelog"}
+]}
+FIM
+cat > "$FIO_DIR/roteiro.md" <<'FIM'
+---
+date: 2026-10-05
+topics:
+  - title: Pauta que repete
+    source_name: OpenAI
+    source_url: http://openai.com/index/coisa?utm=x
+  - title: Pauta nova
+    source_name: Anthropic
+    source_url: https://anthropic.com/news/nova
+  - title: Outra notícia na mesma página de listagem
+    source_name: OpenAI
+    source_url: https://developers.openai.com/changelog/
+---
+corpo
+FIM
+REP="$(python3 scripts/confere_repeticao.py "$FIO_DIR/roteiro.md" --indice "$FIO_DIR/indice.json" --data 2026-10-05)"
+if [[ "$(printf '%s\n' "$REP" | grep -c '^repetição: ')" == 1 && "$REP" == *"2026-09-14"*"Pauta antiga"* ]]; then
+  ok "repetição de pauta pelo link, ignorando esquema, www, barra, parâmetros e páginas de listagem"
+else
+  bad "conferência de repetição errada: '${REP}'"
+fi
+
+FAKE_FIO="$(mktemp -d)"
+cat > "$FAKE_FIO/claude" <<STUB
+#!/bin/sh
+cat > episodes/2026-08-25.md <<'MD'
+---
+episode: 2
+topics:
+  - title: Repetida
+    source_url: https://openai.com/index/coisa
+---
+CampsCast, episódio dois. Eu sou um agente de IA. Uma pauta. Ficha: Claude Opus cinco ponto cinco, cópia sintética da voz. Até o próximo episódio.
+MD
+printf '%s' '{"type":"result","is_error":false,"result":"OK episodes/2026-08-25.md 10 00:04","num_turns":1,"usage":{"input_tokens":1}}'
+STUB
+chmod +x "$FAKE_FIO/claude"
+FIOS_ARQ="$FIO_DIR/ruim.md" PAUTAS_INDICE="$FIO_DIR/indice.json" CLAUDE_BIN="$FAKE_FIO/claude" \
+  bash scripts/run_episode.sh --date 2026-08-25 --only research >/dev/null 2>&1 || true
+ULTIMA="$(tail -1 "$METRICAS_ARQ" 2>/dev/null)"
+rm -rf "$FAKE_FIO" "$FIO_DIR"; rm -f episodes/2026-08-25.md logs/2026-08-25.log logs/2026-08-25-*.json
+if [[ "$ULTIMA" == *'"avisos_roteiro": ['*"fios: "* && "$ULTIMA" == *"repetição: "* \
+      && "$ULTIMA" == *'"fios_abertos": '* ]]; then
+  ok "avisos de fios e de repetição chegam ao registro, com o tamanho dos fios"
+else
+  bad "fios ou repetição não chegaram ao registro: ${ULTIMA:-vazio}"
+fi
+
 # ------------------------------------------------------------------- resultado
 printf '\n\033[1m%s\033[0m\n' "Resultado: $PASS ok, $FAIL falha(s)"
 [[ $FAIL -eq 0 ]] || exit 1

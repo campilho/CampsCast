@@ -55,7 +55,10 @@ Decida sozinho e siga em frente. Nunca peça confirmação.
    de uma leitura, e lido aos pedaços deixa buracos. Quando uma candidata
    parecer ligada a alguma linha da lista, busque o detalhe daquela pauta no
    `covered-index.json` com Grep, pelo título ou por um termo dele.
-   Leia também os **5 arquivos mais recentes** de `episodes/`, na íntegra.
+   Leia também os **5 arquivos mais recentes** de `episodes/`, na íntegra;
+   `memoria/temas.md` inteiro — as questões de fundo que o programa acompanha
+   e que não fecham, escolhidas pelo autor; e `memoria/fios.md` inteiro — os
+   fios em aberto, perguntas que já foram ao ar e ainda esperam desfecho.
 
    Os dois têm papéis diferentes. A lista é memória longa e barata: o que já
    foi ao ar, para sempre. Os 5 roteiros são memória curta e rica: o texto
@@ -74,6 +77,15 @@ Decida sozinho e siga em frente. Nunca peça confirmação.
    todo dia percebe a continuidade, e quem chega hoje entende o contexto sem
    precisar voltar. Vale para desdobramento, contraste, confirmação de algo que
    era rumor, e para promessa cumprida ("o que a empresa tinha anunciado saiu").
+
+   **Temas e fios são a memória mais longa do programa.** Os temas também
+   pesam na seleção: entre duas pautas de impacto parecido, prefira a que mexe
+   num tema. Se uma pauta de hoje mexe num fio — cumpre a promessa, desmente a previsão, responde a
+   preocupação —, diga no ar de onde a história vem ("em setembro, quando a
+   OpenAI pausou os modelos, a pergunta era quando a pausa acabaria; hoje veio
+   a resposta"). Antes de citar o passado, releia o roteiro do episódio de
+   origem: o fio aponta para ele, e a regra de fonte primária vale também para
+   a própria memória.
 
    Não force. Se não houver relação real, não invente ponte.
    O diretório `archive/` guarda execuções de teste que foram desfeitas de
@@ -140,6 +152,38 @@ Decida sozinho e siga em frente. Nunca peça confirmação.
    (`# Histórico do backlog — <mês> de <ano>`) e a primeira linha. Lições sobre
    fontes e método não vão para o histórico: vão para as Observações do
    `research/<EPISODE_DATE>.md`.
+
+   Atualize `memoria/temas.md` quando uma pauta de hoje mexer num tema:
+   reescreva o estado em duas ou três linhas, com a data de EPISODE_DATE, e
+   ponha este episódio em "recentes" (com o quarto, o mais antigo sai). **Não
+   crie, renomeie nem retire tema** — isso é do autor. Se perceber uma questão
+   de fundo que volta em várias pautas e mereceria tema, sugira em
+   `memoria/temas-sugeridos.md`, no formato do cabeçalho, com situação
+   "pendente" e as pautas em que ela apareceu. Leia o arquivo antes: não
+   repita sugestão pendente, não ressuscite uma recusada, e não sugira nada
+   se já houver 10 pendentes. Sugestão é rara — uma questão de fundo, não uma
+   pauta forte.
+
+   Atualize `memoria/fios.md`, no formato do cabeçalho dele:
+   - **Marco:** pauta de hoje que mexe num fio ganha uma linha em "marcos",
+     com a data e o número deste episódio. Com o quarto marco, o mais antigo
+     sai.
+   - **Abrir:** só quando o episódio de hoje levantar uma pergunta concreta e
+     verificável, que alguém poderá responder com fato — prazo prometido,
+     resultado esperado, resposta cobrada — e com desfecho esperado em até
+     uns seis meses. Opinião e tendência vaga não viram fio; questão que nunca
+     fecha é tema. Ponha em "temas" os temas a que o fio pertence, se houver. Número seguinte ao maior F-NNN que já existe, "rever até" coerente
+     com o prazo. No máximo 20 fios abertos: para abrir o 21º, feche ou
+     arquive um.
+   - **Fechar:** com desfecho (cumprido, desmentido, resolvido), conte a
+     história no ar, mude a situação e mova o fio inteiro para o fim de
+     `memoria/fios-fechados/<ano de EPISODE_DATE>.md`, com uma linha
+     "fechado: EPISODE_DATE (ep. N) — <desfecho>". Crie o arquivo do ano se
+     não existir.
+   - **Arquivar:** passou do "rever até" sem novidade, estenda a data se o
+     assunto segue vivo ou mova para os fechados como arquivado.
+   - Registre no `research/<EPISODE_DATE>.md`, em Observações, o que mudou nos
+     fios.
 
 8. Escreva `research/<EPISODE_DATE>.md` — o log de pesquisa. Ele existe para que
    um humano consiga auditar suas decisões editoriais depois, sem ter que
