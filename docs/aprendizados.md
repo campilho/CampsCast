@@ -151,6 +151,25 @@ O comportamento que se queria ver ficou válido; o custo, não. **Ensaio que
 mede custo precisa do ambiente de produção, não só do código de produção:**
 `env -i` com o que o plist define.
 
+### Instalar uma ferramenta para você é instalar para o agente de produção
+
+O agente do podcast é um `claude -p` que roda no Mac do autor, e herda a
+configuração de usuário do Claude Code: skills em `~/.claude/skills` e
+servidores MCP em `~/.claude.json`. Em 04/10, configurando a AWS para as
+sessões de desenvolvimento, o assistente da AWS CLI instalou 24 skills e um
+servidor MCP da AWS para o Mac inteiro. Ninguém pediu isso para o podcast, mas
+na madrugada seguinte o agente de produção teria tudo à mão.
+
+Pego antes de ir ao ar porque a instalação foi lida linha por linha. O
+orquestrador passou a chamar o agente com `--strict-mcp-config` (só os
+servidores declarados, e não há nenhum) e `--disable-slash-commands` (nenhuma
+skill). Conferido com o CLI de verdade, no ambiente do launchd, e não só pelos
+argumentos: a lista de skills sumiu, e a primeira chamada caiu de 27,1 mil
+para 23,7 mil tokens — o agente carregava skills que nunca usou.
+
+**O ambiente do agente de produção é configuração, não acaso:** declare o que
+ele recebe, em vez de herdar o que o dono da máquina instalou por último.
+
 ### O agente conta palavras sem ferramenta, e conta certo
 
 Ele não tem Bash, então não roda `wc -w`; as transcrições mostram a tentativa

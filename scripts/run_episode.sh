@@ -336,6 +336,9 @@ $PAUTAS"
 
     espera_rede
 
+    # --strict-mcp-config e --disable-slash-commands: o agente do podcast não
+    # herda servidores MCP nem skills da configuração de usuário do Claude Code.
+    # Em 04/10 o Agent Toolkit for AWS instalou os dele para o Mac inteiro.
     set +e
     AGENT_RAW="$(
       "$CLAUDE_BIN" -p "$PROMPT_AGENTE" \
@@ -344,6 +347,7 @@ $PAUTAS"
         --output-format json \
         --permission-mode acceptEdits \
         --allowedTools "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch" \
+        --strict-mcp-config --disable-slash-commands \
         2>>"$LOG"
     )"
     AGENT_RC=$?

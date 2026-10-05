@@ -77,10 +77,12 @@ mil tokens da ferramenta Read.
       `main`, publicando num bucket de testes; uma semana em paralelo,
       comparando roteiro, custo e horário. O crédito de US$ 250 não paga a
       rotina e fica para o desenvolvimento na nuvem. Etapas:
-      - [ ] **P0 — credencial da AWS que não é a raiz** (autor): MFA na raiz,
-            IAM Identity Center com usuário administrador, conjunto de
-            permissões `CampsCastAgente` e perfil `campscast-agente` na CLI;
-            depois o plugin `aws-core` do Agent Toolkit for AWS
+      - [x] **P0 — credencial da AWS que não é a raiz** (04/10): portal
+            `campilho.awsapps.com/start`, usuário `fernando` com
+            `AdministratorAccess` e `CampsCastAgente`, perfil
+            `campscast-agente` na CLI, conferido (AccessDenied fora da regra).
+            Agent Toolkit instalado para o Mac todo; o pipeline foi isolado
+            dele. Falta o `uv`, para o servidor MCP da AWS subir
       - [ ] **P1 — o pipeline local passa a comitar e enviar** o que produz
             (lista fechada de caminhos), com teste e ensaio
       - [ ] **P2 — bucket `campscast-piloto`** e usuário que só grava nele

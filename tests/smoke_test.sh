@@ -1826,7 +1826,27 @@ else
   bad "aviso do backlog não chegou ao registro: ${ULTIMA:-vazio}"
 fi
 
-head_ "20. Fios em aberto e repetição de pauta"
+head_ "20. Isolamento do agente e fios em aberto"
+
+# O agente do podcast herda a configuração de usuário do Claude Code. Em 04/10,
+# o Agent Toolkit for AWS instalou para o Mac inteiro um servidor MCP da AWS e
+# 24 skills; sem isolamento, o agente de produção passaria a tê-los. Ele não
+# usa MCP nem skill: só os servidores declarados (nenhum) e nenhuma skill.
+FAKE_ISO="$(mktemp -d)"
+cat > "$FAKE_ISO/claude" <<STUB
+#!/bin/sh
+printf '%s\n' "\$@" > "$FAKE_ISO/args.txt"
+printf '%s' '{"type":"result","is_error":true,"result":"parado de propósito","usage":{}}'
+STUB
+chmod +x "$FAKE_ISO/claude"
+CLAUDE_BIN="$FAKE_ISO/claude" bash scripts/run_episode.sh --date 2026-08-25 --only research >/dev/null 2>&1 || true
+ARGS_ISO="$(cat "$FAKE_ISO/args.txt" 2>/dev/null)"
+rm -rf "$FAKE_ISO"; rm -f logs/2026-08-25.log logs/2026-08-25-*.json
+if [[ "$ARGS_ISO" == *"--strict-mcp-config"* && "$ARGS_ISO" == *"--disable-slash-commands"* ]]; then
+  ok "agente de produção sem servidores MCP nem skills da configuração de usuário"
+else
+  bad "agente de produção herda MCP ou skills do usuário — argumentos: $(printf '%s' "$ARGS_ISO" | grep -- '^--' | tr '\n' ' ')"
+fi
 
 # Fios em aberto (ADR 0008): preocupações, promessas e previsões acompanhadas
 # até o desfecho. A conferência registra, não bloqueia.

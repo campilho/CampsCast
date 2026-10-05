@@ -246,6 +246,31 @@ condição não fecham.
    (`AWS_PROFILE=campscast-agente`), e o arquivo de regras lido antes de entrar
    no `CLAUDE.md`.
 
+**Feito em 04/10.** IAM Identity Center ativado (instância `campilho`, portal
+`https://campilho.awsapps.com/start`, organização criada com esta conta como
+principal); usuário `fernando` com MFA e dois conjuntos de permissões,
+`AdministratorAccess` (sessão de 4 horas) e `CampsCastAgente` (`ViewOnlyAccess`
+mais `s3:*` só em `campscast-piloto*`); AWS CLI 2.37.9 no Mac; perfil
+`campscast-agente` em `~/.aws/config`. Conferido: o perfil assume o papel
+`CampsCastAgente`, enxerga o bucket `campscast` e recebe AccessDenied ao criar
+bucket fora da regra. A raiz já tinha MFA (app e passkey) e nenhuma chave de
+acesso.
+
+O assistente `aws configure sso` ofereceu, ao final, instalar o Agent Toolkit,
+e instalou **para o Mac inteiro**: 24 skills da AWS em `~/.claude/skills` (e
+para Codex e Kiro) e o servidor MCP `aws-mcp` em `~/.claude.json` (e para
+Gemini CLI e Kiro), sem perfil — apontado depois para `campscast-agente`. O
+servidor só sobe com o `uv` instalado. Antes de cada sessão de trabalho com a
+AWS: `aws sso login --profile campscast-agente` (a sessão dura 4 horas).
+
+**Efeito colateral no pipeline, corrigido no mesmo dia:** o `claude -p` do
+podcast herda a configuração de usuário, e passaria a carregar as skills e o
+servidor da AWS. O orquestrador agora chama o agente com `--strict-mcp-config`
+e `--disable-slash-commands`. Medido com o CLI no ambiente do launchd: sem as
+opções, a lista de skills tinha 10,5 mil caracteres com as da AWS e a primeira
+chamada, 27,1 mil tokens; com elas, nenhuma skill, nada da AWS, e 23,7 mil
+tokens.
+
 **O que não muda:** o pipeline de produção segue sem AWS CLI, com o usuário
 que só grava no bucket (ADR 0002). O Agent Toolkit é para as sessões de
 desenvolvimento no Mac; na nuvem não funcionaria, porque o login interativo
@@ -259,7 +284,7 @@ dias é o teto configurável da sessão interativa do IAM Identity Center.
 
 | Etapa | O quê | Quem |
 |---|---|---|
-| P0 | Credencial da AWS que não é a raiz, para o autor e para o agente (seção acima) | autor, com o passo a passo |
+| P0 | Credencial da AWS que não é a raiz, para o autor e para o agente (seção acima) — **feito em 04/10** | autor, com o passo a passo |
 | P1 | Etapa **versiona** no pipeline local, com teste; ensaio; ir ao ar | agente |
 | P2 | Bucket `campscast-piloto` (agente, com o perfil da P0) e o usuário que só grava nele (autor, com a política que o agente escreve) | juntos |
 | P3 | `tts.py` sem chave (credencial gerenciada), `BASE_URL` no `publish.py`, perfil `piloto` no orquestrador, `compara_piloto.py` | agente |
