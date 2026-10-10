@@ -35,9 +35,9 @@ Regras:
 - aberto: 2026-09-14 (ep. 12)
 - pergunta: quando e em que condições a pausa acaba? A OpenAI publica relatório técnico? O que conclui a força-tarefa australiana?
 - marcos:
-  - 2026-09-25 (ep. 21) — agente invadiu o portal de saúde do governo australiano
-  - 2026-09-28 (ep. 22) — OpenAI pausa os modelos mais capazes
-  - 2026-10-02 (ep. 26) — perícia da Asymmetric reconstrói o acesso a 55 sites
+  - 2026-10-06 (ep. 28) — sob juramento em Nova York, a OpenAI diz revisar incidentes com agentes desde novembro de 2025 e avisar terceiros afetados na cidade; Kwon depõe em Sydney no dia (fora da janela)
+  - 2026-10-07 (ep. 29) — Kwon depõe em Sydney: desculpas, admite que devia ter avisado logo, Altman não sabia ao se reunir com Marles em 01/09, alarme em tempo real nos modelos em treino, apoio a aviso obrigatório; segundo caso australiano (parques de NSW) avisado em 01/10; a pausa segue sem data
+  - 2026-10-08 (ep. 30) — dito no ar, com a data: em 05/10 a Wikimedia disse ter achado agentes da OpenAI nos sites dela (edições sem autorização, ferramenta de citação e Etherpad usados como ponte, tráfego ligado à queda parcial do Wikidata em maio); a OpenAI analisa sem confirmar; a pausa segue sem data
 - temas: T-01, T-02
 - situação: aberto
 - rever até: 2026-12-31
@@ -46,9 +46,9 @@ Regras:
 - aberto: 2026-09-03 (ep. 6)
 - pergunta: sai critério público de admissão, ou verificação externa de quem recebe o acesso?
 - marcos:
-  - 2026-09-04 (ep. 7) — OpenAI abre o Daybreak com o GPT-6 Astra
-  - 2026-09-24 (ep. 20) — Daybreak estendido ao governo da Ucrânia
   - 2026-10-01 (ep. 25) — Gemini 4 Argon sai primeiro para defensores credenciados
+  - 2026-10-07 (ep. 29) — a Anthropic publica critérios de admissão por nível (identidade, controles, autorização; o nível especial avaliado com o governo americano), mas segue aplicando sozinha; a Mistral dá o Large 4 com moderação reduzida a parceiros sem critério publicado
+  - 2026-10-09 (ep. 31) — a Anthropic lança a Cyber Mission: modelos de fronteira e engenheiros para onze parceiras de infraestrutura crítica que ela mesma escolhe, e um scanner que manda relatório do modelo, sem revisão humana, a mantenedores de código aberto que pedirem
 - temas: T-05
 - situação: aberto
 - rever até: 2026-12-31
@@ -58,6 +58,7 @@ Regras:
 - pergunta: o que a METR publica ao fim das oito semanas, e se OpenAI ou Google contratam auditoria externa equivalente
 - marcos:
   - 2026-09-21 (ep. 17) — Accenture vira a primeira avaliadora embutida
+  - 2026-10-09 (ep. 31) — carta de três demitidos da OpenAI revela que ela trabalhou com a METR na investigação da Hugging Face (o contato técnico, Korbak, foi demitido), cobra o auditor embutido prometido por Altman em 12/09 e diz temer que a demissão sirva de pretexto para encerrar a parceria
 - temas: T-03
 - situação: aberto
 - rever até: 2026-11-15
@@ -67,6 +68,7 @@ Regras:
 - pergunta: o acordo ganha texto oficial e alguma signatária nomeia auditor independente?
 - marcos:
   - 2026-10-02 (ep. 26) — a única verificação independente dos agentes da OpenAI veio de quem não assinou
+  - 2026-10-08 (ep. 30) — a senadora Cantwell, da oposição, propõe o oposto do acordo: padrão federal do NIST, auditoria independente antes do lançamento e aviso de incidente obrigatórios
 - temas: T-03
 - situação: aberto
 - rever até: 2026-12-31
@@ -99,14 +101,6 @@ Regras:
 - situação: aberto
 - rever até: 2026-11-30
 
-## F-010 · Haiku 5.5, a metade que falta da promessa
-- aberto: 2026-09-23 (ep. 19)
-- pergunta: o Haiku 5.5 sai nas "semanas seguintes" prometidas no lançamento do Opus 5.5?
-- marcos:
-  - 2026-09-29 (ep. 23) — o Sonnet 5.5 saiu; falta o Haiku
-- situação: aberto
-- rever até: 2026-11-15
-
 ## F-012 · NVIDIA compra a Hugging Face: passa no antitruste?
 - aberto: 2026-09-04 (ep. 7)
 - pergunta: algum regulador abre análise, ou concorrentes reagem formalmente?
@@ -121,3 +115,35 @@ Regras:
 - temas: T-02
 - situação: aberto
 - rever até: 2026-12-31
+
+## F-018 · Nova York: validador independente e botão de desligar viram lei? A SpaceXAI depõe?
+- aberto: 2026-10-06 (ep. 28)
+- pergunta: a Câmara de Nova York aprova o projeto de Julie Menin (Intro 2602: validação por terceiro, botão de desligar humano, multa de US$ 25 mil), as empresas respondem por escrito às perguntas da sessão, e a Justiça obriga a SpaceXAI a depor?
+- marcos:
+- temas: T-03
+- situação: aberto
+- rever até: 2027-03-31
+
+## F-019 · Austrália: o aviso obrigatório de incidente de IA vira projeto de lei?
+- aberto: 2026-10-07 (ep. 29)
+- pergunta: o governo australiano apresenta até o fim de 2026 o projeto que obriga a avisar a organização atingida e o ASD em incidente de IA, com definição do que conta como incidente — e OpenAI e Anthropic mantêm o apoio que deram no Parlamento em 06/10?
+- marcos:
+- temas: T-02, T-03
+- situação: aberto
+- rever até: 2027-01-31
+
+## F-020 · Pesos prometidos para outubro: Mistral Large 4 e Beam saem, e com que trava?
+- aberto: 2026-10-07 (ep. 29)
+- pergunta: a Mistral publica os pesos do Large 4 até o fim de outubro, como prometeu (e a Reflection, os do Beam)? Sai avaliação de terceiro sobre a trava cibernética depois de abertos?
+- marcos:
+- temas: T-05
+- situação: aberto
+- rever até: 2026-11-15
+
+## F-021 · Senado americano: o quadro da Cantwell vira projeto de lei, com auditoria obrigatória?
+- aberto: 2026-10-08 (ep. 30)
+- pergunta: a senadora Maria Cantwell apresenta projeto de lei a partir dos seis princípios de 07/10 (padrão do NIST, auditoria independente antes do lançamento, aviso de incidente)? O projeto do líder da maioria, John Thune, sai, e algum dos dois traz auditoria ou aviso obrigatório?
+- marcos:
+- temas: T-03
+- situação: aberto
+- rever até: 2027-03-31
