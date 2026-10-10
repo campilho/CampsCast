@@ -2038,6 +2038,13 @@ if [[ "$REL_SEX" == *"semana 2026-W35"* && "$ESTADO_SEX" == *'"relatorio": {'*'"
 else
   bad "passo do relatório de sexta falhou — relatório: ${REL_SEX:0:80} / estado: ${ESTADO_SEX:-vazio}"
 fi
+# Em 09/10 o relatório saiu sem o próprio episódio de sexta: era gerado antes de
+# o registro do dia ser gravado, que só fecha no fim da execução.
+if [[ "$REL_SEX" == *"| 28/08 | 2 | Sexta de teste |"* ]]; then
+  ok "o relatório de sexta inclui o episódio do próprio dia"
+else
+  bad "relatório de sexta sem o episódio do dia — ${REL_SEX:0:300}"
+fi
 
 # Repetição de pauta por link: rede de segurança para quando a lista no prompt
 # tiver teto. As pautas do próprio dia já estão no índice e não contam.

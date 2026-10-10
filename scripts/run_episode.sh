@@ -102,7 +102,7 @@ die() { ULTIMO_ERRO="$*"; log "ERRO: $*"; exit 1; }
 # Nunca derruba o pipeline: falha no registro vai para o log e segue.
 T_INICIO="$(date +%s)"
 REGISTRAR=0; CONCLUIDO=0; ULTIMO_ERRO=""; ETAPA_ATUAL="inicio"
-AVISOS_ROTEIRO=""; ROTEIRO_CONFERIDO=0
+AVISOS_ROTEIRO=""; ROTEIRO_CONFERIDO=0; GERAR_RELATORIO=0
 T_PESQUISA=""; T_NARRACAO=""; T_PUBLICACAO=""; T_AVISO=""
 BASE_REGISTRO="logs/${EPISODE_DATE}-${T_INICIO}"
 finaliza() {
@@ -117,6 +117,20 @@ finaliza() {
       --indicadores "${BASE_REGISTRO}-indicadores.json" --erro "$ULTIMO_ERRO" \
       --conferido "$ROTEIRO_CONFERIDO" --avisos "$AVISOS_ROTEIRO" \
       >>"$LOG" 2>&1 || true
+    # Relatório do autor: junta o que pede decisão e o que deu errado na semana
+    # (scripts/relatorio.py). Não bloqueia nada: falhar aqui não derruba um
+    # episódio já publicado. O resumo, só com contagens, vai no estado.json, e
+    # o vigia na nuvem avisa no celular.
+    if [[ $GERAR_RELATORIO -eq 1 && "$estado" == "ok" ]]; then
+      local semana
+      semana="$(python3 -c "import datetime as d; a,s,_=d.date.fromisoformat('$EPISODE_DATE').isocalendar(); print(f'{a}-W{s:02d}')")"
+      if python3 scripts/relatorio.py --data "$EPISODE_DATE" --saida "memoria/autor/${semana}.md" \
+          --resumo "${BASE_REGISTRO}-relatorio.json" >/dev/null 2>>"$LOG"; then
+        log "Relatório do autor: memoria/autor/${semana}.md"
+      else
+        log "AVISO: relatório do autor falhou; o episódio não é afetado."
+      fi
+    fi
     # Estado público no S3. É o único aviso que chega a quem está longe do Mac:
     # notificação do macOS morre na tela de casa. Sucesso também sobe — vigia
     # que só enxerga fracasso não distingue "falhou" de "nem chegou a rodar".
@@ -458,18 +472,11 @@ else
 fi
 
 # ---------- relatório do autor (último episódio da semana) ----------
-# Junta o que pede decisão e o que deu errado na semana (scripts/relatorio.py).
-# Não bloqueia nada: falhar aqui não derruba um episódio já publicado. O resumo,
-# só com contagens, vai no estado.json, e o vigia na nuvem avisa no celular.
+# Só marca: o relatório é gerado em finaliza(), depois de o registro do dia ser
+# gravado — antes disso o episódio de sexta ficava fora da tabela (09/10).
 if stage_enabled relatorio && [[ $DRY_RUN -eq 0 ]] \
     && python3 scripts/relatorio.py --fecha-semana "$EPISODE_DATE" 2>>"$LOG"; then
-  SEMANA="$(python3 -c "import datetime as d; a,s,_=d.date.fromisoformat('$EPISODE_DATE').isocalendar(); print(f'{a}-W{s:02d}')")"
-  if python3 scripts/relatorio.py --data "$EPISODE_DATE" --saida "memoria/autor/${SEMANA}.md" \
-      --resumo "${BASE_REGISTRO}-relatorio.json" >/dev/null 2>>"$LOG"; then
-    log "Relatório do autor: memoria/autor/${SEMANA}.md"
-  else
-    log "AVISO: relatório do autor falhou; o episódio não é afetado."
-  fi
+  GERAR_RELATORIO=1
 fi
 
 # ---------- 4. notificação ----------

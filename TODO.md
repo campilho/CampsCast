@@ -1,7 +1,7 @@
 # TODO
 
 Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
-[PROJETO.md](PROJETO.md). Atualizada em 03/10/2026, à noite.
+[PROJETO.md](PROJETO.md). Atualizada em 10/10/2026.
 
 ## Semana de 05/10 — acompanhar o que entrou em 03/10
 
@@ -9,22 +9,33 @@ Em 03/10 entrou de uma vez: lista de pautas no prompt, histórico do backlog
 fora da leitura, temas, fios, sugestões de tema, conferência de repetição e o
 relatório do autor. Tudo ensaiado, mas um ensaio é um dia só.
 
-- [ ] **Antes de segunda — despertar do Mac às 04:55** (precisa de senha, só
+- [x] **Antes de segunda — despertar do Mac às 04:55** (precisa de senha, só
       o autor roda): `sudo pmset repeat wakeorpoweron MTWRF 04:55:00`. O
       launchd já foi para 05:00, com repescagem às 06:00 e 07:00, e o vigia
-      para 07:30 (o agendador marcou 07:36)
-- [ ] **Segunda, 05/10 — primeiro episódio com a memória nova.** Depois das
+      para 07:30 (o agendador marcou 07:36). Conferido em 10/10: `pmset -g
+      sched` mostra "wakepoweron at 4:55AM weekdays only"
+- [x] **Segunda, 05/10 — primeiro episódio com a memória nova.** Depois das
       07:30: o vigia disse "tudo certo"? Olhar os avisos no registro
       (`python3 scripts/registro.py mostra`) e se o agente mexeu em temas,
-      fios ou sugestões (Observações do `research/2026-10-05.md`)
-- [ ] **Quinta, 08/10 — custo da memória nova em produção:**
+      fios ou sugestões (Observações do `research/2026-10-05.md`). Semana
+      toda `ok`, de 12 a 15 minutos, Mac sem dormir, nenhum aviso
+- [x] **Quinta, 08/10 — custo da memória nova em produção:**
       `python3 scripts/memoria_custo.py --desde 2026-10-05`, contra a semana
       de 28/09 (índice 13%, backlog 11%, mediana de US$ 4,41). Se o custo
-      subiu ou alguma pauta repetiu, revisar antes do C2
-- [ ] **Sexta, 09/10 — primeiro relatório do autor automático:** conferir
+      subiu ou alguma pauta repetiu, revisar antes do C2. **Medido em 10/10:**
+      mediana de US$ 4,87 (+11%), semana de US$ 25,13 contra 21,60 (+16%). Não
+      é a memória: índice + backlog + fios + roteiros caíram de ~42% para
+      ~26% do cache lido. Subiram os turnos (mediana 95 → 117), a saída
+      (68 → 77 mil tokens, o agente agora escreve fios, temas e sugestões) e
+      a base do prompt (20% → 28–31%; a lista de pautas cresce todo dia, ver
+      C4b). Nenhuma pauta repetida. Cinco dias é pouco: medir de novo com o C2
+- [x] **Sexta, 09/10 — primeiro relatório do autor automático:** conferir
       `memoria/autor/2026-W41.md` e se o push do vigia trouxe a linha
       "RELATÓRIO DA SEMANA". Pedir `/relatorio` e decidir o que estiver
-      pendente
+      pendente. Saiu, mas **sem o episódio de sexta** na tabela: era gerado
+      antes de o registro do dia ser gravado. Corrigido em 10/10 (agora roda
+      no `finaliza`, depois do registro), com teste; W41 refeito. Pendentes:
+      sugestões S-002 e S-003
 - [x] **Novidade na abertura** (04/10) — a memória nova, de 05/10 a 09/10 em
       `config/novidades.json`: "a partir de hoje estou testando uma memória
       nova: lembro de tudo o que já passou por aqui e fico de olho nas
@@ -33,6 +44,11 @@ relatório do autor. Tudo ensaiado, mas um ensaio é um dia só.
       copiar o repositório no estado de um dia, rodar com `env -i` e o `PATH`
       do plist, desviar registro e estado. Sem o ambiente do launchd, o custo
       do ensaio não vale (ver `docs/aprendizados.md`)
+
+- [ ] **Terça, 13/10, 11h–12h — post no LinkedIn sobre a memória nova.**
+      Rascunho em `privado/divulgacao.md` (10/10). O autor posta à mão e
+      responde os comentários na primeira hora. Audiência de 10/10 já
+      anotada em `privado/audiencia.md`, para comparar na sexta, 16/10
 
 ## Fase 3 — memória do agente
 
@@ -126,6 +142,13 @@ mil tokens da ferramenta Read.
       já existe** no `relatorio.py`: em 03/10, `openai.com` falhou 7 vezes na
       semana e 12 nas quatro anteriores, `x.ai` 3 e 8. Falta decidir se o
       roteiro de pesquisa muda para essas fontes
+- [ ] **Pronúncia de "Anthropic"** — o autor ouviu errado na maior parte dos
+      dias da semana de 05/10 (51 ocorrências nos roteiros). Em 12/09 o erro
+      parecia raro e ficou só a regra do artigo, com `config/pronuncia.json`
+      vazio (`docs/aprendizados.md`, "Erro de pronúncia não se reproduz sob
+      encomenda"). Próximo passo: áudio de teste com ~10 frases variadas por
+      grafia candidata (as de `privado/pronuncia/anthropic-candidatos.md`),
+      o autor conta os acertos, a vencedora entra no `pronuncia.json`
 
 ## Fase 3 — feedback e site
 
@@ -136,6 +159,31 @@ mil tokens da ferramenta Read.
       (04/10): uma página com player do último episódio, como funciona,
       números, últimos episódios, temas, história, formulário e seção técnica;
       etapas S1 a S5 e quatro decisões abertas. Visual com o Claude Design
+- [ ] **Estúdio em miniatura, ao vivo no site** — projeto à parte, feito em
+      paralelo (10/10): um estúdio isométrico em 3D, com avatares para os
+      agentes que montam o podcast trabalhando ao longo do dia, para as pessoas
+      assistirem. Ainda sem repositório; o autor avisa quando houver. Protótipo "Estudio Podcast 3D" no Claude Design: Jornalista,
+      Editor, Locutor (cabine com "ON AIR"), Artista e Zelador; quadro "Pauta
+      do dia", balão de pensamento ("confirmar na fonte oficial"), relógio,
+      barra "Episódio de amanhã", custo e tokens do dia. **O que cabe a este
+      repositório:** o contrato de dados que o estúdio lê. Hoje já existem
+      `estado.json` no S3 (como terminou a execução), o registro de custo
+      (`metricas/execucoes.jsonl`) e o rastro da pesquisa (`watch_agent.py`,
+      `research_trail.py`). Decisões abertas:
+      - **papéis:** quem é quem no pipeline. Primeira ideia, nada fechado: Jornalista = pesquisa,
+        Editor = roteiro e conferências, Locutor = `tts.py`, Artista = capa
+        (quando houver capa por episódio), Zelador = vigia e conferências de
+        memória
+      - **tempo:** primeira ideia do autor (10/10): o pipeline continua de
+        madrugada, e o estúdio **emula** o dia de trabalho, como ficção. No
+        futuro o próprio ambiente simulado produziria o podcast, mas oito horas
+        de agente ligado gastam muito token — a IA é muito mais rápida que
+        gente. Caminho possível: um de-para do tempo da IA para o tempo humano.
+        Em aberto
+      - **o que é público:** buscas, fontes lidas e custo podem ir; nada de
+        `privado/` nem de dados de audiência
+      - **formato:** um `ao-vivo.json` (ou um por dia) publicado no S3 junto do
+        `estado.json`, versionado, para os dois projetos andarem separados
 - Vídeos e regravação da voz: ver Fase 3 no `PROJETO.md`
 
 ## Recorrente
@@ -178,7 +226,7 @@ mil tokens da ferramenta Read.
 
 ## Datas fixas
 
-- [ ] **Sexta, 09/10/2026 — primeiro relatório do autor automático**
+- [x] **Sexta, 09/10/2026 — primeiro relatório do autor automático**
 - [ ] **Até 17/10/2026 — ler os primeiros resumos semanais** (C2), de 24/08 a
       09/10, antes de o agente passar a usá-los; depois, só a conferência
 - [ ] **05/11/2026, 04:59 — o crédito de US$ 250 da nuvem expira.** Não paga
