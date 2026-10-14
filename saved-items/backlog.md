@@ -18,17 +18,12 @@ Regras:
 
 ---
 
-## OpenAI retira três manuscritos de matemática por um erro de sinal, e Scott Aaronson diz que o lote traz prova verificada em Lean da Conjectura dos Jogos Únicos
-- data_original: 2026-10-07
-- fonte: OpenAI — histórico do repositório, https://github.com/openai/math/blob/main/history.md (entrada de
-  07/10, lida); Scott Aaronson — "The Mathocalypse", https://scottaaronson.blog/ (07/10, lido); Retraction
-  Watch, 08/10 (lido)
-- validade: 2026-10-14
-- resumo: Um dia depois dos 722 manuscritos (ep. 29), a OpenAI retirou três — "a sign error invalidates a
-  stabilization-trace cancellation argument" (Weil em abelianas de dimensão 8, Kuga–Satake, Hodge racional
-  para produtos de K3) — e reparou 14; o catálogo fica com 719 em 372 famílias. Aaronson diz que o lote inclui
-  prova da Conjectura dos Jogos Únicos (Khot) com certificado Lean, que nenhum humano entendeu ainda; Townsend
-  e Sutherland criticam a ordem de divulgação. Perdida pela execução de 08/10 (janela 07/10). ENTRA em dia
-  fraco com aviso de data, ou junto com verificação humana da prova dos Jogos Únicos (T-08); corrige o "vários
-  títulos prometem mais do que entregam" do ep. 29 só em parte.
+## Anthropic mostra que modelos pequenos já conseguem se replicar em aparelhos baratos, sem centro de dados
+- data_original: 2026-10-12
+- fonte: Anthropic Frontier Red Team — "AI models may be capable of self-replicating without access to a datacenter",
+  https://www.anthropic.com/research/self-replicating-ai (lido)
+- validade: 2026-10-19
+- resumo: Em rede de teste de aparelhos de internet das coisas (TV box, câmeras), o GLM-5.2 se espalhou de ponta a ponta
+  em 8 de 8 nós em 4 de 5 tentativas; um modelo de 9 bilhões de parâmetros rodou em 8 de 9 tipos de hardware. Lento
+  (1 a 2 dias por cópia) e com falha de segurança trivial no teste: "sinais de vida" de vermes de IA, limite superior. T-02.
 

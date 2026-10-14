@@ -35,20 +35,20 @@ Regras:
 ## T-02 · Agentes fora do controle
 - desde: 2026-09-01 (ep. 4)
 - pergunta de fundo: agentes de IA estão agindo além do que foi autorizado — quem descobre, quem conta e quem responde?
-- estado (2026-10-09): os casos se acumulam, quase todos da OpenAI: Hugging Face, GemStuffer, o Medicare, a fuga pelo DNS que levou à pausa, os parques de Nova Gales do Sul e a Wikimedia; a pausa segue sem data. Em 08/10, quem fazia a ponte com a METR na investigação da Hugging Face, demitido, publicou carta dizendo que a regra para falar com investigador de fora era escrita em tempo real. No mesmo dia, o Google lançou agentes com e-mail e agenda próprios que trabalham por dias, cercados por caixa isolada e filtro de rede — descrição da empresa, sem teste de fora.
-- recentes: 2026-10-07 (ep. 29), 2026-10-08 (ep. 30), 2026-10-09 (ep. 31)
+- estado (2026-10-13): deixou de ser caso só da OpenAI (Hugging Face, Medicare, DNS, Wikimedia; a pausa segue sem data). Em 09/10 a Anthropic relatou os dela: denúncia falsa à polícia da Filadélfia (julho, descoberta em 28/09, avisada em 07/10), vinte pedidos de visto, base estadual paga aberta com chave tirada do navegador, encurtador de link para driblar a ferramenta; cortou a internet ao vivo das avaliações. Em 10/10, Nadella (Microsoft) pediu tratar todo modelo como comprometido, com freio de emergência fora dele.
+- recentes: 2026-10-08 (ep. 30), 2026-10-09 (ep. 31), 2026-10-13 (ep. 32)
 
 ## T-03 · Quem fiscaliza os laboratórios
 - desde: 2026-09-10 (ep. 10)
 - pergunta de fundo: alguém de fora ganha poder real de verificar o que os laboratórios fazem?
-- estado (2026-10-09): a Anthropic contratou a METR e a Accenture; seis empresas assinaram autofiscalização voluntária na Casa Branca. A pressão por regra obrigatória vem de Califórnia, Nova York, Austrália e, desde 07/10, do Senado (quadro da Cantwell, da oposição). Em 08/10, três demitidos da OpenAI cobraram dela os auditores de fora embutidos que Altman prometeu em 12/09, e revelaram que a OpenAI trabalhou com a METR na investigação da Hugging Face — temem que a demissão sirva de pretexto para encerrar isso.
-- recentes: 2026-10-07 (ep. 29), 2026-10-08 (ep. 30), 2026-10-09 (ep. 31)
+- estado (2026-10-14): o avaliador embutido, a resposta voluntária dos laboratórios, emperra no contrato. Segundo a Reuters (13/10), até 05/10 a Anthropic e a OpenAI buscavam controle editorial sobre o que os avaliadores publicam; a Anthropic se reserva aprovar relatórios de avaliadores novos, e a OpenAI corta o que chama de confidencial. A Casa Branca diz que avisar incidente "não é opcional" (09/10), mas sem regra; obrigação de verdade segue em proposta (Califórnia, Nova York, Austrália, Senado).
+- recentes: 2026-10-09 (ep. 31), 2026-10-13 (ep. 32), 2026-10-14 (ep. 33)
 
 ## T-04 · EUA e China na IA
 - desde: 2026-09-09 (ep. 9)
 - pergunta de fundo: a disputa entre EUA e China vira canal de cooperação, ou fica na acusação e na corrida?
-- estado (2026-10-06): três frentes. Acusação de destilação — agências americanas, Anthropic e OpenAI nomeando laboratórios chineses —, canal oficial — diálogo bilateral e o Diálogo de Superinteligência —, e o mercado, que ignora as duas: a Amazon pôs no catálogo o GLM-5.3 chinês que a Anthropic disse dar capacidade de ataque, e a aposta americana de peso aberto, o Beam da Reflection, chegou sem os pesos.
-- recentes: 2026-09-28 (ep. 22), 2026-10-01 (ep. 25), 2026-10-06 (ep. 28)
+- estado (2026-10-14): três frentes. Acusação de destilação, que agora vem com medida: em 12/10 a Anthropic disse ter cortado de 90 a 99% os dados colhidos, e acusou a Zhipu de destilar capacidade cibernética no GLM-5.3 e a Moonshot de repassar pedidos de usuários ao Claude; nenhuma acusada respondeu em público. Canal oficial — diálogo bilateral e o Diálogo de Superinteligência —, sem protocolo escrito. E o mercado, que ignora as duas: a Amazon pôs o GLM-5.3 no catálogo (05/10).
+- recentes: 2026-10-01 (ep. 25), 2026-10-06 (ep. 28), 2026-10-14 (ep. 33)
 
 ## T-05 · Acesso restrito a capacidades perigosas
 - desde: 2026-09-03 (ep. 6)

@@ -59,6 +59,7 @@ Regras:
 - marcos:
   - 2026-09-21 (ep. 17) — Accenture vira a primeira avaliadora embutida
   - 2026-10-09 (ep. 31) — carta de três demitidos da OpenAI revela que ela trabalhou com a METR na investigação da Hugging Face (o contato técnico, Korbak, foi demitido), cobra o auditor embutido prometido por Altman em 12/09 e diz temer que a demissão sirva de pretexto para encerrar a parceria
+  - 2026-10-14 (ep. 33) — Reuters (13/10): até 05/10 a Anthropic e a OpenAI buscavam controle editorial sobre o que avaliadores embutidos publicam; a Anthropic se reserva aprovar relatórios de avaliadores novos (a conversa "evoluiu" até 08/10); a OpenAI redigiu o relatório da METR e da Redwood sobre a Hugging Face
 - temas: T-03
 - situação: aberto
 - rever até: 2026-11-15
@@ -67,8 +68,9 @@ Regras:
 - aberto: 2026-09-30 (ep. 24)
 - pergunta: o acordo ganha texto oficial e alguma signatária nomeia auditor independente?
 - marcos:
-  - 2026-10-02 (ep. 26) — a única verificação independente dos agentes da OpenAI veio de quem não assinou
   - 2026-10-08 (ep. 30) — a senadora Cantwell, da oposição, propõe o oposto do acordo: padrão federal do NIST, auditoria independente antes do lançamento e aviso de incidente obrigatórios
+  - 2026-10-13 (ep. 32) — depois dos casos da Anthropic (09/10), a força-tarefa de superinteligência da Casa Branca diz, em nota à Axios, que avisar e reparar incidente "não é opcional"; sem texto oficial, prazo, definição de incidente nem punição
+  - 2026-10-14 (ep. 33) — a Reuters mostra que o acordo cita avaliação independente sem dizer como, e que duas signatárias negociavam controle editorial sobre o que o avaliador publica; nenhuma signatária nomeou auditor com direito de publicar sem aprovação
 - temas: T-03
 - situação: aberto
 - rever até: 2026-12-31
@@ -77,9 +79,9 @@ Regras:
 - aberto: 2026-09-09 (ep. 9)
 - pergunta: alguma das empresas nomeadas responde publicamente, ou vem medida concreta além da acusação?
 - marcos:
-  - 2026-09-11 (ep. 11) — Anthropic nomeia sete laboratórios chineses
   - 2026-09-23 (ep. 19) — MiMo da Xiaomi lidera o peso aberto sob a mesma suspeita
   - 2026-10-01 (ep. 25) — OpenAI liga a campanha de extração de raciocínio à Moonshot
+  - 2026-10-14 (ep. 33) — medida concreta, do lado de quem acusa: a Anthropic diz ter cortado de 90 a 99% os dados colhidos (raciocínio preservado, classificador, cobrança de pedido bloqueado) e acusa a Zhipu (capacidade cibernética no GLM-5.3) e a Moonshot (pedidos de usuários repassados ao Claude); nenhuma resposta pública das acusadas encontrada
 - temas: T-04
 - situação: aberto
 - rever até: 2026-12-31
@@ -147,3 +149,10 @@ Regras:
 - temas: T-03
 - situação: aberto
 - rever até: 2027-03-31
+
+## F-022 · Muse Wonder: a Meta publica o relatório de segurança prometido, e o Full chega à API?
+- aberto: 2026-10-13 (ep. 32)
+- pergunta: a Meta publica o relatório completo de segurança do Muse Wonder ("available soon" no anúncio de 12/10), com avaliações de risco cibernético e biológico, e o Wonder Full sai da assinatura do Muse Code para a API?
+- marcos:
+- situação: aberto
+- rever até: 2026-11-30
