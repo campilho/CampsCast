@@ -1,7 +1,21 @@
 # TODO
 
 Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
-[PROJETO.md](PROJETO.md). Atualizada em 10/10/2026.
+[PROJETO.md](PROJETO.md). Atualizada em 14/10/2026.
+
+## Semana de 12/10 — fechar até sexta, 16/10
+
+- [ ] **Quinta, 15/10, 11h–12h — post no LinkedIn sobre a memória nova.**
+      Não saiu em 13/10. Rascunho em `privado/divulgacao.md`, já ajustado para
+      quinta. O autor posta à mão e responde os comentários na primeira hora.
+      Audiência de 10/10 anotada em `privado/audiencia.md`; comparar
+      seguidores na sexta, 16/10, e na seguinte
+- [ ] **Pronúncia de "Anthropic"** — o autor ouve
+      `privado/pronuncia/anthropic-2026-10-10.mp3` e conta os acertos de cada
+      grafia; a vencedora entra em `config/pronuncia.json`, o aprendizado é
+      atualizado e o episódio seguinte é conferido de ouvido (item detalhado
+      em "Fase 3 — formato do episódio")
+
 
 ## Semana de 05/10 — acompanhar o que entrou em 03/10
 
@@ -44,11 +58,6 @@ relatório do autor. Tudo ensaiado, mas um ensaio é um dia só.
       copiar o repositório no estado de um dia, rodar com `env -i` e o `PATH`
       do plist, desviar registro e estado. Sem o ambiente do launchd, o custo
       do ensaio não vale (ver `docs/aprendizados.md`)
-
-- [ ] **Terça, 13/10, 11h–12h — post no LinkedIn sobre a memória nova.**
-      Rascunho em `privado/divulgacao.md` (10/10). O autor posta à mão e
-      responde os comentários na primeira hora. Audiência de 10/10 já
-      anotada em `privado/audiencia.md`, para comparar na sexta, 16/10
 
 ## Fase 3 — memória do agente
 
@@ -148,7 +157,9 @@ mil tokens da ferramenta Read.
       vazio (`docs/aprendizados.md`, "Erro de pronúncia não se reproduz sob
       encomenda"). Próximo passo: áudio de teste com ~10 frases variadas por
       grafia candidata (as de `privado/pronuncia/anthropic-candidatos.md`),
-      o autor conta os acertos, a vencedora entra no `pronuncia.json`
+      o autor conta os acertos, a vencedora entra no `pronuncia.json`.
+      **Áudio gerado em 10/10** (1.766 créditos): as mesmas 10 frases reais da
+      semana em Anthropic, Antrópic, Antrópik e Anthrópic. Falta a contagem
 
 ## Fase 3 — feedback e site
 
