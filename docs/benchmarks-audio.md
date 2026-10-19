@@ -481,6 +481,38 @@ Gravação caseira que chegue perto disso está excelente. É o teto prático.
 
 ---
 
+### Microfone USB dinâmico: Shure MV7+
+
+18/10, mesmo quarto dos blocos de 07/09, microfone num braço articulado, uns
+8 cm combinados (não medidos), mesmo texto de uns 40 s em todas as tomadas, WAV
+48 kHz Float32 pelo MOTIV Mix. Ganho manual de +20,5 dB, limitador ligado,
+Popper Stopper ligado, compressor, reverberação, tom e passa-alta neutros. Modo
+de microfone do macOS em "Padrão" — com o Isolamento de Voz ligado, o
+silêncio virou zero digital e a medição perdeu o sentido (ver aprendizados).
+
+| Tomada | Fala | Ruído | S/R | Reverb | Pico | Voz: grave / médio-grave / médio |
+|---|---|---|---|---|---|---|
+| A1, configuração crua | −27,1 dBFS | −81,0 dBFS | **54 dB** | 0,52 s | −9,4 | 27% / 43% / 26% |
+| B, removedor de ruído ligado | −25,8 dBFS | −103,9 dBFS | 78 dB | 0,52 s | −9,3 | 26% / 49% / 18% |
+| C, nível automático | −25,3 dBFS | −81,0 dBFS | 56 dB | 0,50 s | −5,8 | 34% / 47% / 17% |
+| iPhone, bloco 4 de 07/09 | −23,8 dBFS | −58,2 dBFS | 34 dB | 0,61 s | −7,0 | 29% / 41% / 22% |
+| iPhone, bloco 5 de 07/09 | −23,6 dBFS | −57,5 dBFS | 34 dB | 0,57 s | −7,8 | 28% / 38% / 25% |
+
+**Vinte decibéis a mais de relação sinal/ruído**, com o mesmo quarto. O
+microfone dinâmico de perto rejeita a sala que o iPhone captava inteira: o
+ruído do iPhone, no bloco 4, era 94% grave e sub-grave, a rua e a TV atravessando a parede.
+Passa também dos 41 dB da saída da ElevenLabs, o teto prático da tabela de
+referência.
+
+O removedor de ruído (B) não melhora o que importa: o silêncio desce para
+−104 dBFS, mas a voz perde médios. O nível automático (C) sobe os picos e
+também desloca o timbre para o grave. Fica a tomada crua, com uns 4 dB a mais
+de ganho para a fala chegar perto de −23 dBFS.
+
+Um teste pelo QuickTime, direto no microfone (AAC, então o piso sai otimista),
+deu os mesmos 54 dB: o MOTIV Mix não acrescenta processamento quando o modo do
+macOS está em "Padrão".
+
 ## Referências sonoras
 
 As medições acima descrevem áudio; estes dois arquivos **são** o áudio. Mesmo
@@ -511,7 +543,6 @@ com a régua de gravação humana achata a diferença de 38 para 26 dB — ver
 
 - Quarto em dia útil, hora do rush, para medir o custo da fresta de ventilação
 - iPhone 17 Pro Max, mesma distância e sala
-- Microfone USB dinâmico com braço articulado
 - Sala tratada, ou gravação dentro do closet
 - Distância de 10 cm contra 20 cm contra 40 cm, mesmo aparelho
 

@@ -426,16 +426,20 @@ lista agora reconhece esses tipos, com teste.
 A primeira tomada com o Shure MV7+ (18/10, ganho manual de +20,5 dB, removedor
 de ruído desligado) mediu ruído de −120 dBFS e relação sinal/ruído de 95 dB.
 Nenhum microfone entrega isso: nos dez segundos de silêncio, de 50% a 88% das
-amostras eram **exatamente zero**. Algum processamento na cadeia, no
-microfone ou no MOTIV Mix, fecha o sinal quando não há voz — um gate — e o
-`check_recording.py` mediu o gate, não o quarto. Ele também encurta a cauda do
-som, então a reverberação medida sai baixa demais.
+amostras eram **exatamente zero**. Algum processamento fechava o sinal quando
+não havia voz — um gate — e o `check_recording.py` mediu o gate, não o quarto.
+Ele também encurta a cauda do som, então a reverberação medida sai baixa demais.
 
-O que ainda vale comparar é o que acontece **dentro da fala**, onde o gate
-fica aberto: nas pausas entre palavras, o percentil 5 de janelas de 50 ms deu
-−75 dBFS no MV7+ contra −51 nos blocos do iPhone de 07/09, com a fala uns 4 dB
-mais baixa. Piso abaixo de −96 dBFS em gravação de microfone é sinal de
-processamento, não de sala silenciosa.
+Não era o microfone nem o MOTIV: era o **Isolamento de Voz do macOS**, o modo de
+microfone da Central de Controle, que vale por aplicativo e estava ligado para
+o MOTIV Mix. De volta ao "Padrão", a mesma configuração mediu silêncio de
+−79 dBFS, sem um zero, e relação sinal/ruído de 54 dB — o número de verdade.
+**Antes de gravar para clonagem, conferir o modo de microfone na barra do Mac.**
+
+Piso abaixo de −96 dBFS em gravação de microfone é sinal de processamento, não
+de sala silenciosa. O removedor de ruído do próprio MV7+ mostra o mesmo: com
+ele ligado, o silêncio foi a −104 dBFS — e a voz perdeu médios (de 26% para
+18% da energia), o que o clone aprenderia junto.
 
 ## Infraestrutura
 

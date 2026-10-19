@@ -44,11 +44,20 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
             S/R (95 dB) não valem. Dentro da fala, pausas a −75 dBFS contra −51
             no iPhone (percentil 5, janelas de 50 ms); menos grave e mais médio
             no espectro. Ver `aprendizados.md`, "Silêncio digital não é sala"
-      - [ ] **B** (removedor de ruído ligado) e **C** (nível automático), com o
-            mesmo ganho de +20,5 dB, para comparar com A
-      - [ ] **D, achar o gate:** 15 s de silêncio gravados pelo QuickTime
-            (Arquivo → Nova Gravação de Áudio, entrada MV7+), sem o MOTIV Mix.
-            Se o silêncio continuar em zero, o gate está no microfone
+      - [x] **O gate era o Isolamento de Voz do macOS** (modo de microfone da
+            barra, ligado para o MOTIV Mix), achado pelo autor. Em "Padrão",
+            regravada como **A1**: fala −27,1 dBFS, ruído −81, **S/R 54 dB**
+            contra 34 do iPhone, reverberação 0,52 s contra 0,57–0,61
+      - [x] **B** (removedor de ruído): silêncio a −104 dBFS, mas a voz perde
+            médios (26% → 18%). **C** (nível automático): picos mais altos e
+            timbre mais grave. Fica a configuração crua, a A1
+      - [x] **D** (QuickTime direto no microfone): sem gate e os mesmos 54 dB;
+            o MOTIV não processa nada a mais. Gravou em AAC, que serve para
+            achar gate mas não para medir piso nem para clonar
+      - [ ] **Decidir a nova rodada de gravação** — os números justificam: 20
+            dB a mais de S/R no mesmo quarto. A ElevenLabs recomenda de uma a
+            três horas de áudio; a de setembro teve uns 28 minutos. Tabela em
+            `docs/benchmarks-audio.md`
       - [ ] Na gravação de verdade, subir o ganho uns 3 dB: a ElevenLabs pede
             fala entre −23 e −18 dB RMS e pico até −3
       - [ ] `check_recording.py` avisar quando o piso sair abaixo de −96 dBFS
