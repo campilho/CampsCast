@@ -42,6 +42,11 @@ if [[ -z "${SMOKE_SANDBOX:-}" ]]; then
   exit $RC
 fi
 cd "$ROOT"
+# A suíte roda com o ambiente do launchd, não com o de quem a chama. Em 18/10 o
+# app do Claude Code passou a exportar CLAUDE_EFFORT=xhigh nas sessões, o mesmo
+# nome da variável do orquestrador: o dry-run saiu com --effort xhigh e o teste
+# que fixa o esforço falhou sem nada ter mudado no código.
+unset CLAUDE_EFFORT CLAUDE_MODEL
 
 PASS=0; FAIL=0
 FIXTURE_DATE="1970-01-01"
@@ -1043,6 +1048,27 @@ if [[ "$DUP" == "ok" ]]; then
 else
   bad "detector de duplicata não distingue cópia de original ($DUP)"
 fi
+  # O afinfo descreve PCM como "Int16" ou "Float32", sem "lpcm". Em 18/10 a
+  # gravação do MV7+ (WAV Float32) saiu como "com perdas", e todo WAV de 16 bits
+  # sairia igual. Quem decide é o nome do codec, então os dois têm de passar.
+  PCM="$(python3 - <<'PYPCM'
+import sys, struct, wave, tempfile, pathlib, subprocess
+sys.path.insert(0, "scripts")
+from audio_metrics import taxa_de_bits
+d = pathlib.Path(tempfile.mkdtemp())
+with wave.open(str(d / "i16.wav"), "wb") as w:
+    w.setnchannels(1); w.setsampwidth(2); w.setframerate(48000)
+    w.writeframes(struct.pack("<h", 1000) * 48000)
+subprocess.run(["afconvert", "-f", "WAVE", "-d", "LEF32@48000", str(d / "i16.wav"), str(d / "f32.wav")], check=True)
+tipos = [taxa_de_bits(d / n)[1] for n in ("i16.wav", "f32.wav")]
+print("ok" if tipos == ["sem perdas", "sem perdas"] else f"falhou {tipos}")
+PYPCM
+)" || PCM="erro"
+  if [[ "$PCM" == "ok" ]]; then
+    ok "WAV Int16 e Float32 reconhecidos como sem perdas"
+  else
+    bad "PCM rotulado errado pelo nome do codec ($PCM)"
+  fi
   # Voz sintética não faz pausa de 2s: exigir isso mede fala e achata o piso.
   # Com o arquivo sintético (4s de silêncio + tom), pedir 0,5s e pedir 2s têm
   # que dar o mesmo piso; o que não pode é a exigência longa piorar a medida.
@@ -1177,6 +1203,17 @@ if [[ "$SIL" == "ok" ]]; then
   ok "silêncio MP3 com duração certa e pronúncia por palavra inteira"
 else
   bad "silêncio/pronúncia: $SIL"
+fi
+# "Anthropic" saiu errado em 9 de 10 frases com a grafia original e certo em 10
+# de 10 com "Anthrópic" (teste de 10/10, ouvido pelo autor em 18/10). A troca
+# vive só na configuração; este teste impede que ela suma sem ninguém ver.
+PRON_REAL="$(python3 -c "
+import sys; sys.path.insert(0, 'scripts'); import tts
+print(tts.aplica_pronuncia('a Anthropic e a OpenAI', tts.carrega_pronuncia()))" 2>&1)"
+if [[ "$PRON_REAL" == "a Anthrópic e a OpenAI" ]]; then
+  ok "config/pronuncia.json lê Anthropic como Anthrópic"
+else
+  bad "pronúncia de Anthropic fora da configuração — saiu: $PRON_REAL"
 fi
 if python3 scripts/tts.py --script tests/fixtures/sample-episode.md --speed 1.5 --dry-run >/dev/null 2>&1; then
   bad "tts.py aceitou --speed fora do limite da API"

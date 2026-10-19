@@ -1,20 +1,80 @@
 # TODO
 
 Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
-[PROJETO.md](PROJETO.md). Atualizada em 14/10/2026.
+[PROJETO.md](PROJETO.md). Atualizada em 18/10/2026.
 
 ## Semana de 12/10 — fechar até sexta, 16/10
 
-- [ ] **Quinta, 15/10, 11h–12h — post no LinkedIn sobre a memória nova.**
-      Não saiu em 13/10. Rascunho em `privado/divulgacao.md`, já ajustado para
-      quinta. O autor posta à mão e responde os comentários na primeira hora.
-      Audiência de 10/10 anotada em `privado/audiencia.md`; comparar
-      seguidores na sexta, 16/10, e na seguinte
-- [ ] **Pronúncia de "Anthropic"** — o autor ouve
-      `privado/pronuncia/anthropic-2026-10-10.mp3` e conta os acertos de cada
-      grafia; a vencedora entra em `config/pronuncia.json`, o aprendizado é
-      atualizado e o episódio seguinte é conferido de ouvido (item detalhado
-      em "Fase 3 — formato do episódio")
+- [ ] ~~Quinta, 15/10 — post no LinkedIn~~ — não saiu em 13/10 nem em 15/10;
+      vai para a terça, 20/10 (semana de 19/10)
+- [x] **Pronúncia de "Anthropic"** (18/10) — contagem do autor: grafia
+      original 1 certa em 10, "Antrópic" 9, "Antrópik" 10, "Anthrópic" 10.
+      "Anthrópic" no `config/pronuncia.json`, com teste. Falta ouvir o
+      episódio de segunda, 19/10
+
+## Semana de 19/10
+
+- [ ] **Terça, 20/10, 11h–12h — post no LinkedIn sobre a memória nova.**
+      Rascunho em `privado/divulgacao.md`. Antes de postar, conferir as
+      referências de tempo ("na quinta passada", "na semana passada"), que
+      foram escritas para 15/10 e já não valem. O autor posta à mão e responde
+      os comentários na primeira hora. Comparar seguidores na sexta, 23/10,
+      contra os 53 de 10/10
+- [ ] **Segunda, 19/10 — ouvir "Anthropic" no episódio.** Primeiro com
+      "Anthrópic"; se errar, anotar a frase
+- [ ] **"Gemini"** — saiu "Geminí" uma vez em quatro no teste de 10/10. Testar
+      "Gêmini" do mesmo jeito (as mesmas frases, as duas grafias) antes de pôr
+      no `pronuncia.json`
+- [ ] **Repetição de nomes no roteiro** — na semana de 12/10, "Anthropic"
+      apareceu 7, 16, 7 e 14 vezes (ep. 32 a 35), contra 4 a 7 na semana
+      anterior; no ep. 33, duas das três pautas eram dela. Ideia: a
+      `confere_roteiro.py` conta nomes por pauta e registra (não bloqueia), e o
+      prompt orienta a variar depois da primeira menção ("a empresa", "ela"),
+      sem perder clareza quando duas empresas estão na mesma frase
+- [ ] **Microfone novo, Shure MV7+** — teste de 60 segundos em três
+      configurações do MOTIV, medido com `check_recording.py` contra os blocos
+      do iPhone de 07/09 (fala −21 a −24 dBFS, S/R 30 a 34 dB; o melhor
+      arquivo, 38,9 dB). Se ganhar com folga, entra no roadmap uma nova rodada
+      de gravação e um clone novo. É o cenário "microfone USB dinâmico com
+      braço articulado" que o `benchmarks-audio.md` lista como não medido
+      - [x] **A** (18/10, `gravacoes/2026-10-19-mv7/A.wav`): ganho manual
+            +20,5 dB, limitador ligado, Popper Stopper ligado, resto
+            desligado. Fala −25,4 dBFS, pico −7,6. **Há um gate na cadeia:** o
+            silêncio inicial é quase todo zero digital, então ruído (−120) e
+            S/R (95 dB) não valem. Dentro da fala, pausas a −75 dBFS contra −51
+            no iPhone (percentil 5, janelas de 50 ms); menos grave e mais médio
+            no espectro. Ver `aprendizados.md`, "Silêncio digital não é sala"
+      - [ ] **B** (removedor de ruído ligado) e **C** (nível automático), com o
+            mesmo ganho de +20,5 dB, para comparar com A
+      - [ ] **D, achar o gate:** 15 s de silêncio gravados pelo QuickTime
+            (Arquivo → Nova Gravação de Áudio, entrada MV7+), sem o MOTIV Mix.
+            Se o silêncio continuar em zero, o gate está no microfone
+      - [ ] Na gravação de verdade, subir o ganho uns 3 dB: a ElevenLabs pede
+            fala entre −23 e −18 dB RMS e pico até −3
+      - [ ] `check_recording.py` avisar quando o piso sair abaixo de −96 dBFS
+            ("processamento, não sala"), para isso não passar despercebido
+- [ ] **Eleven v4 e v4 Turbo** — o clone profissional respondeu aos dois em
+      18/10 (`--check`), mas o treino só aparece pronto no Multilingual v2: não
+      há prova de que o v4 usa o clone treinado. Amostras do mesmo trecho nos
+      três modelos em `privado/voz/modelos-2026-10-18/`, com "Anthropic" e
+      "Gemini" na grafia original. Se o v4 soar melhor: pedir o treino no v4
+      pela tela da ElevenLabs (My Voices, passar o mouse na voz, clicar no
+      modelo), medir o nível ao longo da geração (ADR 0004), recalibrar o
+      ritmo (`calibrate_pace.py --apply`) e registrar num ADR. O plano
+      Creator tem uma vaga de clone profissional, e é a que usamos
+      - **Ouvido pelo autor em 18/10:** o Multilingual v2 soa como ele; o v4
+            e o v4 Turbo têm timbre parecido mas não soam como ele, com
+            qualidade muito melhor e um "bom dia" mais animado. Faz sentido: o
+            clone não foi treinado no v4
+      - [ ] **Primeiro, treinar o clone atual no v4, sem apagar nada.** A
+            documentação diz que um clone profissional pode ser treinado em
+            modelos adicionais pela tela (My Voices); não usa vaga nova nem
+            regravação. Se soar como o autor, a troca é só de modelo
+      - [ ] **Só se for preciso um clone novo** (gravação do MV7+, ou o treino
+            no v4 não servir): a vaga é uma só, e apagar a voz atual derruba o
+            episódio do dia seguinte até o treino terminar. Fazer na sexta,
+            depois do episódio, com o fim de semana para treinar; as gravações
+            de 07/09 continuam em `gravacoes/` para refazer se der errado
 
 
 ## Semana de 05/10 — acompanhar o que entrou em 03/10
@@ -58,6 +118,28 @@ relatório do autor. Tudo ensaiado, mas um ensaio é um dia só.
       copiar o repositório no estado de um dia, rodar com `env -i` e o `PATH`
       do plist, desviar registro e estado. Sem o ambiente do launchd, o custo
       do ensaio não vale (ver `docs/aprendizados.md`)
+
+## Fase 3 — vários agentes
+
+Proposta no [ADR 0010](docs/decisions/0010-redacao-com-varios-agentes.md)
+(18/10): estudar orquestração e aprendizado de agentes com o podcast como
+banco de provas. Claude Code headless no Mac, em sombra, uma mudança por vez.
+
+- [ ] **`scripts/ensaio.sh` antes de tudo** (item da semana de 05/10): sem
+      rodar dias passados no ambiente do launchd, não há como dizer que um
+      agente melhorou
+- [ ] **V1. Verificador de fontes** — `claude -p` separado depois do agente
+      atual, confere cada fato do roteiro contra a fonte primária; registra,
+      não bloqueia. Uma semana dá a linha de base de erros de fato
+- [ ] **V2. Revisor** com rubrica, em ciclo com o roteiro (no máximo duas
+      voltas)
+- [ ] **V3. Arquivista** — a memória sai do agente principal; junta com o C2
+- [ ] **V4. Pesquisa em paralelo** — subagentes por camada de fontes, e o
+      contrato em `runs/AAAA-MM-DD/`
+- [ ] **V5. Cadernos de lições por agente** — o agente propõe, o autor aprova
+      no relatório de sexta; medir reprovações e voltas antes e depois
+- [ ] Fase 4: os mesmos papéis em Managed Agents ou no AgentCore, para
+      comparar. Conferir antes se o WebSearch funciona no Bedrock
 
 ## Fase 3 — memória do agente
 

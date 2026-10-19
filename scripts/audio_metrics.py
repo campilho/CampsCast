@@ -13,6 +13,7 @@ import cmath
 import math
 import os
 import pathlib
+import re
 import subprocess
 import tempfile
 import wave
@@ -47,6 +48,8 @@ def para_wav(caminho: pathlib.Path, taxa: int = TAXA) -> pathlib.Path:
 
 
 SEM_PERDAS = ("alac", "lpcm", "flac", "aiff")
+# PCM em WAV aparece no afinfo só pelo tipo da amostra: "Int16", "Float32".
+PCM = re.compile(r"\b(int|float)\d+\b")
 
 
 def taxa_de_bits(caminho: pathlib.Path) -> tuple[int, str]:
@@ -65,7 +68,7 @@ def taxa_de_bits(caminho: pathlib.Path) -> tuple[int, str]:
                 kbps = int(int(linha.split(":")[1].strip().split()[0]) / 1000)
             elif "data format" in baixa:
                 tipo = ("sem perdas" if any(c in baixa for c in SEM_PERDAS)
-                        else "com perdas")
+                        or PCM.search(baixa) else "com perdas")
     except Exception:
         pass
     return kbps, tipo

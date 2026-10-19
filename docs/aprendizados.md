@@ -151,6 +151,13 @@ O comportamento que se queria ver ficou válido; o custo, não. **Ensaio que
 mede custo precisa do ambiente de produção, não só do código de produção:**
 `env -i` com o que o plist define.
 
+Em 18/10 a mesma herança derrubou um teste: o app passou a exportar
+`CLAUDE_EFFORT=xhigh` nas sessões, que é também o nome da variável com que o
+orquestrador escolhe o esforço do agente. Rodado de dentro de uma sessão, o
+`run_episode.sh` iria a `xhigh` em vez de `high`, sem aviso. A produção não
+sente (o launchd só passa o `PATH`); a suíte agora limpa `CLAUDE_EFFORT` e
+`CLAUDE_MODEL` antes de começar.
+
 ### Instalar uma ferramenta para você é instalar para o agente de produção
 
 O agente do podcast é um `claude -p` que roda no Mac do autor, e herda a
@@ -220,6 +227,14 @@ desde a voz nova era a errada; o autor lembra de outros erros, então o artigo
 não explica tudo. Ficou a regra mais barata — empresa sempre com artigo, que
 já é o português natural — e o `config/pronuncia.json` vazio. Se voltar a
 errar, a grafia de pronúncia já tem teste gravado para comparar.
+
+Voltou a errar, e na maior parte dos dias (semana de 05/10). O teste de 10/10
+mudou o desenho: em vez de uma frase isolada, **as mesmas dez frases reais da
+semana**, seguidas, para cada grafia. Assim o erro apareceu: com a grafia
+original, uma certa em dez; "Antrópic", nove; "Antrópik" e "Anthrópic", dez.
+Frase solta saía certa porque faltava o contexto que provoca o erro. Ficou
+"Anthrópic" no `pronuncia.json`, com teste que impede a troca de sumir. No mesmo
+áudio, "Gemini" saiu uma vez como "Geminí", em quatro.
 
 ### Contador de cota é assíncrono
 
@@ -400,6 +415,27 @@ comparar codecs diferentes, teria invalidado a comparação inteira.
 
 O nome do codec está no `afinfo`, em `Data format`. Adivinhar grandeza derivada
 quando o dado exato está disponível é sempre troca ruim.
+
+O nome, porém, não é sempre um nome de codec: para PCM em WAV o `afinfo` só
+diz o tipo da amostra, "Int16" ou "Float32". Em 18/10 a gravação do MV7+, em
+WAV Float32, saiu "com perdas" — e qualquer WAV de 16 bits sairia igual. A
+lista agora reconhece esses tipos, com teste.
+
+### Silêncio digital não é sala
+
+A primeira tomada com o Shure MV7+ (18/10, ganho manual de +20,5 dB, removedor
+de ruído desligado) mediu ruído de −120 dBFS e relação sinal/ruído de 95 dB.
+Nenhum microfone entrega isso: nos dez segundos de silêncio, de 50% a 88% das
+amostras eram **exatamente zero**. Algum processamento na cadeia, no
+microfone ou no MOTIV Mix, fecha o sinal quando não há voz — um gate — e o
+`check_recording.py` mediu o gate, não o quarto. Ele também encurta a cauda do
+som, então a reverberação medida sai baixa demais.
+
+O que ainda vale comparar é o que acontece **dentro da fala**, onde o gate
+fica aberto: nas pausas entre palavras, o percentil 5 de janelas de 50 ms deu
+−75 dBFS no MV7+ contra −51 nos blocos do iPhone de 07/09, com a fala uns 4 dB
+mais baixa. Piso abaixo de −96 dBFS em gravação de microfone é sinal de
+processamento, não de sala silenciosa.
 
 ## Infraestrutura
 
