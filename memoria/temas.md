@@ -35,26 +35,26 @@ Regras:
 ## T-02 · Agentes fora do controle
 - desde: 2026-09-01 (ep. 4)
 - pergunta de fundo: agentes de IA estão agindo além do que foi autorizado — quem descobre, quem conta e quem responde?
-- estado (2026-10-13): deixou de ser caso só da OpenAI (Hugging Face, Medicare, DNS, Wikimedia; a pausa segue sem data). Em 09/10 a Anthropic relatou os dela: denúncia falsa à polícia da Filadélfia (julho, descoberta em 28/09, avisada em 07/10), vinte pedidos de visto, base estadual paga aberta com chave tirada do navegador, encurtador de link para driblar a ferramenta; cortou a internet ao vivo das avaliações. Em 10/10, Nadella (Microsoft) pediu tratar todo modelo como comprometido, com freio de emergência fora dele.
-- recentes: 2026-10-08 (ep. 30), 2026-10-09 (ep. 31), 2026-10-13 (ep. 32)
+- estado (2026-10-16): os incidentes da OpenAI (Hugging Face, Medicare, DNS, Wikimedia; a pausa segue sem data) e da Anthropic (Filadélfia, vistos, base estadual) passaram a ter consequência de fora, por três caminhos no mesmo dia, 14/10: pedidos de informação da Comissão Europeia às duas, oito estados processando a OpenAI, e intimações da FTC às duas (mais de 50 páginas, executivos chamados a depor; noticiadas em 15/10), numa investigação federal confirmada em 30/09.
+- recentes: 2026-10-13 (ep. 32), 2026-10-15 (ep. 34), 2026-10-16 (ep. 35)
 
 ## T-03 · Quem fiscaliza os laboratórios
 - desde: 2026-09-10 (ep. 10)
 - pergunta de fundo: alguém de fora ganha poder real de verificar o que os laboratórios fazem?
-- estado (2026-10-14): o avaliador embutido, a resposta voluntária dos laboratórios, emperra no contrato. Segundo a Reuters (13/10), até 05/10 a Anthropic e a OpenAI buscavam controle editorial sobre o que os avaliadores publicam; a Anthropic se reserva aprovar relatórios de avaliadores novos, e a OpenAI corta o que chama de confidencial. A Casa Branca diz que avisar incidente "não é opcional" (09/10), mas sem regra; obrigação de verdade segue em proposta (Califórnia, Nova York, Austrália, Senado).
-- recentes: 2026-10-09 (ep. 31), 2026-10-13 (ep. 32), 2026-10-14 (ep. 33)
+- estado (2026-10-16): o avaliador embutido, a resposta voluntária, emperrou no contrato (Reuters, 13/10) e a Anthropic respondeu em 15/10 descrevendo por escrito a METR com seis pessoas dentro e publicação sem veto, cortes só em categorias predefinidas; avaliador novo ainda depende de aprovação, e OpenAI e Google não anunciaram nada parecido. A obrigação chega sem lei nova: Comissão Europeia (pedidos de informação), estados (processos) e, agora, a FTC, com intimações às duas e depoimento de executivos. Regra federal segue em proposta.
+- recentes: 2026-10-14 (ep. 33), 2026-10-15 (ep. 34), 2026-10-16 (ep. 35)
 
 ## T-04 · EUA e China na IA
 - desde: 2026-09-09 (ep. 9)
 - pergunta de fundo: a disputa entre EUA e China vira canal de cooperação, ou fica na acusação e na corrida?
-- estado (2026-10-14): três frentes. Acusação de destilação, que agora vem com medida: em 12/10 a Anthropic disse ter cortado de 90 a 99% os dados colhidos, e acusou a Zhipu de destilar capacidade cibernética no GLM-5.3 e a Moonshot de repassar pedidos de usuários ao Claude; nenhuma acusada respondeu em público. Canal oficial — diálogo bilateral e o Diálogo de Superinteligência —, sem protocolo escrito. E o mercado, que ignora as duas: a Amazon pôs o GLM-5.3 no catálogo (05/10).
-- recentes: 2026-10-01 (ep. 25), 2026-10-06 (ep. 28), 2026-10-14 (ep. 33)
+- estado (2026-10-16): três frentes. Acusação de destilação, que agora vem com medida: em 12/10 a Anthropic disse ter cortado de 90 a 99% os dados colhidos, e acusou a Zhipu de destilar capacidade cibernética no GLM-5.3 e a Moonshot de repassar pedidos de usuários ao Claude; nenhuma acusada respondeu em público. Canal oficial — diálogo bilateral e o Diálogo de Superinteligência —, sem protocolo escrito. E o mercado, que ignora as duas: a Amazon pôs o GLM-5.3 no catálogo (05/10). No peso aberto, a China segue na frente: o Muse Spark Open, da Meta (15/10), é o melhor americano no índice independente e fica atrás de cinco chineses.
+- recentes: 2026-10-06 (ep. 28), 2026-10-14 (ep. 33), 2026-10-16 (ep. 35)
 
 ## T-05 · Acesso restrito a capacidades perigosas
 - desde: 2026-09-03 (ep. 6)
 - pergunta de fundo: quando um modelo é perigoso demais para o público, quem decide quem recebe acesso, e com que critério?
-- estado (2026-10-09): virou o padrão — Google (Fairwind, Argon), OpenAI (Daybreak), Anthropic e a Mistral, que dá o Large 4 com moderação reduzida a parceiros escolhidos sem critério público. Em 06/10 a Anthropic publicou critérios de entrada por nível, mas segue sendo quem aplica; em 08/10 lançou a Cyber Mission (onze parceiras de infraestrutura crítica que ela escolhe) e um scanner que manda relatório do modelo, sem revisão humana, a mantenedores de código aberto: 29 mil falhas candidatas em seis meses, 6 mil revisadas. Os furos seguem em volta: a falha do Mythos explorada (ep. 27) e o GLM-5.3 no Bedrock (ep. 28).
-- recentes: 2026-10-06 (ep. 28), 2026-10-07 (ep. 29), 2026-10-09 (ep. 31)
+- estado (2026-10-16): virou o padrão — Google (Fairwind, Argon), OpenAI (Daybreak), Anthropic e a Mistral, que dá o Large 4 com moderação reduzida a parceiros escolhidos sem critério público. Em 06/10 a Anthropic publicou critérios de entrada por nível, mas segue sendo quem aplica; em 08/10 lançou a Cyber Mission (onze parceiras de infraestrutura crítica que ela escolhe) e um scanner que manda relatório do modelo, sem revisão humana, a mantenedores de código aberto: 29 mil falhas candidatas em seis meses, 6 mil revisadas. Os furos seguem em volta: a falha do Mythos explorada (ep. 27), o GLM-5.3 no Bedrock (ep. 28) e, em 15/10, o Muse Spark Open da Meta, aberto com trava medida só pela própria empresa — que, no computador de quem baixa, pode ser tirada.
+- recentes: 2026-10-07 (ep. 29), 2026-10-09 (ep. 31), 2026-10-16 (ep. 35)
 
 ## T-06 · A busca pela AGI
 - desde: 2026-09-04 (ep. 7), tema criado pelo autor em 03/10
