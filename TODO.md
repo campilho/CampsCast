@@ -182,7 +182,8 @@ banco de provas. Claude Code headless no Mac, em sombra, uma mudança por vez.
       agente melhorou
 - [x] **V1a. Linha de base na nuvem** — **feita em 25/10, duas rodadas**:
       7,9% de erro, todos leves; memória do programa de 30% para 1,7%; fatos
-      de fora sem melhora do Opus 5 para o 5.5. Resultado no ADR 0010
+      de fora sem melhora do Opus 5 para o 5.5. Resultado no ADR 0010.
+      Custo: US$ 149 do crédito (102 + 47); restam US$ 101 até 05/11
 - [ ] **Precisão no roteiro, a partir da linha de base** — os erros se
       repetem em quatro formas (datas, contagem, paráfrase que acrescenta,
       modal mudado). Propor ao autor uma lista curta de conferência no

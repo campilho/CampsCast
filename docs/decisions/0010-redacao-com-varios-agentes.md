@@ -158,6 +158,14 @@ tinham aberto.
 - **Os detalhes finos das fontes da Anthropic erram mais** (11–14% contra uns
   5%): preço de cache, categoria de corte, nome de variante.
 
+**Custo: US$ 149** do crédito de sessões na nuvem — US$ 102 na primeira rodada
+e US$ 47 na segunda —, uns 16 centavos por afirmação e US$ 3,70 por episódio.
+Não foi cobrado (crédito promocional de US$ 250, que expira em 05/11), mas é o
+preço real do trabalho. Um verificador diário nesse ritmo quase dobraria o custo
+do agente a preço de API, cuja mediana é de US$ 4,67 por episódio: no V1, medir
+se dá para verificar menos afirmações, só as de número, data e citação, ou usar
+um modelo menor.
+
 Limites: `openai.com` barrou o WebFetch com 403 mesmo com a rede aberta, e 29%
 da segunda rodada foi conferida na imprensa, às vezes na mesma paráfrase de que
 o roteiro saiu. E as duas rodadas não usaram critérios idênticos: o briefing da

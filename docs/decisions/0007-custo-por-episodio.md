@@ -49,6 +49,11 @@ quase todos no Opus 5. No Opus 5.5, de 28/09 a 02/10, a mediana foi de
 **US$ 4,41** (ADR 0005). Esse valor não é cobrado: o pipeline roda na
 assinatura Max.
 
+**Fora do pipeline (25/10).** A linha de base da verificação de fatos (ADR
+0010) gastou US$ 149 do crédito promocional de sessões na nuvem — US$ 102 e
+US$ 47, em duas rodadas sobre os 40 episódios. Não entra na conta mensal, mas
+fica anotada: é o preço de conferir 949 afirmações.
+
 ## Custo por episódio
 
 Com 22 episódios por mês e o custo fixo dividido igualmente:
