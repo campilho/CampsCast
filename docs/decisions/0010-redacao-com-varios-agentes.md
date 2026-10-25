@@ -124,6 +124,12 @@ dá a linha de base que falta: com que frequência o roteiro erra fato. Depois o
 revisor, o arquivista e, por último, a pesquisa em paralelo — uma mudança por
 vez.
 
+Em 25/10 o passo ganhou uma versão anterior, sobre o acervo: o
+`prompts/verificador.md` roda numa sessão na nuvem, paga com o crédito de
+US$ 250 que expira em 05/11, e confere de uma vez os 40 episódios publicados.
+Sai a linha de base sem esperar semanas de produção, e o prompt vira o ponto de
+partida do verificador diário.
+
 ## Consequências
 
 - Mais etapas, mais pontos de falha e mais tempo de relógio. O orquestrador

@@ -180,6 +180,14 @@ banco de provas. Claude Code headless no Mac, em sombra, uma mudança por vez.
 - [ ] **`scripts/ensaio.sh` antes de tudo** (item da semana de 05/10): sem
       rodar dias passados no ambiente do launchd, não há como dizer que um
       agente melhorou
+- [ ] **V1a. Linha de base na nuvem** (preparado em 25/10) — o
+      `prompts/verificador.md` confere os 40 episódios já publicados contra as
+      fontes primárias, do mais recente ao mais antigo, numa sessão na nuvem,
+      no ramo `claude/verificador-linha-de-base`, escrevendo só em
+      `verificacao/linha-de-base/`. Usa o crédito de US$ 250, que expira em
+      05/11 às 04:59. Abrir de dia: se o crédito acabar no meio, a sessão passa
+      a gastar o limite do Max, que o episódio das 05:00 também usa. Resultado:
+      taxa de erro por agente (Opus 5 e Opus 5.5) e os erros graves
 - [ ] **V1. Verificador de fontes** — `claude -p` separado depois do agente
       atual, confere cada fato do roteiro contra a fonte primária; registra,
       não bloqueia. Uma semana dá a linha de base de erros de fato
