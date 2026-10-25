@@ -130,6 +130,42 @@ US$ 250 que expira em 05/11, e confere de uma vez os 40 episódios publicados.
 Sai a linha de base sem esperar semanas de produção, e o prompt vira o ponto de
 partida do verificador diário.
 
+## Resultado da linha de base (25/10)
+
+Duas sessões na nuvem, `verificacao/linha-de-base/`. A primeira escolheu e
+conferiu 949 afirmações dos 40 episódios, mas a rede padrão do ambiente só
+abria seis domínios; a segunda, com a rede aberta, reconferiu as 513 que não
+tinham aberto.
+
+| | Opus 5 (ep. 1–21) | Opus 5.5 (ep. 22–40) |
+|---|---|---|
+| Erro no verificável (`errado` + `impreciso`) | 8,4% (6,2–11,2) | 7,3% (5,2–10,2) |
+| Memória do programa | **30,0%** (12 de 40) | **1,7%** (1 de 58) |
+| Fatos de fora | 6,3% | 8,2% |
+| Fatos de fora com fonte na Anthropic | 11,3% | 14,0% |
+
+- **No todo, 7,9% de erro (71 de 904), todos leves; `errado` só 0,9%.**
+  Nenhum erro mudou o sentido de uma pauta.
+- **O ganho mensurável é a memória do programa**, que caiu de 30% para 1,7%.
+  A troca para o Opus 5.5 (ep. 22) e a memória em camadas (ep. 27) vieram
+  quase juntas, e a amostra não separa as duas.
+- **Nos fatos de fora, o Opus 5.5 não erra menos que o Opus 5.**
+- **Os erros têm forma repetida**, e isso é o que um revisor ou um caderno de
+  lições pode atacar: data de publicação tomada pela data do fato, fuso
+  trocado, prazo dado como aberto depois de vencido; parte pelo todo e
+  contagem; paráfrase que acrescenta ("editou" por "teve a oportunidade de
+  editar"); modal mudado ("deve" por "can").
+- **Os detalhes finos das fontes da Anthropic erram mais** (11–14% contra uns
+  5%): preço de cache, categoria de corte, nome de variante.
+
+Limites: `openai.com` barrou o WebFetch com 403 mesmo com a rede aberta, e 29%
+da segunda rodada foi conferida na imprensa, às vezes na mesma paráfrase de que
+o roteiro saiu. E as duas rodadas não usaram critérios idênticos: o briefing da
+segunda escreveu regras que a primeira deixava implícitas ("não dizer não é
+desmentir"), e pode ter sido mais branda. **Para o verificador diário, a rubrica
+tem de ser fixa e escrita**, ou a série histórica mede o verificador, não o
+roteiro.
+
 ## Consequências
 
 - Mais etapas, mais pontos de falha e mais tempo de relógio. O orquestrador

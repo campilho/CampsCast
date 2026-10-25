@@ -180,7 +180,15 @@ banco de provas. Claude Code headless no Mac, em sombra, uma mudança por vez.
 - [ ] **`scripts/ensaio.sh` antes de tudo** (item da semana de 05/10): sem
       rodar dias passados no ambiente do launchd, não há como dizer que um
       agente melhorou
-- [ ] **V1a. Linha de base na nuvem** — **primeira rodada feita em 25/10**
+- [x] **V1a. Linha de base na nuvem** — **feita em 25/10, duas rodadas**:
+      7,9% de erro, todos leves; memória do programa de 30% para 1,7%; fatos
+      de fora sem melhora do Opus 5 para o 5.5. Resultado no ADR 0010
+- [ ] **Precisão no roteiro, a partir da linha de base** — os erros se
+      repetem em quatro formas (datas, contagem, paráfrase que acrescenta,
+      modal mudado). Propor ao autor uma lista curta de conferência no
+      `master.md`, ou esperar o revisor (V2). Uma mudança por vez: depois da
+      semana da voz nova
+- [ ] (histórico) **V1a. Linha de base na nuvem** — **primeira rodada feita em 25/10**
       (`verificacao/linha-de-base/`, US$ 102 do crédito): 949 afirmações nos 40
       episódios; 11,0% de erro no verificável, **nenhum grave**; a memória do
       programa foi de 30% de erro (Opus 5) a 1,7% (Opus 5.5 e memória nova).
