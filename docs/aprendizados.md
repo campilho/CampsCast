@@ -443,6 +443,22 @@ ele ligado, o silêncio foi a −104 dBFS — e a voz perdeu médios (de 26% par
 
 ## Infraestrutura
 
+### Na nuvem, a rede padrão não enxerga as fontes
+
+A primeira rodada do verificador (25/10), numa sessão do Claude Code na nuvem,
+gastou US$ 102 do crédito e deixou 54% das afirmações sem conferir: o ambiente
+só abria `anthropic.com`, `claude.com`, `github.com`,
+`raw.githubusercontent.com`, `pypi.org` e `blog.modelcontextprotocol.io`. Os
+outros 151 domínios deram `ENOTFOUND` — openai.com, Google, NVIDIA, imprensa,
+governo. A sessão percebeu, registrou e seguiu; o resumo saiu honesto, mas meio
+cego. É o mesmo bloqueio que barrou o `curl` do vigia em setembro, agora pelo
+WebFetch também.
+
+Para pesquisa, o ambiente na nuvem precisa de rede aberta antes da primeira
+execução. **Testar uma página de fora antes de gastar:** a segunda rodada
+começa abrindo uma página de `openai.com` e para se não abrir.
+
+
 ### macOS bloqueia launchd em `~/Documents`
 
 Agente do launchd não acessa `~/Documents`, `~/Desktop` nem `~/Downloads`

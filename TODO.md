@@ -180,7 +180,15 @@ banco de provas. Claude Code headless no Mac, em sombra, uma mudança por vez.
 - [ ] **`scripts/ensaio.sh` antes de tudo** (item da semana de 05/10): sem
       rodar dias passados no ambiente do launchd, não há como dizer que um
       agente melhorou
-- [ ] **V1a. Linha de base na nuvem** (preparado em 25/10) — o
+- [ ] **V1a. Linha de base na nuvem** — **primeira rodada feita em 25/10**
+      (`verificacao/linha-de-base/`, US$ 102 do crédito): 949 afirmações nos 40
+      episódios; 11,0% de erro no verificável, **nenhum grave**; a memória do
+      programa foi de 30% de erro (Opus 5) a 1,7% (Opus 5.5 e memória nova).
+      Mas a rede do ambiente só abria seis domínios, e 54% ficou
+      `inacessivel`. **Segunda rodada:** `prompts/verificador-reconferencia.md`,
+      só as 513 inacessíveis (147 páginas), num ambiente com a rede aberta.
+      Texto original do item:
+- [ ] **V1a (texto de 25/10)** — o
       `prompts/verificador.md` confere os 40 episódios já publicados contra as
       fontes primárias, do mais recente ao mais antigo, numa sessão na nuvem,
       no ramo `claude/verificador-linha-de-base`, escrevendo só em
@@ -272,7 +280,12 @@ mil tokens da ferramenta Read.
       - [ ] **P2 — bucket `campscast-piloto`** e usuário que só grava nele
       - [ ] **P3 — ajustes de código:** `tts.py` com credencial gerenciada,
             `BASE_URL` no `publish.py`, perfil `piloto`, `compara_piloto.py`
-      - [ ] **P4 — ambiente na nuvem** (autor): rede, credencial da ElevenLabs
+      - [ ] **P4 — ambiente na nuvem** (autor) — **a rede padrão não serve ao
+            agente:** na linha de base de 25/10, só anthropic.com, claude.com,
+            github.com e mais três domínios abriram; openai.com, Google,
+            NVIDIA, imprensa e governo deram `ENOTFOUND`. O ambiente do piloto
+            precisa de rede aberta ou de uma lista com as fontes do
+            `sources.yaml`. Rede, credencial da ElevenLabs
             em `xi-api-key`, variáveis do bucket de testes; proteção da `main`
       - [ ] **P5 — primeira execução manual na nuvem:** testar a rede e se o
             `claude -p` funciona dentro da sessão (forma A ou B)
