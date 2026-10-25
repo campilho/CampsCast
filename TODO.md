@@ -78,7 +78,47 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
       - [ ] **Primeiro, treinar o clone atual no v4, sem apagar nada.** A
             documentação diz que um clone profissional pode ser treinado em
             modelos adicionais pela tela (My Voices); não usa vaga nova nem
-            regravação. Se soar como o autor, a troca é só de modelo
+            regravação. Se soar como o autor, a troca é só de modelo.
+            **Em 18/10 o v4 ainda não aparecia** na lista de treino do clone
+            (só "Multilingual v2 (Speech to Speech)"): segundo a página do
+            Eleven v4, o suporte a clone profissional "is currently rolling
+            out to everyone". Conferir na tela (passar o mouse em "1/4
+            models", clicar no + ao lado de Eleven v4) ou com
+            `python3 scripts/tts.py --voice-status`
+      - [x] **Treino no v4 pronto em 20/10** (e-mail da ElevenLabs; tela em
+            "3/6 models"; `--voice-status` mostra `eleven_v4` e
+            `eleven_v4_turbo` prontos, mais variantes internas que não são
+            para usar). Mesmo trecho do ep. 37 (2.119 caracteres, um pedido só)
+            nos três modelos, em `privado/voz/modelos-2026-10-20/`:
+            Multilingual v2 154,5 ppm, nível estável (0,4 dB entre terços);
+            v4 162,7 ppm, 2,7 dB mais alto, cai 1,7 dB ao longo do trecho; v4
+            Turbo 164,0 ppm, cai 1,1 dB. Falta o autor ouvir. A queda do v4 é o
+            mesmo tipo de defeito do ADR 0004: medir num episódio inteiro,
+            com as emendas, antes de decidir
+      - [x] **Aprovado pelo autor de ouvido (20/10):** soa como ele, com mais
+            energia, sem queda de volume perceptível. Um erro: "IA" lido como
+            sigla em inglês
+      - [x] **Episódio inteiro no v4 (ep. 37, 4 trechos):** emendas de +0,1,
+            +0,5 e +0,3 dB, contra −0,6, −0,4 e −0,4 do publicado no
+            Multilingual; sem queda sistemática dentro dos trechos (só o
+            primeiro cai 1,6 dB, a abertura mais animada). 8:21 contra 8:31, uns
+            2% mais rápido. Custo exato: 3.339 créditos, 0,44 por caractere,
+            igual ao Multilingual
+      - [ ] **"IA" no v4** — teste em `privado/pronuncia/ia-v4-2026-10-20.mp3`:
+            IA (~0:06), I.A. (~1:06), i-á (~2:09), I-A (~3:10), as mesmas dez
+            frases reais. O autor conta os acertos
+      - [ ] **Troca no fim de semana de 24–25/10**, primeiro episódio no v4 na
+            segunda, 26/10: grafia de "IA" no `pronuncia.json` com teste;
+            `model_id` em `config/tts.json`; ADR 0011 com as medições; novidade
+            na abertura de 26/10, se o autor quiser; `--check` no v4 e dry-run.
+            Volta atrás é uma linha no `tts.json`
+      - [ ] **Sexta, 30/10 — recalibrar o ritmo** com os episódios da semana:
+            `calibrate_pace.py --desde 2026-10-26 --apply`. Até lá fica 152
+            ppm; o v4 é uns 2% mais rápido, então os episódios saem uns 10 s
+            mais curtos, sem sair do formato
+      - [ ] Antes de trocar: no v4 não existem os controles de velocidade e
+            estilo, nem SSML; o `tts.json` manda `speed` 1,0 e `style` 0, que
+            não mudam nada hoje, mas o ritmo só se ajusta remedindo
       - [ ] **Só se for preciso um clone novo** (gravação do MV7+, ou o treino
             no v4 não servir): a vaga é uma só, e apagar a voz atual derruba o
             episódio do dia seguinte até o treino terminar. Fazer na sexta,

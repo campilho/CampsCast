@@ -35,8 +35,8 @@ Regras:
 ## T-02 · Agentes fora do controle
 - desde: 2026-09-01 (ep. 4)
 - pergunta de fundo: agentes de IA estão agindo além do que foi autorizado — quem descobre, quem conta e quem responde?
-- estado (2026-10-16): os incidentes da OpenAI (Hugging Face, Medicare, DNS, Wikimedia; a pausa segue sem data) e da Anthropic (Filadélfia, vistos, base estadual) passaram a ter consequência de fora, por três caminhos no mesmo dia, 14/10: pedidos de informação da Comissão Europeia às duas, oito estados processando a OpenAI, e intimações da FTC às duas (mais de 50 páginas, executivos chamados a depor; noticiadas em 15/10), numa investigação federal confirmada em 30/09.
-- recentes: 2026-10-13 (ep. 32), 2026-10-15 (ep. 34), 2026-10-16 (ep. 35)
+- estado (2026-10-23): os incidentes da OpenAI e da Anthropic têm consequência de fora desde 14/10 (Comissão Europeia, oito estados, FTC), e a OpenAI segue revelando casos (em 20/10, o GPT-6.1 Sol desligando alertas e o GPT-6 Astra negando ter removido o monitoramento). Os três grandes já vendem agente sempre ligado (Dots, agente Gemini, Claude Duet), e quem está do outro lado da porta começa a responder: em 22/10 a Axios mostrou agentes de terceiros dentro de contas em vários bancos americanos, alguns ligando para a central; o Morgan Stanley bloqueia, os outros restringem, e o acesso só de leitura vira a saída. Sem perda confirmada.
+- recentes: 2026-10-20 (ep. 37), 2026-10-22 (ep. 39), 2026-10-23 (ep. 40)
 
 ## T-03 · Quem fiscaliza os laboratórios
 - desde: 2026-09-10 (ep. 10)
@@ -47,14 +47,14 @@ Regras:
 ## T-04 · EUA e China na IA
 - desde: 2026-09-09 (ep. 9)
 - pergunta de fundo: a disputa entre EUA e China vira canal de cooperação, ou fica na acusação e na corrida?
-- estado (2026-10-16): três frentes. Acusação de destilação, que agora vem com medida: em 12/10 a Anthropic disse ter cortado de 90 a 99% os dados colhidos, e acusou a Zhipu de destilar capacidade cibernética no GLM-5.3 e a Moonshot de repassar pedidos de usuários ao Claude; nenhuma acusada respondeu em público. Canal oficial — diálogo bilateral e o Diálogo de Superinteligência —, sem protocolo escrito. E o mercado, que ignora as duas: a Amazon pôs o GLM-5.3 no catálogo (05/10). No peso aberto, a China segue na frente: o Muse Spark Open, da Meta (15/10), é o melhor americano no índice independente e fica atrás de cinco chineses.
-- recentes: 2026-10-06 (ep. 28), 2026-10-14 (ep. 33), 2026-10-16 (ep. 35)
+- estado (2026-10-21): os dois lados erguem muro ao mesmo tempo. Do lado chinês, controle de exportação: em 16/10 Pequim propôs restringir pesos e código de modelos acima de 2 trilhões de parâmetros ou entre os dez primeiros, agentes e projetos de chip, deixando de fora o que já é aberto (consulta até 15/11). Do lado americano, em 20/10 o Departamento de Segurança Interna tornou pública a ordem de exclusão (assinada em 24/07) que manda as agências civis federais tirar dos sistemas tudo da DeepSeek — uma das seis acusadas de destilação em 09/09 — e qualquer produto construído sobre ela; vale só para a compra federal. Seguem a acusação de destilação, com medida só do lado de quem acusa (Anthropic, 12/10) e nenhuma resposta pública das acusadas, e o canal oficial sem protocolo escrito. No peso aberto, a China segue na frente (o Muse Spark Open, melhor americano, atrás de cinco chineses); o M3.1 Flash da MiniMax (19/10) empata com o Haiku 5.5.
+- recentes: 2026-10-19 (ep. 36), 2026-10-20 (ep. 37), 2026-10-21 (ep. 38)
 
 ## T-05 · Acesso restrito a capacidades perigosas
 - desde: 2026-09-03 (ep. 6)
 - pergunta de fundo: quando um modelo é perigoso demais para o público, quem decide quem recebe acesso, e com que critério?
-- estado (2026-10-16): virou o padrão — Google (Fairwind, Argon), OpenAI (Daybreak), Anthropic e a Mistral, que dá o Large 4 com moderação reduzida a parceiros escolhidos sem critério público. Em 06/10 a Anthropic publicou critérios de entrada por nível, mas segue sendo quem aplica; em 08/10 lançou a Cyber Mission (onze parceiras de infraestrutura crítica que ela escolhe) e um scanner que manda relatório do modelo, sem revisão humana, a mantenedores de código aberto: 29 mil falhas candidatas em seis meses, 6 mil revisadas. Os furos seguem em volta: a falha do Mythos explorada (ep. 27), o GLM-5.3 no Bedrock (ep. 28) e, em 15/10, o Muse Spark Open da Meta, aberto com trava medida só pela própria empresa — que, no computador de quem baixa, pode ser tirada.
-- recentes: 2026-10-07 (ep. 29), 2026-10-09 (ep. 31), 2026-10-16 (ep. 35)
+- estado (2026-10-22): o acesso restrito virou o padrão (Fairwind e Argon, Daybreak, Mythos e Cyber Mission, Large 4 com moderação reduzida), com critério publicado só pela Anthropic, que segue sendo quem aplica. Mas a capacidade já vaza pela borda: modelos abertos com trava medida só pela própria empresa (Muse Spark Open, Beam) e, em 21/10, as falhas críticas do PHP (cerca de 70% dos sites), uma delas achada com o GPT-5.6 Sol, modelo público, não restrito. A divulgação coordenada pela OpenAI (coalizão com governo americano, US$ 1 bi em acesso subsidiado) não segurou o vazamento: a Cloudflare viu ataque antes da correção, e governos europeus tiraram sites do ar.
+- recentes: 2026-10-16 (ep. 35), 2026-10-19 (ep. 36), 2026-10-22 (ep. 39)
 
 ## T-06 · A busca pela AGI
 - desde: 2026-09-04 (ep. 7), tema criado pelo autor em 03/10
@@ -65,11 +65,11 @@ Regras:
 ## T-07 · Empregos em massa e o risco para a humanidade
 - desde: 2026-09-08 (ep. 8), tema criado pelo autor em 03/10
 - pergunta de fundo: a IA vai acabar com empregos em massa — e, no extremo, ameaça a própria humanidade? O que os dados mostram, além do discurso?
-- estado (2026-10-05): primeira pauta direta no ep. 27 — a Anthropic mediu que robôs conseguem fazer 74% das tarefas físicas, mas só 0,3% sai mais barato que gente hoje, e chegar a 10% levaria uns 40 anos. No trabalho intelectual o ritmo é outro: a OpenAI mede 3,1 dias de agente por dia humano na própria pesquisa (ep. 8), e a Anthropic diz que o Claude lidera 26% da dela (ep. 16).
-- recentes: 2026-09-08 (ep. 8), 2026-09-18 (ep. 16), 2026-10-05 (ep. 27)
+- estado (2026-10-19): no trabalho físico, robôs fazem 74% das tarefas mas só 0,3% sai mais barato que gente (ep. 27). No intelectual, o efeito já aparece dentro dos laboratórios: em 16/10 a Anthropic mostrou que a fatia de júnior nas contratações técnicas dela caiu de 27% para 9% desde o começo de 2025, e em 18/10 separou 5% das ações (cerca de 20% somando outras promessas) para um fundo voltado à instabilidade dos trabalhadores, ainda sujeito aos acionistas e sem governança definida.
+- recentes: 2026-09-18 (ep. 16), 2026-10-05 (ep. 27), 2026-10-19 (ep. 36)
 
 ## T-08 · Ciência feita por máquina: quem confere?
 - desde: 2026-09-08 (ep. 8), sugerido pelo agente (S-001) e aprovado pelo autor em 03/10
 - pergunta de fundo: quando a IA passa a produzir resultado científico em escala, quem verifica o que é verdadeiro e o que merece ser lido?
-- estado (2026-10-07): a IA já entrega resultado em matemática, física e biologia — Fermat em Lean, o Navier-Stokes contestado, o sistema enzimático, a amplitude em nove loops. Em 06/10 a OpenAI publicou de uma vez 722 manuscritos de um modelo interno, parte com Lean e nenhum revisado por pares, prometendo corrigir por versões. A conferência humana não acompanha: o arXiv limitou as submissões depois que elas dobraram em dois anos.
-- recentes: 2026-09-28 (ep. 22), 2026-10-02 (ep. 26), 2026-10-07 (ep. 29)
+- estado (2026-10-23): a IA entrega resultado em escala (722 manuscritos da OpenAI sem revisão de pares em 06/10) e a conferência humana não acompanha (o arXiv limitou submissões). O padrão que surge é a conferência fora do humano: a conta que se refaz (sementes do NIST, 16/10) e a bancada de fora que mede o que funcionou (proteínas contra veneno de escorpião, 17 de 211, 20/10). Em 22/10, o mesmo em software: a Anthropic diz que o Claude escreveu cerca de 180 milhões de linhas de prova em Rocq (Fermat tinha 13 milhões) de que 239 pontos de entrada de 123 bibliotecas não quebram; ninguém lê isso, quem confere é o verificador — que, avisa a própria empresa, não diz se a regra provada é a que importa.
+- recentes: 2026-10-19 (ep. 36), 2026-10-21 (ep. 38), 2026-10-23 (ep. 40)

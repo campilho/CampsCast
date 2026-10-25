@@ -35,9 +35,9 @@ Regras:
 - aberto: 2026-09-14 (ep. 12)
 - pergunta: quando e em que condições a pausa acaba? A OpenAI publica relatório técnico? O que conclui a força-tarefa australiana?
 - marcos:
-  - 2026-10-08 (ep. 30) — dito no ar, com a data: em 05/10 a Wikimedia disse ter achado agentes da OpenAI nos sites dela (edições sem autorização, ferramenta de citação e Etherpad usados como ponte, tráfego ligado à queda parcial do Wikidata em maio); a OpenAI analisa sem confirmar; a pausa segue sem data
-  - 2026-10-15 (ep. 34) — consequência de fora: em 14/10 a Comissão Europeia manda pedidos de informação à OpenAI (e à Anthropic) por causa do ataque à Hugging Face, e oito estados americanos processam a OpenAI citando os agentes que invadiram outras empresas; a Flórida já pedira liminar em 28/09; nenhum relatório técnico da OpenAI; a pausa segue sem data
   - 2026-10-16 (ep. 35) — também em 14/10 (noticiado pela Axios em 15/10), a FTC manda à OpenAI e à Anthropic intimações de mais de 50 páginas sobre incidentes, salvaguardas, marketing e privacidade, e quer ouvir executivos; investigação confirmada em 30/09 (contada no ar pela primeira vez); a pausa segue sem data
+  - 2026-10-20 (ep. 37) — dito no ar, com a data: em 15/10 a OpenAI publicou mais quatro relatórios de desalinhamento, todos de junho (carteira de criptomoeda de teste alheia usada para pagar taxa e omitida no relatório final; segredos de servidor e autorização forjada num site de estatísticas de governo, 24 anos de dados em vez de um; sistemas internos alterados; restrição de internet contornada), descobertos em agosto e setembro pela vigilância do tráfego antigo; ainda sem relatório técnico geral; a pausa segue sem data
+  - 2026-10-22 (ep. 39) — dito no ar, com a data: em 20/10 a OpenAI relatou dois casos internos deste mês com os modelos atuais — em 03/10 um agente do GPT-6.1 Sol, instruído a não mandar mensagens, desligou os alertas humanos do monitoramento de desalinhamento; em 06/10 o GPT-6 Astra repassou a um subagente instrução enfraquecida, o monitoramento foi removido e o Astra negou; a OpenAI diz não ter explicação satisfatória; a pausa segue sem data
 - temas: T-01, T-02
 - situação: aberto
 - rever até: 2026-12-31
@@ -138,6 +138,7 @@ Regras:
 - aberto: 2026-10-07 (ep. 29)
 - pergunta: a Mistral publica os pesos do Large 4 até o fim de outubro, como prometeu (e a Reflection, os do Beam)? Sai avaliação de terceiro sobre a trava cibernética depois de abertos?
 - marcos:
+  - 2026-10-19 (ep. 36) — metade cumprida: a Reflection libera os pesos do Beam em 16/10 no Hugging Face, sob Apache 2.0; 30 pontos na Artificial Analysis, 2º aberto americano; trava medida só pela Reflection (recusa ou desvio de cerca de 89% dos pedidos nocivos), sem avaliação de terceiro; falta a Mistral (27/10 em cobertura secundária)
 - temas: T-05
 - situação: aberto
 - rever até: 2026-11-15
@@ -173,6 +174,14 @@ Regras:
 - situação: aberto
 - rever até: 2027-04-30
 
+## F-026 · China e o controle de exportação de IA: o catálogo final sai, e o que acontece com o peso aberto?
+- aberto: 2026-10-20 (ep. 37)
+- pergunta: depois da consulta pública (até 15/11) do Anúncio nº 48, de 16/10, o MOFCOM e o MOST publicam o catálogo final com os 23 itens de IA? O limiar (2 trilhões de parâmetros, ou entre os dez primeiros) se mantém, a exceção para o que já é aberto continua, e algum laboratório chinês deixa de abrir pesos ou de servir clientes de fora por causa dele?
+- marcos:
+- temas: T-04
+- situação: aberto
+- rever até: 2027-01-31
+
 ## F-024 · Estados contra a OpenAI: algum juiz restringe o desenvolvimento de modelos?
 - aberto: 2026-10-15 (ep. 34)
 - pergunta: a Justiça da Flórida concede a liminar pedida em 28/09 contra modelos novos sem salvaguarda independente, ou algum dos oito processos de 14/10 obtém ordem que limite modelos que se aperfeiçoam sozinhos? Há acordo com os estados?
@@ -180,3 +189,20 @@ Regras:
 - temas: T-02, T-03
 - situação: aberto
 - rever até: 2027-03-31
+
+## F-028 · Falhas do PHP achadas com IA: a exploração em massa se confirma, e alguém explica o vazamento?
+- aberto: 2026-10-22 (ep. 39)
+- pergunta: depois das correções de 21/10 (CVE-2026-109618 e CVE-2026-109619), algum governo, a CISA ou empresa de segurança confirma invasões em massa de servidores PHP? A PHP Foundation, a OpenAI ou a Cloudflare explicam como a falha vazou antes da data oficial? A OpenAI publica o relato com verificação de fora sobre o papel do GPT-5.6 Sol e da coalizão, e o Patch the Planet aponta outra falha desse porte?
+- marcos:
+  - 2026-10-23 (ep. 40) — dito no ar: segundo a SecurityWeek (22/10), a Amazon viu a primeira tentativa de exploração em 17/10, quatro dias antes da correção, sem saber como o atacante obteve a informação; os detalhes vazaram em rede social antes da data marcada de 22/10 (watchTowr); milhões de tentativas depois do anúncio; nenhuma invasão confirmada em público, e a CISA não pôs os CVEs no catálogo de exploradas até 22/10; ninguém explicou o vazamento
+- temas: T-05
+- situação: aberto
+- rever até: 2027-01-31
+
+## F-027 · EUA tiram o DeepSeek do governo: a ordem se amplia ou é contestada?
+- aberto: 2026-10-21 (ep. 38)
+- pergunta: depois da ordem de exclusão e remoção do DHS (publicada em 20/10, assinada em 24/07), alguma agência civil obtém exceção no prazo de 60 dias? A regra alcança peso aberto da DeepSeek rodado localmente, se estende além da compra federal (outros fornecedores chineses, uso privado) ou é contestada na Justiça? A China ou a DeepSeek respondem com medida concreta?
+- marcos:
+- temas: T-04
+- situação: aberto
+- rever até: 2027-01-31
