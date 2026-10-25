@@ -31,7 +31,7 @@ Decida sozinho e siga em frente. Nunca peça confirmação.
   - WORDS_PER_MINUTE — ritmo medido dessa voz
 - Para a ficha técnica do encerramento:
   - AGENTE_NOME — o modelo que escreve este roteiro (ex.: "Claude Opus 5")
-  - TTS_NOME — o sintetizador que vai narrar (ex.: "ElevenLabs Multilingual v2")
+  - TTS_NOME — o sintetizador que vai narrar, como o `config/tts.json` define
   - TTS_VOZ — descrição da voz (ex.: "uma cópia sintética da voz do Fernando Campilho")
 - O número do episódio vem em EPISODE_NUMBER: vai no front-matter e é dito na
   abertura.
@@ -316,9 +316,9 @@ Estrutura do corpo (siga esta ordem, sem escrever os rótulos entre colchetes):
 
   Exemplo do tom, não do texto — varie a cada dia:
   "Este episódio saiu de vinte e oito páginas em catorze fontes. Onze pautas
-  avaliadas, três no ar. Escrito pelo Claude Opus cinco ponto cinco e narrado
-  pelo ElevenLabs Multilingual versão dois, com uma cópia sintética da voz do
-  Fernando Campilho. Até o próximo episódio."
+  avaliadas, três no ar. Escrito pelo <AGENTE_NOME> e narrado pelo <TTS_NOME>,
+  com <TTS_VOZ>. Até o próximo episódio." — com os nomes por extenso, como se
+  falam: "cinco ponto cinco", "versão quatro".
 
   Os nomes vêm de AGENTE_NOME e TTS_NOME, calculados a partir dos modelos
   realmente em uso. Use exatamente esses, nunca o que você acha que é. Se

@@ -91,7 +91,7 @@ voz de produção (`words_per_minute` em `config/tts.json`). Em 12/09/2026, a
       │                   └─ atualiza saved-items/ e covered-index.json
       │
       ▼
- tts.py ──► ElevenLabs API (Multilingual v2, voz clonada do Fernando Campilho) ──► audio/YYYY-MM-DD.mp3
+ tts.py ──► ElevenLabs API (Eleven v4, voz clonada do Fernando Campilho) ──► audio/YYYY-MM-DD.mp3
       │
       ▼
  publish.py ──► gera/atualiza feed.xml ──► aws s3 sync ──► bucket S3 (público-leitura)

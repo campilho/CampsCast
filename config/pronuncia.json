@@ -1,7 +1,8 @@
 {
   "_leia": "Grafia escrita -> como o sintetizador deve ler. Só afeta o áudio: roteiro, contagem de palavras e feed seguem com a grafia original. Palavra inteira e sensível a maiúsculas.",
   "substituicoes": {
-    "Anthropic": "Anthrópic"
+    "Anthropic": "Anthrópic",
+    "IA": "I.A."
   },
-  "_medicao": "Anthropic: teste de 10/10/2026 (privado/pronuncia/anthropic-2026-10-10.mp3), as mesmas 10 frases reais por grafia, ouvido pelo autor em 18/10. Anthropic 1 certa em 10; Antrópic 9; Antrópik 10; Anthrópic 10. Escolhida Anthrópic: acerta como Antrópik e muda menos a grafia."
+  "_medicao": "Anthropic: teste de 10/10/2026 (privado/pronuncia/anthropic-2026-10-10.mp3), as mesmas 10 frases reais por grafia, ouvido pelo autor em 18/10. Anthropic 1 certa em 10; Antrópic 9; Antrópik 10; Anthrópic 10. Escolhida Anthrópic: acerta como Antrópik e muda menos a grafia. IA: no Eleven v4, a sigla saía em inglês; teste de 20/10 (privado/pronuncia/ia-v4-2026-10-20.mp3), as mesmas 10 frases reais por grafia (IA, I.A., i-á, I-A), ouvido pelo autor em 25/10: ficou I.A."
 }

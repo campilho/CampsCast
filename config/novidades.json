@@ -12,6 +12,12 @@
       "ate": "2026-10-09",
       "fato": "A partir do episódio 27, o agente trabalha com uma memória nova, em teste: tem à mão tudo o que já foi ao ar desde o primeiro episódio, acompanha os grandes temas do programa e fica de olho nas perguntas que ficaram em aberto — promessas, prazos, preocupações — para contar quando elas voltarem a ser notícia.",
       "como_dizer": "Uma frase, em primeira pessoa, sem jargão técnico (nada de 'índice', 'camadas' ou 'arquivo'). Dizer que está em teste. No primeiro dia, 'a partir de hoje estou testando uma memória nova: lembro de tudo o que já passou por aqui e fico de olho nas perguntas que ficaram sem resposta'; nos seguintes, 'desde segunda'. Não prometer que vai acertar sempre."
+    },
+    {
+      "desde": "2026-10-26",
+      "ate": "2026-10-26",
+      "fato": "A partir do episódio 41, a narração sai de um modelo de voz mais novo, o ElevenLabs v4, treinado com as mesmas gravações da voz do Fernando Campilho. O texto continua escrito pelo agente, como sempre.",
+      "como_dizer": "Uma frase, em primeira pessoa e sem jargão: 'a partir de hoje, a minha voz sai de um modelo de narração novo'. Não prometer que ficou melhor; pode convidar quem ouve pelo Spotify a dizer nos comentários se percebeu a diferença. Só neste episódio."
     }
   ]
 }

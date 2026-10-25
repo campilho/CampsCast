@@ -1209,11 +1209,21 @@ fi
 # vive só na configuração; este teste impede que ela suma sem ninguém ver.
 PRON_REAL="$(python3 -c "
 import sys; sys.path.insert(0, 'scripts'); import tts
-print(tts.aplica_pronuncia('a Anthropic e a OpenAI', tts.carrega_pronuncia()))" 2>&1)"
-if [[ "$PRON_REAL" == "a Anthrópic e a OpenAI" ]]; then
-  ok "config/pronuncia.json lê Anthropic como Anthrópic"
+print(tts.aplica_pronuncia('a Anthropic e a IA', tts.carrega_pronuncia()))" 2>&1)"
+# "IA" no Eleven v4 saía como sigla em inglês; "I.A." acertou no teste de
+# 20/10, ouvido pelo autor em 25/10.
+if [[ "$PRON_REAL" == "a Anthrópic e a I.A." ]]; then
+  ok "config/pronuncia.json lê Anthropic como Anthrópic e IA como I.A."
 else
-  bad "pronúncia de Anthropic fora da configuração — saiu: $PRON_REAL"
+  bad "pronúncia fora da configuração — saiu: $PRON_REAL"
+fi
+# O exemplo da ficha no prompt citava o sintetizador pelo nome, escrito à mão:
+# na troca para o v4, o agente teria um modelo velho de exemplo. O nome vem
+# só de TTS_NOME, calculado do config/tts.json.
+if grep -qiE "multilingual|eleven ?v[0-9]|flash v" prompts/master.md; then
+  bad "prompt cita um modelo de narração pelo nome: $(grep -oiE 'multilingual[^.]*|eleven ?v[0-9][^.]*|flash v[^.]*' prompts/master.md | head -1)"
+else
+  ok "prompt não cita modelo de narração pelo nome; vem de TTS_NOME"
 fi
 if python3 scripts/tts.py --script tests/fixtures/sample-episode.md --speed 1.5 --dry-run >/dev/null 2>&1; then
   bad "tts.py aceitou --speed fora do limite da API"

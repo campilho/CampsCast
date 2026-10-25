@@ -104,14 +104,15 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
             primeiro cai 1,6 dB, a abertura mais animada). 8:21 contra 8:31, uns
             2% mais rápido. Custo exato: 3.339 créditos, 0,44 por caractere,
             igual ao Multilingual
-      - [ ] **"IA" no v4** — teste em `privado/pronuncia/ia-v4-2026-10-20.mp3`:
-            IA (~0:06), I.A. (~1:06), i-á (~2:09), I-A (~3:10), as mesmas dez
-            frases reais. O autor conta os acertos
-      - [ ] **Troca no fim de semana de 24–25/10**, primeiro episódio no v4 na
-            segunda, 26/10: grafia de "IA" no `pronuncia.json` com teste;
-            `model_id` em `config/tts.json`; ADR 0011 com as medições; novidade
-            na abertura de 26/10, se o autor quiser; `--check` no v4 e dry-run.
-            Volta atrás é uma linha no `tts.json`
+      - [x] **"IA" no v4** — ficou "I.A." (autor, 25/10), no `pronuncia.json`
+            com teste
+      - [x] **Troca feita em 25/10** ([ADR 0011](docs/decisions/0011-narracao-no-eleven-v4.md)):
+            `model_id` `eleven_v4`, exemplo da ficha no prompt sem nome de
+            modelo (com teste), anúncio na abertura só em 26/10, `--check` e
+            dry-run conferidos. Volta atrás é uma linha no `tts.json`
+      - [ ] **Segunda, 26/10 — ouvir o primeiro episódio no v4**: o anúncio, a
+            ficha ("ElevenLabs versão quatro"), "I.A." e "Anthrópic". Olhar os
+            comentários no Spotify durante a semana
       - [ ] **Sexta, 30/10 — recalibrar o ritmo** com os episódios da semana:
             `calibrate_pace.py --desde 2026-10-26 --apply`. Até lá fica 152
             ppm; o v4 é uns 2% mais rápido, então os episódios saem uns 10 s
