@@ -271,6 +271,16 @@ if stage_enabled research; then
 
   [[ -f prompts/master.md ]] || die "prompts/master.md não encontrado."
 
+  # Fio sem marco há 30 dias sai da leitura diária para memoria/fios-expirados/
+  # antes de o agente ler a memória (ADR 0008, adendo de 25/10). Nada se apaga.
+  # Falhar aqui não derruba o episódio: o fio só fica mais um dia na lista.
+  if [[ $DRY_RUN -eq 0 ]]; then
+    EXPIRADOS="$(python3 scripts/expira_fios.py --data "$EPISODE_DATE" 2>>"$LOG" || true)"
+  else
+    EXPIRADOS="$(python3 scripts/expira_fios.py --data "$EPISODE_DATE" --dry-run 2>>"$LOG" || true)"
+  fi
+  if [[ -n "$EXPIRADOS" ]]; then log "Fios expirados (30 dias sem marco): $EXPIRADOS"; fi
+
   export EPISODE_DATE NEWS_WINDOW WINDOW_START WINDOW_END WINDOW_DAYS
   export WORD_MIN WORD_TARGET WORD_MAX WORDS_PER_MINUTE
   # Mudanças no próprio podcast que a abertura anuncia (config/novidades.json).

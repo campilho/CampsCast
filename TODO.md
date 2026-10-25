@@ -110,6 +110,8 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
             `model_id` `eleven_v4`, exemplo da ficha no prompt sem nome de
             modelo (com teste), anúncio na abertura só em 26/10, `--check` e
             dry-run conferidos. Volta atrás é uma linha no `tts.json`
+      - [x] Anúncio estendido a 26–30/10 (autor, 25/10): frase com convite
+            aos comentários do Spotify na segunda, meia frase de terça a sexta
       - [ ] **Segunda, 26/10 — ouvir o primeiro episódio no v4**: o anúncio, a
             ficha ("ElevenLabs versão quatro"), "I.A." e "Anthrópic". Olhar os
             comentários no Spotify durante a semana
@@ -214,6 +216,23 @@ mil tokens da ferramenta Read.
       publicação, `prompts/memoria.md`, `confere_resumo.py` e carga das 6
       semanas de 24/08 a 02/10. Medir junto se 4 resumos permitem ler 3
       roteiros na íntegra em vez de 5
+- [x] **Fios no teto (25/10)** — decidido pelo autor: teto de 40 (~30 KB) e
+      expiração de 30 dias sem marco para `memoria/fios-expirados/`, por
+      `scripts/expira_fios.py`, antes de cada episódio; nada se apaga e o
+      agente pode trazer o fio de volta (adendo do ADR 0008). Saíram F-012,
+      F-008 e F-017; ficaram 17. O relatório de sexta mede a velocidade
+      (abertos, fechados, expirados) — acompanhar por algumas semanas. Revisão
+      do cemitério no relatório mensal; episódio especial dos que nunca
+      fecharam no fim do ano. F-020 segue meio resolvido (o Beam saiu)
+- [x] **S-002 e S-003 aprovadas (25/10)** — viraram T-09 e T-10. Temas em 10
+      de 10: o próximo exige aposentar, juntar ou subir o teto
+- [ ] **Acervo como linha do tempo (C7, antecipado)** — nada se apaga, e o
+      acervo vira um registro de como a IA evoluiu. Para medir o ritmo daqui a
+      um ou dois anos, vale gravar desde já, em cada pauta do índice, campos
+      estruturados: tipo de evento (lançamento, preço, regulação, incidente,
+      pesquisa), empresa e os números do dia (preço por milhão de tokens, nota
+      em índice independente). Dado anotado na hora vale mais que dado
+      reconstruído depois
 - [ ] **C3. Resumo mensal** — setembro como piloto, com uma seção por tema
 - [ ] **C4b. Teto de 90 dias na lista do prompt** — quando passar de ~30 KB,
       por volta de janeiro de 2027

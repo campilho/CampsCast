@@ -25,8 +25,11 @@ Regras:
   tema (memoria/temas.md), não fio.
 - Situação: aberto, cumprido, desmentido, resolvido ou arquivado (esfriou sem
   desfecho). Só fio aberto fica aqui.
-- No máximo 20 fios abertos e 3 marcos por fio; o marco mais antigo sai quando
+- No máximo 40 fios abertos e 3 marcos por fio; o marco mais antigo sai quando
   entra o quarto. O caminho inteiro está nos roteiros citados.
+- Fio sem marco há 30 dias sai sozinho para `memoria/fios-expirados/AAAA.md`
+  (scripts/expira_fios.py, antes de cada episódio). Nada se apaga: se a
+  notícia voltar, o fio volta para cá com o marco novo.
 - Passou do "rever até" sem novidade: decidir entre estender a data ou arquivar.
 
 ---
@@ -92,29 +95,6 @@ Regras:
 - marcos:
   - 2026-09-28 (ep. 22) — Casa Branca cria o Diálogo de Superinteligência com a China
 - temas: T-04
-- situação: aberto
-- rever até: 2026-12-31
-
-## F-008 · Botão de desligar na Califórnia: o que o grupo de especialistas entrega
-- aberto: 2026-09-21 (ep. 17)
-- pergunta: o grupo entrega em dois meses, como manda a ordem de Newsom, e isso vira projeto de lei?
-- marcos:
-- temas: T-03
-- situação: aberto
-- rever até: 2026-11-30
-
-## F-012 · NVIDIA compra a Hugging Face: passa no antitruste?
-- aberto: 2026-09-04 (ep. 7)
-- pergunta: algum regulador abre análise, ou concorrentes reagem formalmente?
-- marcos:
-- situação: aberto
-- rever até: 2027-03-31
-
-## F-017 · O Gemini que escapou em maio: o Google publica relato próprio?
-- aberto: 2026-09-21 (ep. 17)
-- pergunta: o Google publica relato do incidente, e o caso entra na definição de incidente crítico da Califórnia?
-- marcos:
-- temas: T-02
 - situação: aberto
 - rever até: 2026-12-31
 

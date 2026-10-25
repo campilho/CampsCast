@@ -2028,6 +2028,9 @@ t = t.replace("  - 2026-09-28 (ep. 22) — pausa", "  - 2026-09-28 (ep. 22) — 
 (r / "temas.md").write_text((f / "temas.md").read_text())
 (r / "sugestoes.md").write_text((f / "sugestoes.md").read_text())
 PYF
+mkdir -p "$REL_DIR/fios-expirados"
+printf -- '# Fios expirados\n\n---\n\n## F-090 · Parado\n- aberto: 2026-08-20 (ep. 1)\n- situação: expirado\n- expirado: 2026-09-30 — sem marco desde 2026-08-20 (41 dias)\n' \
+  > "$REL_DIR/fios-expirados/2026.md"
 METRICAS_ARQ="$REL_DIR/metricas.jsonl" FIOS_ARQ="$REL_DIR/fios.md" TEMAS_ARQ="$REL_DIR/temas.md" \
 SUGESTOES_ARQ="$REL_DIR/sugestoes.md" EPISODIOS_DIR="$REL_DIR/episodes" \
   python3 scripts/relatorio.py --data 2026-10-02 --saida "$REL_DIR/rel.md" --resumo "$REL_DIR/resumo.json" >/dev/null 2>&1
@@ -2035,7 +2038,8 @@ REL="$(cat "$REL_DIR/rel.md" 2>/dev/null)"; RESUMO="$(cat "$REL_DIR/resumo.json"
 if [[ "$REL" == *"2026-W40"* && "$REL" == *"Pauta da segunda"* && "$REL" == *"S-001"*"energia"* \
       && "$REL" != *"S-002"* && "$REL" == *"F-001"*"2026-10-01"* && "$REL" == *"T-01"* \
       && "$REL" == *"passou do rever até"* && "$RESUMO" == *'"sugestoes_pendentes": 1'* \
-      && "$RESUMO" == *'"fios_vencidos": 1'* && "$RESUMO" == *'"episodios": 1'* ]]; then
+      && "$RESUMO" == *'"fios_vencidos": 1'* && "$RESUMO" == *'"episodios": 1'* \
+      && "$REL" == *"(teto de 40)"* && "$REL" == *"1 expirado"* && "$RESUMO" == *'"fios_expirados": 1'* ]]; then
   ok "relatório do autor junta episódios, decisões pendentes, temas, fios e avisos da semana"
 else
   bad "relatório do autor errado: ${RESUMO:-sem resumo} / $(printf '%s' "$REL" | head -c 300)"
@@ -2091,6 +2095,54 @@ if [[ "$REL_SEX" == *"| 28/08 | 2 | Sexta de teste |"* ]]; then
   ok "o relatório de sexta inclui o episódio do próprio dia"
 else
   bad "relatório de sexta sem o episódio do dia — ${REL_SEX:0:300}"
+fi
+
+# Expiração de fios (25/10): com 20 fios no teto e onze abertos contra um
+# fechado em três semanas, fio sem marco há 30 dias sai da leitura diária para
+# memoria/fios-expirados/AAAA.md. Nada se apaga, e rodar duas vezes não duplica.
+EXP_DIR="$(mktemp -d)"; mkdir -p "$EXP_DIR/memoria"
+cat > "$EXP_DIR/memoria/fios.md" <<'FIM'
+# Fios em aberto
+
+Cabeçalho.
+
+---
+
+## F-001 · Parado há 40 dias
+- aberto: 2026-09-01 (ep. 1)
+- pergunta: sai?
+- marcos:
+  - 2026-09-15 (ep. 2) — marco antigo
+- situação: aberto
+- rever até: 2027-01-31
+
+## F-002 · Aberto há tempo, marco recente
+- aberto: 2026-08-01 (ep. 1)
+- pergunta: sai?
+- marcos:
+  - 2026-10-20 (ep. 3) — marco novo
+- situação: aberto
+- rever até: 2027-01-31
+
+## F-003 · Aberto há 10 dias, sem marco
+- aberto: 2026-10-15 (ep. 4)
+- pergunta: sai?
+- marcos:
+- situação: aberto
+- rever até: 2027-01-31
+FIM
+EXP1="$(FIOS_ARQ="$EXP_DIR/memoria/fios.md" python3 scripts/expira_fios.py --data 2026-10-25 2>&1)"
+EXP2="$(FIOS_ARQ="$EXP_DIR/memoria/fios.md" python3 scripts/expira_fios.py --data 2026-10-25 2>&1)"
+RESTO="$(cat "$EXP_DIR/memoria/fios.md")"; CEMITERIO="$(cat "$EXP_DIR/memoria/fios-expirados/2026.md" 2>/dev/null)"
+rm -rf "$EXP_DIR"
+if [[ "$EXP1" == "F-001" && -z "$EXP2" && "$RESTO" != *"F-001"* && "$RESTO" == *"F-002"* \
+      && "$RESTO" == *"F-003"* && "$RESTO" == *"Cabeçalho."* \
+      && "$CEMITERIO" == *"## F-001 · Parado há 40 dias"* && "$CEMITERIO" == *"- situação: expirado"* \
+      && "$CEMITERIO" == *"- expirado: 2026-10-25 — sem marco desde 2026-09-15 (40 dias)"* \
+      && "$(printf '%s' "$CEMITERIO" | grep -c '^## F-001')" == "1" ]]; then
+  ok "fio sem marco há 30 dias vai para fios-expirados, sem apagar e sem duplicar"
+else
+  bad "expiração de fios errada — 1ª: '$EXP1', 2ª: '$EXP2' / cemitério: ${CEMITERIO:0:200}"
 fi
 
 # Repetição de pauta por link: rede de segurança para quando a lista no prompt

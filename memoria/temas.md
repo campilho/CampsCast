@@ -73,3 +73,16 @@ Regras:
 - pergunta de fundo: quando a IA passa a produzir resultado científico em escala, quem verifica o que é verdadeiro e o que merece ser lido?
 - estado (2026-10-23): a IA entrega resultado em escala (722 manuscritos da OpenAI sem revisão de pares em 06/10) e a conferência humana não acompanha (o arXiv limitou submissões). O padrão que surge é a conferência fora do humano: a conta que se refaz (sementes do NIST, 16/10) e a bancada de fora que mede o que funcionou (proteínas contra veneno de escorpião, 17 de 211, 20/10). Em 22/10, o mesmo em software: a Anthropic diz que o Claude escreveu cerca de 180 milhões de linhas de prova em Rocq (Fermat tinha 13 milhões) de que 239 pontos de entrada de 123 bibliotecas não quebram; ninguém lê isso, quem confere é o verificador — que, avisa a própria empresa, não diz se a regra provada é a que importa.
 - recentes: 2026-10-19 (ep. 36), 2026-10-21 (ep. 38), 2026-10-23 (ep. 40)
+
+## T-09 · Peso aberto: quem responde pelo modelo que qualquer um baixa?
+- desde: 2026-09-04 (ep. 7), sugerido pelo agente (S-002) e aprovado pelo autor em 25/10
+- pergunta de fundo: quando um modelo aberto chega perto da fronteira, sem trava que resista e sem certidão de origem, quem responde pelo que se faz com ele — o laboratório, quem distribui ou ninguém?
+- estado (2026-10-25): o peso aberto encosta na fronteira (K2 Horizon com dados e logs abertos, MiMo da Xiaomi na liderança, o M3.1 Flash da MiniMax prometendo pesos depois) e a trava não resiste: em 30/09 a Anthropic mostrou que a do GLM-5.3 sai por uns 4.400 dólares. A distribuição segue sem dono da responsabilidade: a NVIDIA comprou a Hugging Face, a Amazon pôs o GLM-5.3 no Bedrock e o Beam americano chegou primeiro sem pesos.
+- recentes: 2026-09-23 (ep. 19), 2026-09-30 (ep. 24), 2026-10-06 (ep. 28)
+
+## T-10 · O preço da inteligência: quem paga a guerra de preço?
+- desde: 2026-08-24 (ep. 1), sugerido pelo agente (S-003) e aprovado pelo autor em 25/10
+- pergunta de fundo: os laboratórios cortam e espelham preços a cada lançamento — o preço de tabela ainda diz quanto custa o trabalho, quem sustenta a queda, e o que acontece quando as tabelas ficam iguais?
+- estado (2026-10-25): cortes e tabelas espelhadas a cada lançamento — GPT-6 Sol e Luna pela metade, Sonnet 5.5 com a tabela do GPT-6 Sol, Haiku 5.5 com a do GPT-6 Luna — enquanto o custo por tarefa diverge: o Haiku sai três vezes mais caro que o Luna no índice independente, e o MiniMax M3.1 Flash, barato por token, gera quase o dobro de texto. A ressalva "preço de tabela não é custo por tarefa" foi dita no ar em quase todos.
+- recentes: 2026-09-30 (ep. 24), 2026-10-01 (ep. 25), 2026-10-08 (ep. 30)
+

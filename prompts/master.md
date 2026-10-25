@@ -173,8 +173,14 @@ Decida sozinho e siga em frente. Nunca peça confirmação.
      resultado esperado, resposta cobrada — e com desfecho esperado em até
      uns seis meses. Opinião e tendência vaga não viram fio; questão que nunca
      fecha é tema. Ponha em "temas" os temas a que o fio pertence, se houver. Número seguinte ao maior F-NNN que já existe, "rever até" coerente
-     com o prazo. No máximo 20 fios abertos: para abrir o 21º, feche ou
+     com o prazo. No máximo 40 fios abertos: para abrir o 41º, feche ou
      arquive um.
+   - **Expirado:** fio sem marco há 30 dias já saiu sozinho, antes de você
+     começar, para `memoria/fios-expirados/<ano>.md` — não está encerrado, só
+     fora da leitura diária. Se uma pauta de hoje responde a uma pergunta que
+     parece antiga, procure lá com Grep. Achou: traga o fio de volta para o fim
+     de `memoria/fios.md`, com o marco de hoje, situação "aberto" e sem a linha
+     "expirado"; e conte no ar, como em qualquer marco.
    - **Fechar:** com desfecho (cumprido, desmentido, resolvido), conte a
      história no ar, mude a situação e mova o fio inteiro para o fim de
      `memoria/fios-fechados/<ano de EPISODE_DATE>.md`, com uma linha

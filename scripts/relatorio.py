@@ -10,7 +10,8 @@ no registro ou nas transcrições:
 - **para decidir:** sugestões de tema pendentes; fios que passaram do
   "rever até" ou vencem nos próximos 14 dias;
 - temas cujo estado mudou na semana;
-- fios: abertos, marcos da semana, fechados na semana;
+- fios: abertos, marcos da semana, e a velocidade: abertos, fechados e
+  expirados na semana;
 - fontes que falharam na leitura, na semana e nas quatro anteriores — lidas
   das transcrições do agente, não do relato dele;
 - avisos das conferências (roteiro, backlog, fios, repetição);
@@ -46,7 +47,7 @@ import urllib.parse
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from confere_fios import _depois_do_cabecalho, _fios, sugestoes  # noqa: E402
+from confere_fios import MAX_FIOS, _depois_do_cabecalho, _fios, sugestoes  # noqa: E402
 
 DATA = re.compile(r"\d{4}-\d{2}-\d{2}")
 
@@ -155,6 +156,13 @@ def monta(d: dt.date) -> tuple[str, dict]:
     fechados = [(m[1], m[2]) for m in re.finditer(
         r"(?ms)^## (F-\d{3}[^\n]*).*?^- fechado:\s*(\d{4}-\d{2}-\d{2}[^\n]*)", fechados_txt)
         if ini <= m[2][:10] <= fim]
+    expirados_txt = ler(arq("FIOS_ARQ", "memoria/fios.md").parent / "fios-expirados" / f"{d.year}.md")
+    expirados = [m[1] for m in re.finditer(r"(?m)^- expirado:\s*(\d{4}-\d{2}-\d{2})", expirados_txt)
+                 if ini <= m[1] <= fim]
+    # Velocidade: quantos fios nasceram na semana, onde quer que estejam hoje.
+    abertos_semana = sum(1 for txt in (fios_txt, fechados_txt, expirados_txt)
+                         for m in re.finditer(r"(?m)^- aberto:\s*(\d{4}-\d{2}-\d{2})", txt)
+                         if ini <= m[1] <= fim)
     avisos = [(r["data"], a) for r in regs for a in (r.get("avisos_roteiro") or [])]
 
     L = [f"# Relatório do autor — semana {semana} ({ini_d:%d/%m} a {fim_d:%d/%m})", ""]
@@ -207,7 +215,8 @@ def monta(d: dt.date) -> tuple[str, dict]:
         or ["Nenhum tema mudou de estado."]
 
     L += ["", "## Fios", "", f"{sum(1 for f in fios if f['campos'].get('situação') == 'aberto')} "
-          "abertos (teto de 20)."]
+          f"abertos (teto de {MAX_FIOS}). Na semana: {abertos_semana} aberto(s), "
+          f"{len(fechados)} fechado(s), {len(expirados)} expirado(s)."]
     marcos = []
     for linha in _depois_do_cabecalho(fios_txt):
         m = re.match(r"^## (F-\d{3})", linha)
@@ -244,6 +253,7 @@ def monta(d: dt.date) -> tuple[str, dict]:
 
     resumo = {"semana": semana, "episodios": len(regs), "sugestoes_pendentes": len(pendentes),
               "fios_vencidos": len(vencidos), "fios_fechados": len(fechados),
+              "fios_abertos_semana": abertos_semana, "fios_expirados": len(expirados),
               "avisos": len(avisos)}
     return "\n".join(L) + "\n", resumo
 

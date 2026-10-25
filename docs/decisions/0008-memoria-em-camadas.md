@@ -185,3 +185,27 @@ em vez de 5 (hoje 16% do cache lido) — decidir pelo custo medido.
 - Mais um passo de modelo por semana (e por mês), com custo a medir no primeiro.
 - As camadas são arquivos portáveis; na Fase 4, vale comparar com o módulo de
   memória do AgentCore.
+
+## Adendo de 25/10/2026 — fios: teto de 40 e expiração
+
+Em três semanas com a memória nova (05 a 25/10) o agente abriu onze fios e
+fechou um. A lista bateu no teto de 20 e o arquivo chegou a 14,6 KB, uns 730
+bytes por fio, contra os 500 previstos; a conferência avisou todos os dias da
+semana 43. Perguntas se abrem bem mais rápido do que se resolvem.
+
+- **Teto de 40 fios e ~30 KB.** Ler os fios custa de 6% a 8% do cache lido,
+  uns 10 a 20 centavos de dólar por episódio a preço de API; dobrar continua
+  pequeno.
+- **Expiração:** fio sem marco há 30 dias — contados do dia mais recente entre
+  a abertura e os marcos — é movido inteiro para
+  `memoria/fios-expirados/AAAA.md`, com situação "expirado", por
+  `scripts/expira_fios.py`, que o orquestrador roda antes do agente. É conta, não
+  julgamento, e por isso fica fora do agente. Nada se apaga: o agente traz o
+  fio de volta se a notícia voltar.
+- **Velocidade medida:** o relatório semanal passa a contar fios abertos,
+  fechados e expirados na semana. Algumas semanas disso dizem se 40 basta.
+- O cemitério é revisto uma vez por mês, no relatório mensal; os que nunca
+  fecharem rendem um episódio especial no fim do ano.
+- Princípio de sempre: o acervo não tem fim, só a leitura tem teto. É ele que
+  vai permitir, daqui a um ou dois anos, mostrar a linha do tempo da IA.
+

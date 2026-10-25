@@ -4,7 +4,7 @@ Podcast diário de IA em português, escrito e narrado por agentes, publicado em
 dias úteis. Rodando em produção desde 24/08/2026.
 
 > **Antes de mexer em qualquer coisa:** `bash tests/smoke_test.sh`
-> São 151 testes, offline, sem custo. Rode antes e depois de alterar.
+> São 152 testes, offline, sem custo. Rode antes e depois de alterar.
 
 ## Regra número um
 
@@ -63,7 +63,8 @@ Agregador serve para descobrir, nunca para citar.
 | `chamada.py` | decide se o episódio convida a seguir o podcast (dias em `config/show.json`) |
 | `pautas.py` | lista compacta do que já foi ao ar, uma linha por pauta, escrita no prompt |
 | `confere_backlog.py` | confere se o backlog guarda só pauta ativa; registra, não bloqueia |
-| `confere_fios.py` | confere fios (teto de 20, marcos, datas) e temas (teto de 10); registra |
+| `confere_fios.py` | confere fios (teto de 40, marcos, datas) e temas (teto de 10); registra |
+| `expira_fios.py` | move fio sem marco há 30 dias para `memoria/fios-expirados/`; roda antes do agente |
 | `confere_repeticao.py` | avisa pauta do dia com link já usado antes; ignora páginas de listagem |
 | `relatorio.py` | relatório semanal do autor: decisões pendentes, temas, fios, fontes que falharam, avisos; `--semana`, `--fecha-semana` |
 | `confere_roteiro.py` | confere o que a abertura e a ficha não podem deixar de dizer; registra, não bloqueia |

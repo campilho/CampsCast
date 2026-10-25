@@ -4,8 +4,10 @@ CampsCast — confere o arquivo de fios em aberto (memoria/fios.md).
 
 Fios são preocupações, promessas e previsões que apareceram no ar e ainda não
 tiveram desfecho (ADR 0008). O agente abre, acrescenta marcos e fecha. O
-arquivo é lido inteiro todo dia, então tem teto: 20 fios abertos, 3 marcos por
-fio, ~10 KB — um fio com três marcos tem uns 500 bytes.
+arquivo é lido inteiro todo dia, então tem teto: 40 fios abertos, 3 marcos por
+fio, ~30 KB — em 25/10, 20 fios mediam 14,6 KB, uns 730 bytes cada. O teto era
+de 20 até 25/10; com ele veio a expiração (scripts/expira_fios.py): fio sem
+marco há 30 dias sai para memoria/fios-expirados/.
 
 Não bloqueia: imprime uma linha por problema, e o orquestrador grava no
 registro junto com os avisos do roteiro. Confere:
@@ -15,7 +17,7 @@ registro junto com os avisos do roteiro. Confere:
   para memoria/fios-fechados/;
 - data de revisão vencida;
 - episódio citado (na abertura ou num marco) que não existe;
-- mais de 3 marcos, mais de 20 fios, arquivo acima do teto;
+- mais de 3 marcos, mais de 40 fios, arquivo acima do teto;
 - texto fora do formato depois do cabeçalho.
 
 Com --temas, confere também memoria/temas.md: as questões de fundo que nunca
@@ -43,7 +45,7 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SITUACOES = {"aberto", "cumprido", "desmentido", "resolvido", "arquivado"}
-MAX_FIOS, MAX_MARCOS, TETO_BYTES = 20, 3, 10 * 1024
+MAX_FIOS, MAX_MARCOS, TETO_BYTES = 40, 3, 30 * 1024
 MAX_TEMAS, MAX_RECENTES = 10, 3
 MAX_PENDENTES = 10
 SITUACOES_SUGESTAO = {"pendente", "aprovado", "recusado"}

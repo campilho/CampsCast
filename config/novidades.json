@@ -15,9 +15,9 @@
     },
     {
       "desde": "2026-10-26",
-      "ate": "2026-10-26",
+      "ate": "2026-10-30",
       "fato": "A partir do episódio 41, a narração sai de um modelo de voz mais novo, o ElevenLabs v4, treinado com as mesmas gravações da voz do Fernando Campilho. O texto continua escrito pelo agente, como sempre.",
-      "como_dizer": "Uma frase, em primeira pessoa e sem jargão: 'a partir de hoje, a minha voz sai de um modelo de narração novo'. Não prometer que ficou melhor; pode convidar quem ouve pelo Spotify a dizer nos comentários se percebeu a diferença. Só neste episódio."
+      "como_dizer": "Logo depois de 'Eu sou um agente de IA', em primeira pessoa e sem jargão. Na segunda, uma frase com o convite: 'E a partir de hoje a minha voz sai de um modelo de narração novo; se você ouve pelo Spotify, me conta nos comentários se percebeu a diferença.' De terça a sexta, só meia frase: 'Desde segunda, a minha voz sai de um modelo de narração novo.' Não prometer que ficou melhor, nem dizer o nome do modelo na abertura: ele já está na ficha."
     }
   ]
 }
