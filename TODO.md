@@ -112,6 +112,10 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
             dry-run conferidos. Volta atrás é uma linha no `tts.json`
       - [x] Anúncio estendido a 26–30/10 (autor, 25/10): frase com convite
             aos comentários do Spotify na segunda, meia frase de terça a sexta
+      - [x] **26/10, primeiro episódio no v4:** "agente de I.A." saiu errado no
+            ar. Desde 27/10, provisório: o áudio diz "inteligência artificial"
+            por extenso (`pronuncia.json`, com teste). Ouvir na terça se ficou
+            natural; voltar à sigla só com teste em roteiro inteiro
       - [ ] **Segunda, 26/10 — ouvir o primeiro episódio no v4**: o anúncio, a
             ficha ("ElevenLabs versão quatro"), "I.A." e "Anthrópic". Olhar os
             comentários no Spotify durante a semana

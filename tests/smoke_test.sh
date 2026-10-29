@@ -1210,10 +1210,11 @@ fi
 PRON_REAL="$(python3 -c "
 import sys; sys.path.insert(0, 'scripts'); import tts
 print(tts.aplica_pronuncia('a Anthropic e a IA', tts.carrega_pronuncia()))" 2>&1)"
-# "IA" no Eleven v4 saía como sigla em inglês; "I.A." acertou no teste de
-# 20/10, ouvido pelo autor em 25/10.
-if [[ "$PRON_REAL" == "a Anthrópic e a I.A." ]]; then
-  ok "config/pronuncia.json lê Anthropic como Anthrópic e IA como I.A."
+# "IA" no Eleven v4 saía como sigla em inglês. "I.A." acertou no teste de
+# 20/10, mas errou no ar no primeiro episódio no v4 (26/10, "agente de I.A.");
+# por ora o áudio diz "inteligência artificial" por extenso.
+if [[ "$PRON_REAL" == "a Anthrópic e a inteligência artificial" ]]; then
+  ok "config/pronuncia.json lê Anthropic como Anthrópic e IA por extenso"
 else
   bad "pronúncia fora da configuração — saiu: $PRON_REAL"
 fi

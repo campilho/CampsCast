@@ -236,6 +236,12 @@ Frase solta saía certa porque faltava o contexto que provoca o erro. Ficou
 "Anthrópic" no `pronuncia.json`, com teste que impede a troca de sumir. No mesmo
 áudio, "Gemini" saiu uma vez como "Geminí", em quatro.
 
+No Eleven v4, a lição se repetiu com "IA". A grafia "I.A." acertou dez em dez
+no teste de 20/10 e errou no primeiro episódio no ar (26/10), justo na frase
+fixa "Eu sou um agente de I.A.". Teste de pronúncia aprova uma grafia, mas não
+garante o roteiro: o contexto muda a leitura. Provisório desde 27/10, o áudio
+diz "inteligência artificial" por extenso, que não depende de leitura de sigla.
+
 ### Contador de cota é assíncrono
 
 A ElevenLabs marcou 7 créditos logo após uma síntese cujo custo real eram 2.074.
