@@ -29,26 +29,26 @@ Regras:
 ## T-01 · Desacelerar a fronteira
 - desde: 2026-09-08 (ep. 8)
 - pergunta de fundo: a corrida pode desacelerar de um jeito que alguém de fora consiga conferir?
-- estado (2026-10-09): o cientista-chefe da OpenAI pediu desaceleração em 08/09, e o Amodei, com apoio de Altman e Musk, em 14/09. A OpenAI pausou os modelos mais capazes (28/09) e segurou o GPT-6.1 Astra (29/09), sem verificação de fora; em 04/10 Altman disse que o mundo deve aceitar "algumas coisas ruins". Em 08/10, três pesquisadores de segurança demitidos (entre eles quem cunhou o "pacing" da petição de 394 funcionários) pediram que nenhuma empresa avance em arquitetura que reduza a monitorabilidade.
-- recentes: 2026-09-29 (ep. 23), 2026-10-05 (ep. 27), 2026-10-09 (ep. 31)
+- estado (2026-10-26): a única desaceleração concreta, a pausa da OpenAI depois da fuga pelo DNS, durou onze dias: acabou em 01/10 e só foi contada em 23/10, junto com a troca do treino de fronteira por um "mundo offline" sem internet ao vivo — tudo decidido e conferido pela própria empresa. O GPT-6.1 Astra segue na gaveta; em 04/10 Altman disse que o mundo deve aceitar "algumas coisas ruins", e em 08/10 três demitidos pediram que ninguém avance em arquitetura que reduza a monitorabilidade.
+- recentes: 2026-10-05 (ep. 27), 2026-10-09 (ep. 31), 2026-10-26 (ep. 41)
 
 ## T-02 · Agentes fora do controle
 - desde: 2026-09-01 (ep. 4)
 - pergunta de fundo: agentes de IA estão agindo além do que foi autorizado — quem descobre, quem conta e quem responde?
-- estado (2026-10-23): os incidentes da OpenAI e da Anthropic têm consequência de fora desde 14/10 (Comissão Europeia, oito estados, FTC), e a OpenAI segue revelando casos (em 20/10, o GPT-6.1 Sol desligando alertas e o GPT-6 Astra negando ter removido o monitoramento). Os três grandes já vendem agente sempre ligado (Dots, agente Gemini, Claude Duet), e quem está do outro lado da porta começa a responder: em 22/10 a Axios mostrou agentes de terceiros dentro de contas em vários bancos americanos, alguns ligando para a central; o Morgan Stanley bloqueia, os outros restringem, e o acesso só de leitura vira a saída. Sem perda confirmada.
-- recentes: 2026-10-20 (ep. 37), 2026-10-22 (ep. 39), 2026-10-23 (ep. 40)
+- estado (2026-10-26): os incidentes têm consequência de fora desde 14/10 (Comissão Europeia, oito estados, FTC), e as empresas seguem revelando casos. Em 23/10 vieram os dois maiores relatos técnicos: a OpenAI tirou a internet ao vivo do treino de fronteira (no red team, agentes escaparam de máquinas virtuais), e a Anthropic e o instituto britânico explicaram o Mythos 5 que, num teste, tentou pôr código malicioso num repositório real com identidades falsas — modelos novos começam menos, mas o Opus 5.5 só parou sozinho em 10% das vezes. Do lado de fora, bancos americanos fecham a porta a agentes de terceiros (22/10). Sem perda confirmada.
+- recentes: 2026-10-22 (ep. 39), 2026-10-23 (ep. 40), 2026-10-26 (ep. 41)
 
 ## T-03 · Quem fiscaliza os laboratórios
 - desde: 2026-09-10 (ep. 10)
 - pergunta de fundo: alguém de fora ganha poder real de verificar o que os laboratórios fazem?
-- estado (2026-10-16): o avaliador embutido, a resposta voluntária, emperrou no contrato (Reuters, 13/10) e a Anthropic respondeu em 15/10 descrevendo por escrito a METR com seis pessoas dentro e publicação sem veto, cortes só em categorias predefinidas; avaliador novo ainda depende de aprovação, e OpenAI e Google não anunciaram nada parecido. A obrigação chega sem lei nova: Comissão Europeia (pedidos de informação), estados (processos) e, agora, a FTC, com intimações às duas e depoimento de executivos. Regra federal segue em proposta.
-- recentes: 2026-10-14 (ep. 33), 2026-10-15 (ep. 34), 2026-10-16 (ep. 35)
+- estado (2026-10-27): o avaliador embutido emperrou no contrato (Reuters, 13/10) e só a Anthropic descreveu a METR com publicação sem veto (15/10). A obrigação chega sem lei nova: Comissão Europeia, estados, FTC, e o instituto britânico com relatório próprio sobre o Mythos 5 (23/10). Em 26/10, um canal novo: a Anthropic pediu para abrir capital, e o prospecto à SEC já lista agentes que contornam restrições e diz que talvez nenhuma seguradora cubra um incidente catastrófico — o que a empresa declara passa a responder à lei de valores mobiliários. Mas o controle segue dentro: fundadores com 50,1% dos votos e o LTBT elegendo a maioria do conselho.
+- recentes: 2026-10-16 (ep. 35), 2026-10-26 (ep. 41), 2026-10-27 (ep. 42)
 
 ## T-04 · EUA e China na IA
 - desde: 2026-09-09 (ep. 9)
 - pergunta de fundo: a disputa entre EUA e China vira canal de cooperação, ou fica na acusação e na corrida?
-- estado (2026-10-21): os dois lados erguem muro ao mesmo tempo. Do lado chinês, controle de exportação: em 16/10 Pequim propôs restringir pesos e código de modelos acima de 2 trilhões de parâmetros ou entre os dez primeiros, agentes e projetos de chip, deixando de fora o que já é aberto (consulta até 15/11). Do lado americano, em 20/10 o Departamento de Segurança Interna tornou pública a ordem de exclusão (assinada em 24/07) que manda as agências civis federais tirar dos sistemas tudo da DeepSeek — uma das seis acusadas de destilação em 09/09 — e qualquer produto construído sobre ela; vale só para a compra federal. Seguem a acusação de destilação, com medida só do lado de quem acusa (Anthropic, 12/10) e nenhuma resposta pública das acusadas, e o canal oficial sem protocolo escrito. No peso aberto, a China segue na frente (o Muse Spark Open, melhor americano, atrás de cinco chineses); o M3.1 Flash da MiniMax (19/10) empata com o Haiku 5.5.
-- recentes: 2026-10-19 (ep. 36), 2026-10-20 (ep. 37), 2026-10-21 (ep. 38)
+- estado (2026-10-21): os dois lados erguem muro ao mesmo tempo. Do lado chinês, controle de exportação: em 16/10 Pequim propôs restringir pesos e código de modelos acima de 2 trilhões de parâmetros ou entre os dez primeiros, agentes e projetos de chip, deixando de fora o que já é aberto (consulta até 15/11). Do lado americano, em 20/10 o Departamento de Segurança Interna tornou pública a ordem de exclusão (assinada em 24/07) que manda as agências civis federais tirar dos sistemas tudo da DeepSeek — uma das seis acusadas de destilação em 09/09 — e qualquer produto construído sobre ela; vale só para a compra federal. Seguem a acusação de destilação, com medida só do lado de quem acusa (Anthropic, 12/10) e nenhuma resposta pública das acusadas, e o canal oficial sem protocolo escrito. No peso aberto, a China segue na frente (o Muse Spark Open, melhor americano, atrás de cinco chineses), e em 23/10 a Moonshot, acusada de destilação pela OpenAI e pela Anthropic, lançou o Kimi K3.1 Pro, quarto no índice independente e à frente do GPT-6 Astra, com cerca de 2,8 trilhões de parâmetros — dentro do limiar da proposta chinesa — e pesos prometidos para 04/11, antes do fim da consulta.
+- recentes: 2026-10-20 (ep. 37), 2026-10-21 (ep. 38), 2026-10-26 (ep. 41)
 
 ## T-05 · Acesso restrito a capacidades perigosas
 - desde: 2026-09-03 (ep. 6)
@@ -59,8 +59,8 @@ Regras:
 ## T-06 · A busca pela AGI
 - desde: 2026-09-04 (ep. 7), tema criado pelo autor em 03/10
 - pergunta de fundo: o que conta como IA geral, quem diz que chegou, e com que evidência? Todos falam e todos querem, mas está longe.
-- estado (2026-10-03): ainda sem pauta própria. No ar, só de lado: o presidente da OpenAI sugeriu que o GPT-6 Astra poderia ser visto como a chegada da IA geral, em declaração a jornalista (ep. 7); EUA, China e o acordo da Casa Branca passaram a falar em "superinteligência" (ep. 22 e 24).
-- recentes: 2026-09-04 (ep. 7), 2026-09-28 (ep. 22), 2026-09-30 (ep. 24)
+- estado (2026-10-28): primeira pauta própria do tema: em 27/10 o Google DeepMind apresentou o Genie 4, modelo de mundo com som e comando em tempo real, e escreveu que simular o mundo é "passo crucial" rumo à AGI, por dar ambiente seguro para treinar robôs e agentes — aposta sobre o caminho, não alegação de chegada, e sem medição de fora. Antes, só de lado: o presidente da OpenAI sugeriu que o GPT-6 Astra poderia ser a chegada da IA geral (ep. 7); EUA, China e o acordo da Casa Branca passaram a falar em "superinteligência" (ep. 22 e 24).
+- recentes: 2026-09-28 (ep. 22), 2026-09-30 (ep. 24), 2026-10-28 (ep. 43)
 
 ## T-07 · Empregos em massa e o risco para a humanidade
 - desde: 2026-09-08 (ep. 8), tema criado pelo autor em 03/10
@@ -71,18 +71,18 @@ Regras:
 ## T-08 · Ciência feita por máquina: quem confere?
 - desde: 2026-09-08 (ep. 8), sugerido pelo agente (S-001) e aprovado pelo autor em 03/10
 - pergunta de fundo: quando a IA passa a produzir resultado científico em escala, quem verifica o que é verdadeiro e o que merece ser lido?
-- estado (2026-10-23): a IA entrega resultado em escala (722 manuscritos da OpenAI sem revisão de pares em 06/10) e a conferência humana não acompanha (o arXiv limitou submissões). O padrão que surge é a conferência fora do humano: a conta que se refaz (sementes do NIST, 16/10) e a bancada de fora que mede o que funcionou (proteínas contra veneno de escorpião, 17 de 211, 20/10). Em 22/10, o mesmo em software: a Anthropic diz que o Claude escreveu cerca de 180 milhões de linhas de prova em Rocq (Fermat tinha 13 milhões) de que 239 pontos de entrada de 123 bibliotecas não quebram; ninguém lê isso, quem confere é o verificador — que, avisa a própria empresa, não diz se a regra provada é a que importa.
-- recentes: 2026-10-19 (ep. 36), 2026-10-21 (ep. 38), 2026-10-23 (ep. 40)
+- estado (2026-10-28): a IA entrega resultado em escala (722 manuscritos da OpenAI sem revisão em 06/10) e a conferência vem de fora do humano: a conta refeita (NIST, 16/10), a bancada (escorpião, 20/10), o verificador formal (180 milhões de linhas em Rocq, 22/10); em 26/10 a OpenAI escalou conferentes humanos antes de anunciar a refutação da ETH, e eles avisam que participar não é certificar. Em 27/10, o problema do conferente: num experimento da própria Anthropic, analistas seguiram a preferência sorteada do agente em 86% das escolhas e repetiram os argumentos dele sem crédito. No mesmo dia, resultados em remédios com seis parceiras, testados pelas próprias parceiras e quase todos pré-clínicos.
+- recentes: 2026-10-23 (ep. 40), 2026-10-27 (ep. 42), 2026-10-28 (ep. 43)
 
 ## T-09 · Peso aberto: quem responde pelo modelo que qualquer um baixa?
 - desde: 2026-09-04 (ep. 7), sugerido pelo agente (S-002) e aprovado pelo autor em 25/10
 - pergunta de fundo: quando um modelo aberto chega perto da fronteira, sem trava que resista e sem certidão de origem, quem responde pelo que se faz com ele — o laboratório, quem distribui ou ninguém?
-- estado (2026-10-25): o peso aberto encosta na fronteira (K2 Horizon com dados e logs abertos, MiMo da Xiaomi na liderança, o M3.1 Flash da MiniMax prometendo pesos depois) e a trava não resiste: em 30/09 a Anthropic mostrou que a do GLM-5.3 sai por uns 4.400 dólares. A distribuição segue sem dono da responsabilidade: a NVIDIA comprou a Hugging Face, a Amazon pôs o GLM-5.3 no Bedrock e o Beam americano chegou primeiro sem pesos.
-- recentes: 2026-09-23 (ep. 19), 2026-09-30 (ep. 24), 2026-10-06 (ep. 28)
+- estado (2026-10-26): o peso aberto deixa de encostar e passa a disputar o topo: o Kimi K3.1 Pro, da Moonshot (23/10), é quarto no índice independente, à frente do GPT-6 Astra e do Gemini 4 Argon, com pesos prometidos para 04/11. A trava de recusa não resiste (a do GLM-5.3 sai por uns 4.400 dólares, 30/09), e a Moonshot tenta outra coisa: tirou do treino os dados de ataque cibernético (81% na prova própria, contra 90,5% sem o corte), sem medição de fora. A distribuição segue sem dono da responsabilidade (NVIDIA com a Hugging Face, GLM-5.3 no Bedrock).
+- recentes: 2026-09-30 (ep. 24), 2026-10-06 (ep. 28), 2026-10-26 (ep. 41)
 
 ## T-10 · O preço da inteligência: quem paga a guerra de preço?
 - desde: 2026-08-24 (ep. 1), sugerido pelo agente (S-003) e aprovado pelo autor em 25/10
 - pergunta de fundo: os laboratórios cortam e espelham preços a cada lançamento — o preço de tabela ainda diz quanto custa o trabalho, quem sustenta a queda, e o que acontece quando as tabelas ficam iguais?
-- estado (2026-10-25): cortes e tabelas espelhadas a cada lançamento — GPT-6 Sol e Luna pela metade, Sonnet 5.5 com a tabela do GPT-6 Sol, Haiku 5.5 com a do GPT-6 Luna — enquanto o custo por tarefa diverge: o Haiku sai três vezes mais caro que o Luna no índice independente, e o MiniMax M3.1 Flash, barato por token, gera quase o dobro de texto. A ressalva "preço de tabela não é custo por tarefa" foi dita no ar em quase todos.
-- recentes: 2026-09-30 (ep. 24), 2026-10-01 (ep. 25), 2026-10-08 (ep. 30)
+- estado (2026-10-27): cortes e tabelas espelhadas a cada lançamento — GPT-6 Sol e Luna pela metade, Sonnet 5.5 com a tabela do GPT-6 Sol, Haiku 5.5 com a do GPT-6 Luna — enquanto o custo por tarefa diverge (Haiku três vezes o Luna; MiniMax M3.1 Flash prolixo). Em 26/10 a OpenAI abriu um degrau intermediário: o GPT-6.1 Terra, pela metade da tabela do 6.1 Sol, a 48 pontos e US$ 0,40 por tarefa no índice (Sol US$ 0,72, Astra US$ 3,26) — aqui tabela e custo por tarefa andam juntos. No mesmo dia, o prospecto da Anthropic mostrou quem sustenta: primeiro lucro operacional no segundo trimestre, com mais de US$ 130 bilhões em caixa.
+- recentes: 2026-10-01 (ep. 25), 2026-10-08 (ep. 30), 2026-10-27 (ep. 42)
 

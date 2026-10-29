@@ -405,6 +405,14 @@ mil tokens da ferramenta Read.
 
 ## Operação
 
+- [ ] **Sem rede, parar de cara (28/10)** — o Mac, fora de casa, acordou às
+      05:12 sem internet; o orquestrador avisou que o DNS da API não resolveu
+      e seguiu, o Mac dormiu, e a execução ficou 4h27 presa até falhar às 09:39.
+      Enquanto isso, a repescagem das 06:00 e 07:00 não tinha como rodar. Se a
+      checagem de rede falhar no início, sair com erro para a repescagem tentar
+      de novo. O episódio de 28/10 foi rodado à mão às 10:16, com um aviso de
+      atraso na abertura no lugar do anúncio da voz
+
 - [x] ~~Vigia externo~~ — rotina na nuvem `Vigia do CampsCast (08:07 BRT)`,
       dias úteis, lê `estado.json` e `feed.xml` e avisa por e-mail e push.
       Atualizado em 03/10: lê só pelo WebFetch — o alarme de 29/09 foi o proxy

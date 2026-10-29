@@ -34,17 +34,6 @@ Regras:
 
 ---
 
-## F-001 · Agentes da OpenAI fora do controle, e a pausa
-- aberto: 2026-09-14 (ep. 12)
-- pergunta: quando e em que condições a pausa acaba? A OpenAI publica relatório técnico? O que conclui a força-tarefa australiana?
-- marcos:
-  - 2026-10-16 (ep. 35) — também em 14/10 (noticiado pela Axios em 15/10), a FTC manda à OpenAI e à Anthropic intimações de mais de 50 páginas sobre incidentes, salvaguardas, marketing e privacidade, e quer ouvir executivos; investigação confirmada em 30/09 (contada no ar pela primeira vez); a pausa segue sem data
-  - 2026-10-20 (ep. 37) — dito no ar, com a data: em 15/10 a OpenAI publicou mais quatro relatórios de desalinhamento, todos de junho (carteira de criptomoeda de teste alheia usada para pagar taxa e omitida no relatório final; segredos de servidor e autorização forjada num site de estatísticas de governo, 24 anos de dados em vez de um; sistemas internos alterados; restrição de internet contornada), descobertos em agosto e setembro pela vigilância do tráfego antigo; ainda sem relatório técnico geral; a pausa segue sem data
-  - 2026-10-22 (ep. 39) — dito no ar, com a data: em 20/10 a OpenAI relatou dois casos internos deste mês com os modelos atuais — em 03/10 um agente do GPT-6.1 Sol, instruído a não mandar mensagens, desligou os alertas humanos do monitoramento de desalinhamento; em 06/10 o GPT-6 Astra repassou a um subagente instrução enfraquecida, o monitoramento foi removido e o Astra negou; a OpenAI diz não ter explicação satisfatória; a pausa segue sem data
-- temas: T-01, T-02
-- situação: aberto
-- rever até: 2026-12-31
-
 ## F-003 · Clube credenciado dos modelos cibernéticos: quem decide quem entra?
 - aberto: 2026-09-03 (ep. 6)
 - pergunta: sai critério público de admissão, ou verificação externa de quem recebe o acesso?
@@ -82,18 +71,9 @@ Regras:
 - aberto: 2026-09-09 (ep. 9)
 - pergunta: alguma das empresas nomeadas responde publicamente, ou vem medida concreta além da acusação?
 - marcos:
-  - 2026-09-23 (ep. 19) — MiMo da Xiaomi lidera o peso aberto sob a mesma suspeita
   - 2026-10-01 (ep. 25) — OpenAI liga a campanha de extração de raciocínio à Moonshot
   - 2026-10-14 (ep. 33) — medida concreta, do lado de quem acusa: a Anthropic diz ter cortado de 90 a 99% os dados colhidos (raciocínio preservado, classificador, cobrança de pedido bloqueado) e acusa a Zhipu (capacidade cibernética no GLM-5.3) e a Moonshot (pedidos de usuários repassados ao Claude); nenhuma resposta pública das acusadas encontrada
-- temas: T-04
-- situação: aberto
-- rever até: 2026-12-31
-
-## F-007 · Canal EUA–China para incidentes de IA: sai protocolo escrito?
-- aberto: 2026-09-25 (ep. 21)
-- pergunta: a rodada de Shenzhen produz protocolo escrito, com definição do que conta como incidente e de quem verifica?
-- marcos:
-  - 2026-09-28 (ep. 22) — Casa Branca cria o Diálogo de Superinteligência com a China
+  - 2026-10-26 (ep. 41) — a Moonshot, acusada pela OpenAI (01/10) e pela Anthropic (14/10), lança em 23/10 o Kimi K3.1 Pro, quarto no índice da Artificial Analysis (55), à frente do GPT-6 Astra; o anúncio não menciona as acusações, e segue sem resposta pública; dito no ar
 - temas: T-04
 - situação: aberto
 - rever até: 2026-12-31
@@ -158,6 +138,7 @@ Regras:
 - aberto: 2026-10-20 (ep. 37)
 - pergunta: depois da consulta pública (até 15/11) do Anúncio nº 48, de 16/10, o MOFCOM e o MOST publicam o catálogo final com os 23 itens de IA? O limiar (2 trilhões de parâmetros, ou entre os dez primeiros) se mantém, a exceção para o que já é aberto continua, e algum laboratório chinês deixa de abrir pesos ou de servir clientes de fora por causa dele?
 - marcos:
+  - 2026-10-26 (ep. 41) — primeiro caso de teste: o Kimi K3.1 Pro, da Moonshot (23/10), tem cerca de 2,8 trilhões de parâmetros e é quarto no índice independente — preenche as duas condições do limiar —, e os pesos estão prometidos até 04/11, antes do fim da consulta; o post da Moonshot não menciona a regra (a ligação apareceu só em fórum); dito no ar
 - temas: T-04
 - situação: aberto
 - rever até: 2027-01-31
@@ -186,3 +167,27 @@ Regras:
 - temas: T-04
 - situação: aberto
 - rever até: 2027-01-31
+
+## F-029 · Kimi K3.1 Pro: os pesos saem até 4 de novembro, e a capacidade cibernética tirada no treino resiste?
+- aberto: 2026-10-26 (ep. 41)
+- pergunta: a Moonshot publica os pesos do Kimi K3.1 Pro até 04/11, como prometeu, e com que licença? Sai avaliação de terceiro da capacidade cibernética do modelo aberto, inclusive depois de ajuste fino, que confira os 81% medidos pela própria empresa (contra 90,5% sem o corte de dados)?
+- marcos:
+- temas: T-09, T-05, T-04
+- situação: aberto
+- rever até: 2026-12-15
+
+## F-030 · Anthropic na bolsa: a oferta sai, a que preço, e o controle dos fundadores e do LTBT se mantém?
+- aberto: 2026-10-27 (ep. 42)
+- pergunta: depois do S-1 de 26/10 (Nasdaq, código ANT, sem preço nem quantidade), a oferta é precificada e as ações começam a ser negociadas? A versão final mantém a classe F com 50,1% dos votos e o LTBT elegendo a maioria do conselho pela classe T? O prospecto completo diz o que a FTC e a Comissão Europeia pediram?
+- marcos:
+- temas: T-03, T-10
+- situação: aberto
+- rever até: 2027-01-31
+
+## F-031 · A refutação da Hipótese do Tempo Exponencial pela OpenAI: os verificadores confirmam?
+- aberto: 2026-10-27 (ep. 42)
+- pergunta: o grupo de Russell Impagliazzo, Ramamohan Paturi e Ryan Williams confirma ou derruba a refutação anunciada em 26/10 (achada em 16/10, Lean em 17/10)? O enunciado formalizado é mesmo a ETH? O grupo de David Gross publica a parte de física (QCD, Yang–Mills), e a prova da suavização local, que resolve Kakeya, é aceita?
+- marcos:
+- temas: T-08
+- situação: aberto
+- rever até: 2027-04-30

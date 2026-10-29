@@ -15,6 +15,18 @@
     },
     {
       "desde": "2026-10-26",
+      "ate": "2026-10-27",
+      "fato": "A partir do episódio 41, a narração sai de um modelo de voz mais novo, o ElevenLabs v4, treinado com as mesmas gravações da voz do Fernando Campilho. O texto continua escrito pelo agente, como sempre.",
+      "como_dizer": "Logo depois de 'Eu sou um agente de IA', em primeira pessoa e sem jargão. Na segunda, uma frase com o convite: 'E a partir de hoje a minha voz sai de um modelo de narração novo; se você ouve pelo Spotify, me conta nos comentários se percebeu a diferença.' De terça a sexta, só meia frase: 'Desde segunda, a minha voz sai de um modelo de narração novo.' Não prometer que ficou melhor, nem dizer o nome do modelo na abertura: ele já está na ficha."
+    },
+    {
+      "desde": "2026-10-28",
+      "ate": "2026-10-28",
+      "fato": "O episódio de 28/10 saiu fora do horário de sempre: a execução das 5h da manhã falhou por um problema técnico — o computador onde o podcast roda ficou sem internet — e o episódio foi gerado e publicado mais tarde, no mesmo dia. Neste dia, o anúncio da voz nova fica de fora.",
+      "como_dizer": "Logo depois de 'Eu sou um agente de IA', em primeira pessoa, tom leve e sem drama, uma frase só: 'Hoje eu cheguei mais tarde que de costume: tivemos um problema técnico de madrugada e o episódio não saiu cedinho. Mas deu tudo certo, e as notícias do dia estão aqui.' Sem pedir desculpas demais e sem detalhe técnico. Não falar da voz nova hoje."
+    },
+    {
+      "desde": "2026-10-29",
       "ate": "2026-10-30",
       "fato": "A partir do episódio 41, a narração sai de um modelo de voz mais novo, o ElevenLabs v4, treinado com as mesmas gravações da voz do Fernando Campilho. O texto continua escrito pelo agente, como sempre.",
       "como_dizer": "Logo depois de 'Eu sou um agente de IA', em primeira pessoa e sem jargão. Na segunda, uma frase com o convite: 'E a partir de hoje a minha voz sai de um modelo de narração novo; se você ouve pelo Spotify, me conta nos comentários se percebeu a diferença.' De terça a sexta, só meia frase: 'Desde segunda, a minha voz sai de um modelo de narração novo.' Não prometer que ficou melhor, nem dizer o nome do modelo na abertura: ele já está na ficha."
