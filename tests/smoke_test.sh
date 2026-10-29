@@ -60,6 +60,9 @@ export METRICAS_ARQ="$(mktemp)"
 export REGISTRO_SEM_SONO=1
 # Sem isto o orquestrador publicaria estado no S3 de produção a cada teste.
 export ESTADO_ARQ="$(mktemp)"
+# Sem rede o orquestrador para de cara; a suíte é offline e checa um nome que
+# sempre resolve. O teste de falta de rede troca por um que nunca resolve.
+export REDE_HOST=localhost
 
 ok()   { printf '  \033[32m✓\033[0m %s\n' "$1"; PASS=$((PASS+1)); }
 bad()  { printf '  \033[31m✗\033[0m %s\n' "$1"; FAIL=$((FAIL+1)); }
@@ -1548,30 +1551,30 @@ else
   bad "falha na pesquisa não publicou estado: ${EST_FALHA:-<vazio>}"
 fi
 
-# espera_rede nunca pode abortar o pipeline, mesmo sem resolver nada.
-SAIDA_REDE="$(
-  set +e
-  source /dev/stdin <<'FIM' 2>&1
-log() { printf '%s\n' "$*"; }
-espera_rede() {
-  local tentativas=${1:-12} i
-  for ((i = 1; i <= tentativas; i++)); do
-    if python3 -c "import socket; socket.getaddrinfo('nao.existe.invalid', 443)" 2>/dev/null; then
-      return 0
-    fi
-    sleep 0
-  done
-  log "AVISO: DNS não resolveu; seguindo assim mesmo."
-  return 0
-}
-espera_rede 1
-echo "rc=$?"
-FIM
-)"
-if [[ "$SAIDA_REDE" == *"rc=0"* && "$SAIDA_REDE" == *"AVISO"* ]]; then
-  ok "espera de rede avisa e segue em vez de abortar"
+# Sem rede, parar de cara (28/10). Fora de casa, o Mac acordou às 05:12 sem
+# internet; a espera de um minuto pelo DNS virou três horas com o Mac dormindo
+# no meio, e o agente seguiu e ficou mais 1h35 tentando a API. Com o job preso,
+# o launchd não dispara a repescagem. Sem DNS no prazo, a execução sai com erro
+# antes de chamar o agente.
+EST_REDE="$(mktemp)"
+FAKE_REDE="$(mktemp -d)"
+printf '#!/bin/sh\ntouch "%s/chamado"\n' "$FAKE_REDE" > "$FAKE_REDE/claude"
+chmod +x "$FAKE_REDE/claude"
+T0_REDE="$(date +%s)"
+OUT_REDE="$(REDE_HOST=nao.existe.invalid REDE_ESPERA_S=0 ESTADO_ARQ="$EST_REDE" \
+  CLAUDE_BIN="$FAKE_REDE/claude" \
+  bash scripts/run_episode.sh --date 2026-08-25 --only research 2>&1)"
+RC_REDE=$?
+DUR_REDE=$(( $(date +%s) - T0_REDE ))
+CHAMOU_REDE=0; [[ -e "$FAKE_REDE/chamado" ]] && CHAMOU_REDE=1
+EST_REDE_TXT="$(cat "$EST_REDE" 2>/dev/null)"
+rm -rf "$FAKE_REDE"; rm -f "$EST_REDE"
+rm -f episodes/2026-08-25.md logs/2026-08-25.log logs/2026-08-25-*.json
+if [[ $RC_REDE -ne 0 && $CHAMOU_REDE -eq 0 && "$OUT_REDE" == *"Sem rede"* && $DUR_REDE -lt 30 \
+      && "$EST_REDE_TXT" == *'"etapa": "rede"'* ]]; then
+  ok "sem rede, sai com erro antes de chamar o agente, e o estado diz onde parou"
 else
-  bad "espera de rede não seguiu: $SAIDA_REDE"
+  bad "sem rede não parou (rc=$RC_REDE, agente chamado=$CHAMOU_REDE, ${DUR_REDE}s): $(printf '%s' "$OUT_REDE" | tail -2)"
 fi
 
 # ------------------------------------ 18. novidades e conferência do roteiro

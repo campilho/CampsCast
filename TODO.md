@@ -405,13 +405,27 @@ mil tokens da ferramenta Read.
 
 ## Operação
 
-- [ ] **Sem rede, parar de cara (28/10)** — o Mac, fora de casa, acordou às
+- [x] **Sem rede, parar de cara (28/10)** — o Mac, fora de casa, acordou às
       05:12 sem internet; o orquestrador avisou que o DNS da API não resolveu
       e seguiu, o Mac dormiu, e a execução ficou 4h27 presa até falhar às 09:39.
-      Enquanto isso, a repescagem das 06:00 e 07:00 não tinha como rodar. Se a
-      checagem de rede falhar no início, sair com erro para a repescagem tentar
-      de novo. O episódio de 28/10 foi rodado à mão às 10:16, com um aviso de
-      atraso na abertura no lugar do anúncio da voz
+      Enquanto isso, a repescagem das 06:00 e 07:00 não tinha como rodar. O
+      episódio de 28/10 foi rodado à mão às 10:16, com um aviso de atraso na
+      abertura no lugar do anúncio da voz.
+      **Feito em 28/10:** a checagem de rede vem antes de qualquer etapa, com
+      prazo de relógio (60 s), não de tentativas; sem DNS, sai com erro antes de
+      chamar o agente e de mexer na memória. Registro e `estado.json` saem com
+      a etapa `rede`. Teste no `smoke_test.sh`, que agora roda o orquestrador de
+      verdade em vez de uma cópia da função
+- [ ] **Sem rede, conferir a repescagem de verdade** — o caso de 28/10, na
+      bateria, deve terminar no primeiro despertar depois do prazo (uns 15 a
+      30 min) e deixar a das 06:00 rodar no despertar seguinte. Não medido: o
+      `man launchd.plist` diz que horário perdido com o Mac dormindo roda no
+      próximo despertar, mas não diz o que acontece com o horário que passou
+      enquanto o job ainda rodava. Conferir no log da próxima vez que faltar rede
+- [ ] **Agente preso na API** — em 28/10 o `claude -p` passou 1h35 tentando a
+      API sem rede antes de desistir. Um teto de tempo para a etapa (a pesquisa
+      mais longa no registro levou 19 min 50 s, em 16/09) cortaria isso; decidir
+      o teto olhando o registro, não no chute
 
 - [x] ~~Vigia externo~~ — rotina na nuvem `Vigia do CampsCast (08:07 BRT)`,
       dias úteis, lê `estado.json` e `feed.xml` e avisa por e-mail e push.

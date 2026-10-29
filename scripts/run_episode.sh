@@ -157,20 +157,28 @@ run() {
 }
 
 # Em 11/09 uma repescagem morreu com ENOTFOUND logo depois de o Mac acordar: o
-# agendador dispara antes de o Wi-Fi voltar. Esperar o DNS resolver custa
-# segundos e evita perder a janela inteira. Nunca aborta — se não resolver,
-# segue e deixa o erro real aparecer.
+# agendador dispara antes de o Wi-Fi voltar, e esperar o DNS uns segundos
+# resolve. Em 28/10, com o Mac fora de casa e sem internet, esperar e seguir
+# assim mesmo prendeu a execução por 4h27: o Mac dormiu no meio da espera (um
+# minuto em tentativas virou quase três horas) e o agente ficou mais 1h35 tentando a
+# API. Com o job preso, o launchd não dispara a repescagem das 06:00 e 07:00.
+# Agora o prazo é de relógio, não de tentativas, e sem rede a execução sai com
+# erro antes de chamar o agente e de mexer na memória.
+REDE_HOST="${REDE_HOST:-api.anthropic.com}"
+REDE_ESPERA_S="${REDE_ESPERA_S:-60}"
 espera_rede() {
-  local tentativas=${1:-12} i
-  for ((i = 1; i <= tentativas; i++)); do
-    if python3 -c "import socket; socket.getaddrinfo('api.anthropic.com', 443)" 2>/dev/null; then
-      [[ $i -gt 1 ]] && log "Rede respondeu depois de $(( (i - 1) * 5 ))s de espera."
+  local inicio fim i=0
+  inicio="$(date +%s)"; fim=$(( inicio + REDE_ESPERA_S ))
+  while :; do
+    i=$((i + 1))
+    if python3 -c "import socket, sys; socket.getaddrinfo(sys.argv[1], 443)" "$REDE_HOST" 2>/dev/null; then
+      [[ $i -gt 1 ]] && log "Rede respondeu depois de $(( $(date +%s) - inicio ))s de espera."
       return 0
     fi
+    [[ $(date +%s) -ge $fim ]] && break
     sleep 5
   done
-  log "AVISO: DNS de api.anthropic.com não resolveu em $(( tentativas * 5 ))s; seguindo assim mesmo."
-  return 0
+  die "Sem rede: o DNS de $REDE_HOST não resolveu em $(( $(date +%s) - inicio ))s. Saindo para a repescagem tentar de novo."
 }
 
 # ---------- há episódio hoje? ----------
@@ -252,6 +260,14 @@ fi
 # Não sobrepor um episódio que já existe.
 if [[ -f "$SCRIPT_PATH" && $OVERWRITE -eq 0 ]] && stage_enabled research; then
   die "$SCRIPT_PATH já existe. Use --overwrite para regravar, ou --skip research para reaproveitá-lo."
+fi
+
+# ---------- rede ----------
+# Pesquisa, narração e publicação dependem de rede. A falta dela entra no
+# registro e no estado, com a etapa "rede", para o relatório e o vigia.
+if [[ $DRY_RUN -eq 0 ]] && { stage_enabled research || stage_enabled tts || stage_enabled publish; }; then
+  REGISTRAR=1; ETAPA_ATUAL="rede"
+  espera_rede
 fi
 
 # ---------- 1. pesquisa + roteiro (agente) ----------
@@ -357,8 +373,6 @@ $PAUTAS"
     python3 scripts/watch_agent.py --newer-than "$(date +%s)" \
       --log "$LOG" --prefix "           " --quiet 2>/dev/null &
     WATCHER_PID=$!
-
-    espera_rede
 
     # --strict-mcp-config e --disable-slash-commands: o agente do podcast não
     # herda servidores MCP nem skills da configuração de usuário do Claude Code.

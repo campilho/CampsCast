@@ -827,10 +827,33 @@ derrubou um episódio.
 
 A correção do DNS é uma espera de até um minuto pela resolução de
 `api.anthropic.com` antes de chamar o agente, que avisa e segue em vez de
-abortar. A do sono é a tomada.
+abortar. A do sono é a tomada. (Em 28/10 a espera passou a abortar; ver a
+seção seguinte.)
 
 **A mensagem de erro que você viu por último não é a causa da falha que você
 está investigando.** Leia o log da falha, não o da sua memória.
+
+### Prazo contado em tentativas não é prazo
+
+Em 28/10 o Mac estava fora de casa, na bateria e sem internet. O `pmset -g log`
+mostra o despertar das 05:12:55 durando 2 segundos; dali em diante, o Mac só
+acordava de 15 em 15 minutos, por 2 a 5 segundos. A espera pela rede, de "12
+tentativas com 5 s entre elas", só andava nesses intervalos: o minuto previsto
+terminou às 08:04, depois de uns 33 segundos de Mac acordado em 2h51 de
+relógio. O orquestrador então avisou e seguiu, como mandava a regra de 11/09, e
+o agente passou mais 1h35 tentando a API antes de desistir, às 09:39.
+
+O estrago maior foi o tempo preso, não a falha: o launchd não roda duas
+instâncias do mesmo job, então a repescagem das 06:00 e das 07:00 não teve vez.
+
+Agora o prazo é de relógio (60 s desde o início da espera) e, sem DNS, a
+execução sai com erro antes de chamar o agente e de mexer na memória. Registro
+e `estado.json` dizem `rede` como etapa. Seguir sem rede valia em 11/09, quando
+o Wi-Fi voltava em segundos; com o Mac longe de casa, só prendia o horário da
+repescagem.
+
+**Espera que pode atravessar o sono do Mac se mede no relógio, não em
+tentativas nem em `sleep`.**
 
 ### O vigia não enxergava o podcast pelo shell, e quase ninguém percebeu
 
