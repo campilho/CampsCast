@@ -86,10 +86,12 @@ def titulo_episodio(data: str) -> str:
     return m[1].strip() if m else "—"
 
 
-def falhas_de_leitura(ini: str, fim: str) -> collections.Counter:
-    """Leituras de página que falharam, por domínio, nas transcrições do agente."""
+def falhas_de_leitura(ini: str, fim: str) -> tuple[collections.Counter, collections.Counter]:
+    """Leituras de página por domínio, nas transcrições do agente: as que
+    falharam e todas as tentativas. Sem as tentativas, fonte que falha sempre
+    não se distingue de fonte que falha às vezes."""
     from memoria_custo import transcricoes_dir
-    pasta, conta = transcricoes_dir(), collections.Counter()
+    pasta, conta, tentou = transcricoes_dir(), collections.Counter(), collections.Counter()
     for ag in sorted((ROOT / "logs").glob("*-agente.json")):
         if not ini <= ag.name[:10] <= fim:
             continue
@@ -117,10 +119,11 @@ def falhas_de_leitura(ini: str, fim: str) -> collections.Counter:
                         texto = " ".join(x.get("text", "") for x in texto if isinstance(x, dict))
                     texto = texto or ""
                     erro = c.get("is_error") or re.search(r"HTTP [45]\d\d", texto[:300])
+                    host = urllib.parse.urlparse(urls[c["tool_use_id"]]).netloc.removeprefix("www.")
+                    tentou[host] += 1
                     if erro:
-                        host = urllib.parse.urlparse(urls[c["tool_use_id"]]).netloc
-                        conta[host.removeprefix("www.")] += 1
-    return conta
+                        conta[host] += 1
+    return conta, tentou
 
 
 def fecha_semana(d: dt.date) -> bool:
@@ -231,12 +234,14 @@ def monta(d: dt.date) -> tuple[str, dict]:
         L += ["", "Fechados na semana:"] + [f"- {t} — {q}" for t, q in fechados]
 
     L += ["", "## Fontes que falharam na leitura", ""]
-    semana_f = falhas_de_leitura(ini, fim)
-    antes = falhas_de_leitura((ini_d - dt.timedelta(days=28)).isoformat(),
-                              (ini_d - dt.timedelta(days=1)).isoformat())
+    semana_f, semana_t = falhas_de_leitura(ini, fim)
+    antes_f, antes_t = falhas_de_leitura((ini_d - dt.timedelta(days=28)).isoformat(),
+                                         (ini_d - dt.timedelta(days=1)).isoformat())
+    de = lambda f, t, h: f"{f.get(h, 0)} de {t[h]}" if t.get(h) else "—"
     if semana_f:
-        L += ["| Domínio | Na semana | Nas 4 anteriores |", "|---|---|---|"]
-        L += [f"| {h} | {n} | {antes.get(h, 0)} |" for h, n in semana_f.most_common(10)]
+        L += ["| Domínio | Na semana (falhas de leituras) | Nas 4 anteriores |", "|---|---|---|"]
+        L += [f"| {h} | {de(semana_f, semana_t, h)} | {de(antes_f, antes_t, h)} |"
+              for h, _ in semana_f.most_common(10)]
     else:
         L.append("Nenhuma falha encontrada nas transcrições da semana.")
 

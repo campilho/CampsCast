@@ -16,8 +16,12 @@ scan_order:
 labs:
   - name: Anthropic News
     url: https://www.anthropic.com/news
-  - name: OpenAI News
-    url: https://openai.com/news
+  # A página openai.com/news deu 403 em todas as leituras de 30/09 a 30/10
+  # (33 de 33). O feed oficial abre: título, data, link e resumo de uma linha,
+  # o mais recente primeiro. Serve para saber o que saiu; o post em si costuma
+  # dar 403 também, e para o conteúdo vale a regra de fonte de sempre.
+  - name: OpenAI News (feed RSS)
+    url: https://openai.com/news/rss.xml
   - name: Google — The Keyword (AI)
     url: https://blog.google/technology/ai/
   - name: Google DeepMind Blog
@@ -57,3 +61,9 @@ people:
 aggregators:
   - name: Hacker News
     url: https://news.ycombinator.com/
+
+# Não abrem pela leitura de páginas — não tente; procure a mesma notícia na
+# origem ou em outra cobertura. Medido nas transcrições de 30/09 a 30/10.
+nao_abrem:
+  - domain: theneuron.ai
+    medido: 403 em 12 de 12 leituras

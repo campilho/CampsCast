@@ -1649,6 +1649,49 @@ else
   bad "extenso errado"
 fi
 
+# Duas regras de forma que o ouvinte notou (30/10). Com "IA" por extenso no
+# áudio, "seu briefing de inteligência artificial. Eu sou um agente de IA"
+# repete a expressão em dois segundos; a manchete pode falar de IA à vontade.
+# E "o terceiro assunto é curto" saiu em 15 dos 21 episódios de outubro.
+ROT_FORMA="$(mktemp)"
+cat > "$ROT_FORMA" <<'FIM'
+---
+date: 2026-10-30
+episode: 45
+---
+Um índice independente de inteligência artificial mudou de líder.
+
+Este é o CampsCast, episódio quarenta e cinco, o seu briefing de inteligência artificial. Eu sou um agente de IA.
+
+O primeiro assunto é um lançamento. O terceiro assunto é curto, e vem do backlog.
+
+Escrito pelo Claude Opus cinco ponto cinco, com uma cópia sintética da voz do
+Fernando Campilho. Até o próximo episódio.
+FIM
+FORMA_RUIM="$(python3 scripts/confere_roteiro.py "$ROT_FORMA" --numero 45 --agente "Claude Opus 5.5")"
+sed -i '' 's/, o seu briefing de inteligência artificial\././; s/O terceiro assunto é curto, e vem/Por último, uma pauta que vem/' "$ROT_FORMA"
+FORMA_BOA="$(python3 scripts/confere_roteiro.py "$ROT_FORMA" --numero 45 --agente "Claude Opus 5.5")"
+rm -f "$ROT_FORMA"
+if [[ "$FORMA_RUIM" == *"duas vezes"* && "$FORMA_RUIM" == *"curto"* && -z "$FORMA_BOA" ]]; then
+  ok "conferência registra 'IA' duas vezes na apresentação e assunto anunciado como curto"
+else
+  bad "conferência de forma errada — ruim: '${FORMA_RUIM}' / boa: '${FORMA_BOA}'"
+fi
+
+# O modelo de abertura do prompt é o que o agente copia: foi ele que ensinou o
+# "seu briefing de inteligência artificial. Eu sou um agente de IA".
+if python3 - <<'FIM'
+import re
+t = open("prompts/master.md", encoding="utf-8").read()
+ref = t.split("Forma de referência", 1)[1].split('"')[1]
+assert len(re.findall(r"\b(IA|inteligência artificial)\b", ref)) == 1, ref
+FIM
+then
+  ok "modelo de abertura do prompt diz 'IA' uma vez só"
+else
+  bad "modelo de abertura do prompt repete 'IA' antes de 'Eu sou um agente de IA'"
+fi
+
 # De ponta a ponta: a novidade chega ao agente e o roteiro que ele escreve é
 # conferido e registrado. Um export esquecido falharia em silêncio.
 FAKE_CONF="$(mktemp -d)"
@@ -2058,6 +2101,30 @@ if [[ "$ESTADO_REL" == *'"relatorio": {'* && "$ESTADO_REL" == *'"semana": "2026-
   ok "estado.json leva o resumo do relatório semanal, só com contagens"
 else
   bad "estado.json sem o resumo do relatório: ${ESTADO_REL:-vazio}"
+fi
+
+# Fonte que falha sempre se distingue de fonte que falha às vezes só com as
+# tentativas ao lado: em outubro, openai.com deu 403 em 33 de 33 leituras.
+TR_DIR="$(mktemp -d)"
+printf '%s' '{"session_id": "sessao-fontes"}' > logs/2026-09-29-1-agente.json
+python3 - "$TR_DIR/sessao-fontes.jsonl" <<'PYF'
+import json, sys
+linhas = []
+for i, (url, txt) in enumerate([("https://openai.com/news", "Request failed with status code 403"),
+                                ("https://openai.com/index/x", "HTTP 403 Forbidden"),
+                                ("https://www.anthropic.com/news", "texto da página")]):
+    linhas.append({"type": "assistant", "message": {"content": [
+        {"type": "tool_use", "id": f"t{i}", "name": "WebFetch", "input": {"url": url}}]}})
+    linhas.append({"type": "user", "message": {"content": [
+        {"type": "tool_result", "tool_use_id": f"t{i}", "content": txt, "is_error": "403" in txt}]}})
+open(sys.argv[1], "w").write("\n".join(json.dumps(l) for l in linhas) + "\n")
+PYF
+REL_F="$(TRANSCRICOES_DIR="$TR_DIR" METRICAS_ARQ=/dev/null python3 scripts/relatorio.py --data 2026-10-02 2>/dev/null)"
+rm -rf "$TR_DIR"; rm -f logs/2026-09-29-1-agente.json
+if [[ "$REL_F" == *"| openai.com | 2 de 2 | — |"* && "$REL_F" != *"| anthropic.com"* ]]; then
+  ok "fontes que falharam aparecem com as tentativas ao lado"
+else
+  bad "tabela de fontes sem tentativas: $(printf '%s' "$REL_F" | grep -A4 'Fontes que falharam')"
 fi
 
 # O relatório sai no último episódio da semana, que o calendário decide: na

@@ -5,9 +5,10 @@ CampsCast — confere se o roteiro diz o que não pode deixar de dizer.
 Abertura e encerramento variam de um dia para o outro por decisão de projeto:
 o agente escreve no tom, não num texto fixo. O que não varia são os
 compromissos de transparência — o número do episódio, "sou um agente de IA",
-quem escreveu, que a voz é sintética — e duas regras de forma: despedir com
-"até o próximo episódio" (não há episódio no fim de semana) e não usar o
-apelido do autor.
+quem escreveu, que a voz é sintética — e algumas regras de forma: despedir com
+"até o próximo episódio" (não há episódio no fim de semana), não usar o
+apelido do autor, não dizer "IA" duas vezes na apresentação e não anunciar que
+um assunto é curto.
 
 Não bloqueia nada. Imprime uma linha por regra que caiu, e o orquestrador
 grava no registro. É a medição do experimento: com liberdade, quantas vezes o
@@ -67,6 +68,16 @@ def corpo(texto: str) -> str:
 # que aparece à toa em frase de transição.
 CHAMADA = re.compile(r"\b(siga|sigam|seguir|segue)\b( a gente| o| a)? (campscast|podcast|programa)")
 
+# "IA" sai "inteligência artificial" no áudio (pronuncia.json, 27/10), e "seu
+# briefing de inteligência artificial. Eu sou um agente de IA" repete a
+# expressão em dois segundos. Vale só o parágrafo da apresentação: a manchete
+# pode falar de IA à vontade.
+AGENTE = re.compile(r"agente de (ia|inteligência artificial)\b")
+IA = re.compile(r"\b(ia|inteligência artificial)\b")
+# Em outubro, 15 de 21 episódios passaram ao terceiro assunto com "o terceiro
+# assunto é curto". A duração do tópico é instrução ao agente, não ao ouvinte.
+CURTO = re.compile(r"\bassunto\b[^.]{0,40}\b(é|vai ser|fica|será) (mais |bem )?(curt|rápid|brev)")
+
 
 def confere(texto: str, numero: int | None, agente: str | None,
             chamada: str | None = None) -> list[str]:
@@ -77,8 +88,16 @@ def confere(texto: str, numero: int | None, agente: str | None,
     if numero is not None and not re.search(
             rf"episódio (n[º°o]\.? )?({re.escape(extenso(numero))}|{numero})\b", inicio):
         faltas.append(f"abertura sem o número do episódio ({extenso(numero)})")
-    if not re.search(r"agente de (ia|inteligência artificial)\b", inicio):
+    if not AGENTE.search(inicio):
         faltas.append("abertura sem 'agente de IA'")
+    paragrafos = [p for p in corpo(texto).lower().split("\n\n") if p.strip()][:3]
+    # "sou um agente", e não só "agente de IA": a manchete de 28/10 falava de
+    # "um agente de inteligência artificial" e passaria pela apresentação.
+    apresentacao = next((p for p in paragrafos if re.search(r"sou um " + AGENTE.pattern, p)), "")
+    if len(IA.findall(apresentacao)) > 1:
+        faltas.append("apresentação diz 'IA' duas vezes (o programa e o agente)")
+    if CURTO.search(tudo):
+        faltas.append("transição anuncia que o assunto é curto")
     if agente and agente.lower() not in fim and falado(agente).lower() not in fim:
         faltas.append(f"ficha sem o nome de quem escreveu ({agente})")
     if "sintétic" not in fim:

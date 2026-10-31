@@ -35,6 +35,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import pathlib
 import re
 import sys
@@ -44,6 +45,10 @@ CATEGORIAS = ("indice", "backlog", "fios", "roteiros", "web", "outros")
 
 
 def transcricoes_dir() -> pathlib.Path:
+    # TRANSCRICOES_DIR serve ao smoke test, que roda numa cópia do repositório
+    # e não teria transcrição nenhuma no caminho derivado da cópia.
+    if os.environ.get("TRANSCRICOES_DIR"):
+        return pathlib.Path(os.environ["TRANSCRICOES_DIR"])
     nome = "-" + str(ROOT).strip("/").replace("/", "-")
     return pathlib.Path.home() / ".claude" / "projects" / nome
 

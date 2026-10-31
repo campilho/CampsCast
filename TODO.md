@@ -337,7 +337,30 @@ mil tokens da ferramenta Read.
       "cinco delas bloqueadas na leitura". **O relatório de fontes que falham
       já existe** no `relatorio.py`: em 03/10, `openai.com` falhou 7 vezes na
       semana e 12 nas quatro anteriores, `x.ai` 3 e 8. Falta decidir se o
-      roteiro de pesquisa muda para essas fontes
+      roteiro de pesquisa muda para essas fontes.
+      **30/10:** de 30/09 a 30/10, 146 de 899 leituras falharam (16%, de 15 a
+      18% toda semana), 85% com 403. Nunca abriram: openai.com (33 de 33),
+      x.ai (21 de 21), theneuron.ai (12 de 12), cnbc.com (7), axios.com (5).
+      Mudou: a página da OpenAI deu lugar ao feed RSS oficial, que abre (título,
+      data, link e resumo; o post segue com 403), e theneuron.ai entrou numa
+      lista `nao_abrem` no `sources.yaml`. A tabela do relatório mostra
+      "falhas de tentativas". Fingir ser navegador para furar o bloqueio, não:
+      é a proteção contra robôs do próprio site. **Medir no relatório de
+      06/11** se as fechadas caíram e se a OpenAI segue entrando nas pautas
+- [x] **Abertura e transições repetitivas (30/10)** — com "IA" por extenso no
+      áudio, 3 das 5 aberturas da semana disseram "seu briefing de
+      inteligência artificial. Eu sou um agente de inteligência artificial"; o
+      modelo de abertura do prompt ensinava a frase. E "o terceiro assunto é
+      curto" saiu em 15 dos 21 episódios de outubro. O prompt mudou nos dois
+      pontos, e o `confere_roteiro.py` registra os dois casos. **Conferir no
+      relatório de 06/11** se os avisos sumiram
+- [ ] **Siglas em inglês (MIT)** — o v4 leu "MIT" como sigla em português em
+      30/10. Ele não tem marcação de idioma, mas a documentação diz que entende
+      fonética IPA entre barras (`/ɛm aɪ ˈtiː/`). Teste no padrão do
+      "Anthropic": as mesmas frases reais com IPA e duas grafias, o autor
+      conta os acertos (uns 2 a 3 mil créditos). Se o IPA funcionar, testar o
+      "IA" de volta como sigla. Em outubro também saíram METR (16 vezes),
+      NIST, FTC e SEC
 - [ ] **Pronúncia de "Anthropic"** — o autor ouviu errado na maior parte dos
       dias da semana de 05/10 (51 ocorrências nos roteiros). Em 12/09 o erro
       parecia raro e ficou só a regra do artigo, com `config/pronuncia.json`
