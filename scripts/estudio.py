@@ -45,10 +45,13 @@ REPO = "https://github.com/campilho/CampsCast/blob/main"
 
 # Quem é quem. `por_tras` diz o que de fato faz o trabalho hoje — o site mostra
 # isso ao clicar no personagem, para que a separação não pareça mais do que é.
+# `situacao`: "ativo", "em_parte" (já faz um pedaço) ou "em_breve" (ainda não
+# existe; fica congelado na ala em obras, com o que vai fazer em `em_breve`).
 ELENCO = [
     {"id": "produtor", "nome": "Produtor", "estacao": "tecnica",
      "papel": "Abre o estúdio às 05:00, chama cada um na ordem, publica e avisa.",
-     "por_tras": "scripts/run_episode.sh, um programa sem IA, chamado pelo agendador do Mac"},
+     "por_tras": "scripts/run_episode.sh, um programa sem IA, chamado pelo agendador do Mac",
+     "em_breve": "Ser quem recebe o visitante: a mensagem do site passa por ele antes de chegar a quem resolve."},
     {"id": "editor", "nome": "Editor", "estacao": "redacao",
      "papel": "Lê a memória do programa, escolhe as pautas e atualiza temas, fios e backlog.",
      "por_tras": "Claude, o mesmo agente do Jornalista e do Roteirista"},
@@ -62,8 +65,24 @@ ELENCO = [
      "papel": "Narra o roteiro com a cópia sintética da voz do autor.",
      "por_tras": "ElevenLabs, chamado por scripts/tts.py"},
     {"id": "vigia", "nome": "Vigia", "estacao": "portaria",
-     "papel": "Arquiva fios parados, confere o roteiro e, às 07:30, confere se o episódio está no ar.",
+     "papel": "Confere o roteiro, deixa o estado da gravação à vista e, às 07:30, confere se o episódio está no ar.",
      "por_tras": "conferências em Python no Mac e uma rotina do Claude na nuvem"},
+    {"id": "arquivista", "nome": "Arquivista", "estacao": "arquivo", "situacao": "em_parte",
+     "papel": "Tira da leitura diária o que já passou: fio parado, pauta usada ou vencida, fio fechado. Nada se apaga.",
+     "por_tras": "scripts/expira_fios.py, sem IA, e o próprio agente quando move pauta e fio para o arquivo",
+     "em_breve": "Resumir a memória por semana, por mês e por trimestre, para o programa lembrar do ano passado sem reler tudo."},
+    {"id": "checador", "nome": "Checador", "estacao": "obras", "situacao": "em_breve",
+     "papel": "Confere os fatos de cada episódio contra as fontes primárias, com uma régua fixa. Fica fora da redação: quem confere não é quem escreve.",
+     "por_tras": "hoje, um ensaio na nuvem, fora da gravação diária, com a rubrica de prompts/verificador-rubrica.md",
+     "em_breve": "Conferir todo episódio, e um dia antes de ir ao ar (ADR 0010). Sala de vidro: Checagem e Compliance."},
+    {"id": "artista", "nome": "Artista", "estacao": "obras", "situacao": "em_breve",
+     "papel": "Faz as imagens do programa.",
+     "por_tras": "ainda não existe; a capa é fixa",
+     "em_breve": "Capa de cada episódio e imagens para os posts e os vídeos."},
+    {"id": "marketing", "nome": "Marketing", "estacao": "obras", "situacao": "em_breve",
+     "papel": "Leva o programa a mais gente.",
+     "por_tras": "ainda não existe; hoje o autor escreve e publica os posts",
+     "em_breve": "Rascunhar os posts do LinkedIn, o Instagram, os vídeos curtos do YouTube e o plano de expansão. Nada sai em nome do autor sem a aprovação dele."},
 ]
 AGENTE = ("jornalista", "editor", "roteirista")
 
@@ -173,9 +192,15 @@ def instrucoes(pid: str) -> list[dict]:
                 {"titulo": "Que dia tem episódio", "origem": "scripts/schedule.py", "texto": doc("schedule.py")},
                 {"titulo": "Publicar", "origem": "scripts/publish.py", "texto": doc("publish.py")},
                 {"titulo": "Avisar", "origem": "scripts/notify.py", "texto": doc("notify.py")}]
-    if pid == "vigia":
+    if pid == "arquivista":
         return [{"titulo": "Antes do agente: arquivar fios parados", "origem": "scripts/expira_fios.py", "texto": doc("expira_fios.py")},
-                {"titulo": "Depois do roteiro: conferir o que não pode faltar", "origem": "scripts/confere_roteiro.py", "texto": doc("confere_roteiro.py")},
+                {"titulo": "Depois do agente: o backlog guarda só pauta ativa", "origem": "scripts/confere_backlog.py", "texto": doc("confere_backlog.py")}]
+    if pid == "checador":
+        rubrica = ROOT / "prompts" / "verificador-rubrica.md"
+        return [{"titulo": "A régua", "origem": "prompts/verificador-rubrica.md",
+                 "texto": rubrica.read_text(encoding="utf-8").strip()}] if rubrica.exists() else []
+    if pid == "vigia":
+        return [{"titulo": "Depois do roteiro: conferir o que não pode faltar", "origem": "scripts/confere_roteiro.py", "texto": doc("confere_roteiro.py")},
                 {"titulo": "No fim: deixar o estado à vista", "origem": "scripts/estado.py", "texto": doc("estado.py")},
                 {"titulo": "Às 07:30, na nuvem", "origem": "rotina do Claude na nuvem",
                  "texto": "Nos dias úteis, às 07:30, uma rotina do Claude na nuvem lê o estado.json e o feed "
@@ -208,10 +233,10 @@ LEITURAS = [  # (início do caminho, quem, balão)
     ("config/briefing.md", "editor", "Relendo o contrato editorial"),
     ("config/sources.yaml", "jornalista", "Conferindo a lista de fontes"),
     ("saved-items/backlog.md", "editor", "Lendo o backlog: o que ficou de fora"),
-    ("saved-items/historico", "editor", "Anotando no histórico do backlog"),
+    ("saved-items/historico", "arquivista", "Anotando no histórico do backlog o que saiu dele"),
     ("memoria/temas-sugeridos.md", "editor", "Lendo as sugestões de tema"),
     ("memoria/temas.md", "editor", "Lendo os temas que o programa acompanha"),
-    ("memoria/fios-fechados", "editor", "Fechando um fio que teve desfecho"),
+    ("memoria/fios-fechados", "arquivista", "Guardando no arquivo um fio que teve desfecho"),
     ("memoria/fios.md", "editor", "Lendo os fios em aberto"),
     ("covered-index.json", "editor", "Consultando o índice do que já foi ao ar"),
     ("research/", "jornalista", "Escrevendo o log de pesquisa"),
@@ -262,7 +287,7 @@ def evento_ferramenta(nome: str, inp: dict, anterior: str) -> dict | None:
     if nome == "Bash":
         cmd = inp.get("command", "")
         if "fios-fechados" in cmd:
-            return {"quem": "editor", "texto": "Fechando um fio que teve desfecho", "acao": "edita"}
+            return {"quem": "arquivista", "texto": "Guardando no arquivo um fio que teve desfecho", "acao": "edita"}
         if cmd.startswith("ls"):
             return {"quem": "editor", "texto": "Vendo o que já existe: episódios, logs e memória", "acao": "le"}
         if "wc -w" in cmd:
@@ -270,7 +295,7 @@ def evento_ferramenta(nome: str, inp: dict, anterior: str) -> dict | None:
         if "plutil" in cmd or "json" in cmd:
             return {"quem": "editor", "texto": "Conferindo se o índice continua válido", "acao": "confere"}
         if "historico" in cmd:
-            return {"quem": "editor", "texto": "Olhando o histórico do backlog", "acao": "le"}
+            return {"quem": "arquivista", "texto": "Olhando o histórico do backlog", "acao": "le"}
         return {"quem": anterior, "texto": "Conferindo um detalhe no terminal", "acao": "confere"}
     return None  # ToolSearch e afins: bastidor do CLI, não trabalho
 
@@ -280,7 +305,9 @@ ROTEIRO_FALA = re.compile(r"writing the script|escrevo o roteiro\b(?!.*índice)|
 
 
 def de_quem_fala(texto: str, anterior: str) -> str:
-    if EDITOR_FALA.search(texto):
+    # o Arquivista só arquiva; quando o agente fala depois de arquivar, é o
+    # Editor resumindo a rodada de memória
+    if EDITOR_FALA.search(texto) or anterior == "arquivista":
         return "editor"
     if ROTEIRO_FALA.search(texto):
         return "roteirista"
@@ -351,6 +378,8 @@ def eventos_log(data: str, tts: dict) -> list[dict]:
          lambda m, l: f"Pedido: roteiro de {milhar(int(m.group(1)))} a {milhar(int(m.group(2)))} palavras"),
         (r"^── \[1/4\]", "produtor", lambda m, l: "Chamando a redação"),
         (r"^Rede respondeu|^Sem rede", "produtor", lambda m, l: l),
+        (r"^Fios expirados \(30 dias sem marco\): (.+)", "arquivista",
+         lambda m, l: f"Arquivei fio parado há 30 dias: {m.group(1)}"),
         (r"^Agente retornou: OK \S+ (\d+) (\d\d:\d\d)", "produtor",
          lambda m, l: f"Roteiro entregue: {milhar(int(m.group(1)))} palavras, {m.group(2)}"),
         (r"^Roteiro conferido: (.*)", "vigia", lambda m, l: f"Conferi o roteiro: {m.group(1)}"),
@@ -405,6 +434,15 @@ def pesquisa(data: str) -> dict:
         return {}
     t = arq.read_text(encoding="utf-8")
     num = lambda rotulo: int(m.group(1)) if (m := re.search(rotulo + r"[^*]*\*\*(\d+)\*\*", t)) else None
+    # "Páginas lidas" e "Escolhas" entram no log em 03/11; antes disso a lista
+    # de páginas existia, sem nota, com o título "Páginas abertas, na ordem:".
+    paginas = secao(t, "Páginas lidas") or (t.split("Páginas abertas, na ordem:", 1)[1].split("\n## ", 1)[0]
+                                            if "Páginas abertas, na ordem:" in t else "")
+    notas = []
+    for item in itens(paginas, r"\d+\. "):
+        endereco, _, nota = item.partition(" — ")
+        notas.append({"endereco": endereco.split()[0] if endereco.split() else endereco, "nota": nota.strip()})
+    escolhas = itens(secao(t, "Escolhas"), r"- ")
     descartadas = []
     bloco = t.split("## Descartadas", 1)[1].split("\n## ", 1)[0] if "## Descartadas" in t else ""
     for m in re.finditer(r"^### (.+)\n((?:- .*\n?)+)", bloco, flags=re.M):
@@ -412,7 +450,30 @@ def pesquisa(data: str) -> dict:
         descartadas.append({"titulo": m.group(1).strip(), "motivo": motivo.group(1).strip() if motivo else ""})
     return {"paginas": num("Páginas abertas"), "fechadas": num("Fechadas"), "sites": num("Sites distintos"),
             "buscas": num("Buscas na web"), "pautas_avaliadas": num("Pautas avaliadas"),
+            "notas": notas, "escolhas": escolhas,
             "descartadas": descartadas, "url": f"{REPO}/research/{data}.md"}
+
+
+def secao(texto: str, titulo: str) -> str:
+    m = re.search(rf"^## {re.escape(titulo)}[^\n]*\n(.*?)(?=^## |\Z)", texto, flags=re.M | re.S)
+    return m.group(1) if m else ""
+
+
+def itens(bloco: str, marcador: str) -> list[str]:
+    """Itens de uma lista em markdown, juntando as linhas de continuação."""
+    out: list[str] = []
+    for linha in bloco.splitlines():
+        if re.match(marcador, linha):
+            out.append(re.sub("^" + marcador, "", linha).strip())
+        elif out and linha.startswith((" ", "\t")) and linha.strip():
+            out[-1] += " " + linha.strip()
+    return out
+
+
+def endereco(url: str) -> str:
+    """Forma comparável de um endereço: sem esquema, sem www, sem barra final."""
+    u = re.sub(r"^https?://", "", url.strip().lower()).removeprefix("www.")
+    return u.rstrip("/").rstrip(".,;:")
 
 
 def memoria() -> dict:
@@ -551,6 +612,12 @@ def monta(data: str) -> dict:
     ep = episodio(data)
     pq = pesquisa(data)
     leituras = [e for e in eventos if e.get("acao") == "le" and "url" in e]
+    # a nota do log de pesquisa é relato, escrito no fim da gravação: vai junto
+    # da leitura, marcada como tal, e não vira evento com horário próprio
+    notas = {endereco(n["endereco"]): n["nota"] for n in pq.get("notas", []) if n["nota"]}
+    for e in leituras:
+        if endereco(e["url"]) in notas:
+            e["nota"] = notas[endereco(e["url"])]
     buscas = [e["texto"].removeprefix("Buscando ") for e in eventos if e.get("acao") == "busca"]
     claude = reg.get("claude") or {}
     return {
@@ -572,8 +639,8 @@ def monta(data: str) -> dict:
         },
         "eventos": eventos,
         "capitulos": capitulos(eventos),
-        "pesquisa": {**pq, "leituras": [{"url": e["url"], "ok": e.get("ok", True), "status": e.get("status")}
-                                        for e in leituras], "buscas_feitas": buscas},
+        "pesquisa": {**pq, "leituras": [{"url": e["url"], "ok": e.get("ok", True), "status": e.get("status"),
+                                         "nota": e.get("nota")} for e in leituras], "buscas_feitas": buscas},
         "memoria": memoria(),
         "conversa": conversa(ep, pq, reg, leituras),
         "agenda": agenda(data),
@@ -595,7 +662,8 @@ def main() -> int:
     saida = pathlib.Path(os.environ.get("ESTUDIO_DIR", ROOT / "site" / "estudio"))
     saida.mkdir(parents=True, exist_ok=True)
 
-    elenco = {"contrato": CONTRATO, "personagens": [{**p, "instrucoes": instrucoes(p["id"])} for p in ELENCO]}
+    elenco = {"contrato": CONTRATO, "personagens": [{**p, "situacao": p.get("situacao", "ativo"),
+                                                     "instrucoes": instrucoes(p["id"])} for p in ELENCO]}
     dia = monta(data)
     escreve = lambda nome, obj: (saida / nome).write_text(json.dumps(obj, ensure_ascii=False, indent=1) + "\n",
                                                           encoding="utf-8")

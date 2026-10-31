@@ -23,33 +23,35 @@ o que os personagens dizem saiu do registro da gravação, não da imaginação.
 
 ## Os personagens
 
-| Personagem | O que faz | Por trás, hoje | Instruções vêm de |
-|---|---|---|---|
-| **Produtor** | abre o estúdio às 05:00, confere se o dia tem episódio e qual é a janela, chama cada um na ordem, publica e avisa; volta às 06:00 e 07:00 se a gravação falhou | `run_episode.sh`, um programa sem IA | cabeçalho do `run_episode.sh`, `schedule.py`, `publish.py`, `notify.py` |
-| **Jornalista** | percorre as fontes, lê as páginas, faz as buscas, escreve o log de pesquisa — os "N sites" da ficha técnica | Claude (o mesmo agente dos dois seguintes) | passos 4 e 8 do `prompts/master.md` |
-| **Editor** | lê a memória (temas, fios, backlog, episódios recentes), escolhe o que vai ao ar, atualiza a memória; recebe as sugestões do formulário | Claude | passos 1, 2, 3, 5 e 7 |
-| **Roteirista** | escreve o roteiro na faixa de palavras que cabe na voz | Claude | passos 6 e 9 e "Formato do roteiro" |
-| **Locutor** | narra o roteiro com a cópia sintética da voz do autor | ElevenLabs v4, por `tts.py` | `tts.py` e `config/tts.json` |
-| **Vigia** | antes do agente, arquiva fios parados; depois do roteiro, confere o que não pode faltar; no fim, publica o estado; às 07:30, confere da nuvem se o episódio está no ar | `expira_fios.py`, `confere_roteiro.py`, `estado.py` e a rotina na nuvem | as docstrings desses scripts |
+Elenco aprovado pelo autor em 31/10.
+
+| Personagem | Situação | O que faz | Por trás, hoje | Instruções vêm de |
+|---|---|---|---|---|
+| **Produtor** | ativo | abre o estúdio às 05:00, confere se o dia tem episódio e qual é a janela, chama cada um na ordem, publica e avisa; volta às 06:00 e 07:00 se a gravação falhou. É a ponte com quem visita: a sugestão do site passa por ele antes de chegar ao Editor | `run_episode.sh`, um programa sem IA | cabeçalho do `run_episode.sh`, `schedule.py`, `publish.py`, `notify.py` |
+| **Jornalista** | ativo | percorre as fontes, lê as páginas, faz as buscas, escreve o log de pesquisa — os "N sites" da ficha técnica | Claude (o mesmo agente dos dois seguintes) | passos 4 e 8 do `prompts/master.md` |
+| **Editor** | ativo | lê a memória (temas, fios, backlog, episódios recentes), escolhe o que vai ao ar, atualiza a memória, avalia as sugestões | Claude | passos 1, 2, 3, 5 e 7 |
+| **Roteirista** | ativo | escreve o roteiro na faixa de palavras que cabe na voz | Claude | passos 6 e 9 e "Formato do roteiro" |
+| **Locutor** | ativo | narra o roteiro com a cópia sintética da voz do autor | ElevenLabs v4, por `tts.py` | `tts.py` e `config/tts.json` |
+| **Vigia** | ativo | depois do roteiro, confere o que não pode faltar; no fim, publica o estado; às 07:30, confere da nuvem se o episódio está no ar | `confere_roteiro.py`, `estado.py` e a rotina na nuvem | as docstrings desses scripts |
+| **Arquivista** | em parte | tira da leitura diária o que já passou: fio parado há 30 dias, pauta usada ou vencida, fio fechado. Nada se apaga, tudo se arquiva. Em breve: os resumos da memória por semana, mês e trimestre | `expira_fios.py`, sem IA, e o próprio agente quando move pauta e fio para o arquivo | `expira_fios.py` e `confere_backlog.py` |
+| **Checador** | em breve | confere os fatos de cada episódio contra as fontes primárias, com régua fixa. Fica numa sala de vidro fora da redação, "Checagem e Compliance": quem confere não é quem escreve | hoje, o ensaio V1 na nuvem, fora da gravação | `prompts/verificador-rubrica.md` |
+| **Artista** | em breve | capa de cada episódio e imagens para posts e vídeos | ainda não existe; a capa é fixa | — |
+| **Marketing** | em breve | rascunha os posts (LinkedIn, Instagram, vídeos curtos do YouTube) e o plano de expansão; nada sai em nome do autor sem a aprovação dele | ainda não existe; o autor escreve os posts | — |
 
 "Contexto de execução" e "Guardrails", do prompt, valem para os três papéis
 do agente e aparecem nos três.
 
-**Sobre a lista do autor (Jornalista, Editor, Roteirista, Locutor e o
-zelador como vigia):**
+**Em breve, na ala em obras.** Quem ainda não trabalha fica congelado (em
+cinza) numa ala com faixa de obra, com a placa "em breve" e uma ficha dizendo
+o que vai fazer. Ninguém de lá aparece trabalhando no replay.
 
-- **Faltava o Produtor.** Sem ele ninguém abre o estúdio às 05:00, e quem
-  publicaria seria o vigia, que confere o próprio trabalho. Quem confere não
-  é quem faz: é o mesmo princípio do verificador de fatos.
-- **O zelador vira o Vigia.** A limpeza que existe é arquivar fios parados
-  (`expira_fios.py`), e ela roda de madrugada, antes da equipe chegar, que é
-  justamente o turno do vigia.
-- **O Verificador de fatos** entra quando o V1 rodar todo dia (ADR 0010).
-  Hoje ele roda em lote, na nuvem, sem horário.
-- **O Artista** do protótipo 3D fica de fora: a capa é fixa e não existe
-  trabalho dele no pipeline.
-- **O autor não é personagem.** Aparece como destinatário: o relatório da
-  sexta e as sugestões que viram tema.
+**Candidatos a "em breve" que já estão no `PROJETO.md`,** a decidir:
+editor de vídeo (shorts do Instagram e do YouTube), apresentadora (a segunda
+voz do formato entrevista), analista de FinOps (custo por episódio; o
+registro já calcula, então seria "em parte") e o "Fernando Campilho virtual".
+
+**O autor não é personagem** por enquanto: aparece como destinatário do
+relatório da sexta e das sugestões que viram tema.
 
 ## O estúdio ao longo do dia
 
@@ -95,6 +97,7 @@ Cada balão diz de onde veio, e o site mostra a diferença:
 | `sistema` | aviso do próprio Claude Code | texto normal | "O filtro de segurança do modelo interrompeu uma resposta; o agente retomou." |
 | `numeros` | conversa do café, montada com os números do dia | com a nota "conversa montada com os números" | "Abri 41 páginas em 31 sites e fiz 31 buscas." |
 | `agenda` | o vigia lendo a agenda | texto normal | "A equipe volta terça-feira, 03/11, às 05:00." |
+| nota do log | o que o Jornalista anotou sobre a página, no log de pesquisa, ao fim da gravação | sob o balão da leitura, com "no log" | (a partir de 03/11) |
 
 **Não existe balão de pensamento.** O raciocínio interno do modelo não fica
 na transcrição: os blocos de pensamento vêm vazios (medido em 30/10, todos).
@@ -104,6 +107,29 @@ ferramenta e outra, e são essas que aparecem em itálico.
 Medido em 30/10: dos 165 eventos, 135 vêm de ferramenta, 16 do log, 13 são
 frases do agente e 1 do sistema.
 
+## O log de pesquisa mais rico (a partir de 03/11)
+
+Para o replay mostrar o que o agente achou em cada página e por que escolheu
+uma pauta e não outra, o passo 8 do prompt pede duas seções novas no
+`research/AAAA-MM-DD.md`:
+
+- **Páginas lidas, na ordem:** toda página aberta, com uma frase sobre o que
+  ela trouxe para a decisão, ou "nada na janela", ou "não abriu (403)".
+- **Escolhas:** cada vez que uma candidata perdeu a vaga para outra, qual
+  ficou, qual perdeu e por quê. Sem disputa, "nenhuma disputa".
+
+As duas são **relato do agente**, escrito no fim da gravação, não registro de
+máquina. O site mostra a nota junto da leitura, marcada "no log", sem horário
+próprio, e o Checador pode conferi-la contra a transcrição. A "Contagem para
+a ficha técnica", que o agente já escrevia por conta própria, passou a estar
+no modelo do prompt.
+
+O que já estava gravado e não muda: a transcrição guarda o que cada leitura
+devolveu (42 leituras e 48 mil caracteres em 30/10). É conteúdo de terceiros
+resumido, então o site público não mostra; serve para auditoria.
+
+Medir em 03/11: tamanho do log, custo de saída e se toda página ganhou nota.
+
 ## Clicar num personagem
 
 Abre a ficha dele, com três abas:
@@ -111,12 +137,12 @@ Abre a ficha dele, com três abas:
 1. **Hoje:** onde ele está e o que está fazendo agora, e tudo o que fez na
    gravação, com horário. Nos três papéis do agente, a ficha avisa que hoje
    são o mesmo agente, separado pelo que ele estava fazendo.
-2. **A aba própria:**
+2. **A aba própria** (quem está em obras tem só "Em breve" e, se houver, "Instruções"):
 
    | Personagem | Aba | O que mostra |
    |---|---|---|
-   | Jornalista | Leituras | os números da ficha técnica (do log de pesquisa) e as páginas na ordem em que abriu (da transcrição), com as que não abriram em vermelho; as buscas |
-   | Editor | Pautas e memória | as pautas que entraram, com a fonte; as descartadas com o motivo (42 em 30/10); temas com o estado de cada um; fios em aberto; backlog; o botão "mandar um tema" |
+   | Jornalista | Leituras | os números da ficha técnica (do log de pesquisa) e as páginas na ordem em que abriu (da transcrição), com as que não abriram em vermelho e a nota "no log" de cada uma; as buscas |
+   | Editor | Pautas e memória | as pautas que entraram, com a fonte; as escolhas ("por que esta e não aquela"); as descartadas com o motivo (42 em 30/10); temas com o estado de cada um; fios em aberto; backlog; o botão "sugerir um tema" |
    | Roteirista | Roteiro | o roteiro inteiro, com link para o arquivo no GitHub |
    | Locutor | Episódio | o player, a duração, os créditos gastos |
    | Produtor | Etapas | a duração de cada etapa, o custo de modelo, a repescagem |
@@ -147,16 +173,16 @@ personagens, acima). Dois cuidados:
 Quando a redação virar vários agentes (ADR 0010), cada um terá o seu prompt,
 e a separação vira leitura direta, sem que o site mude.
 
-## Fale com o Editor (formulário v1)
+## Sugira um tema (formulário v1)
 
 - **Texto:** "Que assunto de IA você gostaria de ouvir mais vezes no
-  CampsCast? O Editor recebe sua mensagem e avalia."
+  CampsCast? O Produtor recebe sua mensagem e leva ao Editor, que avalia."
 - **Campos:** tema (obrigatório, até 1.000 caracteres), e-mail (opcional, só
   para resposta), concordância com a página de privacidade e um campo isca,
   invisível, contra robôs.
-- **O estúdio reage:** no café, o Editor diz "Chegou uma sugestão de tema. Vou
-  avaliar."; fora do horário, o vigia guarda para entregar quando a equipe
-  chegar.
+- **O estúdio reage:** no café, o Produtor diz que chegou uma sugestão e leva
+  ao Editor, que responde que vai avaliar; fora do horário, o vigia guarda
+  para o Produtor.
 - **O que "avalia" quer dizer:** o agente recebe só o texto, sem nome nem
   e-mail. A sugestão pode orientar a pesquisa do dia; se for tema novo, entra
   em `memoria/temas-sugeridos.md` com "por ouvinte", e o autor decide, como já
@@ -251,10 +277,13 @@ S1 a S3 são o beta 1. S4 e S5 completam o critério de saída da Fase 3:
 
 ## Para decidir
 
-1. **Elenco:** Produtor como sexto personagem e Vigia no lugar do zelador?
-2. **Buscas à vista:** mostrar o texto das buscas, hoje inédito?
-3. **Custo:** mostrar o custo de modelo da gravação (US$ 6,37 em 30/10) na
+1. ~~Elenco~~ — decidido em 31/10: Produtor, Vigia e Arquivista separados;
+   Checador, Artista e Marketing em breve.
+2. **Outros "em breve":** editor de vídeo, apresentadora, analista de FinOps,
+   "Fernando Campilho virtual".
+3. **Buscas à vista:** mostrar o texto das buscas, hoje inédito?
+4. **Custo:** mostrar o custo de modelo da gravação (US$ 6,37 em 30/10) na
    ficha do Produtor?
-4. **Fim de semana:** estúdio vazio com o vigia, como no protótipo, ou equipe
+5. **Fim de semana:** estúdio vazio com o vigia, como no protótipo, ou equipe
    no café?
-5. **Beta com a maquete do protótipo,** ou esperar o visual final?
+6. **Beta com a maquete do protótipo,** ou esperar o visual final?

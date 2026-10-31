@@ -21,7 +21,8 @@
   --metal: #7c8796; --vidro-dia: #a9d8f6; --vidro-noite: #0e1a36; --balao-bg: #ffffff; --balao-fg: #18202b;
   --pele: #efc6a0; --sombra: rgba(8, 14, 30, .58);
   --c-produtor: #d8962c; --c-editor: #7a5fd0; --c-jornalista: #2a86cf; --c-roteirista: #cf4a77;
-  --c-locutor: #23a184; --c-vigia: #55657a;
+  --c-locutor: #23a184; --c-vigia: #55657a; --c-arquivista: #8a6d3b;
+  --c-checador: #b8433a; --c-artista: #c77d1e; --c-marketing: #3e7fa6; --fita-obra: #f2c230;
   --f-corpo: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
   --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
   --f-crt: "VT323", "JetBrains Mono", ui-monospace, monospace;
@@ -89,7 +90,7 @@ button { font: inherit; color: inherit; }
 main { padding-block: 22px 8px; }
 .cena { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; align-items: start; }
 .estudio { display: grid; gap: 0; grid-template-columns: repeat(4, minmax(0, 1fr));
-  grid-template-areas: "redacao redacao redacao cabine" "cafe cafe tecnica portaria";
+  grid-template-areas: "redacao redacao redacao cabine" "cafe cafe tecnica portaria" "arquivo obras obras obras";
   border: 3px solid var(--contorno); border-radius: 10px; overflow: hidden; background: var(--contorno); }
 .sala { position: relative; min-height: 270px; background: var(--parede); border: 1.5px solid var(--contorno);
   display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; }
@@ -98,6 +99,19 @@ main { padding-block: 22px 8px; }
 .sala[data-sala="cafe"] { grid-area: cafe; }
 .sala[data-sala="tecnica"] { grid-area: tecnica; background: var(--parede-2); }
 .sala[data-sala="portaria"] { grid-area: portaria; }
+.sala[data-sala="arquivo"] { grid-area: arquivo; background: var(--parede-2); min-height: 230px; }
+.sala[data-sala="obras"] { grid-area: obras; min-height: 230px;
+  background: repeating-linear-gradient(135deg, transparent 0 22px, var(--parede-2) 22px 24px), var(--parede); }
+.sala[data-sala="obras"]::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 10px; z-index: 3;
+  background: repeating-linear-gradient(135deg, var(--fita-obra) 0 12px, #1d1d1d 12px 24px); }
+.sala[data-sala="obras"] .placa { top: 16px; }
+.estantes { position: absolute; top: 30px; left: 10px; right: 10px; display: grid; gap: 10px; z-index: 0; }
+.estantes i { display: block; height: 26px; border-bottom: 4px solid var(--madeira);
+  background: repeating-linear-gradient(90deg, #c9a66b 0 16px, #b58f55 16px 18px, transparent 18px 22px); }
+.pers.em-breve svg { filter: grayscale(1); opacity: .55; }
+.pers.em-breve .situ { background: var(--fita-obra); color: #1d1d1d; font-weight: 700; border-radius: 3px; padding: 1px 5px; margin-top: 2px; }
+.balao .nota-log { display: block; margin-top: 4px; padding-top: 4px; border-top: 1px dashed var(--muted); font-style: normal; font-size: 12px; }
+.balao .nota-log b { font: 600 10px/1 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; margin-right: 4px; }
 .placa { position: absolute; top: 8px; left: 10px; font: 600 11px/1 var(--f-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); z-index: 3; }
 .piso { height: 16px; background: var(--piso); border-top: 2px solid var(--madeira); flex: none; position: relative; z-index: 2; }
 .palco { position: relative; z-index: 1; display: flex; flex-wrap: wrap; justify-content: space-evenly; align-items: flex-end; gap: 2px 4px; padding: 0 6px; min-height: 104px; }
@@ -214,7 +228,7 @@ summary { cursor: pointer; font-weight: 700; font-size: 14px; }
 }
 @media (max-width: 720px) {
   .estudio { grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-areas: "redacao redacao" "cabine tecnica" "cafe cafe" "portaria portaria"; }
+    grid-template-areas: "redacao redacao" "cabine tecnica" "cafe cafe" "portaria portaria" "arquivo arquivo" "obras obras"; }
   .sala { min-height: 250px; }
   .form-editor .cartao { grid-template-columns: minmax(0, 1fr); }
   .logo { font-size: 34px; } .hora { font-size: 28px; }
@@ -309,6 +323,17 @@ summary { cursor: pointer; font-weight: 700; font-size: 14px; }
         <div class="moveis" aria-hidden="true"><svg viewBox="0 0 100 40" preserveAspectRatio="xMinYMax meet"><rect x="4" y="16" width="34" height="24" fill="var(--madeira)"/><rect x="10" y="0" width="20" height="15" rx="2" fill="#1d2620"/><rect x="13" y="3" width="14" height="9" fill="#2bd862" opacity=".8"/></svg></div>
         <div class="piso"></div>
       </div>
+      <div class="sala" data-sala="arquivo">
+        <span class="placa">Arquivo</span>
+        <div class="estantes" aria-hidden="true"><i></i><i></i></div>
+        <div class="palco"></div>
+        <div class="piso"></div>
+      </div>
+      <div class="sala" data-sala="obras">
+        <span class="placa">Ala nova · em obras</span>
+        <div class="palco"></div>
+        <div class="piso"></div>
+      </div>
     </div>
 
     <aside class="lado">
@@ -329,8 +354,8 @@ summary { cursor: pointer; font-weight: 700; font-size: 14px; }
 <section class="form-editor gutter" id="fale">
   <div class="largura cartao">
     <div>
-      <h2>Fale com o Editor</h2>
-      <p>Que assunto de IA você gostaria de ouvir mais vezes no CampsCast? O Editor recebe sua mensagem e avalia.</p>
+      <h2>Sugira um tema</h2>
+      <p>Que assunto de IA você gostaria de ouvir mais vezes no CampsCast? O Produtor recebe sua mensagem e leva ao Editor, que avalia.</p>
       <p class="nota">Só o texto chega ao Editor. O e-mail, se você deixar, fica guardado à parte e serve apenas para uma resposta.</p>
     </div>
     <form id="form-editor" novalidate>
@@ -339,7 +364,7 @@ summary { cursor: pointer; font-weight: 700; font-size: 14px; }
       <label for="msg-email">E-mail <span style="font-weight:400;color:var(--muted)">(opcional)</span></label>
       <input id="msg-email" type="email" autocomplete="email" placeholder="voce@exemplo.com">
       <label class="check"><input type="checkbox" id="msg-ok" required> Li e concordo com a política de privacidade.</label>
-      <button class="btn btn-acao" type="submit">Enviar para o Editor</button>
+      <button class="btn btn-acao" type="submit">Enviar ao estúdio</button>
       <div class="resposta" id="msg-resposta" hidden></div>
     </form>
   </div>
@@ -366,8 +391,10 @@ summary { cursor: pointer; font-weight: 700; font-size: 14px; }
 <script>
 "use strict";
 const FUSO = "America/Sao_Paulo";
-const SALAS = { produtor: "tecnica", editor: "redacao", jornalista: "redacao", roteirista: "redacao", locutor: "cabine", vigia: "portaria" };
-const ORDEM = ["jornalista", "editor", "roteirista", "locutor", "produtor", "vigia"];
+const SALAS = { produtor: "tecnica", editor: "redacao", jornalista: "redacao", roteirista: "redacao", locutor: "cabine", vigia: "portaria",
+  arquivista: "arquivo", checador: "obras", artista: "obras", marketing: "obras" };
+const ORDEM = ["jornalista", "editor", "roteirista", "locutor", "produtor", "vigia", "arquivista"];
+const EM_BREVE = ["checador", "artista", "marketing"];  // congelados na ala em obras
 const SEGURA = 90e3;  // um balão fica no ar até 90 s depois do evento, no relógio da gravação
 const VEL = { real: { k: 1, min: 0, max: Infinity }, acelerado: { k: 20, min: 1400, max: 4000 }, rapido: { k: 60, min: 550, max: 1500 } };
 
@@ -415,6 +442,7 @@ function quadro(ms) {
   // devolve onde cada um está, o que diz e o que a fita mostra
   const per = replay ? { nome: "gravando", c: campos(ms) } : periodo(ms);
   const q = { per, onde: {}, situ: {}, baloes: {}, ativos: new Set(), fita: [], fitaRotulo: "No estúdio agora", fitaNota: "", estado: "" };
+  for (const id of EM_BREVE) { q.onde[id] = "obras"; q.situ[id] = "em breve"; }
   const ep = DIA.episodio;
   const prox = proximaGravacao(per.c);
   const proxTxt = `${semana(prox)}, ${diaMes(prox)}, às 05:00`;
@@ -432,7 +460,7 @@ function quadro(ms) {
     q.fita = vistos.slice(-6).reverse();
     q.fitaRotulo = replay ? "Na gravação" : "Gravando agora";
     q.estado = replay ? `Replay da gravação de ${diaMes(DIA.data)}` : "Gravando agora. Ao vivo, o que você vê está acontecendo.";
-    if (sugestao && !replay) q.baloes.portaria = { quem: "vigia", texto: "Chegou uma sugestão de tema. Entrego ao Editor depois da gravação.", origem: "visitante" };
+    if (sugestao && !replay) q.baloes.portaria = { quem: "vigia", texto: "Chegou uma sugestão de tema pelo site. O Produtor leva ao Editor depois da gravação.", origem: "visitante" };
     const loc = vistos.filter(e => e.quem === "locutor").pop();
     q.onair = !!loc && loc.texto.startsWith("Narrando");
     return q;
@@ -444,7 +472,7 @@ function quadro(ms) {
   const fala = (quem, texto, origem = "numeros") => ({ quem, texto, origem });
 
   if (per.nome === "dia" || per.nome === "atrasado") {
-    for (const id of ["produtor", "editor", "jornalista", "roteirista", "locutor"]) { q.onde[id] = "cafe"; q.situ[id] = "no café"; }
+    for (const id of ["produtor", "editor", "jornalista", "roteirista", "locutor", "arquivista"]) { q.onde[id] = "cafe"; q.situ[id] = "no café"; }
     const conv = DIA.conversa.length ? DIA.conversa : [fala("produtor", "Dia tranquilo.")];
     const atual = conv[ciclo % conv.length];
     q.baloes.cafe = atual; q.ativos.add(atual.quem);
@@ -463,7 +491,12 @@ function quadro(ms) {
       q.situ.vigia = "de plantão";
       q.estado = `Episódio ${ep.numero} no ar desde as ${hhmm(FIM)}. A equipe está no café.`;
     }
-    if (sugestao) { q.baloes.cafe = fala("editor", "Chegou uma sugestão de tema. Vou avaliar.", "visitante"); q.ativos.clear(); q.ativos.add("editor"); }
+    if (sugestao) {
+      const primeiro = Date.now() - sugestao < 4500;
+      q.baloes.cafe = primeiro ? fala("produtor", "Chegou uma sugestão de tema pelo site. Levo ao Editor.", "visitante")
+                               : fala("editor", "Recebi a sugestão. Vou avaliar.", "visitante");
+      q.ativos.clear(); q.ativos.add(primeiro ? "produtor" : "editor");
+    }
     return q;
   }
 
@@ -477,7 +510,7 @@ function quadro(ms) {
   // noite e folga: só o vigia
   q.situ.vigia = "de plantão";
   if (sugestao) {
-    q.baloes.portaria = fala("vigia", "Chegou uma sugestão de tema para o Editor. Entrego quando a equipe chegar.", "visitante");
+    q.baloes.portaria = fala("vigia", "Chegou uma sugestão de tema pelo site. Fica com o Produtor quando a equipe chegar.", "visitante");
     q.ativos.add("vigia"); q.estado = "Estúdio fechado."; return q;
   }
   const falas = per.nome.startsWith("folga")
@@ -500,6 +533,10 @@ function boneco(id) {
     roteirista: '<line x1="39" y1="9" x2="44" y2="22" stroke="#f2c14e" stroke-width="3.2" stroke-linecap="round"/><path d="M44 22 l1 3 l-2.4 -1.3z" fill="#1b2129"/>',
     locutor: '<path d="M13 25 A15 15 0 0 1 43 25" fill="none" stroke="#1b2129" stroke-width="3"/><rect x="10" y="21" width="6" height="10" rx="2" fill="#1b2129"/><rect x="40" y="21" width="6" height="10" rx="2" fill="#1b2129"/>',
     produtor: '<rect x="6" y="44" width="13" height="17" rx="1.5" fill="#e4d3ab" stroke="#1b2129" stroke-width="1.3"/><rect x="9" y="42" width="7" height="4" rx="1" fill="#1b2129"/>',
+    arquivista: '<rect x="35" y="45" width="15" height="12" rx="1" fill="#c9a66b" stroke="#1b2129" stroke-width="1.3"/><line x1="35" y1="49" x2="50" y2="49" stroke="#1b2129"/>',
+    checador: '<circle cx="44" cy="47" r="6" fill="#dff1ff" stroke="#1b2129" stroke-width="2"/><line x1="40" y1="52" x2="35" y2="59" stroke="#1b2129" stroke-width="3" stroke-linecap="round"/>',
+    artista: '<ellipse cx="28" cy="12" rx="13" ry="5" fill="#2b3138"/><circle cx="28" cy="7" r="2.2" fill="#2b3138"/><line x1="40" y1="60" x2="47" y2="44" stroke="#8a5a2b" stroke-width="2.6"/><circle cx="47" cy="43" r="2.4" fill="#d4507a"/>',
+    marketing: '<path d="M36 46 L50 40 L50 58 L36 52 Z" fill="#f2c14e" stroke="#1b2129" stroke-width="1.3"/><rect x="32" y="46" width="5" height="6" fill="#1b2129"/>',
     vigia: '<path d="M14 18 Q28 4 42 18 Z" fill="#26303b"/><rect x="12" y="17" width="34" height="4" rx="2" fill="#26303b"/><rect x="40" y="48" width="11" height="5" rx="1.5" fill="#f2c14e" stroke="#1b2129"/>',
   }[id] || "";
   return `<svg viewBox="0 0 56 76" aria-hidden="true"><rect x="10" y="38" width="36" height="36" rx="12" fill="${cor(id)}"/><circle cx="28" cy="24" r="13" fill="var(--pele)"/>${id === "editor" ? "" : '<circle cx="23" cy="24" r="1.7" fill="#1b2129"/><circle cx="33" cy="24" r="1.7" fill="#1b2129"/>'}${id === "editor" ? '<circle cx="22.5" cy="24" r="1.3" fill="#1b2129"/><circle cx="33.5" cy="24" r="1.3" fill="#1b2129"/>' : ""}<path d="M24 30 q4 3 8 0" fill="none" stroke="#1b2129" stroke-width="1.3" stroke-linecap="round"/>${ac}</svg>`;
@@ -536,18 +573,20 @@ function desenha(forca = false) {
   $("#estado").textContent = q.estado;
 
   // personagens nas salas
-  const ordemSala = { redacao: ["jornalista", "editor", "roteirista"], cafe: ["jornalista", "editor", "produtor", "roteirista", "locutor"] };
-  for (const sala of ["redacao", "cabine", "cafe", "tecnica", "portaria"]) {
+  const ordemSala = { redacao: ["jornalista", "editor", "roteirista"], cafe: ["jornalista", "editor", "produtor", "roteirista", "locutor", "arquivista"],
+    obras: EM_BREVE };
+  for (const sala of ["redacao", "cabine", "cafe", "tecnica", "portaria", "arquivo", "obras"]) {
     const palco = $(`.sala[data-sala="${sala}"] .palco`);
     const aqui = (ordemSala[sala] || ORDEM).filter(id => q.onde[id] === sala);
     const atual = [...palco.children].map(n => n.dataset.id).join();
     if (atual !== aqui.join()) palco.replaceChildren(...aqui.map(id => PERS[id]));
     $(`.sala[data-sala="${sala}"]`).classList.toggle("ativa", [...q.ativos].some(id => q.onde[id] === sala));
   }
-  for (const id of ORDEM) {
+  for (const id of [...ORDEM, ...EM_BREVE]) {
     if (!PERS[id]) continue;
     PERS[id].classList.toggle("ativo", q.ativos.has(id));
-    PERS[id].classList.toggle("parado", !!q.onde[id] && !q.ativos.has(id));
+    PERS[id].classList.toggle("em-breve", EM_BREVE.includes(id));
+    PERS[id].classList.toggle("parado", !!q.onde[id] && !q.ativos.has(id) && !EM_BREVE.includes(id));
     $(".situ", PERS[id]).textContent = q.situ[id] || "";
   }
   $("#onair").classList.toggle("aceso", !!q.onair);
@@ -559,8 +598,8 @@ function desenha(forca = false) {
 
   // fita
   $("#fita-rotulo").textContent = q.fitaRotulo;
-  $("#fita").innerHTML = q.fita.map(e => `<li>${e.ms ? `<time>${hhmmss(e.ms)}</time>` : "<span></span>"}<span class="q" style="--cor:${cor(e.quem)}"><span class="ponto"></span>${esc(nomeDe(e.quem))}</span><span class="t ${e.origem === "agente" ? "fala" : ""}">${esc(e.texto)}</span></li>`).join("");
-  $("#fita-nota").textContent = q.fitaNota || (q.per.nome === "gravando" ? "Em itálico, frases do próprio agente. O resto descreve o que ele fez, pela transcrição e pelo log." : "");
+  $("#fita").innerHTML = q.fita.map(e => `<li>${e.ms ? `<time>${hhmmss(e.ms)}</time>` : "<span></span>"}<span class="q" style="--cor:${cor(e.quem)}"><span class="ponto"></span>${esc(nomeDe(e.quem))}</span><span class="t ${e.origem === "agente" ? "fala" : ""}">${esc(e.texto)}${e.nota ? ` <span class="nota">· no log: ${esc(e.nota)}</span>` : ""}</span></li>`).join("");
+  $("#fita-nota").textContent = q.fitaNota || (q.per.nome === "gravando" ? "Em itálico, frases do próprio agente. O resto descreve o que ele fez, pela transcrição e pelo log. \"No log\" é a nota que ele escreveu no log de pesquisa, ao fim da gravação." : "");
 
   if (fichaAberta && abaAberta === "hoje") atualizaAgora(q);
 }
@@ -571,7 +610,7 @@ function poeBalao(sala, e) {
   const b = document.createElement("div");
   b.className = "balao" + (e.origem === "agente" ? " fala" : "");
   b.style.setProperty("--cor", cor(e.quem));
-  b.innerHTML = `<span class="quem">${esc(nomeDe(e.quem))}</span>${esc(e.texto)}`;
+  b.innerHTML = `<span class="quem">${esc(nomeDe(e.quem))}</span>${esc(e.texto)}${e.nota ? `<span class="nota-log"><b>no log</b>${esc(e.nota)}</span>` : ""}`;
   const rabo = document.createElement("div"); rabo.className = "balao-rabo";
   salaEl.append(b, rabo);
   const rs = salaEl.getBoundingClientRect(), ra = alvo.getBoundingClientRect();
@@ -641,11 +680,14 @@ function passo() {
 }
 
 // ------------------------------------------------------------ ficha do personagem
-function abreFicha(id, aba = "hoje") {
-  fichaAberta = id; abaAberta = aba;
+function abreFicha(id, aba) {
   const p = ELENCO.find(x => x.id === id);
+  const breve = p.situacao === "em_breve";
+  aba = aba || (breve ? "embreve" : "hoje");
+  fichaAberta = id; abaAberta = aba;
   const extra = { jornalista: ["leituras", "Leituras"], editor: ["pautas", "Pautas e memória"], roteirista: ["roteiro", "Roteiro"], locutor: ["episodio", "Episódio"], produtor: ["etapas", "Etapas"], vigia: ["plantao", "Plantão"] }[id];
-  const abas = [["hoje", "Hoje"], extra, ["instrucoes", "Instruções"]].filter(Boolean);
+  const abas = breve ? [["embreve", "Em breve"], p.instrucoes.length ? ["instrucoes", "Instruções"] : null].filter(Boolean)
+                     : [["hoje", "Hoje"], extra, p.instrucoes.length ? ["instrucoes", "Instruções"] : null].filter(Boolean);
   const f = $("#ficha");
   f.style.setProperty("--cor", cor(id));
   f.innerHTML = `<div class="ficha-topo">${boneco(id)}<div><h2 id="ficha-nome">${esc(p.nome)}</h2><p>${esc(p.papel)}</p></div><button class="fechar" type="button" aria-label="Fechar">×</button></div>
@@ -667,16 +709,20 @@ function atualizaAgora(q) {
   const id = fichaAberta;
   const e = Object.values(q.baloes).find(b => b.quem === id);
   const onde = { redacao: "na redação", cabine: "na cabine", cafe: "no café", tecnica: "na técnica", portaria: "na portaria" }[q.onde[id]] || "fora do estúdio";
-  el.innerHTML = e ? `${esc(onde)}: <em>${esc(e.texto)}</em>` : `${esc(onde)}${q.situ[id] ? `, ${esc(q.situ[id])}` : ""}.`;
+  el.innerHTML = e ? `${esc(onde)}: <em>${esc(e.texto)}</em>` : `${esc(onde)}${q.situ[id] && q.situ[id] !== onde ? `, ${esc(q.situ[id])}` : ""}.`;
 }
 
 function corpoFicha(p, aba) {
   const id = p.id, d = DIA, ep = d.episodio;
   const agente = ["jornalista", "editor", "roteirista"].includes(id);
   const porTras = `<p class="por-tras"><b>Por trás:</b> ${esc(p.por_tras)}.${agente ? " Hoje Jornalista, Editor e Roteirista são o mesmo agente; o site separa o trabalho pelo que ele estava fazendo em cada momento." : ""}</p>`;
+  if (aba === "embreve") {
+    return `<div class="agora"><p class="rotulo">Em breve</p><div>${esc(p.em_breve)}</div></div>${porTras}
+      <p class="nota">Ainda não trabalha na gravação. Fica na ala em obras até estrear.</p>`;
+  }
   if (aba === "hoje") {
     const meus = EVENTOS.filter(e => e.quem === id);
-    return `<div class="agora"><p class="rotulo">Agora</p><div id="agora-txt">—</div></div>${porTras}
+    return `<div class="agora"><p class="rotulo">Agora</p><div id="agora-txt">—</div></div>${porTras}${p.em_breve ? `<p class="por-tras"><b>Em breve:</b> ${esc(p.em_breve)}</p>` : ""}
       <h3>O que fez na gravação de ${diaMes(d.data)} <span class="nota">(${meus.length} registros)</span></h3>
       <ul class="fita">${meus.map(e => `<li><time>${hhmmss(e.ms)}</time><span class="t ${e.origem === "agente" ? "fala" : ""}">${esc(e.texto)}${e.url ? ` <a href="${esc(e.url)}" target="_blank" rel="noopener">abrir</a>` : ""}</span></li>`).join("") || "<li><span></span><span class='t'>Nada registrado.</span></li>"}</ul>`;
   }
@@ -688,13 +734,16 @@ function corpoFicha(p, aba) {
     const pq = d.pesquisa, fech = pq.leituras.filter(l => !l.ok);
     return `<div class="numeros"><div><b>${pq.paginas ?? "—"}</b><span>páginas</span></div><div><b>${pq.sites ?? "—"}</b><span>sites</span></div><div><b>${pq.buscas ?? "—"}</b><span>buscas</span></div><div><b>${fech.length}</b><span>fechadas</span></div></div>
       <p class="nota">Números da ficha técnica, contados pelo próprio agente no <a href="${esc(pq.url)}" target="_blank" rel="noopener">log de pesquisa</a>. A lista abaixo vem da transcrição, na ordem em que ele abriu.</p>
-      <h3>Páginas</h3><ol class="lista">${pq.leituras.map(l => `<li><a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.url.replace(/^https?:\/\/(www\.)?/, ""))}</a>${l.ok ? "" : ` <span class="fechada">não abriu (${esc(l.status)})</span>`}</li>`).join("")}</ol>
+      <h3>Páginas</h3><ol class="lista">${pq.leituras.map(l => `<li><a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.url.replace(/^https?:\/\/(www\.)?/, ""))}</a>${l.ok ? "" : ` <span class="fechada">não abriu (${esc(l.status)})</span>`}${l.nota ? `<br><span class="nota">no log: ${esc(l.nota)}</span>` : ""}</li>`).join("")}</ol>
+      <p class="nota">"No log" é a nota do próprio Jornalista sobre a página, escrita no log de pesquisa ao fim da gravação. A partir de 03/11 toda página tem uma.</p>
       <h3>Buscas</h3><ul class="lista">${pq.buscas_feitas.map(b => `<li>${esc(b)}</li>`).join("")}</ul>`;
   }
   if (aba === "pautas") {
     const m = d.memoria;
-    return `<button class="btn btn-acao" id="btn-tema" type="button">Mandar um tema para o Editor</button>
+    const esc_ = d.pesquisa.escolhas || [];
+    return `<button class="btn btn-acao" id="btn-tema" type="button">Sugerir um tema</button>
       <h3>Entraram (${ep.pautas.length})</h3><ul class="lista">${ep.pautas.map(x => `<li><b>${esc(x.titulo)}</b>${x.do_backlog ? " <span class='nota'>· do backlog</span>" : ""}<br><span class="nota">${esc(x.fonte)}</span> <a href="${esc(x.url)}" target="_blank" rel="noopener">fonte</a></li>`).join("")}</ul>
+      <h3>Escolhas</h3>${esc_.length ? `<ul class="lista">${esc_.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : `<p class="nota">O "por que esta e não aquela" entra no log de pesquisa a partir da gravação de 03/11.</p>`}
       <details><summary>Descartadas (${d.pesquisa.descartadas.length})</summary><ul class="lista" style="margin-top:8px">${d.pesquisa.descartadas.map(x => `<li><b>${esc(x.titulo)}</b><br><span class="nota">${esc(x.motivo)}</span></li>`).join("")}</ul></details>
       <details><summary>Temas que o programa acompanha (${m.temas.length})</summary><ul class="lista" style="margin-top:8px">${m.temas.map(t => `<li><b>${esc(t.id)} · ${esc(t.titulo)}</b><br><span class="nota">${t.estado_em ? `em ${diaMes(t.estado_em)}: ` : ""}${esc(t.estado)}</span></li>`).join("")}</ul><p class="nota"><a href="${esc(m.urls.temas)}" target="_blank" rel="noopener">temas.md no GitHub</a></p></details>
       <details><summary>Fios em aberto (${m.fios.length})</summary><ul class="lista" style="margin-top:8px">${m.fios.map(f => `<li><b>${esc(f.id)}</b> ${esc(f.titulo)}</li>`).join("")}</ul><p class="nota"><a href="${esc(m.urls.fios)}" target="_blank" rel="noopener">fios.md no GitHub</a></p></details>
@@ -769,7 +818,7 @@ $("#form-editor").addEventListener("submit", e => {
   if (!txt) { r.hidden = false; r.textContent = "Escreva o tema antes de enviar."; $("#msg-tema").focus(); return; }
   if (!$("#msg-ok").checked) { r.hidden = false; r.textContent = "Marque a concordância com a política de privacidade para enviar."; return; }
   r.hidden = false;
-  r.textContent = "Protótipo: nada foi enviado. No site de verdade, sua mensagem chega ao Editor, que avalia. Repare no café.";
+  r.textContent = "Protótipo: nada foi enviado. No site de verdade, o Produtor recebe e leva ao Editor, que avalia. Repare no estúdio.";
   sugestao = Date.now(); setTimeout(() => { sugestao = null; }, 9000);
   $("#estudio").scrollIntoView({ behavior: "smooth" });
 });

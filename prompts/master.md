@@ -221,6 +221,21 @@ Decida sozinho e siga em frente. Nunca peça confirmação.
    Janela: WINDOW_START a WINDOW_END (N dias)
    Fontes varridas: <quais camadas de sources.yaml você percorreu>
 
+   ## Contagem para a ficha técnica
+   - Páginas abertas (cada URL uma vez): **N**
+   - Fechadas: **N** — <quais, e o que respondeu: 403, fora do ar>
+   - Sites distintos (por hostname, sem "www"): **N**
+   - Buscas na web: **N**
+   - Pautas avaliadas: **N** = <entraram> + <descartadas> (+ <guardadas no backlog>)
+
+   ## Páginas lidas, na ordem
+   1. <endereço sem https://> — <o que você achou ali que pesou na decisão>
+   2. <endereço> — nada na janela
+   3. <endereço> — não abriu (403)
+
+   ## Escolhas
+   - <a vaga em disputa>: <a que ficou> em vez de <a que perdeu> — <por quê>
+
    ## Entraram no episódio
    ### 1. <título da pauta>
    - fonte: <nome> — <url primária>
@@ -244,6 +259,18 @@ Decida sozinho e siga em frente. Nunca peça confirmação.
    Seja específico no motivo do descarte. "Impacto baixo" sem explicação não
    serve; "anúncio de integração de app, não muda o que os modelos conseguem
    fazer" serve.
+
+   **Páginas lidas:** toda página que você abriu, uma linha cada, com uma
+   frase sua sobre o que ela trouxe para a decisão — a data que confirmou, o
+   número que conferiu, a pauta que revelou — ou "nada na janela". Com suas
+   palavras, sem citar a página. O site do programa mostra essas notas ao lado
+   de cada leitura, e o verificador as confere contra a transcrição: escreva só
+   o que a página disse.
+
+   **Escolhas:** toda vez que uma candidata perdeu a vaga para outra, ou que a
+   ordem das pautas saiu de uma comparação, uma linha dizendo qual ficou, qual
+   perdeu e por quê. É o "por que A e não B" que o motivo do descarte sozinho
+   não conta. Se não houve disputa, escreva "nenhuma disputa".
 
 9. Ao final, imprima EXATAMENTE uma linha, nada mais:
    `OK <caminho-do-roteiro> <palavras> <duracao-estimada-mm:ss>`

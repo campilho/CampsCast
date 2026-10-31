@@ -2298,6 +2298,18 @@ topics:
 ---
 Corpo.
 MD
+cat > "research/${FIXTURE_DATE}.md" <<'MD'
+# Log de pesquisa — 1970-01-01
+
+## Páginas lidas, na ordem
+1. openai.com/news/ — não abriu (403)
+
+## Escolhas
+- terceira vaga: A em vez de B — B não tinha fonte
+  primária na janela
+
+## Descartadas
+MD
 printf '%s\n' '{"data": "1970-01-01", "estado": "ok", "claude": {"sessao": "sessao-teste"}}' > "$EST_DIR/metricas.jsonl"
 python3 - "$ROOT" "$EST_DIR/sessao-teste.jsonl" <<'PY'
 import json, sys
@@ -2323,15 +2335,41 @@ assert quem == ["editor", "jornalista", "jornalista", "editor", "roteirista"], q
 assert d["eventos"][0]["t"] == "1970-01-01T05:00:00-03:00", d["eventos"][0]["t"]
 assert d["eventos"][2]["texto"] == "openai.com/news não abriu (403)", d["eventos"][2]
 assert d["eventos"][3]["origem"] == "agente"
+assert d["eventos"][1]["nota"] == "não abriu (403)", d["eventos"][1]
+assert d["pesquisa"]["escolhas"] == ["terceira vaga: A em vez de B — B não tinha fonte primária na janela"], d["pesquisa"]["escolhas"]
 assert sys.argv[2] not in texto, "caminho da máquina no arquivo público"
 print("ok")
 PY
 )"
-rm -rf "$EST_DIR"; rm -f "episodes/${FIXTURE_DATE}.md"
+rm -rf "$EST_DIR"; rm -f "episodes/${FIXTURE_DATE}.md" "research/${FIXTURE_DATE}.md"
 if [[ "$EST_OK" == "ok" ]]; then
-  ok "estúdio: transcrição vira eventos por personagem, no fuso de São Paulo, sem caminho da máquina"
+  ok "estúdio: transcrição vira eventos por personagem, no fuso de São Paulo, com a nota do log e sem caminho da máquina"
 else
   bad "dados do estúdio errados: $EST_OK"
+fi
+
+# O formato do log de pesquisa está no prompt e o site o lê: o exemplo do
+# próprio prompt tem de sair do parser com nota por página e escolha.
+FMT="$(python3 - <<'PY' 2>&1
+import re, sys, textwrap
+sys.path.insert(0, "scripts")
+from estudio import secao, itens
+t = open("prompts/master.md", encoding="utf-8").read()
+crase = chr(96)  # sem crase literal: o bash 3.2 do macOS tropeça nela dentro de $( )
+passo8 = t.split("8. Escreva " + crase + "research/", 1)[1].split("\n9. ", 1)[0]
+cerca = crase * 3
+modelo = textwrap.dedent(passo8.split(cerca + "markdown", 1)[1].split(cerca, 1)[0])
+notas = [i.partition(" — ")[2] for i in itens(secao(modelo, "Páginas lidas"), r"\d+\. ")]
+escolhas = itens(secao(modelo, "Escolhas"), r"- ")
+assert len(notas) == 3 and all(notas), notas
+assert len(escolhas) == 1 and " em vez de " in escolhas[0], escolhas
+print("ok")
+PY
+)"
+if [[ "$FMT" == "ok" ]]; then
+  ok "o modelo de log de pesquisa do prompt sai do parser do site com notas e escolhas"
+else
+  bad "prompt e parser do log de pesquisa divergem: $FMT"
 fi
 
 # ------------------------------------------------------------------- resultado

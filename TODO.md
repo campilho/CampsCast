@@ -2,7 +2,7 @@
 
 Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
 [PROJETO.md](PROJETO.md); o que já foi feito, no git, nos ADRs e em
-[docs/aprendizados.md](docs/aprendizados.md). Atualizada em 30/10/2026.
+[docs/aprendizados.md](docs/aprendizados.md). Atualizada em 31/10/2026.
 
 ## Semana de 02/11 — segunda é feriado (Finados)
 
@@ -24,6 +24,11 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
       fechadas caíram (eram 15 a 18% por semana)? Por qual porta foi lida cada
       pauta da OpenAI (fonte, outra porta, arquivo, imprensa)? A faixa nova de
       palavras (alvo 1272, a 159 ppm) manteve os episódios entre 8 e 10 minutos?
+- [ ] **Terça, 03/11 — log de pesquisa com "Páginas lidas" e "Escolhas"**
+      (passo 8 do prompt, 31/10): toda página ganhou nota? Houve escolha
+      registrada? Quanto cresceram o log e a saída do modelo (30/10: 17,6 mil
+      caracteres de log, 88 mil tokens de saída)? Rodar
+      `python3 scripts/estudio.py` e ver as notas no protótipo
 - [ ] **07–08/11 — relatório mensal de audiência de outubro**, com a revisão
       de custos do [ADR 0007](docs/decisions/0007-custo-por-episodio.md) (ver
       Recorrente)
@@ -172,9 +177,9 @@ aposentar, juntar ou subir o teto.
       velocidades, balões com origem marcada, ficha de cada personagem com as
       instruções dele e o formulário "Fale com o Editor". Protótipo em
       `site/index.html` com os dados de 30/10 (`scripts/estudio.py`). Feito:
-      S1. Próximo: S2, o visual a partir das imagens do autor. Cinco decisões
-      abertas no fim do documento (elenco com Produtor, buscas à vista, custo,
-      fim de semana, beta com a maquete)
+      S1. Elenco aprovado em 31/10 (Arquivista em parte; Checador, Artista e
+      Marketing em breve, na ala em obras). Próximo: S2, o visual a partir
+      das imagens do autor. Decisões abertas no fim do documento
 - [ ] **Estúdio em miniatura, ao vivo no site** — no CampsVerso
       (`~/CampsVerso`, github.com/campilho/campsverso), projeto à parte e em
       andamento; em 30/10 ainda não fala do CampsCast. Protótipo "Estudio
