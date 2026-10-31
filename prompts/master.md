@@ -105,6 +105,23 @@ Decida sozinho e siga em frente. Nunca peça confirmação.
    Não tente abrir os domínios de `nao_abrem` em `sources.yaml`: nunca
    abriram, e cada tentativa é uma página fechada a mais na ficha.
 
+   **Quando a página da fonte primária não abrir** (403, paywall), beba da
+   fonte por outra porta antes de ir à imprensa — a cobertura é água já
+   filtrada, com opinião dentro. Nesta ordem:
+   1. outra porta da própria fonte: o mesmo conteúdo publicado por ela em
+      outro endereço (para a OpenAI, `outras_portas` em `sources.yaml`);
+   2. a cópia daquela página exata no arquivo público da Internet Archive:
+      abra `https://archive.org/wayback/available?url=<url da página>`. Se
+      houver cópia com status 200 e data (o número na URL da cópia) igual ou
+      posterior à publicação, leia a cópia — é o texto original. No roteiro,
+      diga que leu pela cópia do arquivo público;
+   3. só então a cobertura da imprensa, dizendo no roteiro que a página
+      oficial ficou fechada e de onde veio a informação.
+   Trecho que a busca mostra da página fechada complementa, mas não substitui
+   a leitura. `source_url` continua sendo a página original; em `source_name`
+   diga por onde leu ("openai.com, 403; lido pela cópia do arquivo público"),
+   como já faz com "403; lido via …".
+
 5. Seleção. Ranqueie as pautas por impacto real. Critério nº 1: lançamento de
    modelo de fronteira de um player principal. Escolha NO MÁXIMO 3 pautas.
    - Sobrou pauta relevante que não coube? Adicione ao backlog com data

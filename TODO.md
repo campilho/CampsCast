@@ -346,7 +346,14 @@ mil tokens da ferramenta Read.
       lista `nao_abrem` no `sources.yaml`. A tabela do relatório mostra
       "falhas de tentativas". Fingir ser navegador para furar o bloqueio, não:
       é a proteção contra robôs do próprio site. **Medir no relatório de
-      06/11** se as fechadas caíram e se a OpenAI segue entrando nas pautas
+      06/11** se as fechadas caíram e se a OpenAI segue entrando nas pautas.
+      Depois, no mesmo dia: o ChatGPT leu `openai.com/index/updated-model-spec/`
+      (teste do autor); o agente lê da internet de casa, como `Claude-User`,
+      sem JavaScript, e recebe o desafio do Cloudflare. O prompt ganhou uma
+      ordem para fonte fechada: outra porta da própria fonte (`outras_portas`
+      da OpenAI no `sources.yaml`), depois a cópia da Internet Archive daquela
+      página, e só então a imprensa, sempre dizendo no ar por onde leu. Em
+      06/11, contar nos logs quantas pautas usaram cada porta
 - [x] **Abertura e transições repetitivas (30/10)** — com "IA" por extenso no
       áudio, 3 das 5 aberturas da semana disseram "seu briefing de
       inteligência artificial. Eu sou um agente de inteligência artificial"; o

@@ -22,6 +22,14 @@ labs:
   # dar 403 também, e para o conteúdo vale a regra de fonte de sempre.
   - name: OpenAI News (feed RSS)
     url: https://openai.com/news/rss.xml
+    # Quando o post em openai.com não abrir: portas da própria OpenAI que
+    # abriram em todas as leituras de outubro. O ChatGPT lê openai.com (teste
+    # do autor, 30/10); o agente, lendo da casa do autor como Claude-User, não.
+    outras_portas:
+      - https://model-spec.openai.com/                    # o Model Spec em si (2 de 2)
+      - https://alignment.openai.com/                     # pesquisa de segurança (30 de 30)
+      - https://developers.openai.com/                    # documentação e changelog da API (2 de 2)
+      - https://community.openai.com/c/announcements/6    # anúncios da equipe (23 de 23)
   - name: Google — The Keyword (AI)
     url: https://blog.google/technology/ai/
   - name: Google DeepMind Blog
