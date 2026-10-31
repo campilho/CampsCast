@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- página -->
+<title>Estúdio CampsCast</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&family=VT323&display=swap">
+<style>
+/* O site é o estúdio: uma maquete em corte, salas lado a lado, que muda com o
+   relógio de São Paulo. A faixa do topo é o terminal da capa (> CC), igual nos
+   dois temas; o resto segue o tema de quem visita. */
+:root {
+  --bg: #edf0f3; --fg: #18202b; --muted: #576272; --line: #cdd5de; --card: #ffffff;
+  --accent: #17834a; --accent-fg: #ffffff; --onair: #cf3434;
+  --crt-bg: #06100a; --crt-fg: #3cff6e; --crt-dim: #1d7a3a;
+  --parede: #f4f6f8; --parede-2: #e3e8ed; --contorno: #8b97a6; --piso: #c8b49a; --madeira: #9c7047;
+  --metal: #7c8796; --vidro-dia: #a9d8f6; --vidro-noite: #0e1a36; --balao-bg: #ffffff; --balao-fg: #18202b;
+  --pele: #efc6a0; --sombra: rgba(8, 14, 30, .58);
+  --c-produtor: #d8962c; --c-editor: #7a5fd0; --c-jornalista: #2a86cf; --c-roteirista: #cf4a77;
+  --c-locutor: #23a184; --c-vigia: #55657a;
+  --f-corpo: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --f-crt: "VT323", "JetBrains Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0e1217; --fg: #e3e7ed; --muted: #98a3b2; --line: #26303b; --card: #151b22;
+  --accent: #3ad66d; --accent-fg: #06110a; --onair: #ff5c5c;
+  --parede: #1b222b; --parede-2: #222a34; --contorno: #3d4957; --piso: #3b3229; --madeira: #6d5037;
+  --metal: #5a6573; --vidro-dia: #6fa9cf; --vidro-noite: #0a1328; --balao-bg: #f3f5f7; --balao-fg: #121820;
+  --sombra: rgba(0, 0, 0, .62); color-scheme: dark;
+} }
+:root[data-theme="dark"] {
+  --bg: #0e1217; --fg: #e3e7ed; --muted: #98a3b2; --line: #26303b; --card: #151b22;
+  --accent: #3ad66d; --accent-fg: #06110a; --onair: #ff5c5c;
+  --parede: #1b222b; --parede-2: #222a34; --contorno: #3d4957; --piso: #3b3229; --madeira: #6d5037;
+  --metal: #5a6573; --vidro-dia: #6fa9cf; --vidro-noite: #0a1328; --balao-bg: #f3f5f7; --balao-fg: #121820;
+  --sombra: rgba(0, 0, 0, .62); color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.5 var(--f-corpo); }
+a { color: var(--accent); }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.largura { max-width: 1180px; margin: 0 auto; }
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+
+/* faixa do terminal */
+.topo { background: var(--crt-bg); color: #d7f5df; padding-block: 14px; }
+.topo .largura { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; }
+.marca { display: flex; align-items: baseline; gap: 12px; min-width: 0; }
+.logo { font: 40px/1 var(--f-crt); color: var(--crt-fg); text-shadow: 0 0 12px rgba(60, 255, 110, .45); white-space: nowrap; }
+.logo .cursor { display: inline-block; width: .5em; height: .8em; background: var(--crt-fg); vertical-align: -.05em; animation: pisca 1.1s steps(1) infinite; }
+.marca p { margin: 0; font-size: 14px; color: #a9cdb4; }
+.marca strong { color: #eafff0; font-size: 17px; display: block; }
+.relogio { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.hora { font: 34px/1 var(--f-crt); color: var(--crt-fg); letter-spacing: .02em; }
+.hora small { font-size: 20px; color: #7fbf92; margin-right: 6px; }
+.estado { font-size: 14px; color: #cfe9d7; max-width: 30ch; }
+.botoes { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; gap: 8px; border-radius: 6px; padding: 9px 14px; font-weight: 700; font-size: 15px; text-decoration: none; cursor: pointer; border: 1px solid transparent; }
+.btn-crt { background: var(--crt-fg); color: #04120a; }
+.btn-crt:hover { background: #7dff9f; }
+.btn-linha { background: transparent; color: #d7f5df; border-color: #2f6b43; }
+.btn-linha:hover { border-color: var(--crt-fg); }
+
+/* faixa do replay */
+.replay { background: var(--card); border-bottom: 1px solid var(--line); padding-block: 10px; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; }
+.replay .largura { display: grid; gap: 8px; }
+.replay-linha { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.selo { font: 600 12px/1 var(--f-mono); letter-spacing: .12em; text-transform: uppercase; background: var(--onair); color: #fff; padding: 5px 8px; border-radius: 4px; }
+.replay-info { font-size: 14px; color: var(--muted); margin: 0; }
+.replay-hora { font: 600 15px var(--f-mono); }
+.ctl { border: 1px solid var(--line); background: var(--bg); border-radius: 6px; padding: 6px 10px; cursor: pointer; font-size: 14px; }
+.ctl[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.ctl-grupo { display: inline-flex; gap: 4px; }
+#trilha { width: 100%; accent-color: var(--onair); }
+.capitulos { display: flex; gap: 6px; flex-wrap: wrap; }
+.capitulos button { font-size: 13px; padding: 4px 9px; border-radius: 999px; border: 1px solid var(--line); background: transparent; cursor: pointer; display: inline-flex; gap: 6px; align-items: center; }
+.capitulos button.atual { border-color: var(--fg); font-weight: 700; }
+.ponto { width: 9px; height: 9px; border-radius: 50%; background: var(--cor, var(--muted)); flex: none; }
+
+/* o estúdio */
+main { padding-block: 22px 8px; }
+.cena { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; align-items: start; }
+.estudio { display: grid; gap: 0; grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-areas: "redacao redacao redacao cabine" "cafe cafe tecnica portaria";
+  border: 3px solid var(--contorno); border-radius: 10px; overflow: hidden; background: var(--contorno); }
+.sala { position: relative; min-height: 270px; background: var(--parede); border: 1.5px solid var(--contorno);
+  display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; }
+.sala[data-sala="redacao"] { grid-area: redacao; }
+.sala[data-sala="cabine"] { grid-area: cabine; background: repeating-linear-gradient(90deg, var(--parede-2) 0 14px, var(--parede) 14px 28px); }
+.sala[data-sala="cafe"] { grid-area: cafe; }
+.sala[data-sala="tecnica"] { grid-area: tecnica; background: var(--parede-2); }
+.sala[data-sala="portaria"] { grid-area: portaria; }
+.placa { position: absolute; top: 8px; left: 10px; font: 600 11px/1 var(--f-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); z-index: 3; }
+.piso { height: 16px; background: var(--piso); border-top: 2px solid var(--madeira); flex: none; position: relative; z-index: 2; }
+.palco { position: relative; z-index: 1; display: flex; flex-wrap: wrap; justify-content: space-evenly; align-items: flex-end; gap: 2px 4px; padding: 0 6px; min-height: 104px; }
+.janela { position: absolute; top: 30px; width: 92px; height: 64px; border: 4px solid var(--contorno); border-radius: 3px; background: var(--vidro-dia); z-index: 0; overflow: hidden; }
+.sala[data-sala="portaria"] .palco { justify-content: flex-end; padding-right: 18%; }
+.janela::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 47%, var(--contorno) 47% 53%, transparent 53%); }
+.sala[data-sala="redacao"] .janela { right: 18px; }
+.sala[data-sala="cafe"] .janela { right: 18px; }
+.sala[data-sala="portaria"] .janela { right: 12px; width: 60px; }
+.moveis { position: absolute; left: 0; right: 0; bottom: 34px; z-index: 0; pointer-events: none; }
+.moveis svg { display: block; width: 100%; height: 40px; }
+.onair { position: absolute; top: 28px; right: 10px; font: 700 12px/1 var(--f-mono); letter-spacing: .1em; padding: 5px 7px; border-radius: 4px; border: 2px solid var(--contorno); color: var(--muted); background: var(--parede); z-index: 3; }
+.onair.aceso { background: var(--onair); border-color: var(--onair); color: #fff; box-shadow: 0 0 16px var(--onair); }
+.mic { position: absolute; left: 0; bottom: 92px; width: 92px; height: 40px; z-index: 2; pointer-events: none; }
+.rack { position: absolute; top: 30px; right: 10px; width: 46px; height: 120px; background: #262d36; border-radius: 4px; padding: 8px 6px; display: grid; gap: 7px; align-content: start; z-index: 0; }
+.rack i { display: block; height: 6px; border-radius: 2px; background: #3a4450; }
+.rack i::after { content: ""; display: block; width: 6px; height: 6px; border-radius: 50%; background: #2c6b3e; margin-left: auto; }
+.estudio .sala[data-sala="tecnica"].ativa .rack i::after { background: #45ff7a; animation: pisca .5s steps(1) infinite; }
+.rack i:nth-child(2)::after { animation-delay: .2s !important; } .rack i:nth-child(3)::after { animation-delay: .35s !important; }
+.aviso-sala { position: absolute; top: 34px; left: 10px; right: 120px; font-size: 13px; color: var(--muted); z-index: 3; }
+
+/* personagens */
+.pers { position: relative; border: 0; background: none; padding: 0 0 2px; width: 62px; cursor: pointer; display: grid; justify-items: center; gap: 0; }
+.pers svg { width: 52px; height: 70px; display: block; transition: transform .3s; }
+.pers .nome { font-size: 12px; font-weight: 700; line-height: 1.1; }
+.pers .situ { font-size: 10.5px; color: var(--muted); line-height: 1.15; min-height: 1.15em; text-align: center; }
+.pers:hover svg { transform: translateY(-3px); }
+.pers.ativo svg { animation: trabalha 1.2s ease-in-out infinite; }
+.pers.ativo .nome { color: var(--fg); text-decoration: underline 3px var(--cor); text-underline-offset: 3px; }
+.pers.parado { opacity: .72; }
+.balao { position: absolute; z-index: 4; max-width: min(250px, calc(100% - 16px)); background: var(--balao-bg); color: var(--balao-fg);
+  border: 2px solid var(--fg); border-radius: 12px; padding: 7px 10px; font-size: 13.5px; line-height: 1.32;
+  box-shadow: 3px 3px 0 var(--sombra); display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
+.balao.fala { font-style: italic; }
+.balao.fala::before { content: "“"; } .balao.fala::after { content: "”"; }
+.balao .quem { display: block; font: 600 10.5px/1.3 var(--f-mono); font-style: normal; letter-spacing: .06em; text-transform: uppercase; color: var(--cor); }
+.balao-rabo { position: absolute; z-index: 5; width: 14px; height: 14px; background: var(--balao-bg); border-right: 2px solid var(--fg); border-bottom: 2px solid var(--fg); transform: rotate(45deg); }
+
+/* períodos do dia */
+.estudio[data-periodo="noite"] .janela, .estudio[data-periodo="folga-noite"] .janela { background: radial-gradient(circle at 30% 30%, #fff 0 1px, transparent 1.5px), radial-gradient(circle at 70% 60%, #fff 0 1px, transparent 1.5px), var(--vidro-noite); }
+.estudio[data-periodo="gravando"] .janela { background: linear-gradient(180deg, #13224a 0%, #3b3b7a 55%, #e0875a 100%); }
+.estudio[data-periodo="noite"] .sala:not([data-sala="portaria"])::after,
+.estudio[data-periodo="folga-noite"] .sala:not([data-sala="portaria"])::after { content: ""; position: absolute; inset: 0; background: var(--sombra); z-index: 6; pointer-events: none; }
+.estudio[data-periodo="folga"] .sala:not([data-sala="portaria"])::after { content: ""; position: absolute; inset: 0; background: var(--sombra); opacity: .35; z-index: 6; pointer-events: none; }
+.estudio.em-replay { box-shadow: 0 0 0 4px var(--onair); }
+
+/* o que está acontecendo */
+.lado { display: grid; gap: 14px; }
+.cartao { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; min-width: 0; }
+.cartao h2 { font-size: 15px; margin: 0 0 8px; text-wrap: balance; }
+.rotulo { font: 600 11px/1.3 var(--f-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
+.fita { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: 14px; }
+.fita li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 8px; }
+.fita time { font: 12px/1.6 var(--f-mono); color: var(--muted); }
+.fita .q { font-weight: 700; color: var(--fg); }
+.fita .q .ponto { display: inline-block; margin-right: 5px; }
+.fita .t { grid-column: 2; overflow-wrap: anywhere; }
+.fita .t.fala { font-style: italic; }
+.nota { font-size: 12.5px; color: var(--muted); margin: 8px 0 0; }
+.ep-titulo { font-size: 17px; font-weight: 700; margin: 0 0 6px; line-height: 1.3; text-wrap: balance; }
+
+/* fale com o editor */
+.form-editor { padding-block: 12px 28px; }
+.form-editor .cartao { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 18px 28px; padding: 20px; }
+.form-editor h2 { font-size: 22px; margin: 0 0 6px; }
+.form-editor p { margin: 0 0 8px; color: var(--muted); max-width: 52ch; }
+form { display: grid; gap: 10px; min-width: 0; }
+label { font-weight: 700; font-size: 14px; }
+textarea, input[type="email"] { width: 100%; font: inherit; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 10px; }
+textarea { min-height: 96px; resize: vertical; }
+.check { display: flex; gap: 8px; align-items: flex-start; font-weight: 400; font-size: 13.5px; color: var(--muted); }
+.btn-acao { background: var(--accent); color: var(--accent-fg); justify-self: start; }
+.resposta { font-size: 14px; border-left: 3px solid var(--accent); padding: 6px 10px; background: var(--bg); }
+
+/* ficha do personagem */
+.ficha-fundo { position: fixed; inset: 0; background: rgba(5, 10, 18, .45); z-index: 40; }
+.ficha { position: fixed; z-index: 41; top: 0; right: 0; bottom: 0; width: min(480px, 100%); background: var(--card); border-left: 1px solid var(--line);
+  display: flex; flex-direction: column; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); padding-right: env(safe-area-inset-right, 0px); }
+.ficha-topo { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 16px 18px 10px; border-bottom: 1px solid var(--line); }
+.ficha-topo svg { width: 46px; height: 62px; }
+.ficha-topo h2 { margin: 0; font-size: 21px; }
+.ficha-topo p { margin: 0; font-size: 13.5px; color: var(--muted); }
+.fechar { border: 1px solid var(--line); background: var(--bg); border-radius: 6px; width: 38px; height: 38px; cursor: pointer; font-size: 20px; line-height: 1; }
+.abas { display: flex; gap: 4px; padding: 10px 18px 0; border-bottom: 1px solid var(--line); overflow-x: auto; }
+.abas button { border: 0; background: none; padding: 8px 10px; cursor: pointer; font-size: 14px; border-bottom: 3px solid transparent; white-space: nowrap; }
+.abas button[aria-selected="true"] { border-bottom-color: var(--cor); font-weight: 700; }
+.ficha-corpo { overflow-y: auto; padding: 14px 18px 24px; display: grid; gap: 14px; align-content: start; font-size: 14.5px; }
+.ficha-corpo h3 { font-size: 14px; margin: 6px 0 0; }
+.agora { background: var(--bg); border-radius: 8px; padding: 10px 12px; }
+.por-tras { font-size: 13px; color: var(--muted); }
+details { border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; }
+summary { cursor: pointer; font-weight: 700; font-size: 14px; }
+.instr { white-space: pre-wrap; font: 12.5px/1.55 var(--f-mono); margin: 8px 0 0; overflow-wrap: anywhere; }
+.lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+.lista li { overflow-wrap: anywhere; }
+.fechada { color: var(--onair); font-weight: 700; }
+.roteiro p { margin: 0 0 10px; max-width: 65ch; }
+.numeros { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; }
+.numeros div { background: var(--bg); border-radius: 6px; padding: 8px 10px; }
+.numeros b { display: block; font: 600 20px/1.1 var(--f-mono); }
+.numeros span { font-size: 12px; color: var(--muted); }
+
+/* rodapé do protótipo */
+.prototipo { border-top: 1px dashed var(--line); padding-block: 16px 28px; font-size: 13.5px; color: var(--muted); }
+.prototipo .largura { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+
+@keyframes pisca { 50% { opacity: 0; } }
+@keyframes trabalha { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+@media (max-width: 980px) {
+  .cena { grid-template-columns: minmax(0, 1fr); }
+  .lado { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+}
+@media (max-width: 720px) {
+  .estudio { grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas: "redacao redacao" "cabine tecnica" "cafe cafe" "portaria portaria"; }
+  .sala { min-height: 250px; }
+  .form-editor .cartao { grid-template-columns: minmax(0, 1fr); }
+  .logo { font-size: 34px; } .hora { font-size: 28px; }
+  .janela { width: 70px; height: 50px; }
+  .replay { padding-block: 8px; }
+  .replay .largura { gap: 6px; }
+  .replay-info { display: none; }
+  .replay .ctl { padding: 5px 8px; font-size: 13px; }
+  .capitulos { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
+  .capitulos button { white-space: nowrap; }
+  .ficha { top: auto; height: 86%; width: 100%; border-left: 0; border-top: 1px solid var(--line); border-radius: 14px 14px 0 0; padding-left: env(safe-area-inset-left, 0px); }
+}
+@media (max-width: 400px) {
+  .pers { width: 54px; } .pers svg { width: 46px; height: 62px; }
+  .aviso-sala { right: 10px; top: 104px; }
+}
+</style>
+</head>
+<body>
+
+<header class="topo gutter">
+  <div class="largura">
+    <div class="marca">
+      <span class="logo" aria-hidden="true">&gt;CC<span class="cursor"></span></span>
+      <p><strong>CampsCast</strong>Briefing diário de IA, escrito e narrado por agentes</p>
+    </div>
+    <div class="relogio">
+      <div class="hora mono" id="hora" aria-live="off"><small id="dia-semana">—</small><span id="hhmm">--:--</span></div>
+      <div class="estado" id="estado">Abrindo o estúdio…</div>
+    </div>
+    <div class="botoes">
+      <button class="btn btn-crt" id="btn-replay" type="button">▶ Replay da gravação</button>
+      <a class="btn btn-linha" href="https://open.spotify.com/show/5toSeNQlZxjbCAFPA1gAuJ" target="_blank" rel="noopener">Ouvir no Spotify</a>
+    </div>
+  </div>
+</header>
+
+<section class="replay gutter" id="faixa-replay" hidden aria-label="Controles do replay">
+  <div class="largura">
+    <div class="replay-linha">
+      <span class="selo">Replay</span>
+      <span class="replay-hora" id="replay-hora">--:--:--</span>
+      <button class="ctl" id="btn-pausa" type="button" aria-label="Pausar">❚❚</button>
+      <span class="ctl-grupo" role="group" aria-label="Velocidade">
+        <button class="ctl" type="button" data-vel="real" aria-pressed="false">Tempo real</button>
+        <button class="ctl" type="button" data-vel="acelerado" aria-pressed="true">Acelerado</button>
+        <button class="ctl" type="button" data-vel="rapido" aria-pressed="false">Rápido</button>
+      </span>
+      <button class="ctl" id="btn-sair" type="button">Sair do replay</button>
+    </div>
+    <p class="replay-info" id="replay-info">—</p>
+    <input type="range" id="trilha" min="0" max="1000" value="0" step="1" aria-label="Momento da gravação">
+    <div class="capitulos" id="capitulos"></div>
+  </div>
+</section>
+
+<main class="gutter">
+  <div class="largura cena">
+    <div class="estudio" id="estudio" data-periodo="dia">
+      <div class="sala" data-sala="redacao">
+        <span class="placa">Redação</span>
+        <span class="janela"></span>
+        <span class="aviso-sala" id="aviso-redacao"></span>
+        <div class="palco"></div>
+        <div class="moveis" aria-hidden="true"><svg viewBox="0 0 300 40" preserveAspectRatio="none"><rect x="6" y="8" width="288" height="9" rx="2" fill="var(--madeira)"/><rect x="10" y="17" width="5" height="23" fill="var(--metal)"/><rect x="285" y="17" width="5" height="23" fill="var(--metal)"/></svg></div>
+        <div class="piso"></div>
+      </div>
+      <div class="sala" data-sala="cabine">
+        <span class="placa">Cabine</span>
+        <span class="onair" id="onair">ON AIR</span>
+        <div class="palco"></div>
+        <svg class="mic" viewBox="0 0 90 40" aria-hidden="true"><rect x="0" y="4" width="6" height="14" fill="var(--metal)"/><path d="M6 10 L60 10 L74 22" fill="none" stroke="var(--metal)" stroke-width="3"/><rect x="70" y="18" width="10" height="17" rx="5" fill="#2b3138"/></svg>
+        <div class="piso"></div>
+      </div>
+      <div class="sala" data-sala="cafe">
+        <span class="placa">Café</span>
+        <span class="janela"></span>
+        <div class="palco"></div>
+        <div class="moveis" aria-hidden="true"><svg viewBox="0 0 200 40" preserveAspectRatio="xMidYMax meet"><ellipse cx="100" cy="12" rx="62" ry="6" fill="var(--madeira)"/><rect x="97" y="14" width="6" height="26" fill="var(--metal)"/><rect x="72" y="2" width="7" height="8" rx="1" fill="#f4f1ea" stroke="var(--fg)" stroke-width=".8"/><rect x="118" y="2" width="7" height="8" rx="1" fill="#f4f1ea" stroke="var(--fg)" stroke-width=".8"/></svg></div>
+        <div class="piso"></div>
+      </div>
+      <div class="sala" data-sala="tecnica">
+        <span class="placa">Técnica</span>
+        <div class="rack" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="palco"></div>
+        <div class="piso"></div>
+      </div>
+      <div class="sala" data-sala="portaria">
+        <span class="placa">Portaria</span>
+        <span class="janela"></span>
+        <div class="palco"></div>
+        <div class="moveis" aria-hidden="true"><svg viewBox="0 0 100 40" preserveAspectRatio="xMinYMax meet"><rect x="4" y="16" width="34" height="24" fill="var(--madeira)"/><rect x="10" y="0" width="20" height="15" rx="2" fill="#1d2620"/><rect x="13" y="3" width="14" height="9" fill="#2bd862" opacity=".8"/></svg></div>
+        <div class="piso"></div>
+      </div>
+    </div>
+
+    <aside class="lado">
+      <div class="cartao">
+        <p class="rotulo" id="fita-rotulo">No estúdio agora</p>
+        <ul class="fita" id="fita"></ul>
+        <p class="nota" id="fita-nota"></p>
+      </div>
+      <div class="cartao">
+        <p class="rotulo">Último episódio</p>
+        <p class="ep-titulo" id="ep-titulo">—</p>
+        <p class="nota" id="ep-meta"></p>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<section class="form-editor gutter" id="fale">
+  <div class="largura cartao">
+    <div>
+      <h2>Fale com o Editor</h2>
+      <p>Que assunto de IA você gostaria de ouvir mais vezes no CampsCast? O Editor recebe sua mensagem e avalia.</p>
+      <p class="nota">Só o texto chega ao Editor. O e-mail, se você deixar, fica guardado à parte e serve apenas para uma resposta.</p>
+    </div>
+    <form id="form-editor" novalidate>
+      <label for="msg-tema">Seu tema</label>
+      <textarea id="msg-tema" maxlength="1000" placeholder="Ex.: quero ouvir mais sobre chips e data centers no Brasil" required></textarea>
+      <label for="msg-email">E-mail <span style="font-weight:400;color:var(--muted)">(opcional)</span></label>
+      <input id="msg-email" type="email" autocomplete="email" placeholder="voce@exemplo.com">
+      <label class="check"><input type="checkbox" id="msg-ok" required> Li e concordo com a política de privacidade.</label>
+      <button class="btn btn-acao" type="submit">Enviar para o Editor</button>
+      <div class="resposta" id="msg-resposta" hidden></div>
+    </form>
+  </div>
+</section>
+
+<footer class="prototipo gutter">
+  <div class="largura">
+    <strong>Protótipo</strong>
+    <span id="proto-dados">com os dados reais de uma gravação.</span>
+    <span>Ver o estúdio:</span>
+    <span class="ctl-grupo" role="group" aria-label="Simular horário">
+      <button class="ctl" type="button" data-sim="agora" aria-pressed="true">agora</button>
+      <button class="ctl" type="button" data-sim="03:00">03:00</button>
+      <button class="ctl" type="button" data-sim="05:07">05:07</button>
+      <button class="ctl" type="button" data-sim="13:00">13:00</button>
+      <button class="ctl" type="button" data-sim="folga">dia sem episódio</button>
+    </span>
+  </div>
+</footer>
+
+<div class="ficha-fundo" id="ficha-fundo" hidden></div>
+<aside class="ficha" id="ficha" hidden role="dialog" aria-modal="true" aria-labelledby="ficha-nome"></aside>
+
+<script>
+"use strict";
+const FUSO = "America/Sao_Paulo";
+const SALAS = { produtor: "tecnica", editor: "redacao", jornalista: "redacao", roteirista: "redacao", locutor: "cabine", vigia: "portaria" };
+const ORDEM = ["jornalista", "editor", "roteirista", "locutor", "produtor", "vigia"];
+const SEGURA = 90e3;  // um balão fica no ar até 90 s depois do evento, no relógio da gravação
+const VEL = { real: { k: 1, min: 0, max: Infinity }, acelerado: { k: 20, min: 1400, max: 4000 }, rapido: { k: 60, min: 550, max: 1500 } };
+
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const cor = id => `var(--c-${id})`;
+
+let ELENCO = [], DIA = null, EVENTOS = [], CORRIDA = [], INI = 0, FIM = 0;
+let sim = null;               // { base: ms, desde: performance.now() } quando o protótipo simula um horário
+let replay = null;            // { i, p, vel, pausado }
+let fichaAberta = null, abaAberta = "hoje", sugestao = null;
+
+// ------------------------------------------------------------ relógio de São Paulo
+function agoraMs() { return sim ? sim.base + (performance.now() - sim.desde) : Date.now(); }
+const fmt = new Intl.DateTimeFormat("pt-BR", { timeZone: FUSO, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit", weekday: "short", hour12: false });
+function campos(ms) {
+  const p = Object.fromEntries(fmt.formatToParts(new Date(ms)).map(x => [x.type, x.value]));
+  return { data: `${p.year}-${p.month}-${p.day}`, h: +p.hour % 24, m: +p.minute, s: +p.second, dia: p.weekday.replace(".", "") };
+}
+const hhmmss = ms => { const c = campos(ms); return [c.h, c.m, c.s].map(n => String(n).padStart(2, "0")).join(":"); };
+const hhmm = ms => hhmmss(ms).slice(0, 5);
+const diaMes = iso => `${iso.slice(8, 10)}/${iso.slice(5, 7)}`;
+const semana = iso => new Intl.DateTimeFormat("pt-BR", { timeZone: "UTC", weekday: "long" }).format(new Date(iso + "T12:00:00Z"));
+const msDe = (iso, hm) => Date.parse(`${iso}T${hm}:00-03:00`);
+
+// ------------------------------------------------------------ o que o estúdio mostra
+function periodo(ms) {
+  const c = campos(ms), min = c.h * 60 + c.m, ag = DIA.agenda;
+  const temEpisodio = c.data === DIA.data || ag.proximos.includes(c.data);
+  const noite = min < 300 || min >= 1140;
+  if (!temEpisodio) return { nome: noite ? "folga-noite" : "folga", c, motivo: ag.folgas[c.data] || "dia sem episódio" };
+  if (noite) return { nome: "noite", c };
+  if (c.data === DIA.data) return { nome: ms < FIM ? "gravando" : "dia", c };
+  return { nome: min < 480 ? "gravando-sem-dados" : "atrasado", c };
+}
+
+function proximaGravacao(c) {
+  const ag = DIA.agenda;
+  const hoje = c.data, min = c.h * 60 + c.m;
+  const cand = [DIA.data, ...ag.proximos].filter(d => d > hoje || (d === hoje && min < 300));
+  return cand[0] || ag.proximos[0];
+}
+
+function quadro(ms) {
+  // devolve onde cada um está, o que diz e o que a fita mostra
+  const per = replay ? { nome: "gravando", c: campos(ms) } : periodo(ms);
+  const q = { per, onde: {}, situ: {}, baloes: {}, ativos: new Set(), fita: [], fitaRotulo: "No estúdio agora", fitaNota: "", estado: "" };
+  const ep = DIA.episodio;
+  const prox = proximaGravacao(per.c);
+  const proxTxt = `${semana(prox)}, ${diaMes(prox)}, às 05:00`;
+
+  if (per.nome === "gravando") {
+    for (const id of ORDEM) { q.onde[id] = SALAS[id]; q.situ[id] = "aguardando"; }
+    const vistos = CORRIDA.filter(e => e.ms <= ms);
+    const ult = vistos[vistos.length - 1];
+    const porSala = {};
+    for (const e of vistos) porSala[SALAS[e.quem]] = e;
+    for (const [sala, e] of Object.entries(porSala)) {
+      if (e === ult || ms - e.ms < SEGURA) { q.baloes[sala] = e; q.ativos.add(e.quem); q.situ[e.quem] = "trabalhando"; }
+    }
+    if (!ult) q.situ.produtor = "chegando";
+    q.fita = vistos.slice(-6).reverse();
+    q.fitaRotulo = replay ? "Na gravação" : "Gravando agora";
+    q.estado = replay ? `Replay da gravação de ${diaMes(DIA.data)}` : "Gravando agora. Ao vivo, o que você vê está acontecendo.";
+    if (sugestao && !replay) q.baloes.portaria = { quem: "vigia", texto: "Chegou uma sugestão de tema. Entrego ao Editor depois da gravação.", origem: "visitante" };
+    const loc = vistos.filter(e => e.quem === "locutor").pop();
+    q.onair = !!loc && loc.texto.startsWith("Narrando");
+    return q;
+  }
+
+  // fora da gravação o vigia fica na portaria, falando com os números do dia
+  q.onde.vigia = "portaria";
+  const ciclo = Math.floor(ms / 6500);
+  const fala = (quem, texto, origem = "numeros") => ({ quem, texto, origem });
+
+  if (per.nome === "dia" || per.nome === "atrasado") {
+    for (const id of ["produtor", "editor", "jornalista", "roteirista", "locutor"]) { q.onde[id] = "cafe"; q.situ[id] = "no café"; }
+    const conv = DIA.conversa.length ? DIA.conversa : [fala("produtor", "Dia tranquilo.")];
+    const atual = conv[ciclo % conv.length];
+    q.baloes.cafe = atual; q.ativos.add(atual.quem);
+    q.fita = conv.map(e => ({ ...e, ms: null }));
+    q.fitaRotulo = "Conversa no café";
+    q.fitaNota = "Conversa montada com os números da gravação de hoje.";
+    const min = per.c.h * 60 + per.c.m;
+    if (per.nome === "atrasado") {
+      q.baloes.portaria = fala("vigia", `A gravação de hoje ainda não chegou ao site. A última é de ${diaMes(DIA.data)}.`, "agenda");
+      q.situ.vigia = "de olho";
+      q.estado = "A gravação de hoje ainda não chegou.";
+    } else {
+      q.baloes.portaria = min >= 450 && min < 460
+        ? fala("vigia", "07:30: hora de conferir se o episódio de hoje está no ar.", "agenda")
+        : fala("vigia", `No ar desde as ${hhmm(FIM)}: episódio ${ep.numero}.`);
+      q.situ.vigia = "de plantão";
+      q.estado = `Episódio ${ep.numero} no ar desde as ${hhmm(FIM)}. A equipe está no café.`;
+    }
+    if (sugestao) { q.baloes.cafe = fala("editor", "Chegou uma sugestão de tema. Vou avaliar.", "visitante"); q.ativos.clear(); q.ativos.add("editor"); }
+    return q;
+  }
+
+  if (per.nome === "gravando-sem-dados") {
+    for (const id of ORDEM) { q.onde[id] = SALAS[id]; q.situ[id] = "trabalhando"; }
+    q.baloes.portaria = fala("vigia", "Gravando agora. Os detalhes aparecem quando o episódio sair.", "agenda");
+    q.estado = "Gravando agora.";
+    return q;
+  }
+
+  // noite e folga: só o vigia
+  q.situ.vigia = "de plantão";
+  if (sugestao) {
+    q.baloes.portaria = fala("vigia", "Chegou uma sugestão de tema para o Editor. Entrego quando a equipe chegar.", "visitante");
+    q.ativos.add("vigia"); q.estado = "Estúdio fechado."; return q;
+  }
+  const falas = per.nome.startsWith("folga")
+    ? [fala("vigia", `Hoje é ${per.motivo}: não tem episódio.`, "agenda"), fala("vigia", `A equipe volta ${proxTxt}.`, "agenda"), fala("vigia", `No ar: episódio ${ep.numero}, de ${diaMes(DIA.data)}.`)]
+    : [fala("vigia", "Tudo quieto no estúdio.", "agenda"), fala("vigia", `Próxima gravação: ${proxTxt}.`, "agenda"), fala("vigia", `No ar: episódio ${ep.numero}, de ${diaMes(DIA.data)}.`)];
+  q.baloes.portaria = falas[ciclo % falas.length];
+  q.ativos.add("vigia");
+  q.fita = falas.map(e => ({ ...e, ms: null }));
+  q.fitaRotulo = "Na portaria";
+  q.estado = per.nome.startsWith("folga") ? `Folga: ${per.motivo}. Volta ${proxTxt}.` : `Estúdio fechado. Próxima gravação: ${proxTxt}.`;
+  q.aviso = per.nome.startsWith("folga") ? `Folga. A equipe volta ${proxTxt}.` : "";
+  return q;
+}
+
+// ------------------------------------------------------------ desenho
+function boneco(id) {
+  const ac = {
+    jornalista: '<rect x="37" y="44" width="12" height="15" rx="1.5" fill="#fff" stroke="#1b2129" stroke-width="1.4"/><line x1="40" y1="49" x2="46" y2="49" stroke="#1b2129"/><line x1="40" y1="53" x2="46" y2="53" stroke="#1b2129"/>',
+    editor: '<circle cx="22.5" cy="24" r="4" fill="none" stroke="#1b2129" stroke-width="1.6"/><circle cx="33.5" cy="24" r="4" fill="none" stroke="#1b2129" stroke-width="1.6"/><line x1="26.5" y1="24" x2="29.5" y2="24" stroke="#1b2129" stroke-width="1.6"/>',
+    roteirista: '<line x1="39" y1="9" x2="44" y2="22" stroke="#f2c14e" stroke-width="3.2" stroke-linecap="round"/><path d="M44 22 l1 3 l-2.4 -1.3z" fill="#1b2129"/>',
+    locutor: '<path d="M13 25 A15 15 0 0 1 43 25" fill="none" stroke="#1b2129" stroke-width="3"/><rect x="10" y="21" width="6" height="10" rx="2" fill="#1b2129"/><rect x="40" y="21" width="6" height="10" rx="2" fill="#1b2129"/>',
+    produtor: '<rect x="6" y="44" width="13" height="17" rx="1.5" fill="#e4d3ab" stroke="#1b2129" stroke-width="1.3"/><rect x="9" y="42" width="7" height="4" rx="1" fill="#1b2129"/>',
+    vigia: '<path d="M14 18 Q28 4 42 18 Z" fill="#26303b"/><rect x="12" y="17" width="34" height="4" rx="2" fill="#26303b"/><rect x="40" y="48" width="11" height="5" rx="1.5" fill="#f2c14e" stroke="#1b2129"/>',
+  }[id] || "";
+  return `<svg viewBox="0 0 56 76" aria-hidden="true"><rect x="10" y="38" width="36" height="36" rx="12" fill="${cor(id)}"/><circle cx="28" cy="24" r="13" fill="var(--pele)"/>${id === "editor" ? "" : '<circle cx="23" cy="24" r="1.7" fill="#1b2129"/><circle cx="33" cy="24" r="1.7" fill="#1b2129"/>'}${id === "editor" ? '<circle cx="22.5" cy="24" r="1.3" fill="#1b2129"/><circle cx="33.5" cy="24" r="1.3" fill="#1b2129"/>' : ""}<path d="M24 30 q4 3 8 0" fill="none" stroke="#1b2129" stroke-width="1.3" stroke-linecap="round"/>${ac}</svg>`;
+}
+
+const PERS = {};
+function criaPersonagens() {
+  for (const p of ELENCO) {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "pers"; b.dataset.id = p.id; b.style.setProperty("--cor", cor(p.id));
+    b.setAttribute("aria-label", `${p.nome}: abrir a ficha`);
+    b.innerHTML = `${boneco(p.id)}<span class="nome">${esc(p.nome)}</span><span class="situ"></span>`;
+    b.addEventListener("click", () => abreFicha(p.id));
+    PERS[p.id] = b;
+  }
+}
+
+let assinaturaAnterior = "";
+function desenha(forca = false) {
+  const ms = replay ? replayMs() : agoraMs();
+  const q = quadro(ms);
+  const c = campos(ms);
+  $("#dia-semana").textContent = `${c.dia} ${diaMes(c.data)}`;
+  $("#hhmm").textContent = replay ? hhmmss(ms) : hhmm(ms);
+  if (replay) desenhaReplay(ms);
+  // o resto só muda quando alguém muda de lugar ou de fala
+  const assinatura = JSON.stringify([q.per.nome, !!replay, q.onde, q.situ, q.baloes, [...q.ativos], q.fita.length, q.fita[0], q.onair, q.estado]);
+  if (!forca && assinatura === assinaturaAnterior) return;
+  assinaturaAnterior = assinatura;
+  const est = $("#estudio");
+  est.dataset.periodo = q.per.nome === "gravando-sem-dados" ? "gravando" : q.per.nome === "atrasado" ? "dia" : q.per.nome;
+  est.classList.toggle("em-replay", !!replay);
+
+  $("#estado").textContent = q.estado;
+
+  // personagens nas salas
+  const ordemSala = { redacao: ["jornalista", "editor", "roteirista"], cafe: ["jornalista", "editor", "produtor", "roteirista", "locutor"] };
+  for (const sala of ["redacao", "cabine", "cafe", "tecnica", "portaria"]) {
+    const palco = $(`.sala[data-sala="${sala}"] .palco`);
+    const aqui = (ordemSala[sala] || ORDEM).filter(id => q.onde[id] === sala);
+    const atual = [...palco.children].map(n => n.dataset.id).join();
+    if (atual !== aqui.join()) palco.replaceChildren(...aqui.map(id => PERS[id]));
+    $(`.sala[data-sala="${sala}"]`).classList.toggle("ativa", [...q.ativos].some(id => q.onde[id] === sala));
+  }
+  for (const id of ORDEM) {
+    if (!PERS[id]) continue;
+    PERS[id].classList.toggle("ativo", q.ativos.has(id));
+    PERS[id].classList.toggle("parado", !!q.onde[id] && !q.ativos.has(id));
+    $(".situ", PERS[id]).textContent = q.situ[id] || "";
+  }
+  $("#onair").classList.toggle("aceso", !!q.onair);
+  $("#aviso-redacao").textContent = q.aviso || "";
+
+  // balões
+  document.querySelectorAll(".balao, .balao-rabo").forEach(n => n.remove());
+  for (const [sala, e] of Object.entries(q.baloes)) poeBalao(sala, e);
+
+  // fita
+  $("#fita-rotulo").textContent = q.fitaRotulo;
+  $("#fita").innerHTML = q.fita.map(e => `<li>${e.ms ? `<time>${hhmmss(e.ms)}</time>` : "<span></span>"}<span class="q" style="--cor:${cor(e.quem)}"><span class="ponto"></span>${esc(nomeDe(e.quem))}</span><span class="t ${e.origem === "agente" ? "fala" : ""}">${esc(e.texto)}</span></li>`).join("");
+  $("#fita-nota").textContent = q.fitaNota || (q.per.nome === "gravando" ? "Em itálico, frases do próprio agente. O resto descreve o que ele fez, pela transcrição e pelo log." : "");
+
+  if (fichaAberta && abaAberta === "hoje") atualizaAgora(q);
+}
+
+function poeBalao(sala, e) {
+  const salaEl = $(`.sala[data-sala="${sala}"]`), alvo = PERS[e.quem];
+  if (!salaEl || !alvo || !salaEl.contains(alvo)) return;
+  const b = document.createElement("div");
+  b.className = "balao" + (e.origem === "agente" ? " fala" : "");
+  b.style.setProperty("--cor", cor(e.quem));
+  b.innerHTML = `<span class="quem">${esc(nomeDe(e.quem))}</span>${esc(e.texto)}`;
+  const rabo = document.createElement("div"); rabo.className = "balao-rabo";
+  salaEl.append(b, rabo);
+  const rs = salaEl.getBoundingClientRect(), ra = alvo.getBoundingClientRect();
+  const centro = ra.left - rs.left + ra.width / 2;
+  const topoCabeca = ra.top - rs.top;
+  const w = b.offsetWidth, h = b.offsetHeight;
+  const left = Math.max(8, Math.min(rs.width - w - 8, centro - w / 2));
+  b.style.left = `${left}px`; b.style.top = `${Math.max(26, topoCabeca - h - 10)}px`;
+  rabo.style.left = `${centro - 7}px`; rabo.style.top = `${Math.max(26, topoCabeca - h - 10) + h - 9}px`;
+}
+
+const nomeDe = id => (ELENCO.find(p => p.id === id) || { nome: id }).nome;
+
+// ------------------------------------------------------------ replay
+function replayMs() {
+  const r = replay, a = CORRIDA[r.i], b = CORRIDA[r.i + 1];
+  if (!b) return a.ms;
+  return a.ms + (b.ms - a.ms) * r.p;
+}
+function duracaoPasso(i, vel) {
+  const a = CORRIDA[i], b = CORRIDA[i + 1];
+  if (!b) return Infinity;
+  const v = VEL[vel], gap = b.ms - a.ms;
+  if (vel === "real") return gap;
+  return Math.max(v.min, Math.min(v.max, gap / v.k));
+}
+function abreReplay() {
+  replay = { i: 0, p: 0, vel: "acelerado", pausado: false, ultimo: performance.now() };
+  $("#faixa-replay").hidden = false;
+  $("#replay-info").textContent = `Gravado em ${semana(DIA.data)}, ${diaMes(DIA.data)}, das ${hhmm(INI)} às ${hhmm(FIM)}. Não é ao vivo.`;
+  $("#btn-replay").textContent = "↺ Recomeçar o replay";
+  marcaVel();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  desenha();
+}
+function saiReplay() { replay = null; $("#faixa-replay").hidden = true; $("#btn-replay").textContent = "▶ Replay da gravação"; desenha(); }
+function marcaVel() { document.querySelectorAll("[data-vel]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.vel === replay.vel))); }
+function irPara(ms) {
+  let i = 0;
+  while (i < CORRIDA.length - 1 && CORRIDA[i + 1].ms <= ms) i++;
+  const a = CORRIDA[i], b = CORRIDA[i + 1];
+  replay.i = i; replay.p = b && b.ms > a.ms ? Math.min(.999, (ms - a.ms) / (b.ms - a.ms)) : 0;
+}
+function desenhaReplay(ms) {
+  $("#replay-hora").textContent = hhmmss(ms);
+  const t = $("#trilha");
+  if (document.activeElement !== t) t.value = Math.round(1000 * (ms - INI) / Math.max(1, FIM - INI));
+  const atual = DIA.capitulos.filter(c => Date.parse(c.t) <= ms).length - 1;
+  document.querySelectorAll("#capitulos button").forEach((b, i) => b.classList.toggle("atual", i === atual));
+  const fim = replay.i >= CORRIDA.length - 1;
+  $("#btn-pausa").textContent = fim ? "↺" : replay.pausado ? "▶" : "❚❚";
+  $("#btn-pausa").setAttribute("aria-label", fim ? "Rever" : replay.pausado ? "Continuar" : "Pausar");
+}
+function passo() {
+  const agora = performance.now();
+  if (replay && !replay.pausado) {
+    let dt = agora - replay.ultimo;
+    while (dt > 0 && replay.i < CORRIDA.length - 1) {
+      const d = duracaoPasso(replay.i, replay.vel);
+      const resta = (1 - replay.p) * d;
+      if (dt < resta) { replay.p += dt / d; dt = 0; }
+      else { dt -= resta; replay.i++; replay.p = 0; }
+    }
+  }
+  if (replay) replay.ultimo = agora;
+  desenha();
+}
+
+// ------------------------------------------------------------ ficha do personagem
+function abreFicha(id, aba = "hoje") {
+  fichaAberta = id; abaAberta = aba;
+  const p = ELENCO.find(x => x.id === id);
+  const extra = { jornalista: ["leituras", "Leituras"], editor: ["pautas", "Pautas e memória"], roteirista: ["roteiro", "Roteiro"], locutor: ["episodio", "Episódio"], produtor: ["etapas", "Etapas"], vigia: ["plantao", "Plantão"] }[id];
+  const abas = [["hoje", "Hoje"], extra, ["instrucoes", "Instruções"]].filter(Boolean);
+  const f = $("#ficha");
+  f.style.setProperty("--cor", cor(id));
+  f.innerHTML = `<div class="ficha-topo">${boneco(id)}<div><h2 id="ficha-nome">${esc(p.nome)}</h2><p>${esc(p.papel)}</p></div><button class="fechar" type="button" aria-label="Fechar">×</button></div>
+    <div class="abas" role="tablist">${abas.map(([k, n]) => `<button role="tab" type="button" data-aba="${k}" aria-selected="${k === aba}">${n}</button>`).join("")}</div>
+    <div class="ficha-corpo" id="ficha-corpo"></div>`;
+  $(".fechar", f).addEventListener("click", fechaFicha);
+  f.querySelectorAll("[data-aba]").forEach(b => b.addEventListener("click", () => abreFicha(id, b.dataset.aba)));
+  f.hidden = false; $("#ficha-fundo").hidden = false;
+  $("#ficha-corpo").innerHTML = corpoFicha(p, aba);
+  const btnTema = $("#btn-tema", f);
+  if (btnTema) btnTema.addEventListener("click", () => { fechaFicha(); $("#msg-tema").focus(); $("#fale").scrollIntoView({ behavior: "smooth" }); });
+  $(".fechar", f).focus();
+  if (aba === "hoje") atualizaAgora(quadro(replay ? replayMs() : agoraMs()));
+}
+function fechaFicha() { fichaAberta = null; $("#ficha").hidden = true; $("#ficha-fundo").hidden = true; }
+
+function atualizaAgora(q) {
+  const el = $("#agora-txt"); if (!el) return;
+  const id = fichaAberta;
+  const e = Object.values(q.baloes).find(b => b.quem === id);
+  const onde = { redacao: "na redação", cabine: "na cabine", cafe: "no café", tecnica: "na técnica", portaria: "na portaria" }[q.onde[id]] || "fora do estúdio";
+  el.innerHTML = e ? `${esc(onde)}: <em>${esc(e.texto)}</em>` : `${esc(onde)}${q.situ[id] ? `, ${esc(q.situ[id])}` : ""}.`;
+}
+
+function corpoFicha(p, aba) {
+  const id = p.id, d = DIA, ep = d.episodio;
+  const agente = ["jornalista", "editor", "roteirista"].includes(id);
+  const porTras = `<p class="por-tras"><b>Por trás:</b> ${esc(p.por_tras)}.${agente ? " Hoje Jornalista, Editor e Roteirista são o mesmo agente; o site separa o trabalho pelo que ele estava fazendo em cada momento." : ""}</p>`;
+  if (aba === "hoje") {
+    const meus = EVENTOS.filter(e => e.quem === id);
+    return `<div class="agora"><p class="rotulo">Agora</p><div id="agora-txt">—</div></div>${porTras}
+      <h3>O que fez na gravação de ${diaMes(d.data)} <span class="nota">(${meus.length} registros)</span></h3>
+      <ul class="fita">${meus.map(e => `<li><time>${hhmmss(e.ms)}</time><span class="t ${e.origem === "agente" ? "fala" : ""}">${esc(e.texto)}${e.url ? ` <a href="${esc(e.url)}" target="_blank" rel="noopener">abrir</a>` : ""}</span></li>`).join("") || "<li><span></span><span class='t'>Nada registrado.</span></li>"}</ul>`;
+  }
+  if (aba === "instrucoes") {
+    return `<p class="nota">O que o ${esc(p.nome)} recebe como instrução, tirado dos arquivos do projeto. ${agente ? "As três instruções do agente vêm de um arquivo só, o prompts/master.md, separado aqui por passo." : ""}</p>
+      ${p.instrucoes.map((s, i) => `<details${i === 0 ? " open" : ""}><summary>${esc(s.titulo)}${s.compartilhada ? " · vale para os três" : ""}</summary><p class="nota">${esc(s.origem)}</p><div class="instr">${esc(s.texto)}</div></details>`).join("")}`;
+  }
+  if (aba === "leituras") {
+    const pq = d.pesquisa, fech = pq.leituras.filter(l => !l.ok);
+    return `<div class="numeros"><div><b>${pq.paginas ?? "—"}</b><span>páginas</span></div><div><b>${pq.sites ?? "—"}</b><span>sites</span></div><div><b>${pq.buscas ?? "—"}</b><span>buscas</span></div><div><b>${fech.length}</b><span>fechadas</span></div></div>
+      <p class="nota">Números da ficha técnica, contados pelo próprio agente no <a href="${esc(pq.url)}" target="_blank" rel="noopener">log de pesquisa</a>. A lista abaixo vem da transcrição, na ordem em que ele abriu.</p>
+      <h3>Páginas</h3><ol class="lista">${pq.leituras.map(l => `<li><a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.url.replace(/^https?:\/\/(www\.)?/, ""))}</a>${l.ok ? "" : ` <span class="fechada">não abriu (${esc(l.status)})</span>`}</li>`).join("")}</ol>
+      <h3>Buscas</h3><ul class="lista">${pq.buscas_feitas.map(b => `<li>${esc(b)}</li>`).join("")}</ul>`;
+  }
+  if (aba === "pautas") {
+    const m = d.memoria;
+    return `<button class="btn btn-acao" id="btn-tema" type="button">Mandar um tema para o Editor</button>
+      <h3>Entraram (${ep.pautas.length})</h3><ul class="lista">${ep.pautas.map(x => `<li><b>${esc(x.titulo)}</b>${x.do_backlog ? " <span class='nota'>· do backlog</span>" : ""}<br><span class="nota">${esc(x.fonte)}</span> <a href="${esc(x.url)}" target="_blank" rel="noopener">fonte</a></li>`).join("")}</ul>
+      <details><summary>Descartadas (${d.pesquisa.descartadas.length})</summary><ul class="lista" style="margin-top:8px">${d.pesquisa.descartadas.map(x => `<li><b>${esc(x.titulo)}</b><br><span class="nota">${esc(x.motivo)}</span></li>`).join("")}</ul></details>
+      <details><summary>Temas que o programa acompanha (${m.temas.length})</summary><ul class="lista" style="margin-top:8px">${m.temas.map(t => `<li><b>${esc(t.id)} · ${esc(t.titulo)}</b><br><span class="nota">${t.estado_em ? `em ${diaMes(t.estado_em)}: ` : ""}${esc(t.estado)}</span></li>`).join("")}</ul><p class="nota"><a href="${esc(m.urls.temas)}" target="_blank" rel="noopener">temas.md no GitHub</a></p></details>
+      <details><summary>Fios em aberto (${m.fios.length})</summary><ul class="lista" style="margin-top:8px">${m.fios.map(f => `<li><b>${esc(f.id)}</b> ${esc(f.titulo)}</li>`).join("")}</ul><p class="nota"><a href="${esc(m.urls.fios)}" target="_blank" rel="noopener">fios.md no GitHub</a></p></details>
+      <details><summary>Backlog (${m.backlog.length})</summary><ul class="lista" style="margin-top:8px">${m.backlog.map(b => `<li>${esc(b.titulo)}${b.validade ? ` <span class="nota">· vale até ${diaMes(b.validade)}</span>` : ""}</li>`).join("") || "<li>Vazio.</li>"}</ul></details>`;
+  }
+  if (aba === "roteiro") {
+    return `<p class="nota">Episódio ${ep.numero} · ${ep.palavras.toLocaleString("pt-BR")} palavras · <a href="${esc(ep.roteiro_url)}" target="_blank" rel="noopener">no GitHub</a></p>
+      <h3>${esc(ep.titulo)}</h3><div class="roteiro">${ep.roteiro.map(x => `<p>${esc(x)}</p>`).join("")}</div>`;
+  }
+  if (aba === "episodio") {
+    const s = d.execucao.audio_s;
+    return `<div class="numeros"><div><b>${s ? `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}` : "—"}</b><span>de áudio</span></div><div><b>${(d.execucao.creditos_elevenlabs ?? 0).toLocaleString("pt-BR")}</b><span>créditos</span></div></div>
+      <audio controls preload="none" src="${esc(ep.mp3)}" style="width:100%"></audio>
+      <p class="nota">Se o player não tocar aqui, <a href="${esc(ep.mp3)}" target="_blank" rel="noopener">abra o MP3</a> ou ouça no Spotify.</p>`;
+  }
+  if (aba === "etapas") {
+    const e = d.execucao, nomes = { pesquisa: "Pesquisa e roteiro", narracao: "Narração", publicacao: "Publicação", aviso: "Aviso" };
+    return `<div class="numeros"><div><b>${hhmm(INI)}</b><span>abriu</span></div><div><b>${hhmm(FIM)}</b><span>no ar</span></div><div><b>US$ ${e.custo_claude_usd != null ? e.custo_claude_usd.toFixed(2).replace(".", ",") : "—"}</b><span>de modelo</span></div></div>
+      <ul class="lista">${Object.entries(e.etapas_s).map(([k, v]) => `<li><b>${esc(nomes[k] || k)}</b>: ${v >= 60 ? `${Math.floor(v / 60)} min ${v % 60} s` : `${v} s`}</li>`).join("")}</ul>
+      <p class="nota">Repescagem às ${d.agenda.repescagem.join(" e ")}: se a gravação das 05:00 falhar, o Produtor tenta de novo.</p>`;
+  }
+  if (aba === "plantao") {
+    const ag = d.agenda;
+    return `<ul class="lista"><li><b>Estado da última gravação:</b> ${esc(d.execucao.estado || "—")}</li>
+      <li><b>Conferência do roteiro:</b> ${esc((EVENTOS.find(e => e.quem === "vigia") || {}).texto || "—")}</li>
+      <li><b>Às ${esc(ag.vigia)}:</b> confere, da nuvem, se o episódio está no ar, e avisa o autor se não estiver.</li></ul>
+      <h3>Próximas gravações</h3><ul class="lista">${ag.proximos.map(x => `<li>${esc(semana(x))}, ${diaMes(x)}, às ${esc(ag.gravacao)}</li>`).join("")}</ul>
+      <h3>Dias sem episódio</h3><ul class="lista">${Object.entries(ag.folgas).map(([x, m]) => `<li>${diaMes(x)}: ${esc(m)}</li>`).join("")}</ul>`;
+  }
+  return "";
+}
+
+// ------------------------------------------------------------ início
+async function carrega() {
+  const [el, dia] = await Promise.all([fetch("estudio/elenco.json").then(r => r.json()), fetch("estudio/ultimo.json").then(r => r.json())]);
+  ELENCO = el.personagens; DIA = dia;
+  EVENTOS = dia.eventos.map(e => ({ ...e, ms: Date.parse(e.t) }));
+  INI = Date.parse(dia.execucao.inicio); FIM = Date.parse(dia.execucao.fim);
+  CORRIDA = EVENTOS.filter(e => e.ms <= FIM + 60e3);
+  const ep = dia.episodio;
+  $("#ep-titulo").textContent = `${ep.numero} · ${ep.titulo}`;
+  $("#ep-meta").textContent = `${semana(dia.data)}, ${diaMes(dia.data)} · ${ep.pautas.length} pautas · ${Math.round((dia.execucao.audio_s || 0) / 60)} min`;
+  $("#proto-dados").textContent = `com os dados reais da gravação de ${diaMes(dia.data)}.`;
+  $("#capitulos").innerHTML = dia.capitulos.map(c => `<button type="button" data-t="${esc(c.t)}" style="--cor:${cor(c.quem)}"><span class="ponto"></span>${esc(c.titulo)}</button>`).join("");
+  criaPersonagens();
+  passo();
+  setInterval(passo, 100);  // dez quadros por segundo bastam para balão e relógio
+}
+
+$("#btn-replay").addEventListener("click", abreReplay);
+$("#btn-sair").addEventListener("click", saiReplay);
+$("#btn-pausa").addEventListener("click", () => {
+  if (replay.i >= CORRIDA.length - 1) { replay.i = 0; replay.p = 0; replay.pausado = false; }
+  else replay.pausado = !replay.pausado;
+});
+document.querySelectorAll("[data-vel]").forEach(b => b.addEventListener("click", () => { replay.vel = b.dataset.vel; marcaVel(); }));
+$("#trilha").addEventListener("input", e => irPara(INI + (FIM - INI) * e.target.value / 1000));
+$("#capitulos").addEventListener("click", e => { const b = e.target.closest("button"); if (b) irPara(Date.parse(b.dataset.t)); });
+$("#ficha-fundo").addEventListener("click", fechaFicha);
+document.addEventListener("keydown", e => { if (e.key === "Escape" && fichaAberta) fechaFicha(); });
+document.querySelectorAll("[data-sim]").forEach(b => b.addEventListener("click", () => {
+  const v = b.dataset.sim;
+  if (v === "agora") sim = null;
+  else if (v === "folga") { const d = Object.keys(DIA.agenda.folgas)[0]; sim = { base: msDe(d, "14:00"), desde: performance.now() }; }
+  else sim = { base: msDe(DIA.data, v), desde: performance.now() };
+  if (replay) saiReplay();
+  document.querySelectorAll("[data-sim]").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+}));
+$("#form-editor").addEventListener("submit", e => {
+  e.preventDefault();
+  const r = $("#msg-resposta"), txt = $("#msg-tema").value.trim();
+  if (!txt) { r.hidden = false; r.textContent = "Escreva o tema antes de enviar."; $("#msg-tema").focus(); return; }
+  if (!$("#msg-ok").checked) { r.hidden = false; r.textContent = "Marque a concordância com a política de privacidade para enviar."; return; }
+  r.hidden = false;
+  r.textContent = "Protótipo: nada foi enviado. No site de verdade, sua mensagem chega ao Editor, que avalia. Repare no café.";
+  sugestao = Date.now(); setTimeout(() => { sugestao = null; }, 9000);
+  $("#estudio").scrollIntoView({ behavior: "smooth" });
+});
+window.addEventListener("resize", () => desenha(true));
+
+carrega().catch(err => { $("#estado").textContent = "Não consegui ler os dados do estúdio."; console.error(err); });
+</script>
+</body>
+</html>

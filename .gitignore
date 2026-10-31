@@ -34,3 +34,6 @@ gravacoes/
 
 # Pacotes baixados (ex.: botões do Spotify). O que vale fica extraído em assets/.
 *.zip
+
+# Dados do estúdio, gerados por scripts/estudio.py a cada execução
+site/estudio/

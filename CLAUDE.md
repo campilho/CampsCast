@@ -4,7 +4,7 @@ Podcast diário de IA em português, escrito e narrado por agentes, publicado em
 dias úteis. Rodando em produção desde 24/08/2026.
 
 > **Antes de mexer em qualquer coisa:** `bash tests/smoke_test.sh`
-> São 155 testes, offline, sem custo. Rode antes e depois de alterar.
+> São 157 testes, offline, sem custo. Rode antes e depois de alterar.
 
 ## Regra número um
 
@@ -68,6 +68,7 @@ Agregador serve para descobrir, nunca para citar.
 | `confere_repeticao.py` | avisa pauta do dia com link já usado antes; ignora páginas de listagem |
 | `relatorio.py` | relatório semanal do autor: decisões pendentes, temas, fios, fontes que falharam, avisos; `--semana`, `--fecha-semana` |
 | `confere_roteiro.py` | confere o que a abertura e a ficha não podem deixar de dizer; registra, não bloqueia |
+| `estudio.py` | dados do site: a execução evento a evento, por personagem, e as instruções de cada um; `--orfaos` |
 
 ### Diagnóstico e manutenção
 | Script | O que faz |

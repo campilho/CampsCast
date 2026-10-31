@@ -2275,6 +2275,65 @@ else
   bad "fios ou repetição não chegaram ao registro: ${ULTIMA:-vazio}"
 fi
 
+# ------------------------------------------------------------- dados do estúdio
+# O site mostra cada personagem fazendo um pedaço do prompt-mestre. Passo novo
+# no prompt sem dono no site precisa falhar aqui, não sumir da página.
+if ORF="$(python3 scripts/estudio.py --orfaos 2>&1)"; then
+  ok "todo passo e toda seção do prompt-mestre têm personagem no site"
+else
+  bad "passo do prompt sem personagem no site: $ORF"
+fi
+
+EST_DIR="$(mktemp -d)"
+cat > "episodes/${FIXTURE_DATE}.md" <<'MD'
+---
+date: 1970-01-01
+episode: 1
+title: Teste do estúdio
+words: 10
+topics:
+  - title: Pauta de teste
+    source_name: Teste
+    source_url: https://example.com/a
+---
+Corpo.
+MD
+printf '%s\n' '{"data": "1970-01-01", "estado": "ok", "claude": {"sessao": "sessao-teste"}}' > "$EST_DIR/metricas.jsonl"
+python3 - "$ROOT" "$EST_DIR/sessao-teste.jsonl" <<'PY'
+import json, sys
+raiz, saida = sys.argv[1], sys.argv[2]
+uso = lambda ts, i, nome, inp: {"type": "assistant", "timestamp": ts, "message": {"content": [{"type": "tool_use", "id": i, "name": nome, "input": inp}]}}
+linhas = [
+    uso("1970-01-01T08:00:00Z", "a", "Read", {"file_path": f"{raiz}/memoria/temas.md"}),
+    uso("1970-01-01T08:00:05Z", "b", "WebFetch", {"url": "https://openai.com/news", "prompt": "x"}),
+    {"type": "user", "timestamp": "1970-01-01T08:00:06Z", "message": {"content": [{"type": "tool_result", "tool_use_id": "b", "content": "The server returned HTTP 403 Forbidden."}]}},
+    {"type": "assistant", "timestamp": "1970-01-01T08:00:07Z", "message": {"content": [{"type": "text", "text": "Duas pautas firmes. Procurando a terceira."}]}},
+    uso("1970-01-01T08:00:09Z", "c", "Write", {"file_path": f"{raiz}/episodes/1970-01-01.md", "content": "x"}),
+]
+open(saida, "w").write("\n".join(json.dumps(l) for l in linhas) + "\n")
+PY
+ESTUDIO_DIR="$EST_DIR/saida" TRANSCRICOES_DIR="$EST_DIR" METRICAS_ARQ="$EST_DIR/metricas.jsonl" \
+  python3 scripts/estudio.py --date "$FIXTURE_DATE" >/dev/null 2>&1
+EST_OK="$(python3 - "$EST_DIR/saida/${FIXTURE_DATE}.json" "$ROOT" <<'PY' 2>&1
+import json, sys
+texto = open(sys.argv[1]).read()
+d = json.loads(texto)
+quem = [e["quem"] for e in d["eventos"]]
+assert quem == ["editor", "jornalista", "jornalista", "editor", "roteirista"], quem
+assert d["eventos"][0]["t"] == "1970-01-01T05:00:00-03:00", d["eventos"][0]["t"]
+assert d["eventos"][2]["texto"] == "openai.com/news não abriu (403)", d["eventos"][2]
+assert d["eventos"][3]["origem"] == "agente"
+assert sys.argv[2] not in texto, "caminho da máquina no arquivo público"
+print("ok")
+PY
+)"
+rm -rf "$EST_DIR"; rm -f "episodes/${FIXTURE_DATE}.md"
+if [[ "$EST_OK" == "ok" ]]; then
+  ok "estúdio: transcrição vira eventos por personagem, no fuso de São Paulo, sem caminho da máquina"
+else
+  bad "dados do estúdio errados: $EST_OK"
+fi
+
 # ------------------------------------------------------------------- resultado
 printf '\n\033[1m%s\033[0m\n' "Resultado: $PASS ok, $FAIL falha(s)"
 [[ $FAIL -eq 0 ]] || exit 1

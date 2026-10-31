@@ -166,25 +166,25 @@ aposentar, juntar ou subir o teto.
 
 ## Fase 3 — feedback e site
 
-- [ ] **Site, beta 1** — estrutura em [docs/site.md](docs/site.md) (04/10):
-      uma página com player do último episódio, como funciona, números,
-      últimos episódios, temas, história, formulário e seção técnica; etapas
-      S1 a S5 e quatro decisões abertas. Visual com o Claude Design. Em
-      discussão (30/10): uma seção que reproduz a execução da madrugada ao
-      longo do dia, com os dados reais, enquanto o estúdio não fica pronto
+- [ ] **Site, beta 1: o estúdio** — requisitos em [docs/site.md](docs/site.md)
+      (v2, 31/10): o site é o estúdio, que muda com o relógio (noite com o
+      vigia, café de dia, postos na gravação), replay da gravação em três
+      velocidades, balões com origem marcada, ficha de cada personagem com as
+      instruções dele e o formulário "Fale com o Editor". Protótipo em
+      `site/index.html` com os dados de 30/10 (`scripts/estudio.py`). Feito:
+      S1. Próximo: S2, o visual a partir das imagens do autor. Cinco decisões
+      abertas no fim do documento (elenco com Produtor, buscas à vista, custo,
+      fim de semana, beta com a maquete)
 - [ ] **Estúdio em miniatura, ao vivo no site** — no CampsVerso
       (`~/CampsVerso`, github.com/campilho/campsverso), projeto à parte e em
       andamento; em 30/10 ainda não fala do CampsCast. Protótipo "Estudio
       Podcast 3D" no Claude Design: Jornalista, Editor, Locutor (cabine "ON
       AIR"), Artista e Zelador; quadro "Pauta do dia", balão de pensamento,
       relógio, barra "Episódio de amanhã", custo e tokens do dia. **O que cabe
-      a este repositório:** o contrato de dados que o estúdio lê. Já existem o
-      `estado.json` no S3, o registro de custo e o rastro da pesquisa
-      (`watch_agent.py`, `research_trail.py`). Decisões abertas: papéis (quem
-      é quem no pipeline), tempo (o pipeline segue de madrugada e o estúdio
-      emula o dia, com um de-para do tempo da IA para o humano), o que é
-      público (buscas, fontes e custo sim; `privado/` e audiência, não) e
-      formato (um `ao-vivo.json` versionado no S3, ao lado do `estado.json`)
+      a este repositório:** o contrato de dados que o estúdio lê, agora
+      `campscast.estudio/1` ([docs/site.md](docs/site.md), "Os dados"): o
+      mesmo arquivo alimenta o protótipo 2D e, depois, o estúdio 3D. Falta o
+      `ao-vivo.json` durante a gravação (S6)
 - [ ] **Sugestões de tema dos ouvintes** — depois do site e do formulário: a
       sugestão entra em `memoria/temas-sugeridos.md` com "por ouvinte", e o
       autor decide como decide as do agente
