@@ -1,219 +1,59 @@
 # TODO
 
 Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
-[PROJETO.md](PROJETO.md). Atualizada em 18/10/2026.
+[PROJETO.md](PROJETO.md); o que já foi feito, no git, nos ADRs e em
+[docs/aprendizados.md](docs/aprendizados.md). Atualizada em 30/10/2026.
 
-## Semana de 12/10 — fechar até sexta, 16/10
+## Semana de 02/11 — segunda é feriado (Finados)
 
-- [ ] ~~Quinta, 15/10 — post no LinkedIn~~ — não saiu em 13/10 nem em 15/10;
-      vai para a terça, 20/10 (semana de 19/10)
-- [x] **Pronúncia de "Anthropic"** (18/10) — contagem do autor: grafia
-      original 1 certa em 10, "Antrópic" 9, "Antrópik" 10, "Anthrópic" 10.
-      "Anthrópic" no `config/pronuncia.json`, com teste. Falta ouvir o
-      episódio de segunda, 19/10
+- [ ] **Até quarta, 04/11 — verificador na nuvem, ensaio do V1.**
+      `prompts/verificador-v1.md`, com a rubrica fixa
+      `prompts/verificador-rubrica.md`: confere os episódios do 41 em diante e
+      calibra a rubrica nos episódios 35 e 38 da linha de base. Ambiente com
+      rede aberta, ramo `claude/verificador-v1`, uns US$ 25 a 35 do crédito,
+      que expira às 04:59 de quinta, 05/11. Abrir de dia: se o crédito acabar
+      no meio, a sessão passa a gastar o limite do Max, que o episódio das 05:00
+      também usa. Depois, juntar o ramo e decidir o V1 diário
+- [ ] **LinkedIn — post sobre a memória** — rascunho em
+      `privado/divulgacao.md`, com a métrica da linha de base (memória do
+      programa de 30% para 1,7% de erro). Não saiu em 13, 15, 20 nem 27/10;
+      talvez no feriado. Antes de postar, atualizar referências de tempo e
+      números. O autor posta à mão
+- [ ] **Sexta, 06/11 — conferir no relatório o que mudou em 30/10:** os avisos
+      de "IA" dobrada na apresentação e de "assunto curto" sumiram? As páginas
+      fechadas caíram (eram 15 a 18% por semana)? Por qual porta foi lida cada
+      pauta da OpenAI (fonte, outra porta, arquivo, imprensa)? A faixa nova de
+      palavras (alvo 1272, a 159 ppm) manteve os episódios entre 8 e 10 minutos?
+- [ ] **07–08/11 — relatório mensal de audiência de outubro**, com a revisão
+      de custos do [ADR 0007](docs/decisions/0007-custo-por-episodio.md) (ver
+      Recorrente)
 
-## Semana de 19/10
+## Fase 3 — onde está
 
-- [ ] **Terça, 20/10, 11h–12h — post no LinkedIn sobre a memória nova.**
-      Rascunho em `privado/divulgacao.md`. Antes de postar, conferir as
-      referências de tempo ("na quinta passada", "na semana passada"), que
-      foram escritas para 15/10 e já não valem. O autor posta à mão e responde
-      os comentários na primeira hora. Comparar seguidores na sexta, 23/10,
-      contra os 53 de 10/10
-- [ ] **Segunda, 19/10 — ouvir "Anthropic" no episódio.** Primeiro com
-      "Anthrópic"; se errar, anotar a frase
-- [ ] **"Gemini"** — saiu "Geminí" uma vez em quatro no teste de 10/10. Testar
-      "Gêmini" do mesmo jeito (as mesmas frases, as duas grafias) antes de pôr
-      no `pronuncia.json`
-- [ ] **Repetição de nomes no roteiro** — na semana de 12/10, "Anthropic"
-      apareceu 7, 16, 7 e 14 vezes (ep. 32 a 35), contra 4 a 7 na semana
-      anterior; no ep. 33, duas das três pautas eram dela. Ideia: a
-      `confere_roteiro.py` conta nomes por pauta e registra (não bloqueia), e o
-      prompt orienta a variar depois da primeira menção ("a empresa", "ela"),
-      sem perder clareza quando duas empresas estão na mesma frase
-- [ ] **Microfone novo, Shure MV7+** — teste de 60 segundos em três
-      configurações do MOTIV, medido com `check_recording.py` contra os blocos
-      do iPhone de 07/09 (fala −21 a −24 dBFS, S/R 30 a 34 dB; o melhor
-      arquivo, 38,9 dB). Se ganhar com folga, entra no roadmap uma nova rodada
-      de gravação e um clone novo. É o cenário "microfone USB dinâmico com
-      braço articulado" que o `benchmarks-audio.md` lista como não medido
-      - [x] **A** (18/10, `gravacoes/2026-10-19-mv7/A.wav`): ganho manual
-            +20,5 dB, limitador ligado, Popper Stopper ligado, resto
-            desligado. Fala −25,4 dBFS, pico −7,6. **Há um gate na cadeia:** o
-            silêncio inicial é quase todo zero digital, então ruído (−120) e
-            S/R (95 dB) não valem. Dentro da fala, pausas a −75 dBFS contra −51
-            no iPhone (percentil 5, janelas de 50 ms); menos grave e mais médio
-            no espectro. Ver `aprendizados.md`, "Silêncio digital não é sala"
-      - [x] **O gate era o Isolamento de Voz do macOS** (modo de microfone da
-            barra, ligado para o MOTIV Mix), achado pelo autor. Em "Padrão",
-            regravada como **A1**: fala −27,1 dBFS, ruído −81, **S/R 54 dB**
-            contra 34 do iPhone, reverberação 0,52 s contra 0,57–0,61
-      - [x] **B** (removedor de ruído): silêncio a −104 dBFS, mas a voz perde
-            médios (26% → 18%). **C** (nível automático): picos mais altos e
-            timbre mais grave. Fica a configuração crua, a A1
-      - [x] **D** (QuickTime direto no microfone): sem gate e os mesmos 54 dB;
-            o MOTIV não processa nada a mais. Gravou em AAC, que serve para
-            achar gate mas não para medir piso nem para clonar
-      - [ ] **Decidir a nova rodada de gravação** — os números justificam: 20
-            dB a mais de S/R no mesmo quarto. A ElevenLabs recomenda de uma a
-            três horas de áudio; a de setembro teve uns 28 minutos. Tabela em
-            `docs/benchmarks-audio.md`
-      - [ ] Na gravação de verdade, subir o ganho uns 3 dB: a ElevenLabs pede
-            fala entre −23 e −18 dB RMS e pico até −3
-      - [ ] `check_recording.py` avisar quando o piso sair abaixo de −96 dBFS
-            ("processamento, não sala"), para isso não passar despercebido
-- [ ] **Eleven v4 e v4 Turbo** — o clone profissional respondeu aos dois em
-      18/10 (`--check`), mas o treino só aparece pronto no Multilingual v2: não
-      há prova de que o v4 usa o clone treinado. Amostras do mesmo trecho nos
-      três modelos em `privado/voz/modelos-2026-10-18/`, com "Anthropic" e
-      "Gemini" na grafia original. Se o v4 soar melhor: pedir o treino no v4
-      pela tela da ElevenLabs (My Voices, passar o mouse na voz, clicar no
-      modelo), medir o nível ao longo da geração (ADR 0004), recalibrar o
-      ritmo (`calibrate_pace.py --apply`) e registrar num ADR. O plano
-      Creator tem uma vaga de clone profissional, e é a que usamos
-      - **Ouvido pelo autor em 18/10:** o Multilingual v2 soa como ele; o v4
-            e o v4 Turbo têm timbre parecido mas não soam como ele, com
-            qualidade muito melhor e um "bom dia" mais animado. Faz sentido: o
-            clone não foi treinado no v4
-      - [ ] **Primeiro, treinar o clone atual no v4, sem apagar nada.** A
-            documentação diz que um clone profissional pode ser treinado em
-            modelos adicionais pela tela (My Voices); não usa vaga nova nem
-            regravação. Se soar como o autor, a troca é só de modelo.
-            **Em 18/10 o v4 ainda não aparecia** na lista de treino do clone
-            (só "Multilingual v2 (Speech to Speech)"): segundo a página do
-            Eleven v4, o suporte a clone profissional "is currently rolling
-            out to everyone". Conferir na tela (passar o mouse em "1/4
-            models", clicar no + ao lado de Eleven v4) ou com
-            `python3 scripts/tts.py --voice-status`
-      - [x] **Treino no v4 pronto em 20/10** (e-mail da ElevenLabs; tela em
-            "3/6 models"; `--voice-status` mostra `eleven_v4` e
-            `eleven_v4_turbo` prontos, mais variantes internas que não são
-            para usar). Mesmo trecho do ep. 37 (2.119 caracteres, um pedido só)
-            nos três modelos, em `privado/voz/modelos-2026-10-20/`:
-            Multilingual v2 154,5 ppm, nível estável (0,4 dB entre terços);
-            v4 162,7 ppm, 2,7 dB mais alto, cai 1,7 dB ao longo do trecho; v4
-            Turbo 164,0 ppm, cai 1,1 dB. Falta o autor ouvir. A queda do v4 é o
-            mesmo tipo de defeito do ADR 0004: medir num episódio inteiro,
-            com as emendas, antes de decidir
-      - [x] **Aprovado pelo autor de ouvido (20/10):** soa como ele, com mais
-            energia, sem queda de volume perceptível. Um erro: "IA" lido como
-            sigla em inglês
-      - [x] **Episódio inteiro no v4 (ep. 37, 4 trechos):** emendas de +0,1,
-            +0,5 e +0,3 dB, contra −0,6, −0,4 e −0,4 do publicado no
-            Multilingual; sem queda sistemática dentro dos trechos (só o
-            primeiro cai 1,6 dB, a abertura mais animada). 8:21 contra 8:31, uns
-            2% mais rápido. Custo exato: 3.339 créditos, 0,44 por caractere,
-            igual ao Multilingual
-      - [x] **"IA" no v4** — ficou "I.A." (autor, 25/10), no `pronuncia.json`
-            com teste
-      - [x] **Troca feita em 25/10** ([ADR 0011](docs/decisions/0011-narracao-no-eleven-v4.md)):
-            `model_id` `eleven_v4`, exemplo da ficha no prompt sem nome de
-            modelo (com teste), anúncio na abertura só em 26/10, `--check` e
-            dry-run conferidos. Volta atrás é uma linha no `tts.json`
-      - [x] Anúncio estendido a 26–30/10 (autor, 25/10): frase com convite
-            aos comentários do Spotify na segunda, meia frase de terça a sexta
-      - [x] **26/10, primeiro episódio no v4:** "agente de I.A." saiu errado no
-            ar. Desde 27/10, provisório: o áudio diz "inteligência artificial"
-            por extenso (`pronuncia.json`, com teste). Ouvir na terça se ficou
-            natural; voltar à sigla só com teste em roteiro inteiro
-      - [ ] **Segunda, 26/10 — ouvir o primeiro episódio no v4**: o anúncio, a
-            ficha ("ElevenLabs versão quatro"), "I.A." e "Anthrópic". Olhar os
-            comentários no Spotify durante a semana
-      - [x] **Sexta, 30/10 — recalibrar o ritmo** com os episódios da semana:
-            `calibrate_pace.py --desde 2026-10-26 --apply`. Medido: 159 ppm
-            (157–163), contra 152 no Multilingual v2 — o v4 é uns 4% mais
-            rápido, não 2%. Faixa de 836–1444 para 874–1510 palavras, alvo
-            1272. O agente escreveu acima do alvo a semana toda (1306–1406
-            contra 1216), e os episódios saíram com 8:12 a 8:49
-      - [ ] Antes de trocar: no v4 não existem os controles de velocidade e
-            estilo, nem SSML; o `tts.json` manda `speed` 1,0 e `style` 0, que
-            não mudam nada hoje, mas o ritmo só se ajusta remedindo
-      - [ ] **Só se for preciso um clone novo** (gravação do MV7+, ou o treino
-            no v4 não servir): a vaga é uma só, e apagar a voz atual derruba o
-            episódio do dia seguinte até o treino terminar. Fazer na sexta,
-            depois do episódio, com o fim de semana para treinar; as gravações
-            de 07/09 continuam em `gravacoes/` para refazer se der errado
-
-
-## Semana de 05/10 — acompanhar o que entrou em 03/10
-
-Em 03/10 entrou de uma vez: lista de pautas no prompt, histórico do backlog
-fora da leitura, temas, fios, sugestões de tema, conferência de repetição e o
-relatório do autor. Tudo ensaiado, mas um ensaio é um dia só.
-
-- [x] **Antes de segunda — despertar do Mac às 04:55** (precisa de senha, só
-      o autor roda): `sudo pmset repeat wakeorpoweron MTWRF 04:55:00`. O
-      launchd já foi para 05:00, com repescagem às 06:00 e 07:00, e o vigia
-      para 07:30 (o agendador marcou 07:36). Conferido em 10/10: `pmset -g
-      sched` mostra "wakepoweron at 4:55AM weekdays only"
-- [x] **Segunda, 05/10 — primeiro episódio com a memória nova.** Depois das
-      07:30: o vigia disse "tudo certo"? Olhar os avisos no registro
-      (`python3 scripts/registro.py mostra`) e se o agente mexeu em temas,
-      fios ou sugestões (Observações do `research/2026-10-05.md`). Semana
-      toda `ok`, de 12 a 15 minutos, Mac sem dormir, nenhum aviso
-- [x] **Quinta, 08/10 — custo da memória nova em produção:**
-      `python3 scripts/memoria_custo.py --desde 2026-10-05`, contra a semana
-      de 28/09 (índice 13%, backlog 11%, mediana de US$ 4,41). Se o custo
-      subiu ou alguma pauta repetiu, revisar antes do C2. **Medido em 10/10:**
-      mediana de US$ 4,87 (+11%), semana de US$ 25,13 contra 21,60 (+16%). Não
-      é a memória: índice + backlog + fios + roteiros caíram de ~42% para
-      ~26% do cache lido. Subiram os turnos (mediana 95 → 117), a saída
-      (68 → 77 mil tokens, o agente agora escreve fios, temas e sugestões) e
-      a base do prompt (20% → 28–31%; a lista de pautas cresce todo dia, ver
-      C4b). Nenhuma pauta repetida. Cinco dias é pouco: medir de novo com o C2
-- [x] **Sexta, 09/10 — primeiro relatório do autor automático:** conferir
-      `memoria/autor/2026-W41.md` e se o push do vigia trouxe a linha
-      "RELATÓRIO DA SEMANA". Pedir `/relatorio` e decidir o que estiver
-      pendente. Saiu, mas **sem o episódio de sexta** na tabela: era gerado
-      antes de o registro do dia ser gravado. Corrigido em 10/10 (agora roda
-      no `finaliza`, depois do registro), com teste; W41 refeito. Pendentes:
-      sugestões S-002 e S-003
-- [x] **Novidade na abertura** (04/10) — a memória nova, de 05/10 a 09/10 em
-      `config/novidades.json`: "a partir de hoje estou testando uma memória
-      nova: lembro de tudo o que já passou por aqui e fico de olho nas
-      perguntas que ficaram sem resposta", em teste e sem jargão
-- [ ] **`scripts/ensaio.sh`** — automatizar o que foi feito à mão em 03/10:
-      copiar o repositório no estado de um dia, rodar com `env -i` e o `PATH`
-      do plist, desviar registro e estado. Sem o ambiente do launchd, o custo
-      do ensaio não vale (ver `docs/aprendizados.md`)
+Critério de saída (PROJETO.md): dez dias úteis seguidos sem o Mac ligado,
+formulário no ar com as sugestões chegando ao agente, e site novo publicado.
+Em 30/10, nenhum dos três começou: outubro foi de memória (ADR 0008), voz
+(ADR 0011) e verificação de fatos (ADR 0010).
 
 ## Fase 3 — vários agentes
 
-Proposta no [ADR 0010](docs/decisions/0010-redacao-com-varios-agentes.md)
-(18/10): estudar orquestração e aprendizado de agentes com o podcast como
-banco de provas. Claude Code headless no Mac, em sombra, uma mudança por vez.
+Proposta no [ADR 0010](docs/decisions/0010-redacao-com-varios-agentes.md):
+estudar orquestração e aprendizado de agentes com o podcast como banco de
+provas. Claude Code headless no Mac, em sombra, uma mudança por vez.
 
-- [ ] **`scripts/ensaio.sh` antes de tudo** (item da semana de 05/10): sem
-      rodar dias passados no ambiente do launchd, não há como dizer que um
-      agente melhorou
-- [x] **V1a. Linha de base na nuvem** — **feita em 25/10, duas rodadas**:
-      7,9% de erro, todos leves; memória do programa de 30% para 1,7%; fatos
-      de fora sem melhora do Opus 5 para o 5.5. Resultado no ADR 0010.
-      Custo: US$ 149 do crédito (102 + 47); restam US$ 101 até 05/11
-- [ ] **Precisão no roteiro, a partir da linha de base** — os erros se
-      repetem em quatro formas (datas, contagem, paráfrase que acrescenta,
-      modal mudado). Propor ao autor uma lista curta de conferência no
-      `master.md`, ou esperar o revisor (V2). Uma mudança por vez: depois da
-      semana da voz nova
-- [ ] (histórico) **V1a. Linha de base na nuvem** — **primeira rodada feita em 25/10**
-      (`verificacao/linha-de-base/`, US$ 102 do crédito): 949 afirmações nos 40
-      episódios; 11,0% de erro no verificável, **nenhum grave**; a memória do
-      programa foi de 30% de erro (Opus 5) a 1,7% (Opus 5.5 e memória nova).
-      Mas a rede do ambiente só abria seis domínios, e 54% ficou
-      `inacessivel`. **Segunda rodada:** `prompts/verificador-reconferencia.md`,
-      só as 513 inacessíveis (147 páginas), num ambiente com a rede aberta.
-      Texto original do item:
-- [ ] **V1a (texto de 25/10)** — o
-      `prompts/verificador.md` confere os 40 episódios já publicados contra as
-      fontes primárias, do mais recente ao mais antigo, numa sessão na nuvem,
-      no ramo `claude/verificador-linha-de-base`, escrevendo só em
-      `verificacao/linha-de-base/`. Usa o crédito de US$ 250, que expira em
-      05/11 às 04:59. Abrir de dia: se o crédito acabar no meio, a sessão passa
-      a gastar o limite do Max, que o episódio das 05:00 também usa. Resultado:
-      taxa de erro por agente (Opus 5 e Opus 5.5) e os erros graves
-- [ ] **V1. Verificador de fontes** — `claude -p` separado depois do agente
-      atual, confere cada fato do roteiro contra a fonte primária; registra,
-      não bloqueia. Uma semana dá a linha de base de erros de fato
+- [ ] **`scripts/ensaio.sh` antes de tudo** — copiar o repositório no estado de
+      um dia, rodar com `env -i` e o `PATH` do plist, desviar registro e
+      estado. Sem rodar dias passados no ambiente do launchd, não há como dizer
+      que um agente melhorou, e o custo de um ensaio fora dele não vale
+- [ ] **V1. Verificador diário** — `claude -p` separado depois do agente, com
+      a rubrica v1; registra, não bloqueia. Depois do ensaio na nuvem (acima).
+      A linha de base custou US$ 3,70 por episódio, quase o dobro do agente:
+      medir se dá para conferir menos (só número, data e citação) ou com
+      modelo menor
+- [ ] **Precisão no roteiro** — os erros da linha de base se repetem em quatro
+      formas: datas, contagem, paráfrase que acrescenta, modal mudado. Propor
+      uma lista curta de conferência no `master.md`, ou esperar o revisor (V2).
+      Depois do resultado do V1
 - [ ] **V2. Revisor** com rubrica, em ciclo com o roteiro (no máximo duas
       voltas)
 - [ ] **V3. Arquivista** — a memória sai do agente principal; junta com o C2
@@ -227,44 +67,27 @@ banco de provas. Claude Code headless no Mac, em sombra, uma mudança por vez.
 ## Fase 3 — memória do agente
 
 Plano no [ADR 0008](docs/decisions/0008-memoria-em-camadas.md): acervo sem
-fim, leitura com teto (~115 KB por dia em qualquer ano). Medição base de
-03/10, com `scripts/memoria_custo.py`: nos dias do Opus 5.5, a memória era
-~42% do cache lido, e o índice não era lido inteiro — passou do limite de 25
-mil tokens da ferramenta Read.
+fim, leitura com teto (~115 KB por dia em qualquer ano). Feitos A, B, C1 e C4a,
+sugestões de tema e relatório do autor (03/10); fios com teto de 40 e
+expiração em 30 dias (25/10). Temas em 10 de 10 desde 25/10: o próximo exige
+aposentar, juntar ou subir o teto.
 
-- [x] **A. Lista compacta de pautas no prompt** (03/10) — `scripts/pautas.py`
-- [x] **B. Histórico do backlog em arquivo próprio** (03/10) —
-      `saved-items/historico/AAAA-MM.md`; o backlog foi de 39 para 12 KB
-- [x] **C1. Temas e fios** (03/10) — 8 temas em `memoria/temas.md` (teto 10;
-      tema é linha editorial, só o autor cria) e 10 fios em `memoria/fios.md`
-      (teto 20; desfecho esperado em até ~6 meses)
-- [x] **Sugestões de tema e relatório do autor** (03/10) —
-      `memoria/temas-sugeridos.md` (a primeira, S-001, virou o T-08);
-      `scripts/relatorio.py`, comando `/relatorio` e passo automático no último
-      episódio da semana. **Para evoluir:** cada pedido novo entra no script
-- [x] **C4a. Repetição de pauta por link** (03/10) — `confere_repeticao.py`
-- [ ] **C2. Resumos semanais** — semana de 12/10. Passo depois da
-      publicação, `prompts/memoria.md`, `confere_resumo.py` e carga das 6
-      semanas de 24/08 a 02/10. Medir junto se 4 resumos permitem ler 3
-      roteiros na íntegra em vez de 5
-- [x] **Fios no teto (25/10)** — decidido pelo autor: teto de 40 (~30 KB) e
-      expiração de 30 dias sem marco para `memoria/fios-expirados/`, por
-      `scripts/expira_fios.py`, antes de cada episódio; nada se apaga e o
-      agente pode trazer o fio de volta (adendo do ADR 0008). Saíram F-012,
-      F-008 e F-017; ficaram 17. O relatório de sexta mede a velocidade
-      (abertos, fechados, expirados) — acompanhar por algumas semanas. Revisão
-      do cemitério no relatório mensal; episódio especial dos que nunca
-      fecharam no fim do ano. F-020 segue meio resolvido (o Beam saiu)
-- [x] **S-002 e S-003 aprovadas (25/10)** — viraram T-09 e T-10. Temas em 10
-      de 10: o próximo exige aposentar, juntar ou subir o teto
+- [ ] **C2. Resumos semanais** — não começou. Passo depois da publicação,
+      `prompts/memoria.md`, `confere_resumo.py` e carga das semanas desde
+      24/08. Medir junto se 4 resumos permitem ler 3 roteiros na íntegra em vez
+      de 5. Ler os primeiros resumos antes de o agente passar a usá-los
+- [ ] **C3. Resumo mensal** — setembro como piloto, com uma seção por tema;
+      depende do C2
+- [ ] **Velocidade dos fios** — acompanhar no relatório de sexta por algumas
+      semanas. Semana 44: 4 abertos, 2 fechados, 1 expirado; 18 abertos.
+      Revisão do cemitério no relatório mensal; episódio especial dos que
+      nunca fecharam no fim do ano
 - [ ] **Acervo como linha do tempo (C7, antecipado)** — nada se apaga, e o
-      acervo vira um registro de como a IA evoluiu. Para medir o ritmo daqui a
-      um ou dois anos, vale gravar desde já, em cada pauta do índice, campos
-      estruturados: tipo de evento (lançamento, preço, regulação, incidente,
-      pesquisa), empresa e os números do dia (preço por milhão de tokens, nota
-      em índice independente). Dado anotado na hora vale mais que dado
-      reconstruído depois
-- [ ] **C3. Resumo mensal** — setembro como piloto, com uma seção por tema
+      acervo vira um registro de como a IA evoluiu. Gravar desde já, em cada
+      pauta do índice, campos estruturados: tipo de evento (lançamento, preço,
+      regulação, incidente, pesquisa), empresa e os números do dia (preço por
+      milhão de tokens, nota em índice independente). Dado anotado na hora vale
+      mais que dado reconstruído depois
 - [ ] **C4b. Teto de 90 dias na lista do prompt** — quando passar de ~30 KB,
       por volta de janeiro de 2027
 - [ ] C5 trimestre e ano (dez/26) · C6 "há um ano" no prompt (ago/27) · C7
@@ -272,202 +95,131 @@ mil tokens da ferramenta Read.
 
 ## Fase 3 — independência do Mac
 
-- [x] ~~Resgatar o crédito de US$ 250 do Claude Code na nuvem~~ — resgatado em
-      03/10; expira às 04:59 (horário de Brasília) de 05/11. **Não vale para
-      Projects nem para Routines**, só sessões na nuvem
-- [x] ~~Acesso do Claude Code na nuvem ao GitHub~~ — 03/10: Claude GitHub App
-      na conta pessoal `campilho`, modo "Apenas sessões na nuvem", **só no
-      repositório `campilho/CampsCast`**
 - [ ] **Piloto no Claude Code na nuvem** — desenho no
       [ADR 0009](docs/decisions/0009-piloto-na-nuvem.md) (04/10): rotina às
-      04:00, antes do Mac, num ramo próprio (`piloto`) refeito a cada dia da
-      `main`, publicando num bucket de testes; uma semana em paralelo,
-      comparando roteiro, custo e horário. O crédito de US$ 250 não paga a
-      rotina e fica para o desenvolvimento na nuvem. Etapas:
-      - [x] **P0 — credencial da AWS que não é a raiz** (04/10): portal
-            `campilho.awsapps.com/start`, usuário `fernando` com
-            `AdministratorAccess` e `CampsCastAgente`, perfil
-            `campscast-agente` na CLI, conferido (AccessDenied fora da regra).
-            Agent Toolkit instalado para o Mac todo; o pipeline foi isolado
-            dele. Falta o `uv`, para o servidor MCP da AWS subir
+      04:00, antes do Mac, num ramo `piloto` refeito a cada dia da `main`,
+      publicando num bucket de testes; uma semana em paralelo, comparando
+      roteiro, custo e horário. O crédito da nuvem não paga a rotina, que sai
+      do Max. P0 (credencial da AWS que não é a raiz) feito em 04/10; o resto
+      parado desde então:
       - [ ] **P1 — o pipeline local passa a comitar e enviar** o que produz
             (lista fechada de caminhos), com teste e ensaio
       - [ ] **P2 — bucket `campscast-piloto`** e usuário que só grava nele
       - [ ] **P3 — ajustes de código:** `tts.py` com credencial gerenciada,
             `BASE_URL` no `publish.py`, perfil `piloto`, `compara_piloto.py`
-      - [ ] **P4 — ambiente na nuvem** (autor) — **a rede padrão não serve ao
-            agente:** na linha de base de 25/10, só anthropic.com, claude.com,
-            github.com e mais três domínios abriram; openai.com, Google,
-            NVIDIA, imprensa e governo deram `ENOTFOUND`. O ambiente do piloto
-            precisa de rede aberta ou de uma lista com as fontes do
-            `sources.yaml`. Rede, credencial da ElevenLabs
-            em `xi-api-key`, variáveis do bucket de testes; proteção da `main`
+      - [ ] **P4 — ambiente na nuvem** (autor): rede aberta (a padrão barra
+            quase todas as fontes), credencial da ElevenLabs em `xi-api-key`,
+            variáveis do bucket de testes, proteção da `main`
       - [ ] **P5 — primeira execução manual na nuvem:** testar a rede e se o
-            `claude -p` funciona dentro da sessão (forma A ou B)
-      - [ ] **P6 — uma semana de rotina** e comparação diária
-      **Tem de ir junto:** o passo de resumos da memória e o relatório de
-      sexta (ADR 0008)
+            `claude -p` funciona dentro da sessão
+      - [ ] **P6 — uma semana de rotina** e comparação diária. Tem de ir junto:
+            o passo de resumos da memória e o relatório de sexta
 - [ ] **Onde rodar sem o Mac do Fernando Campilho** — AWS (plano B no ADR
       0009: EventBridge, Fargate, Bedrock), Mac mini do irmão ou Mac mini
-      próprio, se o piloto na nuvem não resolver. Avaliação no
-      `PROJETO.md`. Conversar com o irmão sobre acesso remoto e usuário
-      separado; pesar a compra considerando os agentes do livro 2081
+      próprio, se o piloto na nuvem não resolver. Avaliação no `PROJETO.md`
 
 ## Fase 3 — formato do episódio
 
-- [ ] **Capítulos no Spotify** — o Spotify Web marca onde cada pauta começa,
-      com um título por trecho. O feed não manda nada para isso (só a lista de
-      pautas, sem marcas de tempo), então é o Spotify que gera. Primeiro
-      conferir na documentação do Spotify for Creators de onde vêm e se dá
-      para controlar. Para a chamada de seguir virar capítulo próprio: narrar
-      cada parte do roteiro numa requisição separada, o que dá a duração exata
-      de cada uma, e escrever as marcas de tempo na descrição
-- [ ] **Chamada para seguir mais destacada** — no ar, sai colada no fim da
-      primeira pauta e passa muito rápido. Pausa maior antes e depois, e rever
-      a orientação do texto. A pausa pode vir do mesmo mecanismo dos
-      capítulos: a chamada narrada sozinha, com silêncio montado pelo `tts.py`
-- [ ] **Capa própria por episódio** — no carro, a capa aparece grande, e hoje
-      é a mesma em todos. O feed aceita `<itunes:image>` em cada episódio;
-      conferir se o Spotify usa essa imagem quando o programa vem por RSS (a
-      Apple usa). Se usar: gerar uma imagem por dia a partir da manchete, com
-      a identidade da capa atual, e medir o custo. Conversa com o item de
-      vídeos e Instagram, que também vai usar modelo de imagem
-- [ ] **Rever a ficha técnica do encerramento** — a ideia fica, mas está longa
-      (~85 palavras, uns 35 s) e pode cansar quem ouve todo dia. Tirar do ar o
-      "cinco delas bloqueadas na leitura". **O relatório de fontes que falham
-      já existe** no `relatorio.py`: em 03/10, `openai.com` falhou 7 vezes na
-      semana e 12 nas quatro anteriores, `x.ai` 3 e 8. Falta decidir se o
-      roteiro de pesquisa muda para essas fontes.
-      **30/10:** de 30/09 a 30/10, 146 de 899 leituras falharam (16%, de 15 a
-      18% toda semana), 85% com 403. Nunca abriram: openai.com (33 de 33),
-      x.ai (21 de 21), theneuron.ai (12 de 12), cnbc.com (7), axios.com (5).
-      Mudou: a página da OpenAI deu lugar ao feed RSS oficial, que abre (título,
-      data, link e resumo; o post segue com 403), e theneuron.ai entrou numa
-      lista `nao_abrem` no `sources.yaml`. A tabela do relatório mostra
-      "falhas de tentativas". Fingir ser navegador para furar o bloqueio, não:
-      é a proteção contra robôs do próprio site. **Medir no relatório de
-      06/11** se as fechadas caíram e se a OpenAI segue entrando nas pautas.
-      Depois, no mesmo dia: o ChatGPT leu `openai.com/index/updated-model-spec/`
-      (teste do autor); o agente lê da internet de casa, como `Claude-User`,
-      sem JavaScript, e recebe o desafio do Cloudflare. O prompt ganhou uma
-      ordem para fonte fechada: outra porta da própria fonte (`outras_portas`
-      da OpenAI no `sources.yaml`), depois a cópia da Internet Archive daquela
-      página, e só então a imprensa, sempre dizendo no ar por onde leu. Em
-      06/11, contar nos logs quantas pautas usaram cada porta
-- [x] **Abertura e transições repetitivas (30/10)** — com "IA" por extenso no
-      áudio, 3 das 5 aberturas da semana disseram "seu briefing de
-      inteligência artificial. Eu sou um agente de inteligência artificial"; o
-      modelo de abertura do prompt ensinava a frase. E "o terceiro assunto é
-      curto" saiu em 15 dos 21 episódios de outubro. O prompt mudou nos dois
-      pontos, e o `confere_roteiro.py` registra os dois casos. **Conferir no
-      relatório de 06/11** se os avisos sumiram
-- [ ] **Siglas em inglês (MIT)** — o v4 leu "MIT" como sigla em português em
-      30/10. Ele não tem marcação de idioma, mas a documentação diz que entende
-      fonética IPA entre barras (`/ɛm aɪ ˈtiː/`). Teste no padrão do
-      "Anthropic": as mesmas frases reais com IPA e duas grafias, o autor
-      conta os acertos (uns 2 a 3 mil créditos). Se o IPA funcionar, testar o
+- [ ] **Siglas em inglês e "Gemini"** — o v4 leu "MIT" como sigla em
+      português (30/10). Ele não tem marcação de idioma, mas a documentação diz
+      que entende fonética IPA entre barras (`/ɛm aɪ ˈtiː/`). Teste no padrão
+      do "Anthropic": as mesmas frases reais com IPA e duas grafias, o autor
+      conta os acertos (uns 2 a 3 mil créditos). No mesmo áudio, "Gêmini"
+      (saiu "Geminí" uma vez em quatro em 10/10). Se o IPA funcionar, testar o
       "IA" de volta como sigla. Em outubro também saíram METR (16 vezes),
       NIST, FTC e SEC
-- [ ] **Pronúncia de "Anthropic"** — o autor ouviu errado na maior parte dos
-      dias da semana de 05/10 (51 ocorrências nos roteiros). Em 12/09 o erro
-      parecia raro e ficou só a regra do artigo, com `config/pronuncia.json`
-      vazio (`docs/aprendizados.md`, "Erro de pronúncia não se reproduz sob
-      encomenda"). Próximo passo: áudio de teste com ~10 frases variadas por
-      grafia candidata (as de `privado/pronuncia/anthropic-candidatos.md`),
-      o autor conta os acertos, a vencedora entra no `pronuncia.json`.
-      **Áudio gerado em 10/10** (1.766 créditos): as mesmas 10 frases reais da
-      semana em Anthropic, Antrópic, Antrópik e Anthrópic. Falta a contagem
+- [ ] **Repetição de nomes no roteiro** — "Anthropic" 7 a 16 vezes por
+      episódio na semana de 12/10; 3 a 9 na de 26/10. Ideia: o
+      `confere_roteiro.py` conta nomes por pauta e registra, e o prompt orienta
+      a variar depois da primeira menção ("a empresa", "ela"), sem perder
+      clareza quando duas empresas estão na mesma frase
+- [ ] **Ficha técnica do encerramento** — está longa (~85 palavras, uns 35 s)
+      e pode cansar quem ouve todo dia; o "cinco delas fechadas para mim" pode
+      sair do ar. Em 30/10: 16% das leituras falham, quase todas com 403 de
+      sites que nunca abrem; a OpenAI passou a ser lida pelo feed e pelas
+      outras portas dela (ver `docs/aprendizados.md`, "O `robots.txt` da
+      OpenAI libera; a portaria barra"). Decidir depois da medição de 06/11
+- [ ] **Regravação da voz com o MV7+** — decidir. Medido em 18/10 (A1, modo
+      Padrão do macOS): S/R de 54 dB contra 34 do iPhone, no mesmo quarto
+      (`docs/benchmarks-audio.md`). A ElevenLabs recomenda de uma a três horas
+      de áudio; a de setembro teve uns 28 minutos. Na gravação, subir o ganho
+      uns 3 dB (fala entre −23 e −18 dB RMS, pico até −3). A vaga de clone
+      profissional é uma só: apagar a voz atual derruba o episódio do dia
+      seguinte até o treino terminar — fazer numa sexta, depois do episódio.
+      A queixa dos ouvintes era o ritmo; o v4 já lê uns 4% mais rápido, então
+      vale perguntar de novo antes de regravar
+      - [ ] `check_recording.py` avisar quando o piso sair abaixo de −96 dBFS
+            ("processamento, não sala"), como o Isolamento de Voz do macOS
+- [ ] **Capítulos no Spotify** — o Spotify Web marca onde cada pauta começa,
+      com um título por trecho, e é ele que gera. Conferir na documentação do
+      Spotify for Creators de onde vêm e se dá para controlar. Para a chamada
+      de seguir virar capítulo próprio: narrar cada parte do roteiro numa
+      requisição separada e escrever as marcas de tempo na descrição
+- [ ] **Chamada para seguir mais destacada** — no ar, sai colada no fim da
+      primeira pauta e passa muito rápido. Pausa maior antes e depois, e rever
+      a orientação do texto; a pausa pode vir do mesmo mecanismo dos capítulos
+- [ ] **Capa própria por episódio** — no carro, a capa aparece grande, e hoje
+      é a mesma em todos. O feed aceita `<itunes:image>` por episódio;
+      conferir se o Spotify usa essa imagem quando o programa vem por RSS (a
+      Apple usa). Se usar: uma imagem por dia a partir da manchete, com a
+      identidade da capa atual, medindo o custo
 
 ## Fase 3 — feedback e site
 
+- [ ] **Site, beta 1** — estrutura em [docs/site.md](docs/site.md) (04/10):
+      uma página com player do último episódio, como funciona, números,
+      últimos episódios, temas, história, formulário e seção técnica; etapas
+      S1 a S5 e quatro decisões abertas. Visual com o Claude Design. Em
+      discussão (30/10): uma seção que reproduz a execução da madrugada ao
+      longo do dia, com os dados reais, enquanto o estúdio não fica pronto
+- [ ] **Estúdio em miniatura, ao vivo no site** — no CampsVerso
+      (`~/CampsVerso`, github.com/campilho/campsverso), projeto à parte e em
+      andamento; em 30/10 ainda não fala do CampsCast. Protótipo "Estudio
+      Podcast 3D" no Claude Design: Jornalista, Editor, Locutor (cabine "ON
+      AIR"), Artista e Zelador; quadro "Pauta do dia", balão de pensamento,
+      relógio, barra "Episódio de amanhã", custo e tokens do dia. **O que cabe
+      a este repositório:** o contrato de dados que o estúdio lê. Já existem o
+      `estado.json` no S3, o registro de custo e o rastro da pesquisa
+      (`watch_agent.py`, `research_trail.py`). Decisões abertas: papéis (quem
+      é quem no pipeline), tempo (o pipeline segue de madrugada e o estúdio
+      emula o dia, com um de-para do tempo da IA para o humano), o que é
+      público (buscas, fontes e custo sim; `privado/` e audiência, não) e
+      formato (um `ao-vivo.json` versionado no S3, ao lado do `estado.json`)
 - [ ] **Sugestões de tema dos ouvintes** — depois do site e do formulário: a
       sugestão entra em `memoria/temas-sugeridos.md` com "por ouvinte", e o
       autor decide como decide as do agente
-- [ ] **Site, beta 1** — rascunho de estrutura em [docs/site.md](docs/site.md)
-      (04/10): uma página com player do último episódio, como funciona,
-      números, últimos episódios, temas, história, formulário e seção técnica;
-      etapas S1 a S5 e quatro decisões abertas. Visual com o Claude Design
-- [ ] **Estúdio em miniatura, ao vivo no site** — projeto à parte, feito em
-      paralelo (10/10): um estúdio isométrico em 3D, com avatares para os
-      agentes que montam o podcast trabalhando ao longo do dia, para as pessoas
-      assistirem. Ainda sem repositório; o autor avisa quando houver. Protótipo "Estudio Podcast 3D" no Claude Design: Jornalista,
-      Editor, Locutor (cabine com "ON AIR"), Artista e Zelador; quadro "Pauta
-      do dia", balão de pensamento ("confirmar na fonte oficial"), relógio,
-      barra "Episódio de amanhã", custo e tokens do dia. **O que cabe a este
-      repositório:** o contrato de dados que o estúdio lê. Hoje já existem
-      `estado.json` no S3 (como terminou a execução), o registro de custo
-      (`metricas/execucoes.jsonl`) e o rastro da pesquisa (`watch_agent.py`,
-      `research_trail.py`). Decisões abertas:
-      - **papéis:** quem é quem no pipeline. Primeira ideia, nada fechado: Jornalista = pesquisa,
-        Editor = roteiro e conferências, Locutor = `tts.py`, Artista = capa
-        (quando houver capa por episódio), Zelador = vigia e conferências de
-        memória
-      - **tempo:** primeira ideia do autor (10/10): o pipeline continua de
-        madrugada, e o estúdio **emula** o dia de trabalho, como ficção. No
-        futuro o próprio ambiente simulado produziria o podcast, mas oito horas
-        de agente ligado gastam muito token — a IA é muito mais rápida que
-        gente. Caminho possível: um de-para do tempo da IA para o tempo humano.
-        Em aberto
-      - **o que é público:** buscas, fontes lidas e custo podem ir; nada de
-        `privado/` nem de dados de audiência
-      - **formato:** um `ao-vivo.json` (ou um por dia) publicado no S3 junto do
-        `estado.json`, versionado, para os dois projetos andarem separados
 - Vídeos e regravação da voz: ver Fase 3 no `PROJETO.md`
 
 ## Recorrente
 
+- [ ] **Toda sexta — estatísticas da semana:** execução e custo
+      (`registro.py mostra`), audiência no Spotify pela extensão do Chrome
+      (anotada em `privado/audiencia.md`) e o relatório do autor
 - [ ] **Relatório semanal do autor** — sai sozinho no último episódio da
       semana; o vigia avisa no celular. Decidir as pendências com `/relatorio`
 - [ ] **Relatório mensal de audiência** — primeiro fim de semana do mês, em
       `privado/audiencia.md`: exportação diária do Spotify, tela principal
-      (seguidores) e tabela de episódios. Junto, a revisão de custos do
-      [ADR 0007](docs/decisions/0007-custo-por-episodio.md) e uma olhada no
-      Apple Podcasts Connect: aba Análise e relatórios, cujo acesso foi pedido
-      em 03/10 (naquele dia, "Assinaturas (0)" e "Programas (0)", embora o
-      programa esteja no ar na Apple)
-- [ ] **Leitura do Spotify for Creators pela extensão Claude in Chrome** —
-      testada em 03/10: leu a tela principal e a tabela de episódios **com os
-      números**, que a exportação traz vazios. A extensão só enxerga as abas
-      que ela abre, então abre o painel numa aba nova, com o login do Chrome; a
-      tabela pagina de 25 em 25. Validar no relatório de novembro. **Não usar
-      no LinkedIn**, cujos termos proíbem extensões que automatizam ou extraem
-      dados
+      (seguidores) e tabela de episódios, lidas pela extensão Claude in Chrome
+      (a exportação vem sem números). Junto, a revisão de custos do ADR 0007 e
+      uma olhada no Apple Podcasts Connect (Análise e relatórios). A extensão
+      **não** se usa no LinkedIn, cujos termos proíbem automação
 - [ ] O painel do Spotify for Creators tem um **"Programa sem título"** vazio,
       e é ele que abre primeiro. Apagar, se não tiver uso
 
 ## Operação
 
-- [x] **Sem rede, parar de cara (28/10)** — o Mac, fora de casa, acordou às
-      05:12 sem internet; o orquestrador avisou que o DNS da API não resolveu
-      e seguiu, o Mac dormiu, e a execução ficou 4h27 presa até falhar às 09:39.
-      Enquanto isso, a repescagem das 06:00 e 07:00 não tinha como rodar. O
-      episódio de 28/10 foi rodado à mão às 10:16, com um aviso de atraso na
-      abertura no lugar do anúncio da voz.
-      **Feito em 28/10:** a checagem de rede vem antes de qualquer etapa, com
-      prazo de relógio (60 s), não de tentativas; sem DNS, sai com erro antes de
-      chamar o agente e de mexer na memória. Registro e `estado.json` saem com
-      a etapa `rede`. Teste no `smoke_test.sh`, que agora roda o orquestrador de
-      verdade em vez de uma cópia da função
-- [ ] **Sem rede, conferir a repescagem de verdade** — o caso de 28/10, na
-      bateria, deve terminar no primeiro despertar depois do prazo (uns 15 a
-      30 min) e deixar a das 06:00 rodar no despertar seguinte. Não medido: o
-      `man launchd.plist` diz que horário perdido com o Mac dormindo roda no
-      próximo despertar, mas não diz o que acontece com o horário que passou
-      enquanto o job ainda rodava. Conferir no log da próxima vez que faltar rede
+- [ ] **Sem rede, conferir a repescagem de verdade** — desde 28/10 a execução
+      sem rede sai com erro no primeiro despertar depois de 60 s. Não medido:
+      se a repescagem das 06:00 roda depois disso. O `man launchd.plist` diz
+      que horário perdido com o Mac dormindo roda no próximo despertar, mas não
+      diz o que acontece com o horário que passou enquanto o job rodava.
+      Conferir no log da próxima vez que faltar rede
 - [ ] **Agente preso na API** — em 28/10 o `claude -p` passou 1h35 tentando a
       API sem rede antes de desistir. Um teto de tempo para a etapa (a pesquisa
-      mais longa no registro levou 19 min 50 s, em 16/09) cortaria isso; decidir
-      o teto olhando o registro, não no chute
-
-- [x] ~~Vigia externo~~ — rotina na nuvem `Vigia do CampsCast (08:07 BRT)`,
-      dias úteis, lê `estado.json` e `feed.xml` e avisa por e-mail e push.
-      Atualizado em 03/10: lê só pelo WebFetch — o alarme de 29/09 foi o proxy
-      da nuvem barrando o `curl` —, no último episódio da semana avisa do
-      relatório do autor, e passou para 07:30, antes de o autor começar a
-      trabalhar
+      mais longa no registro levou 19 min 50 s, em 16/09) cortaria isso;
+      decidir o teto olhando o registro, não no chute
 - [ ] **Antes da próxima viagem:** `claude setup-token` para um token longo;
-      Remote Control ligado na sessão do app (testado pelo Android S24 em
-      03/10); Mac na tomada, tampa aberta
+      Remote Control ligado na sessão do app; Mac na tomada, tampa aberta
 - [ ] **Preencher `NOTIFY_TO`, `SMTP_USER` e `SMTP_PASS`** no `.env`, ou tirar
       as variáveis pela metade. Hoje o `notify.py` cai calado na notificação do
       macOS, que não sai da tela de casa
@@ -476,16 +228,8 @@ mil tokens da ferramenta Read.
 
 ## Datas fixas
 
-- [x] **Sexta, 09/10/2026 — primeiro relatório do autor automático**
-- [ ] **Até 17/10/2026 — ler os primeiros resumos semanais** (C2), de 24/08 a
-      09/10, antes de o agente passar a usá-los; depois, só a conferência
-- [ ] **05/11/2026, 04:59 — o crédito de US$ 250 da nuvem expira.** Não paga
-      a rotina do piloto (essa sai do Max); paga as sessões na nuvem abertas à
-      mão. Usar no desenvolvimento de outubro que não depende do Mac — P5 do
-      piloto, C2, código do site, `ensaio.sh` — com `claude --cloud` ou o app
-      em "Cloud" (ADR 0009, seção 6)
-- [ ] **Até 07/11/2026 — ler o resumo mensal de setembro** (piloto do C3) e o
-      de outubro
+- [ ] **05/11/2026, 04:59 — o crédito da nuvem expira** (US$ 101 em 25/10).
+      Não paga rotinas; paga sessões na nuvem abertas à mão
 - [ ] **03/01/2027 — Apple Podcasts: sem nenhum acesso, sair** (ver Divulgação)
 - [ ] **05/08/2027 — renovar `campscast.com.br`** no registro.br (R$ 40 por
       ano), um mês antes do vencimento em 05/09/2027
@@ -497,77 +241,30 @@ mil tokens da ferramenta Read.
 
 ## Divulgação
 
-- [x] ~~Plano de divulgação~~ — LinkedIn, um post por terça: lançamento em
-      29/09 e cinco posts sobre as Fases 1 e 2 até 03/11. Rascunhos e regras em
+- [ ] **Post sobre a memória** — ver a semana de 02/11. Rascunhos e regras em
       `privado/divulgacao.md`
-- [x] ~~Link principal~~ — Spotify, onde estão os seguidores; a Apple segue
-      como segundo link
-- [ ] **Sábado, 10/10 — comparar a audiência** com a linha de base de 26/09
-- [ ] **Apple Podcasts: divulgar ou sair** — o foco é o Spotify. Pensar se vale
-      divulgar a Apple de algum jeito; **se até 03/01/2027 não houver nenhum
-      acesso por lá, tirar o programa da Apple**. Se ficar, corrigir a
-      frequência que a Apple mostra ("duas vezes por semana") e a página
-      Podcasts do Connect, que aparece vazia
+- [ ] **Apple Podcasts: divulgar ou sair** — o foco é o Spotify. Se até
+      03/01/2027 não houver nenhum acesso por lá, tirar o programa da Apple. Se
+      ficar, corrigir a frequência que a Apple mostra ("duas vezes por
+      semana") e a página Podcasts do Connect, que aparece vazia
 
-## Feito em 03/10/2026 — abertura da Fase 3
+## Feito em outubro
 
-- [x] Memória do agente: passos A, B, C1 e C4a, sugestões de tema e relatório
-      do autor (detalhes na seção da memória e no ADR 0008)
-- [x] Dois ensaios do episódio de 02/10. O primeiro herdou o ambiente da
-      sessão do app e serviu só para o comportamento. O segundo, com o
-      ambiente do launchd, valeu também para o custo: US$ 4,12 contra 4,41 na
-      produção, cache lido de 5,9 para 4,8 milhões; índice de 21% para 2% do
-      cache lido, backlog de 11% para 4%, temas e fios 5%. O agente não
-      duplicou marco, recusou abrir fio de longo prazo e fez a primeira
-      sugestão de tema, aprovada
-- [x] Ritmo remedido com os 19 episódios da voz nova: **152 ppm**, faixa de
-      836 a 1.444 palavras, alvo 1.216. A contagem de palavras do agente bate
-      com a do texto, então o Bash mínimo para contar deixou de ser necessário
-- [x] Pronúncia de "Anthropic" — o erro do episódio 25 (3:32, "que Anthropic e
-      OpenAI") não se repetiu ao gerar a frase de novo. Ficou a regra no
-      prompt: empresa sempre com artigo. Reabrir se voltar a errar
-- [x] Smoke test isolado numa cópia temporária do repositório — não move mais
-      `episodes/` nem escreve no `.env` real, e confere no fim que o
-      repositório real ficou intacto
-- [x] Duração dos episódios sem mudança — os 26 ficaram entre 8:04 e 9:22,
-      média e mediana de 8:50, desvio padrão de 22 s. Os 10 minutos são
-      referência, não teto rígido
-- [x] Pontualidade — desde 14/09, com o Mac na tomada, os 15 episódios
-      começaram às 05:50 e terminaram até 06:11, sem sono no meio
-- [x] Horário antecipado para 05:00, repescagem às 06:00 e 07:00 — o autor
-      ouve entre 6h e 7h, a caminho da academia ou do trabalho, e o Spotify
-      lê o feed de tempos em tempos: publicar mais cedo dá folga. O vigia
-      passou de 08:07 para 07:30
-- [x] App Store sem atualização automática — o Xcode 27 tinha se instalado
-      sozinho em 15/09 e travado o `git` pela licença
-- [x] Polly e Chirp 3 — comparação dispensada, adendo no ADR 0001
-- [x] Fora da lista, foco no Spotify: OP3, downloads por arquivo, a pergunta
-      Spotify ou Apple, a escuta dos episódios de 25/09 e do 12, e o chamado na
-      ElevenLabs sobre a voz no Flash. `gravacoes/descartadas/`, que só tinha
-      um `.DS_Store`, foi para a Lixeira
-
-## Fase 2 — concluída em 03/10/2026
-
-- [x] Conversas com os primeiros ouvintes — a maioria achou a voz boa e
-      natural; a queixa que se repete é o ritmo (regravação na Fase 3)
-- [x] Post de lançamento no LinkedIn — 29/09, 5.693 pessoas alcançadas;
-      **destacado pelo LinkedIn News em 01/10** (marcos no README, provas em
-      `privado/conquistas/`). Os 15 comentários estão em `privado/audiencia.md`
-- [x] Agente no Claude Opus 5.5 (26/09) e revisão do
-      [ADR 0005](docs/decisions/0005-agente-no-opus-5-5.md) (03/10): custo
-      mediano caiu 49%, execução de 10 a 14 min, nenhum roteiro com regra
-      quebrada
-- [x] Nova abertura e encerramento, novidades na abertura e chamada para
-      seguir às terças e quintas
-      ([ADR 0006](docs/decisions/0006-abertura-no-tom-nao-no-texto.md))
-- [x] macOS 27 — atualizado em 03/10; testes, ensaio, ElevenLabs, token do
-      Claude e S3 verificados no mesmo dia
-- [x] [ADR 0007](docs/decisions/0007-custo-por-episodio.md) — R$ 6,25 por
-      episódio é o que o CampsCast acrescenta; R$ 32,12 com a assinatura do
-      Claude inteira
-- [x] Episódios commitados e enviados ao GitHub até 02/10; episódio 11
-      conferido no painel do Spotify
-- [x] Registro diário de execução e custo em `metricas/execucoes.jsonl`, vigia
-      externo, silêncio no começo e no fim, número do episódio, ficha técnica
-      com nomes derivados dos modelos, mapa de pronúncia, voz clonada
-      profissional e Apple Podcasts no ar
+- **03/10 — abertura da Fase 3:** memória A, B, C1 e C4a, sugestões de tema e
+  relatório do autor ([ADR 0008](docs/decisions/0008-memoria-em-camadas.md));
+  smoke test numa cópia do repositório; episódio às 05:00, repescagem às 06:00
+  e 07:00, vigia às 07:30. Fase 2 concluída no mesmo dia (PROJETO.md)
+- **10/10:** relatório de sexta com o episódio do próprio dia
+- **18/10:** "Anthrópic" no `pronuncia.json`; MV7+ medido
+  (`docs/benchmarks-audio.md`)
+- **25/10:** linha de base dos fatos, 7,9% de erro, todos leves, US$ 149 do
+  crédito ([ADR 0010](docs/decisions/0010-redacao-com-varios-agentes.md));
+  fios com teto de 40 e expiração; temas T-09 e T-10
+- **26/10:** narração no Eleven v4
+  ([ADR 0011](docs/decisions/0011-narracao-no-eleven-v4.md)); "IA" por
+  extenso no áudio desde 27/10; ritmo remedido para 159 ppm em 30/10
+- **28/10:** sem rede, o orquestrador para de cara
+- **30/10:** abertura sem "IA" dobrada e transições sem "o terceiro assunto é
+  curto", com contadores na conferência do roteiro; fonte fechada lida por
+  outra porta da própria fonte (feed da OpenAI, `outras_portas`, cópia do
+  arquivo público) antes da imprensa
