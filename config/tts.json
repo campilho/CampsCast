@@ -11,8 +11,8 @@
     "speed": 1.0
   },
   "_nota": "Voz: Professional Voice Clone do Fernando Campilho, adotada em 11/09/2026, com as gravações de 07/09. Modelo: Eleven v4 desde 26/10/2026 (ADR 0011) — o mesmo clone, treinado no v4 em 20/10. Antes, Multilingual v2, de 11/09 a 23/10 (ADR 0004 e adendo). No episódio 37 narrado inteiro nos dois, as emendas variaram menos de 0,5 dB nos dois modelos, e o custo foi o mesmo: 0,44 crédito por caractere. Voltar atrás é trocar model_id para eleven_multilingual_v2.",
-  "words_per_minute": 152,
-  "_nota_ritmo": "152 ppm medidos no Multilingual v2 por scripts/calibrate_pace.py, em 19 episódios. O v4 leu o episódio 37 uns 2% mais rápido (20/10). Remedir em 30/10 com --desde 2026-10-26 --apply. Trocar de voz OU de modelo exige remedir.",
+  "words_per_minute": 159,
+  "_nota_ritmo": "159 ppm medidos no Eleven v4 por scripts/calibrate_pace.py, em 5 episódios de 26 a 30/10/2026 (faixa 157–163; o 26/10 ainda dizia 'I.A.', os outros já 'inteligência artificial'). No Multilingual v2 eram 152, em 19 episódios. Trocar de voz OU de modelo exige remedir — rode com --desde a partir do primeiro episódio da configuração nova.",
   "_nota_ajustes": "Espelham o painel da ElevenLabs (print de 24/08/2026): Speed no default, Stability 0.5, Similarity 0.75, Style Exaggeration em zero. Style acima de zero degrada a fidelidade de voz clonada — por isso zero, e não 0.10. No Eleven v4 não existem os controles Speed e Style, nem SSML (documentação do v4); os valores seguem no pedido, neutros, e a API aceitou em 18 e 20/10.",
   "_voz_falada": "uma cópia sintética da voz do Fernando Campilho",
   "silence_start_s": 1.0,

@@ -119,10 +119,12 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
       - [ ] **Segunda, 26/10 — ouvir o primeiro episódio no v4**: o anúncio, a
             ficha ("ElevenLabs versão quatro"), "I.A." e "Anthrópic". Olhar os
             comentários no Spotify durante a semana
-      - [ ] **Sexta, 30/10 — recalibrar o ritmo** com os episódios da semana:
-            `calibrate_pace.py --desde 2026-10-26 --apply`. Até lá fica 152
-            ppm; o v4 é uns 2% mais rápido, então os episódios saem uns 10 s
-            mais curtos, sem sair do formato
+      - [x] **Sexta, 30/10 — recalibrar o ritmo** com os episódios da semana:
+            `calibrate_pace.py --desde 2026-10-26 --apply`. Medido: 159 ppm
+            (157–163), contra 152 no Multilingual v2 — o v4 é uns 4% mais
+            rápido, não 2%. Faixa de 836–1444 para 874–1510 palavras, alvo
+            1272. O agente escreveu acima do alvo a semana toda (1306–1406
+            contra 1216), e os episódios saíram com 8:12 a 8:49
       - [ ] Antes de trocar: no v4 não existem os controles de velocidade e
             estilo, nem SSML; o `tts.json` manda `speed` 1,0 e `style` 0, que
             não mudam nada hoje, mas o ritmo só se ajusta remedindo
