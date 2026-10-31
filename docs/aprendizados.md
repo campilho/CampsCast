@@ -464,6 +464,34 @@ Para pesquisa, o ambiente na nuvem precisa de rede aberta antes da primeira
 execução. **Testar uma página de fora antes de gastar:** a segunda rodada
 começa abrindo uma página de `openai.com` e para se não abrir.
 
+### O `robots.txt` da OpenAI libera; a portaria barra
+
+De 30/09 a 30/10, `openai.com` deu 403 em 33 de 33 leituras do agente. Um
+pedido comum, sem se passar por navegador, mostra o porquê (30/10):
+`server: cloudflare` e `cf-mitigated: challenge`. O Cloudflare manda um desafio
+que só um navegador rodando JavaScript passa. Já o `robots.txt` da OpenAI diz
+`User-agent: *` e `Allow: /`. Placa e portaria discordam: a placa é voluntária,
+e a portaria julga cada visita pelo comportamento.
+
+O agente não se esconde. O WebFetch se identifica como `Claude-User
+(claude-code/2.1.309; +https://support.anthropic.com/)`, o robô que a Anthropic
+documenta para leitura pedida por um usuário.
+
+E não é a OpenAI inteira. Nas mesmas transcrições, `alignment.openai.com` abriu
+30 de 30, `community.openai.com` 23 de 23, `developers.openai.com` e
+`model-spec.openai.com` tudo; `openai.com` e `help.openai.com`, nada. O feed
+`openai.com/news/rss.xml` abre, mas só com título, data, link e uma linha de
+resumo. Um mês fechado, sempre com o mesmo cabeçalho, e subdomínios abertos:
+é configuração do site, não falha intermitente do Cloudflare.
+
+Fingir ser navegador para passar, não: é decisão do site, e o classificador
+de segurança desta máquina barrou até o teste. O custo editorial é real:
+`anthropic.com` abriu 106 de 108 leituras, o site da OpenAI 0 de 33. Uma é lida
+na fonte e a outra de segunda mão, e a facilidade de acesso pode puxar a pauta.
+
+**Fonte fechada se procura por outra porta da própria fonte antes de ir à
+cobertura.** Cobertura é água já filtrada, com opinião dentro.
+
 
 ### macOS bloqueia launchd em `~/Documents`
 
