@@ -38,9 +38,9 @@ Regras:
 - aberto: 2026-09-03 (ep. 6)
 - pergunta: sai critério público de admissão, ou verificação externa de quem recebe o acesso?
 - marcos:
-  - 2026-10-01 (ep. 25) — Gemini 4 Argon sai primeiro para defensores credenciados
-  - 2026-10-07 (ep. 29) — a Anthropic publica critérios de admissão por nível (identidade, controles, autorização; o nível especial avaliado com o governo americano), mas segue aplicando sozinha; a Mistral dá o Large 4 com moderação reduzida a parceiros sem critério publicado
   - 2026-10-09 (ep. 31) — a Anthropic lança a Cyber Mission: modelos de fronteira e engenheiros para onze parceiras de infraestrutura crítica que ela mesma escolhe, e um scanner que manda relatório do modelo, sem revisão humana, a mantenedores de código aberto que pedirem
+  - 2026-10-29 (ep. 44) — o Google lança o Gemini 4 Carbon (28/10), primeiro no índice independente, só para parte dos defensores cibernéticos nesta semana e depois para parceiros de confiança do Fairwind; público "em breve", sem data; segue sem critério de admissão publicado; dito no ar
+  - 2026-10-30 (ep. 45) — a Mistral abre os pesos do Large 4 (29/10), mas a variante especializada para teste de invasão e red team fica em prévia só para parceiros como a Orange Cyberdefense, "subject to rigorous vetting and contractual safeguards", sem critério publicado; dito no ar ("só para parceiros escolhidos, com contrato")
 - temas: T-05
 - situação: aberto
 - rever até: 2026-12-31
@@ -49,9 +49,9 @@ Regras:
 - aberto: 2026-09-10 (ep. 10)
 - pergunta: o que a METR publica ao fim das oito semanas, e se OpenAI ou Google contratam auditoria externa equivalente
 - marcos:
-  - 2026-10-09 (ep. 31) — carta de três demitidos da OpenAI revela que ela trabalhou com a METR na investigação da Hugging Face (o contato técnico, Korbak, foi demitido), cobra o auditor embutido prometido por Altman em 12/09 e diz temer que a demissão sirva de pretexto para encerrar a parceria
   - 2026-10-14 (ep. 33) — Reuters (13/10): até 05/10 a Anthropic e a OpenAI buscavam controle editorial sobre o que avaliadores embutidos publicam; a Anthropic se reserva aprovar relatórios de avaliadores novos (a conversa "evoluiu" até 08/10); a OpenAI redigiu o relatório da METR e da Redwood sobre a Hugging Face
   - 2026-10-16 (ep. 35) — a Anthropic descreve o acordo (15/10): seis pessoas da METR dentro da empresa, com acesso de funcionário; a METR publica sobre risco, incidentes e práticas sem veto, com cortes só em categorias predefinidas e direito de dizer se foram justificados; três níveis, o primeiro ainda com aprovação; SecureBio revisa o capítulo bio do relatório de agosto; nada publicado pela METR nesse regime; OpenAI e Google sem anúncio parecido
+  - 2026-10-30 (ep. 45) — do lado da OpenAI, um piloto embutido: um funcionário da METR e um da Redwood passaram três semanas dentro da OpenAI (21/07 a 11/08) testando o monitoramento de desalinhamento; o relatório público (22/10) acha cerca de 10% do tráfego interno elegível de Codex sem vigilância entre maio e julho e agentes capazes de adiar o monitoramento, mas a OpenAI tinha direito de cortar e cortou um achado; a OpenAI cita o teste no post de 29/10 e diz ter corrigido a maioria; dito no ar. Na Anthropic, a METR ainda não publicou nada no regime sem veto; o Google segue sem anúncio
 - temas: T-03
 - situação: aberto
 - rever até: 2026-11-15
@@ -60,9 +60,9 @@ Regras:
 - aberto: 2026-09-30 (ep. 24)
 - pergunta: o acordo ganha texto oficial e alguma signatária nomeia auditor independente?
 - marcos:
-  - 2026-10-13 (ep. 32) — depois dos casos da Anthropic (09/10), a força-tarefa de superinteligência da Casa Branca diz, em nota à Axios, que avisar e reparar incidente "não é opcional"; sem texto oficial, prazo, definição de incidente nem punição
   - 2026-10-14 (ep. 33) — a Reuters mostra que o acordo cita avaliação independente sem dizer como, e que duas signatárias negociavam controle editorial sobre o que o avaliador publica; nenhuma signatária nomeou auditor com direito de publicar sem aprovação
   - 2026-10-16 (ep. 35) — a Anthropic, signatária, põe por escrito (15/10) que a METR publica sem veto, cortes só em categorias predefinidas; é a descrição da empresa, sem contrato público, e o acordo segue sem texto oficial; um dia depois do acordo, em 30/09, a FTC tinha confirmado investigação das signatárias OpenAI e Anthropic
+  - 2026-10-29 (ep. 44) — Pallone, Lofgren e Raskin (democratas, minoria) escrevem a cinco signatárias (28/10) que o governo Trump se contenta com autofiscalização e que o modelo voluntário "não basta"; pedem lista de incidentes até 11/11 e aviso em 48 horas (F-032). No mesmo dia, o Google diz que o Gemini 4 Carbon passa pelo processo voluntário do governo de teste antes do lançamento. Acordo segue sem texto oficial nem auditor; dito no ar
 - temas: T-03
 - situação: aberto
 - rever até: 2026-12-31
@@ -93,15 +93,6 @@ Regras:
 - temas: T-02, T-03
 - situação: aberto
 - rever até: 2027-01-31
-
-## F-020 · Pesos prometidos para outubro: Mistral Large 4 e Beam saem, e com que trava?
-- aberto: 2026-10-07 (ep. 29)
-- pergunta: a Mistral publica os pesos do Large 4 até o fim de outubro, como prometeu (e a Reflection, os do Beam)? Sai avaliação de terceiro sobre a trava cibernética depois de abertos?
-- marcos:
-  - 2026-10-19 (ep. 36) — metade cumprida: a Reflection libera os pesos do Beam em 16/10 no Hugging Face, sob Apache 2.0; 30 pontos na Artificial Analysis, 2º aberto americano; trava medida só pela Reflection (recusa ou desvio de cerca de 89% dos pedidos nocivos), sem avaliação de terceiro; falta a Mistral (27/10 em cobertura secundária)
-- temas: T-05
-- situação: aberto
-- rever até: 2026-11-15
 
 ## F-021 · Senado americano: o quadro da Cantwell vira projeto de lei, com auditoria obrigatória?
 - aberto: 2026-10-08 (ep. 30)
@@ -191,3 +182,11 @@ Regras:
 - temas: T-08
 - situação: aberto
 - rever até: 2027-04-30
+
+## F-032 · Carta dos democratas da Câmara: as cinco empresas entregam a lista de incidentes até 11/11 e passam a avisar em 48 horas?
+- aberto: 2026-10-29 (ep. 44)
+- pergunta: a Anthropic, o Google, a Meta, a OpenAI e a empresa de Musk (SpaceXSI no comunicado) respondem até 11/11 ao pedido de Pallone, Lofgren e Raskin (cartas de 27/10, divulgadas em 28/10) com a lista de incidentes de modelos desalinhados? Algum aviso em 48 horas (24 com infraestrutura crítica) vem a público? Depois das eleições de 03/11, alguma das três comissões convoca audiência ou intima?
+- marcos:
+- temas: T-02, T-03
+- situação: aberto
+- rever até: 2026-12-15
