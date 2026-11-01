@@ -2,7 +2,7 @@
 
 Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
 [PROJETO.md](PROJETO.md); o que já foi feito, no git, nos ADRs e em
-[docs/aprendizados.md](docs/aprendizados.md). Atualizada em 31/10/2026.
+[docs/aprendizados.md](docs/aprendizados.md). Atualizada em 01/11/2026.
 
 ## Semana de 02/11 — segunda é feriado (Finados)
 
@@ -46,10 +46,20 @@ Proposta no [ADR 0010](docs/decisions/0010-redacao-com-varios-agentes.md):
 estudar orquestração e aprendizado de agentes com o podcast como banco de
 provas. Claude Code headless no Mac, em sombra, uma mudança por vez.
 
-- [ ] **`scripts/ensaio.sh` antes de tudo** — copiar o repositório no estado de
-      um dia, rodar com `env -i` e o `PATH` do plist, desviar registro e
-      estado. Sem rodar dias passados no ambiente do launchd, não há como dizer
-      que um agente melhorou, e o custo de um ensaio fora dele não vale
+- [ ] **`scripts/ensaio.sh` antes de tudo** — feito em 01/11, com teste: cópia
+      fora do repositório no estado do commit anterior ao dia, `env -i` e o
+      `PATH` do plist, só o token do Claude no `.env`, S3 e aviso desligados.
+      Dias com estado exato em outubro: 05, 13, 15, 19, 26 e 29/10; e 03/11,
+      do commit atual. Nos outros, só variante contra variante. Falta o primeiro
+      ensaio de verdade: o de 29/10, em 01/11, parou porque a rede do Mac
+      estava instável (35 de 41 leituras recusadas; o agente se recusou a
+      escrever sem fonte, como deve). Rodar de novo com a rede boa e comparar
+      com o episódio publicado
+- [ ] **Agente de produção carrega a memória das sessões de desenvolvimento** —
+      a transcrição de 30/10 tem o `MEMORY.md` de `~/.claude/projects/` e as
+      instruções de memória automática, além do `CLAUDE.md`. Mesmo vazamento
+      que o `a038297` fechou para MCP e skills. Depois de terça: cortar e medir
+      com o `ensaio.sh` se o episódio muda
 - [ ] **V1. Verificador diário** — `claude -p` separado depois do agente, com
       a rubrica v1; registra, não bloqueia. Depois do ensaio na nuvem (acima).
       A linha de base custou US$ 3,70 por episódio, quase o dobro do agente:

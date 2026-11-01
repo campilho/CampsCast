@@ -2404,6 +2404,68 @@ else
   bad "temas do site colados ou sem estado: $TEM"
 fi
 
+# ------------------------------------------------------------------- ensaio
+# O ensaio roda o agente num dia passado sem tocar na produção: cópia fora do
+# repositório, com o estado do commit anterior ao dia, só o token do Claude no
+# .env, S3 e aviso desligados, ambiente do launchd (sem o METRICAS_ARQ daqui).
+ENS="$(mktemp -d)"
+ORI="$ENS/origem"
+mkdir -p "$ORI/episodes" "$ORI/memoria"
+git -C "$ORI" init -q -b main
+ens_dia() {
+  printf -- '---\ndate: %s\nwindow_start: %s\nwindow_end: %s\nepisode: %s\ntitle: t\nwords: 10\ntopics: []\n---\nx\n' \
+    "$1" "$2" "$2" "$3" > "$ORI/episodes/$1.md"
+  printf 'fios de %s\n' "$1" > "$ORI/memoria/fios.md"
+  git -C "$ORI" add -A && git -C "$ORI" -c user.name=t -c user.email=t@t commit -qm "$1"
+}
+ens_dia 2026-10-27 2026-10-26 1
+ens_dia 2026-10-28 2026-10-27 2
+ens_dia 2026-10-29 2026-10-28 3
+cat > "$ENS/claude" <<STUB
+#!/bin/sh
+env > "$ENS/ambiente"
+pwd > "$ENS/onde"
+printf -- '---\ndate: 2026-10-29\nwindow_start: 2026-10-28\nwindow_end: 2026-10-28\nepisode: 3\ntitle: ensaio\nwords: 10\ntopics: []\n---\nx\n' > episodes/2026-10-29.md
+printf 'fios do ensaio\n' > memoria/fios.md
+printf '%s' '{"type":"result","is_error":false,"result":"OK","num_turns":3,"total_cost_usd":0.25,"session_id":"sem-transcricao","usage":{"input_tokens":1},"modelUsage":{"claude-opus-5-5":{"inputTokens":1,"outputTokens":2,"cacheReadInputTokens":30,"cacheCreationInputTokens":4}}}'
+STUB
+chmod +x "$ENS/claude"
+printf 'AWS_SECRET_ACCESS_KEY=nao-pode-ir\nCLAUDE_CODE_OAUTH_TOKEN=token-de-teste\nCLAUDE_BIN=%s\n' "$ENS/claude" > "$ENS/env"
+METRICAS_ANTES="$(shasum "$METRICAS_ARQ")"
+ens() { ENSAIO_ORIGEM="$ORI" ENSAIO_ENV="$ENS/env" ENSAIO_PLIST="$ENS/sem-plist" bash scripts/ensaio.sh "$@" 2>&1; }
+OUT_ENS="$(ens --data 2026-10-29 --pasta "$ENS/copia")" && RC_ENS=0 || RC_ENS=$?
+OUT_INEXATO="$(ens --data 2026-10-29 --de "$(git -C "$ORI" rev-parse HEAD~2)" --pasta "$ENS/inexato" --dry-run)"
+OUT_FEITO="$(ens --data 2026-10-29 --de "$(git -C "$ORI" rev-parse HEAD)" --pasta "$ENS/feito")" && RC_FEITO=0 || RC_FEITO=$?
+ENS_OK="$(python3 - "$ENS" "$RC_ENS" "$(git -C "$ORI" status --porcelain)" "$METRICAS_ANTES" "$(shasum "$METRICAS_ARQ")" <<'PY' 2>&1
+import json, os, pathlib, subprocess, sys
+ens, rc, sujo, antes, depois = pathlib.Path(sys.argv[1]), sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5]
+copia = ens / "copia"
+assert rc == "0", f"rc={rc}"
+git = lambda *a: subprocess.run(["git", "-C", str(copia), *a], capture_output=True, text=True).stdout
+assert git("show", "HEAD:memoria/fios.md") == "fios de 2026-10-28\n", "estado não é o do commit anterior ao dia"
+assert (copia / "memoria" / "fios.md").read_text() == "fios do ensaio\n", "o agente não escreveu na cópia"
+assert not sujo and (ens / "origem" / "memoria" / "fios.md").read_text() == "fios de 2026-10-29\n", "origem mexida"
+assert antes.split()[0] == depois.split()[0], "registro de fora da cópia mexido"
+assert (copia / ".env").read_text().splitlines() == [l for l in (ens / "env").read_text().splitlines() if not l.startswith("AWS")], "chave a mais no .env"
+amb = (ens / "ambiente").read_text()
+assert "AWS_SECRET_ACCESS_KEY" not in amb and "METRICAS_ARQ" not in amb, "ambiente não é o do launchd"
+assert f"ESTADO_ARQ={copia}/logs/estado.json" in amb, "estado não desviado"
+assert os.path.realpath((ens / "onde").read_text().strip()) == os.path.realpath(copia), "agente fora da cópia"
+assert json.loads((copia / "logs" / "estado.json").read_text())["estado"] == "ok"
+reg = json.loads((copia / "metricas" / "execucoes.jsonl").read_text().splitlines()[-1])
+assert reg["data"] == "2026-10-29" and reg["estado"] == "ok", reg
+r = subprocess.run([sys.executable, "-c", "import s3"], cwd=copia / "scripts", capture_output=True, text=True)
+assert r.returncode != 0 and "desligado" in r.stderr, "S3 ligado na cópia"
+print("ok")
+PY
+)"
+rm -rf "$ENS"
+if [[ "$ENS_OK" == "ok" && "$OUT_INEXATO" == *"estado inexato"* && "$OUT_ENS" != *"estado inexato"* && $RC_FEITO -ne 0 ]]; then
+  ok "ensaio: dia passado numa cópia com o estado certo, sem chave a mais, sem S3 e sem tocar no real"
+else
+  bad "ensaio: $ENS_OK | rc do commit que já tem o dia: $RC_FEITO"
+fi
+
 # ------------------------------------------------------------------- resultado
 printf '\n\033[1m%s\033[0m\n' "Resultado: $PASS ok, $FAIL falha(s)"
 [[ $FAIL -eq 0 ]] || exit 1

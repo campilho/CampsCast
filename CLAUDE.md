@@ -4,7 +4,7 @@ Podcast diário de IA em português, escrito e narrado por agentes, publicado em
 dias úteis. Rodando em produção desde 24/08/2026.
 
 > **Antes de mexer em qualquer coisa:** `bash tests/smoke_test.sh`
-> São 157 testes, offline, sem custo. Rode antes e depois de alterar.
+> São 160 testes, offline, sem custo. Rode antes e depois de alterar.
 
 ## Regra número um
 
@@ -75,6 +75,7 @@ Agregador serve para descobrir, nunca para citar.
 |---|---|
 | `watch_agent.py` | mostra ao vivo o que o agente está pesquisando |
 | `research_trail.py` | reconstrói o rastro de pesquisa de um episódio |
+| `ensaio.sh` | roda o agente num dia passado, numa cópia fora do repositório, no ambiente do launchd e sem S3; `--de`, `--codigo`, `--dry-run` |
 | `calibrate_pace.py` | mede o ritmo real de fala e corrige a faixa de palavras |
 | `set_base_url.py` | troca o endereço do feed, verificando antes; `--resolve` |
 | `install_launchd.sh` | instala o agendamento com os caminhos reais da máquina |
