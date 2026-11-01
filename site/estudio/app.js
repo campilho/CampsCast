@@ -78,8 +78,8 @@ function ajustaRegistro() {
 // ------------------------------------------------------------ carga
 async function carrega() {
   const [el, dia] = await Promise.all([
-    fetch("estudio/elenco.json").then(r => { if (!r.ok) throw new Error("elenco.json " + r.status); return r.json(); }),
-    fetch("estudio/ultimo.json").then(r => { if (!r.ok) throw new Error("ultimo.json " + r.status); return r.json(); }),
+    fetch("/estudio/elenco.json").then(r => { if (!r.ok) throw new Error("elenco.json " + r.status); return r.json(); }),
+    fetch("/estudio/ultimo.json").then(r => { if (!r.ok) throw new Error("ultimo.json " + r.status); return r.json(); }),
   ]);
   S.M = criaMotor(el, dia);
   S.c2d = new Cena2D(palco); S.cena = S.c2d;
@@ -517,8 +517,6 @@ function abreFicha(id, aba, origem, focoAba = false) {
       if (d) { e.preventDefault(); abreFicha(id, tabs[(i + d + tabs.length) % tabs.length].dataset.aba, null, true); }
     });
   });
-  const sug = $("[data-acao=sugerir]", ficha);
-  if (sug) sug.addEventListener("click", () => { fechaFicha(); $("#tema").focus(); $("#sugira").scrollIntoView({ behavior: reduz.matches ? "auto" : "smooth", block: "center" }); });
   const lr = $("[data-acao=roteiro]", ficha);
   if (lr) lr.addEventListener("click", () => abreFicha("roteirista", "roteiro", null, true));
   if (!ficha.open) {
@@ -594,7 +592,7 @@ function corpoFicha(p, aba) {
       const tema = t => { const [titulo, ...resto] = String(t.titulo).split("\n"); return `<li><details class="tema"><summary><span class="tema-id">${esc(t.id)}</span><span class="tema-tit">${esc(titulo)}</span>${t.estado_em ? `<span class="tema-data">estado em ${diaMes(t.estado_em)}</span>` : ""}</summary>${t.estado ? `<p>${esc(t.estado)}</p>` : `<p class="nota">Sem estado registrado.</p>`}${resto.length ? `<div class="instr" style="max-height:240px">${esc(resto.join("\n"))}</div>` : ""}</details></li>`; };
       const escolha = x => typeof x === "string" ? esc(x)
         : esc([x.ficou || x.escolhida || x.x, x.perdeu || x.preterida || x.y].filter(Boolean).join(" em vez de ") + (x.motivo || x.porque ? ` — ${x.motivo || x.porque}` : ""));
-      return `<button class="btn btn-acao" type="button" data-acao="sugerir" style="justify-self:start">Sugerir um tema</button>
+      return `<a class="btn btn-acao" href="/sugestao/" style="justify-self:start">Sugerir um tema</a>
         <h3>Entraram <span class="nota">· ${ep.pautas.length}</span></h3>
         <ol class="lista">${ep.pautas.map(x => `<li><span><b>${esc(x.titulo)}</b>${x.do_backlog ? ' <span class="tag-mini">do backlog</span>' : ""}<br><span class="nota">${esc(x.fonte)}</span> <a href="${esc(x.url)}" target="_blank" rel="noopener">fonte</a></span></li>`).join("")}</ol>
         <h3>Escolhas</h3>
@@ -642,20 +640,8 @@ function corpoFicha(p, aba) {
 }
 
 // ------------------------------------------------------------ sugestão de tema
-const form = $("#form-tema");
-$("#tema").addEventListener("input", e => { $("#tema-conta").textContent = `${numero(e.target.value.length)} / ${numero(1000)}`; });
-form.addEventListener("submit", e => {
-  e.preventDefault();
-  const r = $("#resposta"), txt = $("#tema").value.trim();
-  r.hidden = false; r.classList.remove("erro");
-  if ($("#site").value) { r.textContent = "Recebido."; return; }        // robô
-  if (!txt) { r.classList.add("erro"); r.textContent = "Escreva o tema antes de enviar."; $("#tema").focus(); return; }
-  if (!$("#privacidade").checked) { r.classList.add("erro"); r.textContent = "Marque a concordância com a política de privacidade para enviar."; $("#privacidade").focus(); return; }
-  if (S.replay) { r.textContent = "Protótipo: nada foi enviado. Você está no replay; volte ao vivo para ver o estúdio reagir."; return; }
-  S.sug = performance.now(); S.seguir = true;
-  r.textContent = "Protótipo: nada foi enviado. No site de verdade, o Produtor recebe e leva ao Editor, que avalia. Repare no estúdio.";
-  $("#palco").scrollIntoView({ behavior: reduz.matches ? "auto" : "smooth", block: "center" });
-});
+// O formulário mora em /sugestao/. A reação do estúdio (S.sug, o Vigia anunciando
+// a chegada) volta quando o envio for de verdade, na etapa S4 do docs/site.md.
 
 // ------------------------------------------------------------ simulação de horário (só no protótipo)
 function simula(v) {

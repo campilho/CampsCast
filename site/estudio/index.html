@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>CampsCast · o estúdio</title>
-<meta name="description" content="Podcast diário de IA em português. Um agente pesquisa, escreve e narra; o site é o estúdio, com os dados reais de cada gravação.">
+<meta name="description" content="O estúdio do CampsCast, podcast diário de IA em português: veja os agentes pesquisando, escrevendo e narrando, com os dados reais de cada gravação.">
 <meta name="theme-color" content="#050a07">
-<link rel="stylesheet" href="fontes/fontes.css">
-<link rel="stylesheet" href="novo/estilo.css">
+<link rel="stylesheet" href="/fontes/fontes.css">
+<link rel="stylesheet" href="/estudio/estilo.css">
 <!-- O 3D só baixa o three.js quando alguém pede "ver em 3D". -->
 <script type="importmap">
 { "imports": {
@@ -20,7 +20,7 @@
 
 <header class="topo gutter">
   <div class="largura">
-    <a class="marca" href="./" aria-label="CampsCast, início">
+    <a class="marca" href="/" aria-label="CampsCast, início">
       <span class="capa" aria-hidden="true">&gt;CC<i></i></span>
       <span><strong>CampsCast</strong><span class="sub">Podcast diário de IA, pesquisado, escrito e narrado por agentes</span></span>
     </a>
@@ -135,18 +135,11 @@
     <article class="cartao c-sugira" id="sugira" aria-labelledby="sugira-titulo">
       <p class="rotulo">Fale com o estúdio</p>
       <h2 id="sugira-titulo">Sugira um tema</h2>
-      <p class="nota" style="margin-top:0">Que assunto de IA você gostaria de ouvir mais vezes no CampsCast? O Produtor recebe sua mensagem e leva ao Editor, que avalia.</p>
-      <form id="form-tema" novalidate>
-        <label for="tema">Seu tema</label>
-        <textarea id="tema" name="tema" maxlength="1000" required aria-describedby="tema-conta"></textarea>
-        <div class="contador" id="tema-conta">0 / 1.000</div>
-        <label for="email">E-mail <span style="font-weight:400;color:var(--mudo)">(opcional, só para resposta)</span></label>
-        <input id="email" name="email" type="email" autocomplete="email" inputmode="email">
-        <div class="isca" aria-hidden="true"><label for="site">Não preencha</label><input id="site" name="site" type="text" tabindex="-1" autocomplete="off"></div>
-        <label class="check"><input type="checkbox" id="privacidade" required> <span>Li e concordo com a <a href="privacidade.html">política de privacidade</a>. Só o texto chega ao Editor.</span></label>
-        <button class="btn btn-acao" type="submit" style="justify-self:start">Enviar ao estúdio</button>
-        <p class="resposta" id="resposta" role="status" hidden></p>
-      </form>
+      <p class="nota" style="margin-top:0">Que assunto de IA você gostaria de ouvir mais vezes no CampsCast? O Produtor recebe sua sugestão e leva ao Editor, que avalia.</p>
+      <div class="linha-botoes">
+        <a class="btn btn-acao" href="/sugestao/">Sugerir um tema</a>
+        <a class="btn btn-sec" href="/">Sobre o CampsCast</a>
+      </div>
     </article>
   </div></section>
 </main>
@@ -172,13 +165,13 @@
         <button type="button" data-tema="dark" aria-pressed="false">Escuro</button>
       </div>
     </div>
-    <p style="margin:0">Feito por agentes de IA, com os dados de cada gravação. Sem cookies e sem rastreamento. Código em <a href="https://github.com/campilho/CampsCast">github.com/campilho/CampsCast</a>.</p>
+    <p style="margin:0">Feito por agentes de IA, com os dados de cada gravação. Sem cookies e sem rastreamento (<a href="/privacidade/">privacidade</a>). Código em <a href="https://github.com/campilho/CampsCast">github.com/campilho/CampsCast</a>. <a href="/">Sobre o CampsCast</a>.</p>
   </div>
 </footer>
 
 <dialog class="ficha" id="ficha" aria-labelledby="ficha-nome"></dialog>
 <p class="sr" id="anuncio" aria-live="polite"></p>
 
-<script type="module" src="novo/app.js"></script>
+<script type="module" src="/estudio/app.js"></script>
 </body>
 </html>

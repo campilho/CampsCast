@@ -1,17 +1,17 @@
-# Site novo do CampsCast — o estúdio (protótipo v3)
+# O estúdio do CampsCast (protótipo v3)
 
-Página: `site/novo.html`. Código: `site/novo/`. Dados: `site/estudio/elenco.json` e `site/estudio/ultimo.json` (contrato `campscast.estudio/1`), lidos sem alteração. Privacidade: `site/privacidade.html`.
+Página: `site/estudio/index.html`, servida em `/estudio/`. Código: nesta pasta. Dados: `elenco.json` e `ultimo.json`, também nesta pasta, gerados por `scripts/estudio.py` (contrato `campscast.estudio/1`, fora do git) e lidos sem alteração. O resto do site (capa, sugestão, privacidade) está descrito no `docs/site.md`.
 
 ## Para ver
 
 ```
 python3 -m http.server 8765 --directory site
-# http://localhost:8765/novo.html
+# http://localhost:8765/estudio/
 ```
 
 Parâmetros só do protótipo: `?sim=03:00|05:07|13:00|folga` (aceita também `HH:MM:SS`), `?replay=1&vel=real|acelerado|rapido&em=05:07:54&pausa=1`, `?ficha=editor&aba=pautas`, `?tema=claro|escuro`, `?vista=3d` (e `&forca3d=1`).
 
-Para promover: renomear `novo.html` para `index.html` (o protótipo atual pode virar `prototipo-v1.html`).
+Desde 01/11 a página é o estúdio do site, atrás da capa (`site/index.html`). Os caminhos são absolutos (`/estudio/…`, `/fontes/…`), então ela precisa ser servida da raiz.
 
 ## Como está montado
 
@@ -21,10 +21,10 @@ Para promover: renomear `novo.html` para `index.html` (o protótipo atual pode v
 | `motor.js` | **motor de cena**: relógio de São Paulo + eventos → `quadro(ms)` (quem está em que sala, fazendo o quê, com que balão, luz, céu). Também `Replay` e `Locomocao`. Não toca no DOM |
 | `cena2d.js` | camada visual 2D pixel: 640×360 interno, ampliado em inteiros de pixel do aparelho; câmera de sala no celular |
 | `sprites.js`, `pixelfont.js` | os 10 personagens (40×56) e a fonte das placas, desenhados em código |
-| `app.js` | liga dados → motor → cena → página: balões, registro, barra de status, ficha, replay, formulário, minimapa |
+| `app.js` | liga dados → motor → cena → página: balões, registro, barra de status, ficha, replay, minimapa |
 | `folha.html` | ferramenta: todos os quadros dos sprites (`?id=jornalista&estados=trabalhando&k=6`) |
 | `cena3d.js` | 3D, em pausa: só por `?vista=3d`, sem trabalho novo |
-| `../fontes/` | as três fontes (OFL), servidas pelo próprio site: pedi-las ao Google entregaria o IP de quem visita. Vale para `index.html`, `novo.html` e `privacidade.html` |
+| `../fontes/` | as três fontes (OFL), servidas pelo próprio site: pedi-las ao Google entregaria o IP de quem visita. Valem para todas as páginas |
 
 ## O que mudou nesta rodada (acabamento, 01/11)
 
@@ -48,7 +48,7 @@ Para promover: renomear `novo.html` para `index.html` (o protótipo atual pode v
 **Outros**
 - Sem botão "Ver em 3D". O `cena3d.js` continua no projeto, só por `?vista=3d` (com um botão "Voltar ao 2D").
 - `privacidade.html`: o que coleta, para quê, onde, sem cookies nem rastreamento. Prazo de guarda, responsável, contato e data de revisão estão como **[a definir pelo autor]**.
-- O formulário continua dizendo "Protótipo: nada foi enviado".
+- O formulário saiu daqui em 01/11 e foi para `/sugestao/`; a reação do estúdio à sugestão (o Vigia anunciando) volta com o envio de verdade.
 - Antes da gravação dos dados carregados (ex.: `?sim=03:00` no mesmo dia), o Vigia e a barra de status não dizem que o episódio já está no ar.
 
 ## Regra de fidelidade
@@ -57,7 +57,7 @@ Os balões da gravação são os eventos do JSON, com a origem de cada um. Fora 
 
 ## Pendências
 
-- `privacidade.html`: preencher prazo de guarda, responsável, contato e data. Conferir o parágrafo que diz que um tema aceito pode entrar na lista de temas sugeridos do repositório público ("por ouvinte"), tirado do `docs/site.md`.
+- `/privacidade/`: preencher prazo de guarda e data de revisão (responsável e contato preenchidos em 01/11 com o que está no `config/show.json`). Conferir o parágrafo que diz que um tema aceito pode entrar na lista de temas sugeridos do repositório público ("por ouvinte"), tirado do `docs/site.md`.
 - Formulário de verdade (S4: API Gateway + Lambda + S3 privado).
 - A partir de 03/11: conferir com dados reais as notas por página e as escolhas (o código já trata os dois formatos).
 - Telas largas em dpr 1 entre 1100 e ~1700 px: a cena fica em escala fracionária (pixels desiguais). Em dpr 2 e em monitores largos a escala é inteira.

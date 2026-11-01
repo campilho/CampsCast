@@ -1,12 +1,14 @@
 # Site do CampsCast — o estúdio (beta 1)
 
-- **Status:** requisitos v2 (31/10/2026), no lugar da página de seções de
-  04/10. O que valia de lá (formulário, hospedagem, privacidade) continua
+- **Status:** requisitos v3 (01/11/2026): o estúdio de 31/10 continua sendo
+  o coração, agora atrás de uma capa (abaixo, em "As páginas"). O que valia
+  da página de seções de 04/10 (formulário, hospedagem, privacidade) continua
   abaixo.
-- **Protótipo:** `site/index.html`, com os dados reais de uma gravação gerados
-  por `scripts/estudio.py`. Para ver: `python3 scripts/estudio.py` e depois
-  `python3 -m http.server 8765 --directory site`. O desenho é provisório: o
-  visual definitivo sai das imagens do estúdio que o autor já tem.
+- **Protótipo:** a capa em `site/index.html` e o estúdio em
+  `site/estudio/index.html` (visual do Claude Design, aprovado em 01/11), com
+  os dados reais de uma gravação gerados por `scripts/estudio.py`. Para ver:
+  `python3 scripts/estudio.py` e depois
+  `python3 -m http.server 8765 --directory site`.
 - **Endereço:** `campscast.com.br`, hoje respondendo 403 na raiz.
 
 ## A ideia
@@ -20,6 +22,28 @@ gravação inteira, com o horário em que cada coisa aconteceu.
 
 O que separa este estúdio de uma animação é a regra de fidelidade (abaixo):
 o que os personagens dizem saiu do registro da gravação, não da imaginação.
+
+## As páginas
+
+Decidido em 01/11: quem chega por um link compartilhado precisa entender o
+que é o CampsCast antes de entrar numa cena em pixel art, e é a capa que
+aparece na prévia do LinkedIn e do WhatsApp. Então a raiz é uma capa, e o
+estúdio fica a um clique.
+
+| Endereço | Página | Arquivo |
+|---|---|---|
+| `/` | Capa: imagem, o que é, como ouvir, último episódio, como funciona com os números da última gravação, o que é aberto, CampsVerso, sugerir | `site/index.html`, `site/capa/` |
+| `/estudio/` | O estúdio, com replay e fichas | `site/estudio/` |
+| `/studio` | Redireciona para `/estudio/` | função do CloudFront |
+| `/sugestao/` | Sugira um tema; por e-mail até o formulário (S4) | `site/sugestao/index.html` |
+| `/privacidade/` | Privacidade | `site/privacidade/index.html` |
+| `/feed.xml`, `/cover.jpg`, `/audio/` | O podcast, como hoje; a publicação do site não toca neles | `publish.py` |
+
+As páginas usam caminhos absolutos, e as fontes vêm de `/fontes/`. A capa e
+as páginas de texto são escuras, com o verde do `>CC`; o estúdio segue o tema
+de quem visita. A imagem da capa vai ser gerada a partir da cena do estúdio
+(referências em 2560×1440 exportadas da própria cena); até lá, a capa usa a
+cena das 05:15 de 30/10.
 
 ## Os personagens
 
@@ -255,19 +279,23 @@ quem é técnico (GitHub, ADRs, aprendizados); rodapé com contato e licenças. 
 história pode virar quadro na parede.
 
 - **Hospedagem:** o S3 e o CloudFront de hoje; falta o `index.html` como
-  objeto padrão da raiz, que é o motivo do 403.
+  objeto padrão da raiz, que é o motivo do 403. Como a origem é o endereço
+  REST do S3, `/estudio/` só abre o `index.html` da pasta com uma função do
+  CloudFront, que também redireciona `/studio`.
 - **Atualização sem trabalho:** o `publish.py` passa a rodar o `estudio.py`
-  e a subir a página e os dados junto com o feed.
-- **Sem dependências, sem cookies, sem rastreamento.** A audiência continua
-  medida no Spotify.
+  e a subir os dados junto com o feed, numa etapa que não derruba o
+  episódio se falhar. As páginas sobem por um script próprio, só quando
+  mudam.
+- **Sem dependências, sem cookies, sem rastreamento.** Nem as fontes vêm de
+  fora. A audiência continua medida nos aplicativos de podcast.
 
 ## Etapas
 
 | Etapa | O quê |
 |---|---|
 | S1 | Requisitos e protótipo com dados reais — feito em 31/10 |
-| S2 | Visual do estúdio a partir das imagens do autor, em celular e computador |
-| S3 | `publish.py` gera e sobe página e dados; raiz do CloudFront; site no ar com replay e fichas |
+| S2 | Visual do estúdio, em celular e computador — feito em 01/11 (Claude Design) |
+| S3 | Capa e páginas (01/11), imagem da capa; script que sobe as páginas; função do CloudFront; `publish.py` sobe os dados; site no ar |
 | S4 | Formulário: API Gateway, Lambda, S3 privado, aviso ao autor; página de privacidade |
 | S5 | Sugestões chegando ao Editor, sem dados pessoais |
 | S6 | Ao vivo por evento, com `ao-vivo.json` durante a gravação |
