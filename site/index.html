@@ -29,8 +29,8 @@
     <nav aria-label="Principal">
       <a class="nav-link" href="#ouvir">Ouvir</a>
       <a class="nav-link" href="#como">Como funciona</a>
-      <a class="nav-link" href="/sugestao/">Sugerir</a>
-      <a class="nav-link" href="https://github.com/campilho/CampsCast">GitHub</a>
+      <a class="nav-link" href="#github">GitHub</a>
+      <a class="btn btn-verde btn-p" href="#fale">Sugerir</a>
       <a class="btn btn-crt btn-p" href="/estudio/">Estúdio</a>
     </nav>
   </div>
@@ -47,8 +47,8 @@
           <svg class="icone" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>
           Conhecer o estúdio
         </a>
+        <a class="btn btn-verde" href="#fale">Sugerir um tema</a>
         <a class="btn btn-linha" href="#ouvir">Ouvir o podcast</a>
-        <a class="btn btn-linha" href="/sugestao/">Sugerir um tema</a>
       </div>
       <figure class="vitrine">
         <a href="/estudio/" aria-label="Entrar no estúdio">
@@ -61,8 +61,33 @@
     </div>
   </section>
 
+  <section class="gutter" id="fale" aria-labelledby="fale-titulo">
+    <div class="largura">
+      <div class="fale">
+        <div>
+          <p class="rotulo">Fale com o estúdio</p>
+          <h2 id="fale-titulo">Que assunto de IA você quer ouvir mais?</h2>
+          <p>Sua sugestão vai para o Editor, o agente que escolhe as pautas. Ele lê a memória do programa e avalia se ela vira pauta de um episódio ou um tema que o programa passa a acompanhar.</p>
+          <p class="nota"><a href="/sugestao/">O caminho da sugestão</a> · <a href="/privacidade/">Privacidade</a></p>
+        </div>
+        <form class="fale-form" id="fale-form" action="mailto:contato@campscast.com.br" method="get">
+          <input type="hidden" name="subject" value="Sugestão de tema para o CampsCast">
+          <label for="fale-tema">Seu tema</label>
+          <textarea id="fale-tema" name="body" maxlength="500" rows="4" required
+                    placeholder="Ex.: quem paga a conta da energia dos data centers de IA"></textarea>
+          <div class="fale-linha">
+            <span class="contador" id="fale-conta" aria-live="polite">0 / 500</span>
+            <button class="btn btn-crt" type="submit">Enviar ao estúdio</button>
+          </div>
+          <p class="resposta" id="fale-resposta" role="status" hidden></p>
+          <p class="nota">Por enquanto, o botão abre o seu e-mail com o texto pronto, para <b>contato@campscast.com.br</b>. Só o tema chega ao Editor, sem nome e sem e-mail. Por favor, não escreva dados pessoais.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
   <section class="gutter faixa" id="ouvir" aria-labelledby="ouvir-titulo">
-    <div class="largura duas">
+    <div class="largura duas centro">
       <div>
         <p class="rotulo">Ouvir</p>
         <h2 id="ouvir-titulo">Em qualquer aplicativo de podcast</h2>
@@ -106,42 +131,31 @@
         <li><b>Locutor</b><span>Narra com uma cópia sintética da voz do autor, feita por ele e com o consentimento dele.</span><em id="n-voz"></em></li>
         <li><b>Produtor</b><span>Publica no feed, que chega ao Spotify, à Apple e aos outros aplicativos.</span><em id="n-publica"></em></li>
       </ol>
-      <figure class="vitrine real">
-        <a href="/estudio/?replay=1" aria-label="Ver a gravação no estúdio">
-          <img class="pixel" src="/capa/estudio-no-ar.png" width="2560" height="1440" loading="lazy"
-               alt="A cena real do estúdio em pixel art às 05:15 de 30/10: redação, cabine com a luz ON AIR acesa, arquivo, portaria, café e técnica, cada personagem no seu posto.">
-        </a>
-        <figcaption>O estúdio de verdade às 05:15 de 30/10, com o Locutor no ar. O que os personagens dizem no site sai do registro da gravação, e o replay mostra a gravação inteira.</figcaption>
-      </figure>
     </div>
   </section>
 
-  <section class="gutter faixa" aria-labelledby="aberto-titulo">
+  <section class="gutter faixa" id="github" aria-labelledby="github-titulo">
     <div class="largura">
-      <p class="rotulo">Aberto</p>
-      <h2 id="aberto-titulo">Um experimento público de engenharia de agentes</h2>
-      <p class="intro">O CampsCast existe para estudar agentes de IA trabalhando sozinhos, todo dia, em produção. Por isso tudo fica à vista, inclusive o que deu errado.</p>
-      <div class="cartoes">
-        <a class="cartao" href="https://github.com/campilho/CampsCast"><b>O código</b><span>O pipeline inteiro, em Python e shell, sem dependências. Licença MIT: dá para clonar e montar o seu.</span></a>
-        <a class="cartao" href="https://github.com/campilho/CampsCast/tree/main/research"><b>Roteiros e pesquisa</b><span>O roteiro e o log de pesquisa de cada episódio: o que foi lido, o que caiu e por quê.</span></a>
-        <a class="cartao" href="https://github.com/campilho/CampsCast/blob/main/docs/aprendizados.md"><b>Decisões e aprendizados</b><span>As decisões de arquitetura e os erros catalogados, com o que mudou depois de cada um.</span></a>
-      </div>
-    </div>
-  </section>
-
-  <section class="gutter" aria-labelledby="verso-titulo">
-    <div class="largura duas">
-      <div>
-        <p class="rotulo">CampsVerso</p>
-        <h2 id="verso-titulo">Um estúdio dentro de um mundo maior</h2>
-        <p>O CampsVerso é um mundo virtual simulado para interação de agentes de IA, também aberto no GitHub. O estúdio do CampsCast é um passo para dentro dele: um lugar onde cada agente tem um posto, um papel e um registro do que fez.</p>
-        <a class="btn btn-linha" href="https://github.com/campilho/campsverso">CampsVerso no GitHub</a>
-      </div>
-      <div class="sugira">
-        <p class="rotulo">Fale com o estúdio</p>
-        <h2>Que assunto de IA você quer ouvir mais?</h2>
-        <p>Sua sugestão vai para o Editor, que lê a memória do programa e avalia se vira pauta ou tema.</p>
-        <a class="btn btn-crt" href="/sugestao/">Sugerir um tema</a>
+      <p class="rotulo">Aberto no GitHub</p>
+      <h2 id="github-titulo">Tudo à vista, inclusive os erros</h2>
+      <p class="intro">O CampsCast é um experimento público de engenharia de agentes. O código, os roteiros, os logs de pesquisa e as decisões ficam abertos, para quem quiser entender, conferir ou montar o seu.</p>
+      <div class="repos">
+        <article class="repo">
+          <p class="repo-nome">github.com/campilho/CampsCast</p>
+          <h3>O podcast</h3>
+          <ul>
+            <li><a href="https://github.com/campilho/CampsCast">O pipeline inteiro</a>, em Python e shell, sem dependências, sob licença MIT.</li>
+            <li><a href="https://github.com/campilho/CampsCast/tree/main/episodes">O roteiro</a> e <a href="https://github.com/campilho/CampsCast/tree/main/research">o log de pesquisa</a> de cada episódio: o que foi lido, o que caiu e por quê.</li>
+            <li><a href="https://github.com/campilho/CampsCast/tree/main/docs/decisions">As decisões de arquitetura</a> e <a href="https://github.com/campilho/CampsCast/blob/main/docs/aprendizados.md">os aprendizados</a>, com os erros catalogados.</li>
+          </ul>
+          <a class="btn btn-crt" href="https://github.com/campilho/CampsCast">Ver o CampsCast no GitHub</a>
+        </article>
+        <article class="repo">
+          <p class="repo-nome">github.com/campilho/campsverso</p>
+          <h3>O CampsVerso</h3>
+          <p>Um mundo virtual simulado para interação de agentes de IA. O estúdio do CampsCast é um passo para dentro dele: um lugar onde cada agente tem um posto, um papel e um registro do que fez.</p>
+          <a class="btn btn-linha" href="https://github.com/campilho/campsverso">Ver o CampsVerso no GitHub</a>
+        </article>
       </div>
     </div>
   </section>

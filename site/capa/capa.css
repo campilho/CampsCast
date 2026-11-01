@@ -43,6 +43,8 @@ p { margin: 0 0 14px; color: var(--tinta-2); }
 .btn-crt:hover { background: #7dffa0; }
 .btn-linha { background: transparent; color: var(--tinta); border-color: var(--linha-forte); }
 .btn-linha:hover { border-color: var(--crt-fg); color: #fff; }
+.btn-verde { background: transparent; color: var(--crt-fg); border-color: rgba(57, 255, 106, .55); }
+.btn-verde:hover { background: rgba(57, 255, 106, .08); border-color: var(--crt-fg); }
 .btn-plat { background: var(--sup); color: var(--tinta); border-color: var(--linha-forte); min-width: 150px; }
 .btn-plat:hover { border-color: var(--crt-fg); }
 
@@ -63,6 +65,10 @@ p { margin: 0 0 14px; color: var(--tinta-2); }
 .nav-link { color: var(--tinta-2); text-decoration: none; font-size: 15px; padding: 8px 10px; border-radius: 6px; }
 .nav-link:hover { color: #fff; background: var(--sup); }
 @media (max-width: 760px) { .nav-link { display: none; } }
+@media (max-width: 420px) {
+  .marca { gap: 8px; } .marca strong { font-size: 17px; } .nav .cc { font-size: 24px; padding: 2px 6px 0; }
+  .nav nav { gap: 4px; } .nav .btn-p { padding: 0 10px; font-size: 14px; }
+}
 
 /* ---------------------------------------------------------------- abertura */
 .hero { padding-block: clamp(40px, 7vw, 88px) 24px; text-align: center; }
@@ -78,14 +84,13 @@ p { margin: 0 0 14px; color: var(--tinta-2); }
 .vitrine a:hover { transform: translateY(-2px); box-shadow: 0 0 0 1px rgba(57, 255, 106, .4), 0 30px 90px rgba(0, 0, 0, .55), 0 0 90px rgba(57, 255, 106, .14); }
 @media (prefers-reduced-motion: reduce) { .vitrine a, .vitrine a:hover { transition: none; transform: none; } }
 .vitrine img { display: block; width: 100%; height: auto; }
-.vitrine img.pixel { image-rendering: pixelated; }
 .vitrine figcaption { font-size: 14.5px; color: var(--mudo); max-width: 720px; margin: 14px auto 0; }
-.vitrine.real { margin-top: 28px; text-align: center; }
 
 /* ---------------------------------------------------------------- seções */
 main > section:not(.hero) { padding-block: clamp(48px, 7vw, 88px); }
 .faixa { background: linear-gradient(180deg, var(--bg-2), var(--bg)); border-block: 1px solid var(--linha); }
 .duas { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(28px, 5vw, 64px); align-items: start; }
+.duas.centro { align-items: center; }
 @media (max-width: 860px) { .duas { grid-template-columns: minmax(0, 1fr); } }
 
 .plataformas { list-style: none; padding: 0; margin: 20px 0; display: flex; flex-wrap: wrap; gap: 10px; }
@@ -110,18 +115,38 @@ main > section:not(.hero) { padding-block: clamp(48px, 7vw, 88px); }
 .passos em { font: 500 13.5px/1.4 var(--f-mono); font-style: normal; color: var(--crt-texto); }
 .passos em:empty { display: none; }
 
-.cartoes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 24px; }
-@media (max-width: 860px) { .cartoes { grid-template-columns: minmax(0, 1fr); } }
-.cartao { display: grid; gap: 8px; align-content: start; background: var(--sup); border: 1px solid var(--linha); border-radius: var(--raio); padding: 20px;
-  color: inherit; text-decoration: none; transition: border-color .15s; }
-.cartao:hover { border-color: var(--crt-fg); }
-.cartao b { font-size: 19px; color: #fff; }
-.cartao b::after { content: " →"; color: var(--crt-fg); }
-.cartao span { color: var(--tinta-2); font-size: 16px; }
+/* GitHub: os dois repositórios lado a lado */
+.repos { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: 16px; margin-top: 28px; }
+@media (max-width: 860px) { .repos { grid-template-columns: minmax(0, 1fr); } }
+.repo { display: grid; gap: 4px; align-content: start; background: var(--sup); border: 1px solid var(--linha-forte); border-radius: var(--raio); padding: 24px; }
+.repo .btn { justify-self: start; margin-top: 10px; }
+.repo-nome { font: 500 13.5px/1.3 var(--f-mono); color: var(--mudo); margin: 0; overflow-wrap: anywhere; }
+.repo h3 { font-size: 24px; margin: 2px 0 8px; color: #fff; }
+.repo ul { margin: 0; padding-left: 1.2em; }
+.repo li { color: var(--tinta-2); }
+.repo li + li { margin-top: 8px; }
+.repo li::marker { color: var(--crt-fg); }
 
-.sugira { background: radial-gradient(500px 240px at 0 0, rgba(57, 255, 106, .10), transparent 70%), var(--sup);
-  border: 1px solid var(--crt-linha); border-radius: var(--raio); padding: 24px; }
-.sugira h2 { font-size: clamp(22px, 2.6vw, 28px); }
+/* ---------------------------------------------------------------- fale com o estúdio */
+#fale { padding-block: 8px clamp(48px, 7vw, 88px); }
+.fale { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 48px); align-items: center;
+  border: 1px solid rgba(57, 255, 106, .45); border-radius: 20px; padding: clamp(22px, 4vw, 44px);
+  background: radial-gradient(700px 320px at 0 0, rgba(57, 255, 106, .14), transparent 70%), linear-gradient(180deg, #0f1a14, var(--sup));
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .5), 0 0 60px rgba(57, 255, 106, .12), 0 30px 80px rgba(0, 0, 0, .45); }
+@media (max-width: 860px) { .fale { grid-template-columns: minmax(0, 1fr); } }
+.fale h2 { font-size: clamp(28px, 3.8vw, 44px); color: #fff; }
+.fale-form { display: grid; gap: 10px; }
+.fale-form label { font-weight: 700; color: var(--tinta); }
+.fale-form textarea { width: 100%; min-height: 128px; resize: vertical; font: 17px/1.5 var(--f-texto); color: var(--tinta);
+  background: #070b09; border: 1px solid var(--crt-linha); border-radius: var(--raio-p); padding: 12px 14px; }
+.fale-form textarea::placeholder { color: #6b7686; }
+.fale-form textarea:focus { outline: none; border-color: var(--crt-fg); box-shadow: 0 0 0 3px rgba(57, 255, 106, .2); }
+.fale-linha { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.contador { font: 13px var(--f-mono); color: var(--mudo); }
+.resposta { margin: 0; font-size: 15.5px; color: var(--tinta); border-left: 3px solid var(--crt-fg); padding: 8px 12px; background: rgba(57, 255, 106, .06);
+  border-radius: 0 6px 6px 0; }
+.resposta.erro { border-left-color: #ff6b57; background: rgba(255, 107, 87, .08); }
+.fale .nota { margin: 0; font-size: 14px; }
 
 /* ---------------------------------------------------------------- rodapé */
 .rodape { border-top: 1px solid var(--linha); padding-block: 28px 40px; font-size: 14.5px; }

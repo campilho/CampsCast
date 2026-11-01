@@ -43,4 +43,25 @@ $("#rss-copiar").addEventListener("click", async e => {
   setTimeout(() => { e.target.textContent = "Copiar"; }, 2500);
 });
 
+// Fale com o estúdio. Até o envio de verdade (etapa S4 do docs/site.md), o
+// botão abre o e-mail de quem visita com o tema pronto; o limite de 500
+// caracteres é porque alguns aplicativos cortam mensagens longas vindas de link.
+const tema = $("#fale-tema"), resposta = $("#fale-resposta");
+tema.addEventListener("input", () => { $("#fale-conta").textContent = `${num(tema.value.length)} / ${num(500)}`; });
+$("#fale-form").addEventListener("submit", e => {
+  e.preventDefault();
+  const txt = tema.value.trim();
+  resposta.hidden = false;
+  if (!txt) {
+    resposta.classList.add("erro");
+    resposta.textContent = "Escreva o tema antes de enviar.";
+    tema.focus();
+    return;
+  }
+  resposta.classList.remove("erro");
+  const q = new URLSearchParams({ subject: "Sugestão de tema para o CampsCast", body: `Tema: ${txt}\n` }).toString().replace(/\+/g, "%20");
+  location.href = `mailto:contato@campscast.com.br?${q}`;
+  resposta.textContent = "Abrimos o seu e-mail com a sugestão pronta; falta só enviar por lá. Se nada abriu, escreva para contato@campscast.com.br.";
+});
+
 carrega().catch(err => console.warn("capa sem dados do estúdio:", err.message));

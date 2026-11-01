@@ -32,7 +32,7 @@ estúdio fica a um clique.
 
 | Endereço | Página | Arquivo |
 |---|---|---|
-| `/` | Capa: imagem, o que é, como ouvir, último episódio, como funciona com os números da última gravação, o que é aberto, CampsVerso, sugerir | `site/index.html`, `site/capa/` |
+| `/` | Capa: imagem, sugerir um tema, como ouvir, último episódio, como funciona com os números da última gravação, GitHub e CampsVerso | `site/index.html`, `site/capa/` |
 | `/estudio/` | O estúdio, com replay e fichas | `site/estudio/` |
 | `/studio` | Redireciona para `/estudio/` | função do CloudFront |
 | `/sugestao/` | Sugira um tema; por e-mail até o formulário (S4) | `site/sugestao/index.html` |
@@ -45,7 +45,12 @@ de quem visita. A imagem da capa foi gerada no GPT Image a partir da cena do est
 (escolhida em 01/11 entre sete, refeita com um narrador só, porque o
 programa tem uma voz). O original fica em `privado/capa/`; o site serve
 JPEG em 1672 e 960 px, mais a prévia de 1200×630, e o README usa a de 1672.
-A cena real das 05:15 de 30/10 aparece no "como funciona", ligada ao replay.
+
+A ordem da capa, revista em 01/11: abertura com a ilustração; **Fale com o
+estúdio** logo abaixo, em destaque, com o campo do tema na própria capa (até
+o S4, o botão abre o e-mail de quem visita com o texto pronto); ouvir e
+último episódio; como funciona, com os números da última gravação; e o
+GitHub, com o CampsCast e o CampsVerso lado a lado.
 
 ## Os personagens
 
