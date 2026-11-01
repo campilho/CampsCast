@@ -279,7 +279,14 @@ function atualizaCamada(q) {
     if (it.medir || it.maxW !== maxW || Math.abs((it.disp ?? 0) - disp) > 10) {
       it.el.style.setProperty("--max", maxW + "px");
       it.el.style.setProperty("--linhas", 8);
+      it.el.classList.remove("sem-pe");
       it.w = it.el.offsetWidth; it.h = it.el.offsetHeight;
+      // Sala apertada: o rodapé sai antes do texto encolher, porque só repete a
+      // origem que o cabeçalho já diz. Na portaria, com ele, sobrava "No ar desde as…".
+      if (it.h > disp && it.el.querySelector(".balao-pe")) {
+        it.el.classList.add("sem-pe");
+        it.w = it.el.offsetWidth; it.h = it.el.offsetHeight;
+      }
       if (it.h > disp && disp > 40) {
         const linhas = clamp(Math.floor((disp - (it.h - it.el.querySelector(".balao-txt").offsetHeight) - 4) / 18), 1, 8);
         it.el.style.setProperty("--linhas", linhas);

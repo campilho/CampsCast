@@ -155,7 +155,7 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .o-numeros .balao-pe, .o-visitante .balao-pe { display: block; margin-top: 5px; font: 11px/1.3 var(--f-mono); color: var(--balao-mudo); }
 .balao.o-sistema { background: #fff6e0; }
 .balao.o-visitante { border-color: #0d7a3c; }
-.balao-pe { display: none; }
+.balao-pe, .balao.sem-pe .balao-pe { display: none; }
 .balao-nota { display: block; margin-top: 6px; padding-top: 5px; border-top: 1px dashed #9aa1ad; font-size: 12.5px; }
 .balao-nota b, .fita .nota-log b { font: 700 10px/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; margin-right: 5px; color: var(--balao-mudo); }
 .ponto { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--cor, var(--mudo)); flex: none; box-shadow: 0 0 0 1.5px rgba(0, 0, 0, .25); }

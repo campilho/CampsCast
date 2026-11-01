@@ -2466,6 +2466,29 @@ else
   bad "ensaio: $ENS_OK | rc do commit que já tem o dia: $RC_FEITO"
 fi
 
+# --------------------------------------------------------------------- site
+# A página de privacidade promete "sem rastreamento". Fonte, estilo ou script
+# vindo de outro servidor entrega o IP de quem visita; em 01/11 todas as
+# páginas pediam as fontes ao Google. Link para clicar (<a>) não conta.
+FORA="$(python3 - <<'PY' 2>&1
+import pathlib, re
+achados = []
+for p in sorted(pathlib.Path("site").rglob("*.html")):
+    for m in re.finditer(r"<(link|script)\b[^>]*\b(href|src)\s*=\s*[\"']?(https?:)?//[^\s\"'>]+",
+                         p.read_text(encoding="utf-8"), flags=re.I):
+        achados.append(f"{p}: {m.group(0)}")
+for p in sorted(pathlib.Path("site").rglob("*.css")):
+    for m in re.finditer(r"(@import|url\()\s*[\"']?(https?:)?//[^\s\"')]+", p.read_text(encoding="utf-8"), flags=re.I):
+        achados.append(f"{p}: {m.group(0)}")
+print("ok" if not achados else "\n".join(achados))
+PY
+)"
+if [[ "$FORA" == "ok" ]]; then
+  ok "site: nenhuma página carrega fonte, estilo ou script de outro servidor"
+else
+  bad "site carrega coisa de fora: $FORA"
+fi
+
 # ------------------------------------------------------------------- resultado
 printf '\n\033[1m%s\033[0m\n' "Resultado: $PASS ok, $FAIL falha(s)"
 [[ $FAIL -eq 0 ]] || exit 1

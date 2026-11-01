@@ -24,6 +24,7 @@ Para promover: renomear `novo.html` para `index.html` (o protótipo atual pode v
 | `app.js` | liga dados → motor → cena → página: balões, registro, barra de status, ficha, replay, formulário, minimapa |
 | `folha.html` | ferramenta: todos os quadros dos sprites (`?id=jornalista&estados=trabalhando&k=6`) |
 | `cena3d.js` | 3D, em pausa: só por `?vista=3d`, sem trabalho novo |
+| `../fontes/` | as três fontes (OFL), servidas pelo próprio site: pedi-las ao Google entregaria o IP de quem visita. Vale para `index.html`, `novo.html` e `privacidade.html` |
 
 ## O que mudou nesta rodada (acabamento, 01/11)
 
@@ -37,6 +38,7 @@ Para promover: renomear `novo.html` para `index.html` (o protótipo atual pode v
 - "No estúdio agora" virou o **registro**: hora, etiqueta da origem (com cor e texto), personagem e texto inteiro, mais a nota "no log" quando houver. Legenda embaixo. No replay, clicar num evento leva a linha do tempo até ele. No computador fica ao lado da cena; no celular, embaixo.
 - **Barra de status** sob a cena, só com dado do JSON: na gravação e no replay, capítulo, páginas lidas, páginas que não abriram e buscas, contadas dos eventos até aquele ponto; no fim, custo de modelo e créditos de voz (`execucao`). Fora da gravação: próxima gravação com contagem regressiva (de `agenda.proximos`) e "no ar desde".
 - Balão com mais de ~90 caracteres é cortado no último espaço, com "…". O texto inteiro fica no registro e na ficha.
+- Em sala apertada (a portaria), o rodapé "montado com os números do dia" sai antes de o texto encolher: o cabeçalho já diz a origem. Com a cena em 640 px (janela entre ~1150 e ~1270 px em tela retina), os balões ainda ficam com uma linha.
 
 **Ficha**
 - Editor: os 10 temas, cada um com o estado e a data, em blocos que abrem. Fios com a contagem do arquivo de hoje (o 19 do café segue marcado como "números do dia"). Backlog vazio aparece como vazio.
