@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><title>Folha de personagens · CampsCast</title>
+<!-- Ferramenta de desenho: mostra os sprites que o sprites.js gera.
+     ?id=jornalista&estados=parado,trabalhando,cafe,congelado&k=5&fundo=transparente -->
+<style>body{margin:0;background:#e9ecef}canvas{image-rendering:pixelated;display:block}</style></head>
+<body><canvas id="c"></canvas>
+<script type="module">
+import { sprite, PERSONAS, QUADROS, SW, SH, PE } from "./sprites.js";
+const q = new URLSearchParams(location.search);
+const ids = q.get("id") ? q.get("id").split(",") : Object.keys(PERSONAS);
+const est = q.get("estados") ? q.get("estados").split(",").map(e => [e, 0]) : Object.entries(QUADROS).flatMap(([e, n]) => Array.from({ length: n }, (_, f) => [e, f]));
+const k = +(q.get("k") || 4), fundo = q.get("fundo") || "#e9ecef", cw = +(q.get("cw") || 48), ch = 62;
+const c = document.getElementById("c"); c.width = est.length * cw; c.height = ids.length * ch;
+c.style.width = c.width * k + "px"; c.style.height = c.height * k + "px";
+const x = c.getContext("2d");
+if (fundo !== "transparente") { x.fillStyle = fundo; x.fillRect(0, 0, c.width, c.height); } else document.body.style.background = "transparent";
+ids.forEach((id, j) => est.forEach(([e, f], i) => {
+  const ox = i * cw + (cw - SW) / 2, oy = j * ch + 3;
+  x.fillStyle = "rgba(10,10,20,.22)"; x.fillRect(ox + 10, oy + PE + 1, 21, 2); x.fillRect(ox + 13, oy + PE + 3, 15, 1);
+  x.drawImage(sprite(id, e, f, false, e === "andando" && id === "vigia" ? { lanternaAlta: true } : {}), ox, oy);
+}));
+document.title += " ok";
+</script></body></html>

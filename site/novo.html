@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CampsCast · o estúdio</title>
+<meta name="description" content="Podcast diário de IA em português. Um agente pesquisa, escreve e narra; o site é o estúdio, com os dados reais de cada gravação.">
+<meta name="theme-color" content="#050a07">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;700&family=VT323&display=swap">
+<link rel="stylesheet" href="novo/estilo.css">
+<!-- O 3D só baixa o three.js quando alguém pede "ver em 3D". -->
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.min.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+
+<header class="topo gutter">
+  <div class="largura">
+    <a class="marca" href="./" aria-label="CampsCast, início">
+      <span class="capa" aria-hidden="true">&gt;CC<i></i></span>
+      <span><strong>CampsCast</strong><span class="sub">Podcast diário de IA, pesquisado, escrito e narrado por agentes</span></span>
+    </a>
+    <div class="relogio">
+      <div class="hora" id="hora"><small id="hora-dia">—</small><span id="hora-hhmm">--:--</span><span class="fuso" id="hora-fuso">Horário de São Paulo</span></div>
+      <p class="estado" id="estado" aria-live="polite">Abrindo o estúdio…</p>
+    </div>
+    <div class="acoes">
+      <button class="btn btn-crt" id="btn-replay" type="button" aria-pressed="false">
+        <svg class="icone" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>
+        <span class="rotulo-replay">Replay da gravação</span>
+      </button>
+      <a class="btn btn-crt-linha" id="link-spotify" href="https://open.spotify.com/show/5toSeNQlZxjbCAFPA1gAuJ" target="_blank" rel="noopener">
+        <svg class="icone" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 9.5V8a5.5 5.5 0 0 1 11 0v1.5M2.5 9.5h2v4h-2zM11.5 9.5h2v4h-2z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        Ouvir no Spotify
+      </a>
+    </div>
+  </div>
+</header>
+
+<section class="faixa-replay gutter" id="faixa-replay" hidden aria-label="Replay da gravação">
+  <div class="largura">
+    <span class="selo">REPLAY</span>
+    <p class="replay-quando" id="replay-quando">—</p>
+    <button class="ctl ctl-sair" id="btn-sair" type="button" aria-label="Voltar ao vivo">
+      <svg class="icone" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span class="sair-txt">Voltar ao vivo</span>
+    </button>
+    <button class="ctl ctl-play" id="btn-play" type="button" aria-label="Pausar"></button>
+    <span class="replay-hora" id="replay-hora">--:--:--</span>
+    <div class="trilha-caixa">
+      <input type="range" id="trilha" min="0" max="1000" step="1" value="0" aria-label="Momento da gravação" aria-valuetext="">
+      <div class="marcas" id="marcas" aria-hidden="true"></div>
+    </div>
+    <div class="velocidades" role="group" aria-label="Velocidade do replay" id="velocidades"></div>
+    <ul class="capitulos" id="capitulos" aria-label="Capítulos"></ul>
+    <label class="sr" for="cap-select">Capítulo</label>
+    <select class="cap-select" id="cap-select"></select>
+  </div>
+</section>
+
+<main>
+  <section class="estudio gutter" aria-labelledby="titulo-estudio">
+    <div class="largura largura-estudio">
+      <h1 class="sr" id="titulo-estudio">O estúdio do CampsCast</h1>
+      <div class="estudio-barra">
+        <div class="periodo"><span class="chip" id="chip" data-p="">—</span><p id="periodo-desc"></p></div>
+        <button type="button" class="btn btn-sec btn-2d" id="ver-2d" hidden>Voltar ao 2D</button>
+      </div>
+      <div class="estudio-grade">
+        <div class="coluna-cena">
+          <div class="moldura" id="moldura">
+            <div class="palco" id="palco">
+              <div class="camada" id="camada" aria-label="Personagens do estúdio"></div>
+              <p class="aviso-3d" id="aviso-3d" hidden></p>
+            </div>
+          </div>
+          <div class="hud" id="hud" aria-label="Barra de status do estúdio"></div>
+          <div class="nav-celular" id="nav-celular">
+            <button class="ctl-sala" type="button" id="sala-ant" aria-label="Sala anterior">‹</button>
+            <div class="minimapa" id="minimapa"><canvas id="minimapa-canvas" width="320" height="180" aria-hidden="true"></canvas></div>
+            <button class="ctl-sala" type="button" id="sala-prox" aria-label="Próxima sala">›</button>
+          </div>
+          <p class="sala-atual" id="sala-atual" hidden><span id="sala-nome">—</span><button type="button" id="btn-seguir" hidden>Seguir a ação</button></p>
+        </div>
+
+        <aside class="registro" id="registro" aria-labelledby="registro-titulo">
+          <div class="registro-cab">
+            <h2 id="registro-titulo">Registro</h2>
+            <span class="registro-sub" id="registro-sub">No estúdio agora</span>
+          </div>
+          <ol class="registro-lista" id="registro-lista"></ol>
+          <div class="registro-pe">
+            <ul class="legenda-origens" aria-label="Legenda das origens">
+              <li class="o-agente"><i></i>agente</li><li class="o-ferramenta"><i></i>ferramenta</li><li class="o-log"><i></i>log</li>
+              <li class="o-numeros"><i></i>números</li><li class="o-agenda"><i></i>agenda</li><li class="o-sistema"><i></i>sistema</li><li class="o-visitante"><i></i>site</li>
+            </ul>
+            <p class="registro-nota" id="registro-nota"></p>
+            <details class="legenda">
+              <summary>Como ler</summary>
+              <dl>
+                <dt>agente</dt><dd><i>“Frase escrita pelo próprio agente”</i>, literal, em itálico e entre aspas.</dd>
+                <dt>ferramenta</dt><dd>O que ele fez, lido da transcrição: “Lendo mistral.ai/news”.</dd>
+                <dt>log</dt><dd>Linha do orquestrador, em fonte de terminal.</dd>
+                <dt>no log</dt><dd>Nota que o Jornalista escreveu sobre a página no log de pesquisa.</dd>
+                <dt>números</dt><dd>Conversa do café, montada com os números do dia.</dd>
+                <dt>agenda</dt><dd>O Vigia lendo a agenda.</dd>
+                <dt>sistema</dt><dd>Aviso do próprio Claude Code.</dd>
+                <dt>site</dt><dd>Reação do estúdio à sugestão que você mandou.</dd>
+              </dl>
+              <p class="nota">Não existe balão de pensamento: o raciocínio do modelo não fica registrado. Balões longos são cortados em uns 90 caracteres; o texto inteiro fica aqui e na ficha.</p>
+            </details>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="gutter" aria-label="Episódio e sugestões"><div class="largura painel">
+    <article class="cartao c-episodio" aria-labelledby="ep-titulo">
+      <p class="rotulo">Último episódio</p>
+      <div class="ep-num" id="ep-num">—</div>
+      <p class="ep-meta" id="ep-meta"></p>
+      <h2 id="ep-titulo">—</h2>
+      <ol class="pautas" id="ep-pautas"></ol>
+      <div class="linha-botoes">
+        <a class="btn btn-acao" id="ep-spotify" href="https://open.spotify.com/show/5toSeNQlZxjbCAFPA1gAuJ" target="_blank" rel="noopener">Ouvir no Spotify</a>
+        <button class="btn btn-sec" type="button" id="ep-roteiro">Ler o roteiro</button>
+      </div>
+    </article>
+
+    <article class="cartao c-sugira" id="sugira" aria-labelledby="sugira-titulo">
+      <p class="rotulo">Fale com o estúdio</p>
+      <h2 id="sugira-titulo">Sugira um tema</h2>
+      <p class="nota" style="margin-top:0">Que assunto de IA você gostaria de ouvir mais vezes no CampsCast? O Produtor recebe sua mensagem e leva ao Editor, que avalia.</p>
+      <form id="form-tema" novalidate>
+        <label for="tema">Seu tema</label>
+        <textarea id="tema" name="tema" maxlength="1000" required aria-describedby="tema-conta"></textarea>
+        <div class="contador" id="tema-conta">0 / 1.000</div>
+        <label for="email">E-mail <span style="font-weight:400;color:var(--mudo)">(opcional, só para resposta)</span></label>
+        <input id="email" name="email" type="email" autocomplete="email" inputmode="email">
+        <div class="isca" aria-hidden="true"><label for="site">Não preencha</label><input id="site" name="site" type="text" tabindex="-1" autocomplete="off"></div>
+        <label class="check"><input type="checkbox" id="privacidade" required> <span>Li e concordo com a <a href="privacidade.html">política de privacidade</a>. Só o texto chega ao Editor.</span></label>
+        <button class="btn btn-acao" type="submit" style="justify-self:start">Enviar ao estúdio</button>
+        <p class="resposta" id="resposta" role="status" hidden></p>
+      </form>
+    </article>
+  </div></section>
+</main>
+
+<footer class="rodape gutter">
+  <div class="largura">
+    <div class="prototipo" id="prototipo">
+      <strong>Só no protótipo</strong>
+      <span id="proto-dados">dados reais de uma gravação.</span>
+      <span>Ver o estúdio:</span>
+      <span class="sim" role="group" aria-label="Simular horário">
+        <button type="button" data-sim="agora" aria-pressed="true">agora</button>
+        <button type="button" data-sim="03:00" aria-pressed="false">03:00</button>
+        <button type="button" data-sim="05:07" aria-pressed="false">05:07</button>
+        <button type="button" data-sim="13:00" aria-pressed="false">13:00</button>
+        <button type="button" data-sim="folga" aria-pressed="false">dia de folga</button>
+      </span>
+    </div>
+    <div class="rodape-linha">
+      <div class="alternar" role="group" aria-label="Tema da página">
+        <button type="button" data-tema="auto" aria-pressed="true">Tema automático</button>
+        <button type="button" data-tema="light" aria-pressed="false">Claro</button>
+        <button type="button" data-tema="dark" aria-pressed="false">Escuro</button>
+      </div>
+    </div>
+    <p style="margin:0">Feito por agentes de IA, com os dados de cada gravação. Sem cookies e sem rastreamento. Código em <a href="https://github.com/campilho/CampsCast">github.com/campilho/CampsCast</a>.</p>
+  </div>
+</footer>
+
+<dialog class="ficha" id="ficha" aria-labelledby="ficha-nome"></dialog>
+<p class="sr" id="anuncio" aria-live="polite"></p>
+
+<script type="module" src="novo/app.js"></script>
+</body>
+</html>

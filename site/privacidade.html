@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Privacidade · CampsCast</title>
+<meta name="description" content="O que o formulário “Sugira um tema” do CampsCast coleta, para quê e onde fica.">
+<meta name="theme-color" content="#050a07">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;700&family=VT323&display=swap">
+<link rel="stylesheet" href="novo/estilo.css">
+<style>
+  .texto { max-width: 760px; margin: 0 auto; padding-block: 28px 48px; }
+  .texto h1 { font-size: 34px; line-height: 1.15; margin: 0 0 8px; }
+  .texto h2 { font-size: 21px; margin: 32px 0 8px; }
+  .texto p, .texto li { font-size: 17px; line-height: 1.6; color: var(--tinta-2); }
+  .texto ul { padding-left: 1.2em; }
+  .texto li + li { margin-top: 6px; }
+  .definir { background: #f2c230; color: #1d1d1d; font-weight: 700; padding: 1px 6px; border-radius: 3px; white-space: nowrap; }
+  .aviso-prototipo { border: 1px dashed var(--linha-forte); background: var(--sup); border-radius: var(--raio); padding: 14px 16px; font-size: 15.5px; color: var(--tinta-2); }
+  .resumo { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 20px; }
+  .resumo div { background: var(--sup); border: 1px solid var(--linha); border-radius: var(--raio); padding: 14px 16px; }
+  .resumo b { display: block; font: 700 11.5px/1.3 var(--f-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--mudo); margin-bottom: 6px; }
+  .resumo span { font-size: 15.5px; }
+</style>
+</head>
+<body>
+<header class="topo gutter">
+  <div class="largura">
+    <a class="marca" href="novo.html" aria-label="CampsCast, voltar ao estúdio">
+      <span class="capa" aria-hidden="true">&gt;CC<i></i></span>
+      <span><strong>CampsCast</strong><span class="sub">Privacidade do formulário “Sugira um tema”</span></span>
+    </a>
+    <div class="acoes"><a class="btn btn-crt-linha" href="novo.html">Voltar ao estúdio</a></div>
+  </div>
+</header>
+
+<main class="gutter">
+  <article class="texto">
+    <p class="rotulo">Privacidade</p>
+    <h1>O que acontece com a sua sugestão</h1>
+    <p>O site do CampsCast não usa cookies e não tem rastreamento. A única coisa que ele pede a quem visita é o formulário “Sugira um tema”. Esta página diz o que ele coleta, para quê e onde fica.</p>
+
+    <p class="aviso-prototipo"><b>Estado atual:</b> o formulário ainda é um protótipo e não envia nada. Quando o envio de verdade existir, vale o que está descrito abaixo.</p>
+
+    <div class="resumo">
+      <div><b>Coleta</b><span>O tema que você escrever. O e-mail, só se você quiser.</span></div>
+      <div><b>Para quê</b><span>O Editor avaliar o tema. O e-mail serve só para uma resposta.</span></div>
+      <div><b>Onde</b><span>Num servidor privado na AWS. Nunca no repositório público.</span></div>
+    </div>
+
+    <h2>O que o formulário coleta</h2>
+    <ul>
+      <li><b>O tema</b> (obrigatório, até 1.000 caracteres): o assunto de IA que você gostaria de ouvir mais vezes. Por favor, não escreva dados pessoais nesse campo.</li>
+      <li><b>O e-mail</b> (opcional): só para responder à sua sugestão, se você quiser resposta.</li>
+      <li><b>A concordância</b> com esta página.</li>
+      <li>Um campo invisível contra robôs. Ele não guarda nada sobre você: quem preenche esse campo é tratado como robô.</li>
+    </ul>
+
+    <h2>Para que serve</h2>
+    <ul>
+      <li>O Editor do CampsCast (um agente de IA) avalia o tema. <b>O agente recebe só o texto do tema, sem nome e sem e-mail.</b></li>
+      <li>A sugestão pode orientar a pesquisa de um episódio. Se virar tema novo para o programa, o texto do tema (sem nome e sem e-mail) pode entrar na lista de temas sugeridos do projeto, marcado “por ouvinte”, e essa lista fica no repositório público do projeto. Quem decide os temas é o autor.</li>
+      <li>O autor recebe um aviso por e-mail de que chegou uma sugestão.</li>
+      <li>O e-mail, se você deixar, serve apenas para responder à sua sugestão.</li>
+    </ul>
+
+    <h2>Onde fica</h2>
+    <p>A mensagem fica guardada num servidor privado na AWS, separado do site e fora do repositório público do projeto no GitHub. Dados pessoais nunca vão para o repositório.</p>
+
+    <h2>Cookies e rastreamento</h2>
+    <p>O site não usa cookies, não usa ferramentas de análise e não rastreia quem visita. A audiência do podcast é medida no Spotify, fora deste site.</p>
+
+    <h2>Por quanto tempo</h2>
+    <p>Prazo de guarda das mensagens e dos e-mails: <span class="definir">[a definir pelo autor]</span></p>
+
+    <h2>Seus direitos e contato</h2>
+    <p>Pela LGPD, você pode pedir para ver, corrigir ou apagar o que enviou. Responsável e contato: <span class="definir">[a definir pelo autor]</span></p>
+
+    <p class="nota">Última revisão desta página: <span class="definir">[a definir pelo autor]</span></p>
+  </article>
+</main>
+
+<footer class="rodape gutter">
+  <div class="largura"><p style="margin:0">Sem cookies e sem rastreamento. Código em <a href="https://github.com/campilho/CampsCast">github.com/campilho/CampsCast</a>.</p></div>
+</footer>
+</body>
+</html>
