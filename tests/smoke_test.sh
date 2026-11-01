@@ -2372,6 +2372,38 @@ else
   bad "prompt e parser do log de pesquisa divergem: $FMT"
 fi
 
+# Os temas do site saem de memoria/temas.md. Em 30/10 os dez viraram um só,
+# com o arquivo inteiro no título do T-01.
+TEM="$(python3 - <<'PY' 2>&1
+import sys
+sys.path.insert(0, "scripts")
+from estudio import le_temas
+t = """## T-NN · <título>
+- estado (AAAA-MM-DD): <onde está>
+
+---
+
+## T-01 · Primeiro
+- desde: 2026-09-08 (ep. 8)
+- estado (2026-10-26): parado.
+
+## T-02 · Segundo
+- estado (2026-10-30): andou.
+"""
+temas = le_temas(t)
+assert [x["id"] for x in temas] == ["T-01", "T-02"], temas
+assert [x["titulo"] for x in temas] == ["Primeiro", "Segundo"], temas
+assert [x["estado_em"] for x in temas] == ["2026-10-26", "2026-10-30"], temas
+assert temas[1]["estado"] == "andou.", temas
+print("ok")
+PY
+)"
+if [[ "$TEM" == "ok" ]]; then
+  ok "temas do site: um por título, cada um com seu estado"
+else
+  bad "temas do site colados ou sem estado: $TEM"
+fi
+
 # ------------------------------------------------------------------- resultado
 printf '\n\033[1m%s\033[0m\n' "Resultado: $PASS ok, $FAIL falha(s)"
 [[ $FAIL -eq 0 ]] || exit 1

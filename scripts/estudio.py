@@ -476,13 +476,19 @@ def endereco(url: str) -> str:
     return u.rstrip("/").rstrip(".,;:")
 
 
-def memoria() -> dict:
+def le_temas(t: str) -> list:
+    # O título vai até o fim da linha: com re.S, um (.+) engolia o arquivo
+    # inteiro e os dez temas viravam um só.
     temas = []
-    t = (ROOT / "memoria" / "temas.md").read_text(encoding="utf-8")
-    for m in re.finditer(r"^## (T-\d+) · (.+)\n(.*?)(?=^## |\Z)", t, flags=re.M | re.S):
+    for m in re.finditer(r"^## (T-\d+) · ([^\n]+)\n(.*?)(?=^## |\Z)", t, flags=re.M | re.S):
         est = re.search(r"^- estado \((\S+)\): (.+)$", m.group(3), flags=re.M)
         temas.append({"id": m.group(1), "titulo": m.group(2).strip(),
                       "estado_em": est.group(1) if est else None, "estado": est.group(2).strip() if est else ""})
+    return temas
+
+
+def memoria() -> dict:
+    temas = le_temas((ROOT / "memoria" / "temas.md").read_text(encoding="utf-8"))
     f = (ROOT / "memoria" / "fios.md").read_text(encoding="utf-8")
     fios = [{"id": m.group(1), "titulo": m.group(2).strip()}
             for m in re.finditer(r"^## (F-\d+) · (.+)$", f, flags=re.M)]
