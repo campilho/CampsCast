@@ -43,7 +43,8 @@ As páginas usam caminhos absolutos, e as fontes vêm de `/fontes/`. A capa e
 as páginas de texto são escuras, com o verde do `>CC`; o estúdio segue o tema
 de quem visita. A imagem da capa foi gerada no GPT Image a partir da cena do estúdio
 (escolhida em 01/11 entre sete, refeita com um narrador só, porque o
-programa tem uma voz). O original fica em `privado/capa/`; o site serve
+programa tem uma voz, e com uma copa de equipe no lugar de uma cafeteria
+de balcão, que parecia comércio). O original fica em `privado/capa/`; o site serve
 JPEG em 1672 e 960 px, mais a prévia de 1200×630, e o README usa a de 1672.
 
 A ordem da capa, revista em 01/11: abertura com a ilustração; **Fale com o
