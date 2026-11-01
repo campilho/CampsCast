@@ -1,5 +1,7 @@
 # 🎙️ CampsCast
 
+<img src="site/capa/capa-1672.jpg" alt="Ilustração em pixel art do estúdio do CampsCast: um prédio em corte ao amanhecer, com São Paulo e a Ponte Estaiada ao fundo, cada agente no seu posto." width="100%">
+
 > Briefing diário de IA (dias úteis), pesquisado, roteirizado, narrado e
 > publicado de forma autônoma por agentes de IA.
 > Roda localmente num MacBook Pro M3, com Claude Code em modo headless,

@@ -80,6 +80,7 @@ p { margin: 0 0 14px; color: var(--tinta-2); }
 .vitrine img { display: block; width: 100%; height: auto; }
 .vitrine img.pixel { image-rendering: pixelated; }
 .vitrine figcaption { font-size: 14.5px; color: var(--mudo); max-width: 720px; margin: 14px auto 0; }
+.vitrine.real { margin-top: 28px; text-align: center; }
 
 /* ---------------------------------------------------------------- seções */
 main > section:not(.hero) { padding-block: clamp(48px, 7vw, 88px); }

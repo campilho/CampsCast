@@ -12,9 +12,10 @@
 <meta property="og:title" content="CampsCast · podcast diário de IA, feito por agentes">
 <meta property="og:description" content="Um agente pesquisa, escreve e narra as notícias de IA da véspera, todo dia útil às 5 da manhã. Veja o estúdio trabalhando.">
 <meta property="og:url" content="https://campscast.com.br/">
-<meta property="og:image" content="https://campscast.com.br/capa/estudio-no-ar.png">
-<meta property="og:image:width" content="2560">
-<meta property="og:image:height" content="1440">
+<meta property="og:image" content="https://campscast.com.br/capa/capa-og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Ilustração em pixel art do estúdio do CampsCast, um prédio em corte ao amanhecer em São Paulo.">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="alternate" type="application/rss+xml" title="CampsCast" href="/feed.xml">
 <link rel="stylesheet" href="/fontes/fontes.css">
@@ -51,10 +52,11 @@
       </div>
       <figure class="vitrine">
         <a href="/estudio/" aria-label="Entrar no estúdio">
-          <img class="pixel" src="/capa/estudio-no-ar.png" width="2560" height="1440"
-               alt="O estúdio do CampsCast em pixel art, em corte: redação, cabine com a luz ON AIR acesa, arquivo, portaria, café e técnica, cada personagem no seu posto.">
+          <img src="/capa/capa-1672.jpg" srcset="/capa/capa-960.jpg 960w, /capa/capa-1672.jpg 1672w"
+               sizes="(max-width: 1192px) calc(100vw - 32px), 1160px" width="1672" height="941" fetchpriority="high"
+               alt="Ilustração em pixel art do estúdio do CampsCast: um prédio de dois andares em corte, ao amanhecer, com São Paulo e a Ponte Estaiada ao fundo. Em cima, a redação, a cabine com o narrador e o arquivo; embaixo, a portaria com o vigia de lanterna, o café e a sala dos servidores.">
         </a>
-        <figcaption>O estúdio às 05:15 de 30/10, com o Locutor no ar. Cada personagem é uma etapa do processo, e o que eles dizem no site sai do registro da gravação.</figcaption>
+        <figcaption>Ilustração gerada com IA a partir da cena do estúdio. Lá dentro, o estúdio de verdade mostra cada gravação com os dados reais.</figcaption>
       </figure>
     </div>
   </section>
@@ -104,6 +106,13 @@
         <li><b>Locutor</b><span>Narra com uma cópia sintética da voz do autor, feita por ele e com o consentimento dele.</span><em id="n-voz"></em></li>
         <li><b>Produtor</b><span>Publica no feed, que chega ao Spotify, à Apple e aos outros aplicativos.</span><em id="n-publica"></em></li>
       </ol>
+      <figure class="vitrine real">
+        <a href="/estudio/?replay=1" aria-label="Ver a gravação no estúdio">
+          <img class="pixel" src="/capa/estudio-no-ar.png" width="2560" height="1440" loading="lazy"
+               alt="A cena real do estúdio em pixel art às 05:15 de 30/10: redação, cabine com a luz ON AIR acesa, arquivo, portaria, café e técnica, cada personagem no seu posto.">
+        </a>
+        <figcaption>O estúdio de verdade às 05:15 de 30/10, com o Locutor no ar. O que os personagens dizem no site sai do registro da gravação, e o replay mostra a gravação inteira.</figcaption>
+      </figure>
     </div>
   </section>
 
