@@ -56,8 +56,12 @@ provas. Claude Code headless no Mac, em sombra, uma mudança por vez.
       a manchete igual e as outras **duas pautas diferentes** do que foi ao ar
       (ver `docs/aprendizados.md`, "Duas execuções do mesmo dia"). O log no
       formato novo saiu certo e o `estudio.py` leu (30 de 32 leituras com
-      nota, 4 escolhas). Próximo: rodar o mesmo dia mais duas vezes, sem
-      mudar nada, para medir quanto varia sozinho antes de comparar variantes
+      nota, 4 escolhas). Mais dois ensaios do mesmo dia em 02/11: a
+      manchete sempre igual, a vaga do backlog em 3 de 4, a outra vaga com 4
+      escolhas diferentes; custo entre US$ 3,66 e 3,80 nos três ensaios, uns
+      20% abaixo do que foi ao ar (tabela em aprendizados). Próximo, se
+      quisermos separar código de web: um ensaio com `--codigo` apontando para
+      o commit que rodou em 29/10
 - [ ] **Agente de produção carrega a memória das sessões de desenvolvimento** —
       a transcrição de 30/10 tem o `MEMORY.md` de `~/.claude/projects/` e as
       instruções de memória automática, além do `CLAUDE.md`. Mesmo vazamento

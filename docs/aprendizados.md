@@ -80,17 +80,29 @@ preciso gravar a mesma fala, na mesma distância, ao mesmo tempo.
 
 ### Duas execuções do mesmo dia escolhem pautas diferentes
 
-O primeiro ensaio (`scripts/ensaio.sh`, 02/11) refez 29/10 com o mesmo estado
-e o mesmo código. A manchete foi a mesma, o Gemini 4 Carbon; as outras duas
-vagas, não: bancos do Canadá e o Octoverse do GitHub, contra a carta dos
-democratas da Câmara e o teste da Cohere com o Qwen, que tinham ido ao ar. As
-duas escolhas estão justificadas no log, e a janela foi respeitada. Custo e
-turnos também mudaram (US$ 3,78 e 84 contra 4,62 e 110). Uma amostra só, e a
-web de quatro dias depois não é a mesma; mas basta para a consequência: **uma
-variante do agente não se julga por "escolheu as mesmas pautas", nem por um
-custo de uma execução.** Primeiro mede-se quanto o mesmo agente varia sozinho,
-rodando o mesmo dia algumas vezes, e a comparação entre variantes usa uma
-rubrica de qualidade, como a do verificador.
+Em 02/11, três ensaios (`scripts/ensaio.sh`) refizeram 29/10 com o mesmo
+estado e o código do dia, em sequência:
+
+| | manchete | vaga 2 | vaga 3 | turnos | US$ | buscas | páginas |
+|---|---|---|---|---|---|---|---|
+| ao ar, 29/10 | Gemini 4 Carbon | carta dos democratas da Câmara | Cohere e o Qwen (backlog) | 110 | 4,62 | 18 | 36 |
+| ensaio 1 | Gemini 4 Carbon | bancos do Canadá | Octoverse do GitHub | 84 | 3,78 | 14 | 31 |
+| ensaio 2 | Gemini 4 Carbon | Octoverse do GitHub | Cohere e o Qwen | 81 | 3,66 | 9 | 26 |
+| ensaio 3 | Gemini 4 Carbon | lei de Nova York sobre chatbots de companhia | Cohere e o Qwen | 87 | 3,80 | 13 | 29 |
+
+A manchete se repetiu nas quatro; a pauta do backlog, em três; a outra vaga
+teve quatro escolhas diferentes. Todas justificadas no log, todas dentro da
+janela: em dia com várias pautas boas, a segunda e a terceira vaga são quase
+um sorteio entre elas. Já o custo quase não varia de um ensaio para outro
+(US$ 3,66 a 3,80, 81 a 87 turnos, 9,3 a 9,8 minutos); a execução que foi ao ar
+fica uns 20% acima dos três. Isso é diferença de condição, não ruído: o código
+mudou depois de 29/10 (três commits no prompt, um deles mandando ler a OpenAI
+pelo feed) e a web de quatro dias depois não é a mesma.
+
+Consequência para avaliar variantes do agente: **custo e turnos dá para
+comparar com poucas execuções, porque variam uns 3%; escolha de pautas, não**
+— "escolheu as mesmas pautas" mede sorte. A comparação de qualidade precisa
+de uma rubrica, como a do verificador, e de mais de uma execução por lado.
 
 ### A memória precisa de duas camadas
 
