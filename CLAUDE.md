@@ -4,7 +4,7 @@ Podcast diário de IA em português, escrito e narrado por agentes, publicado em
 dias úteis. Rodando em produção desde 24/08/2026.
 
 > **Antes de mexer em qualquer coisa:** `bash tests/smoke_test.sh`
-> São 161 testes, offline, sem custo. Rode antes e depois de alterar.
+> São 163 testes, offline, sem custo. Rode antes e depois de alterar.
 
 ## Regra número um
 
@@ -69,6 +69,7 @@ Agregador serve para descobrir, nunca para citar.
 | `relatorio.py` | relatório semanal do autor: decisões pendentes, temas, fios, fontes que falharam, avisos; `--semana`, `--fecha-semana` |
 | `confere_roteiro.py` | confere o que a abertura e a ficha não podem deixar de dizer; registra, não bloqueia |
 | `estudio.py` | dados do site: a execução evento a evento, por personagem, e as instruções de cada um; `--orfaos` |
+| `publica_site.py` | sobe o site (capa, estúdio, sugestão, privacidade) para o bucket, sem tocar no podcast; `--dry-run` |
 
 ### Diagnóstico e manutenção
 | Script | O que faz |
@@ -106,6 +107,7 @@ Agregador serve para descobrir, nunca para citar.
 | `memoria/temas-sugeridos.md` | sugestões de tema (do agente; no futuro, de ouvintes) que o autor aprova ou recusa |
 | `memoria/fios.md` | fios em aberto: promessas, previsões e preocupações à espera de desfecho ([ADR 0008](docs/decisions/0008-memoria-em-camadas.md)) |
 | `prompts/master.md` | o agente |
+| `config/cloudfront-site.js` | função do CloudFront que abre o `index.html` das pastas do site e leva `/studio` ao estúdio; colada à mão no console |
 
 Relatório da semana: comando `/relatorio` (`.claude/commands/relatorio.md`).
 

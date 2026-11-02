@@ -2489,6 +2489,105 @@ else
   bad "site carrega coisa de fora: $FORA"
 fi
 
+# O site sobe para o mesmo bucket do podcast. O publica_site.py não pode
+# escrever em cima do feed, do áudio ou do estado, tem de subir o HTML por
+# último e não pode subir nada que a bucket policy deixe fechado (daria 403 no
+# ar, em silêncio).
+PUB="$(python3 - <<'PY' 2>&1
+import contextlib, io, pathlib, sys, tempfile
+sys.path.insert(0, "scripts")
+import publica_site as ps
+from s3 import bucket_policy
+
+with tempfile.TemporaryDirectory() as d:
+    s = pathlib.Path(d)
+    for nome in ["index.html", "capa/capa.css", "capa/capa-960.jpg", "estudio/index.html", "estudio/app.js",
+                 "estudio/elenco.json", "estudio/ultimo.json", "estudio/2026-10-30.json", "estudio/LEIAME.md",
+                 "estudio/folha.html", "sugestao/index.html", "privacidade/index.html", "fontes/a.woff2",
+                 "fontes/OFL.txt", ".DS_Store", "capa/.DS_Store"]:
+        (s / nome).parent.mkdir(parents=True, exist_ok=True)
+        (s / nome).write_text("x")
+    itens = ps.lista(s)
+    chaves = [c for _, c, _, _ in itens]
+    assert set(chaves) == {"index.html", "capa/capa.css", "capa/capa-960.jpg", "estudio/index.html", "estudio/app.js",
+                           "estudio/elenco.json", "estudio/ultimo.json", "sugestao/index.html",
+                           "privacidade/index.html", "fontes/a.woff2", "fontes/OFL.txt"}, chaves
+    assert chaves[-1] == "index.html" and all(c.endswith(".html") for c in chaves[-4:]), chaves
+    tipos = {c: (t, k) for _, c, t, k in itens}
+    assert tipos["estudio/index.html"] == ("text/html; charset=utf-8", "max-age=300"), tipos
+    assert tipos["fontes/a.woff2"] == ("font/woff2", "max-age=86400"), tipos
+
+    # cada chave que sobe está aberta na policy
+    abertos = bucket_policy("b")["Statement"][1]["Resource"]
+    for c in chaves:
+        assert any(r == f"arn:aws:s3:::b/{c}" or (r.endswith("/*") and f"arn:aws:s3:::b/{c}".startswith(r[:-1]))
+                   for r in abertos), f"{c} sobe mas fica fechado na policy"
+
+    # sobe tudo pelo put dado, na ordem da lista
+    feitos = []
+    with contextlib.redirect_stdout(io.StringIO()):
+        ps.publica(itens, lambda b, k, dados, t, cache_control: feitos.append(k), "b")
+    assert feitos == chaves, feitos
+
+    # sem os dados do estúdio, para antes de subir
+    (s / "estudio/ultimo.json").unlink()
+    try:
+        ps.lista(s); raise AssertionError("subiria sem o ultimo.json")
+    except ps.Recusa as e:
+        assert "estudio.py" in str(e), e
+    (s / "estudio/ultimo.json").write_text("x")
+
+    # arquivo com nome de coisa do podcast: recusa tudo
+    for intruso in ["feed.xml", "audio/2026-10-30.mp3", "estado.json"]:
+        (s / intruso).parent.mkdir(parents=True, exist_ok=True)
+        (s / intruso).write_text("x")
+        try:
+            ps.lista(s); raise AssertionError(f"subiria {intruso}")
+        except ps.Recusa:
+            pass
+        (s / intruso).unlink()
+print("ok")
+PY
+)"
+if [[ "$PUB" == "ok" ]]; then
+  ok "publica_site: não toca no podcast, HTML por último, tudo aberto na policy"
+else
+  bad "publica_site: $PUB"
+fi
+
+# A função do CloudFront roda na frente do feed e dos MP3: tem de deixar passar
+# intacto tudo o que tem extensão. Roda no Node ou no JavaScript do macOS.
+CF_JS="$(mktemp)"
+{ cat config/cloudfront-site.js; cat <<'JS'
+var falhas = [];
+function ev(uri, qs) { return { request: { uri: uri, querystring: qs || {} } }; }
+function confere(nome, obtido, esperado) { if (obtido !== esperado) falhas.push(nome + ": " + obtido); }
+confere("raiz", handler(ev("/")).uri, "/index.html");
+confere("pasta", handler(ev("/estudio/")).uri, "/estudio/index.html");
+confere("sem barra", handler(ev("/estudio", { replay: { value: "1" } })).headers.location.value, "/estudio/?replay=1");
+confere("studio", handler(ev("/studio")).headers.location.value, "/estudio/");
+confere("studio fundo", handler(ev("/studio/x", { sim: { value: "05:07" } })).headers.location.value, "/estudio/?sim=05:07");
+confere("multi", handler(ev("/sugestao", { a: { value: "1", multiValue: [{ value: "1" }, { value: "2" }] } })).headers.location.value, "/sugestao/?a=1&a=2");
+["/feed.xml", "/audio/2026-10-30.mp3", "/cover.jpg", "/estado.json", "/capa/capa.css", "/estudio/ultimo.json"].forEach(function (u) {
+  var r = handler(ev(u)); confere(u, r.uri + "|" + (r.statusCode || ""), u + "|");
+});
+falhas.length ? falhas.join("; ") : "ok";
+JS
+} > "$CF_JS"
+if command -v node >/dev/null 2>&1; then
+  CF="$(node -p "$(cat "$CF_JS")" 2>&1)"
+elif command -v osascript >/dev/null 2>&1; then
+  CF="$(osascript -l JavaScript "$CF_JS" 2>&1)"
+else
+  CF="sem node nem osascript"
+fi
+rm -f "$CF_JS"
+if [[ "$CF" == "ok" ]]; then
+  ok "função do CloudFront: índice das pastas, /studio, e feed e MP3 intactos"
+else
+  bad "função do CloudFront: $CF"
+fi
+
 # ------------------------------------------------------------------- resultado
 printf '\n\033[1m%s\033[0m\n' "Resultado: $PASS ok, $FAIL falha(s)"
 [[ $FAIL -eq 0 ]] || exit 1

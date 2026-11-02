@@ -9,7 +9,7 @@ python3 -m http.server 8765 --directory site
 # http://localhost:8765/estudio/
 ```
 
-Parâmetros só do protótipo: `?sim=03:00|05:07|13:00|folga` (aceita também `HH:MM:SS`), `?replay=1&vel=real|acelerado|rapido&em=05:07:54&pausa=1`, `?ficha=editor&aba=pautas`, `?tema=claro|escuro`, `?vista=3d` (e `&forca3d=1`).
+Parâmetros (os de horário também estão na faixa "Ver em outro horário", no rodapé): `?sim=03:00|05:07|13:00|folga` (aceita também `HH:MM:SS`), `?replay=1&vel=real|acelerado|rapido&em=05:07:54&pausa=1`, `?ficha=editor&aba=pautas`, `?tema=claro|escuro`, `?vista=3d` (e `&forca3d=1`).
 
 Desde 01/11 a página é o estúdio do site, atrás da capa (`site/index.html`). Os caminhos são absolutos (`/estudio/…`, `/fontes/…`), então ela precisa ser servida da raiz.
 

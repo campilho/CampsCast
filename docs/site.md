@@ -297,6 +297,39 @@ história pode virar quadro na parede.
 - **Sem dependências, sem cookies, sem rastreamento.** Nem as fontes vêm de
   fora. A audiência continua medida nos aplicativos de podcast.
 
+### Publicar o site
+
+Uma vez, no console da AWS (depois de um episódio, para sobrar o dia para
+corrigir qualquer coisa antes do seguinte):
+
+1. **Bucket policy:** S3 → bucket → Permissions → Bucket policy, colar a
+   saída de `python3 scripts/s3.py --print-policy`. Ela mantém o que o
+   podcast já abria e acrescenta as pastas do site; sem isso, tudo o que o
+   site sobe dá 403. Conferir depois que ficou a nossa: o CloudFront já
+   reescreveu essa policy uma vez (ver `docs/aprendizados.md`).
+2. **Função:** CloudFront → Functions → criar `campscast-site`, colar
+   `config/cloudfront-site.js`, publicar e associar à distribuição, no
+   comportamento padrão, em *Viewer request*. Ela abre o `index.html` das
+   pastas e leva `/studio` ao estúdio; endereço com extensão passa intacto.
+
+A cada publicação:
+
+```
+python3 scripts/estudio.py
+python3 scripts/publica_site.py --dry-run
+python3 scripts/publica_site.py
+```
+
+O `publica_site.py` sobe páginas, estilos, scripts e dados com cache de 5
+minutos e imagens e fontes com um dia, o HTML por último. Ele para antes de
+subir qualquer coisa se faltar o `ultimo.json` ou se algum arquivo do site
+tiver nome de coisa do podcast (`feed.xml`, `cover.jpg`, `estado.json`,
+`audio/`, `referencias/`).
+
+Conferir no ar: `/`, `/estudio/`, `/estudio` (redireciona), `/studio`,
+`/sugestao/`, `/privacidade/`, e que o `feed.xml` e um MP3 continuam
+respondendo como antes. A prévia do link: o Post Inspector do LinkedIn.
+
 ## Etapas
 
 | Etapa | O quê |

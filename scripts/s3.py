@@ -231,8 +231,15 @@ def _explain(code: int, body: str, bucket: str, region: str) -> str:
 
 # ---------------------------------------------------------------------- main
 # ------------------------------------------------------------------ policies
+# O que o site serve, na raiz do bucket (ver scripts/publica_site.py). Fica
+# fora da policy tudo o que não for página, estilo, script, imagem, fonte ou
+# dado do estúdio.
+CAMINHOS_DO_SITE = ("index.html", "capa/*", "estudio/*", "sugestao/*",
+                    "privacidade/*", "fontes/*")
+
+
 def bucket_policy(bucket: str) -> dict:
-    """Policy de leitura pública, escopada ao que o feed realmente serve.
+    """Policy de leitura pública, escopada ao que o feed e o site servem.
 
     O S3 exige que os ARNs apontem para o MESMO bucket ao qual a policy está
     sendo anexada — deixar um placeholder no JSON produz o erro pouco
@@ -252,6 +259,12 @@ def bucket_policy(bucket: str) -> dict:
                 f"arn:aws:s3:::{bucket}/audio/*",
                 f"arn:aws:s3:::{bucket}/referencias/*",
             ],
+        }, {
+            "Sid": "LeituraPublicaDoSite",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:GetObject",
+            "Resource": [f"arn:aws:s3:::{bucket}/{c}" for c in CAMINHOS_DO_SITE],
         }],
     }
 

@@ -85,7 +85,7 @@ async function carrega() {
   S.c2d = new Cena2D(palco); S.cena = S.c2d;
   S.c2d.configura({ pautas: dia.episodio.pautas, data: dia.data });
   montaEpisodio(); montaReplay(); criaBotoes(); criaAlvos(); montaMinimapa();
-  $("#proto-dados").textContent = `dados reais da gravação de ${semana(dia.data)}, ${diaMes(dia.data)}.`;
+  $("#proto-dados").textContent = `com os dados reais da gravação de ${semana(dia.data)}, ${diaMes(dia.data)}:`;
   aplicaMedidas();
   parametros();
   requestAnimationFrame(laco);
@@ -643,7 +643,7 @@ function corpoFicha(p, aba) {
 // O formulário mora em /sugestao/. A reação do estúdio (S.sug, o Vigia anunciando
 // a chegada) volta quando o envio for de verdade, na etapa S4 do docs/site.md.
 
-// ------------------------------------------------------------ simulação de horário (só no protótipo)
+// ------------------------------------------------------------ ver em outro horário (faixa do rodapé e ?sim=)
 function simula(v) {
   const d = S.M.dia;
   if (v === "agora") S.sim = null;
