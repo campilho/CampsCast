@@ -167,4 +167,3 @@ main > section:not(.hero) { padding-block: clamp(48px, 7vw, 88px); }
 .resumo div { background: var(--sup); border: 1px solid var(--linha); border-radius: var(--raio); padding: 14px 16px; }
 .resumo b { display: block; font: 700 11.5px/1.3 var(--f-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--crt-fg); margin-bottom: 6px; }
 .resumo span { font-size: 15.5px; color: var(--tinta-2); }
-.definir { background: #f2c230; color: #1d1d1d; font-weight: 700; padding: 1px 6px; border-radius: 3px; white-space: nowrap; }

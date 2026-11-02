@@ -57,7 +57,7 @@ Os balões da gravação são os eventos do JSON, com a origem de cada um. Fora 
 
 ## Pendências
 
-- `/privacidade/`: preencher prazo de guarda e data de revisão (responsável e contato preenchidos em 01/11 com o que está no `config/show.json`). Conferir o parágrafo que diz que um tema aceito pode entrar na lista de temas sugeridos do repositório público ("por ouvinte"), tirado do `docs/site.md`.
+- `/privacidade/`: completa em 02/11 (guarda de 12 meses; responsável e contato do `config/show.json`). Conferir o parágrafo que diz que um tema aceito pode entrar na lista de temas sugeridos do repositório público ("por ouvinte"), tirado do `docs/site.md`.
 - Formulário de verdade (S4: API Gateway + Lambda + S3 privado).
 - A partir de 03/11: conferir com dados reais as notas por página e as escolhas (o código já trata os dois formatos).
 - Telas largas em dpr 1 entre 1100 e ~1700 px: a cena fica em escala fracionária (pixels desiguais). Em dpr 2 e em monitores largos a escala é inteira.

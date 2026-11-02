@@ -2,7 +2,7 @@
 
 Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
 [PROJETO.md](PROJETO.md); o que já foi feito, no git, nos ADRs e em
-[docs/aprendizados.md](docs/aprendizados.md). Atualizada em 01/11/2026.
+[docs/aprendizados.md](docs/aprendizados.md). Atualizada em 02/11/2026.
 
 ## Semana de 02/11 — segunda é feriado (Finados)
 
@@ -181,15 +181,14 @@ aposentar, juntar ou subir o teto.
 
 ## Fase 3 — feedback e site
 
-- [ ] **Site, beta 1: o estúdio** — requisitos em [docs/site.md](docs/site.md)
-      (v2, 31/10): o site é o estúdio, que muda com o relógio (noite com o
-      vigia, café de dia, postos na gravação), replay da gravação em três
-      velocidades, balões com origem marcada, ficha de cada personagem com as
-      instruções dele e o formulário "Fale com o Editor". Protótipo em
-      `site/index.html` com os dados de 30/10 (`scripts/estudio.py`). Feito:
-      S1. Elenco aprovado em 31/10 (Arquivista em parte; Checador, Artista e
-      Marketing em breve, na ala em obras). Próximo: S2, o visual a partir
-      das imagens do autor. Decisões abertas no fim do documento
+- [ ] **Site, beta 1: capa e estúdio** — requisitos em [docs/site.md](docs/site.md)
+      (v3, 01/11): capa na raiz, estúdio em `/estudio/`, sugestão e
+      privacidade. Feito: S1, S2 (visual do Claude Design) e a capa, com a
+      ilustração; script de publicação, policy e função do CloudFront prontos
+      (02/11). **Terça, 03/11, depois do episódio:** colar a policy e criar a
+      função no console, rodar `estudio.py` e `publica_site.py`, conferir no
+      ar (passo a passo em "Publicar o site"). Depois: o `publish.py` subir os
+      dados do estúdio a cada episódio, sem derrubar o episódio se falhar
 - [ ] **Estúdio em miniatura, ao vivo no site** — no CampsVerso
       (`~/CampsVerso`, github.com/campilho/campsverso), projeto à parte e em
       andamento; em 30/10 ainda não fala do CampsCast. Protótipo "Estudio
@@ -218,10 +217,24 @@ aposentar, juntar ou subir o teto.
       (a exportação vem sem números). Junto, a revisão de custos do ADR 0007 e
       uma olhada no Apple Podcasts Connect (Análise e relatórios). A extensão
       **não** se usa no LinkedIn, cujos termos proíbem automação
+- [ ] **Apagar sugestões com mais de 12 meses** — é o prazo da página de
+      privacidade. Até o formulário (S4), as sugestões chegam por e-mail ao
+      `contato@`, encaminhado ao Gmail do autor: no relatório mensal de
+      audiência, apagar as de mais de um ano; as primeiras vencem em 11/2027.
+      Com o formulário, uma regra de ciclo de vida no bucket privado apaga
+      sozinha em 365 dias
 - [ ] O painel do Spotify for Creators tem um **"Programa sem título"** vazio,
       e é ele que abre primeiro. Apagar, se não tiver uso
 
 ## Operação
+
+- [ ] **Gmail pessoal visível no DNS** — o TXT do Forward Email
+      (`forward-email=contato:…`) traz o endereço do Gmail por extenso, e
+      `dig TXT campscast.com.br` mostra para qualquer um (medido em 02/11). O
+      site vai convidar a escrever para o `contato@`, então vale esconder
+      antes de divulgar: o Forward Email oferece cifrar o valor desse TXT
+      (conferir no site deles), e aí é trocar o registro no Route 53.
+      Anotação do encaminhamento em `privado/email-contato.md`
 
 - [ ] **Sem rede, conferir a repescagem de verdade** — desde 28/10 a execução
       sem rede sai com erro no primeiro despertar depois de 60 s. Não medido:
