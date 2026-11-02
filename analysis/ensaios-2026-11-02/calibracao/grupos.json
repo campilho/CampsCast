@@ -1,0 +1,315 @@
+{
+ "carbon": [
+  [
+   "producao",
+   "entrou"
+  ],
+  [
+   "atual-1",
+   "entrou"
+  ],
+  [
+   "atual-2",
+   "entrou"
+  ],
+  [
+   "atual-3",
+   "entrou"
+  ],
+  [
+   "codigo-29-10",
+   "entrou"
+  ]
+ ],
+ "democratas-camara": [
+  [
+   "producao",
+   "entrou"
+  ]
+ ],
+ "bancos-canada": [
+  [
+   "atual-1",
+   "entrou"
+  ]
+ ],
+ "octoverse": [
+  [
+   "atual-1",
+   "entrou"
+  ],
+  [
+   "atual-2",
+   "entrou"
+  ],
+  [
+   "codigo-29-10",
+   "entrou"
+  ]
+ ],
+ "ny-chatbots": [
+  [
+   "atual-1",
+   "descartada"
+  ],
+  [
+   "atual-3",
+   "entrou"
+  ]
+ ],
+ "alphabet-microsoft": [
+  [
+   "codigo-29-10",
+   "entrou"
+  ]
+ ],
+ "ai-for-science": [
+  [
+   "producao",
+   "descartada"
+  ],
+  [
+   "atual-1",
+   "descartada"
+  ],
+  [
+   "atual-2",
+   "descartada"
+  ],
+  [
+   "atual-3",
+   "descartada"
+  ],
+  [
+   "codigo-29-10",
+   "descartada"
+  ]
+ ],
+ "meta-universidades": [
+  [
+   "producao",
+   "descartada"
+  ],
+  [
+   "atual-1",
+   "descartada"
+  ],
+  [
+   "codigo-29-10",
+   "descartada"
+  ]
+ ],
+ "nvidia-rtx-spark": [
+  [
+   "producao",
+   "descartada"
+  ],
+  [
+   "atual-1",
+   "descartada"
+  ],
+  [
+   "atual-2",
+   "descartada"
+  ],
+  [
+   "codigo-29-10",
+   "descartada"
+  ]
+ ],
+ "openai-servicenow": [
+  [
+   "atual-1",
+   "descartada"
+  ],
+  [
+   "atual-2",
+   "descartada"
+  ],
+  [
+   "codigo-29-10",
+   "descartada"
+  ]
+ ],
+ "openai-future-firm": [
+  [
+   "atual-1",
+   "descartada"
+  ],
+  [
+   "atual-2",
+   "descartada"
+  ]
+ ],
+ "openai-dot": [
+  [
+   "producao",
+   "descartada"
+  ],
+  [
+   "atual-3",
+   "descartada"
+  ],
+  [
+   "codigo-29-10",
+   "descartada"
+  ]
+ ],
+ "openai-creditos": [
+  [
+   "producao",
+   "descartada"
+  ]
+ ],
+ "openai-legora": [
+  [
+   "atual-2",
+   "descartada"
+  ]
+ ],
+ "openai-devday-paris": [
+  [
+   "producao",
+   "descartada"
+  ]
+ ],
+ "claude-produtos": [
+  [
+   "atual-1",
+   "descartada"
+  ],
+  [
+   "atual-1",
+   "descartada"
+  ],
+  [
+   "atual-1",
+   "descartada"
+  ],
+  [
+   "codigo-29-10",
+   "descartada"
+  ]
+ ],
+ "aws-blog": [
+  [
+   "producao",
+   "descartada"
+  ],
+  [
+   "atual-1",
+   "descartada"
+  ],
+  [
+   "atual-3",
+   "descartada"
+  ],
+  [
+   "codigo-29-10",
+   "descartada"
+  ]
+ ],
+ "akamai": [
+  [
+   "producao",
+   "descartada"
+  ],
+  [
+   "atual-1",
+   "descartada"
+  ]
+ ],
+ "bytedance-jimeng": [
+  [
+   "atual-3",
+   "descartada"
+  ]
+ ],
+ "cursor-sdk": [
+  [
+   "atual-3",
+   "descartada"
+  ]
+ ],
+ "github-mcp": [
+  [
+   "codigo-29-10",
+   "descartada"
+  ]
+ ],
+ "google-pequenos-negocios": [
+  [
+   "producao",
+   "descartada"
+  ]
+ ],
+ "google-anuncios": [
+  [
+   "atual-1",
+   "descartada"
+  ],
+  [
+   "atual-3",
+   "descartada"
+  ]
+ ],
+ "polonia-lei": [
+  [
+   "atual-1",
+   "descartada"
+  ],
+  [
+   "atual-3",
+   "descartada"
+  ]
+ ],
+ "progressistas-resolucao": [
+  [
+   "producao",
+   "descartada"
+  ]
+ ],
+ "fingerprinting": [
+  [
+   "producao",
+   "descartada"
+  ],
+  [
+   "atual-3",
+   "descartada"
+  ]
+ ],
+ "yc-magic-patterns": [
+  [
+   "atual-1",
+   "descartada"
+  ]
+ ],
+ "kentucky": [
+  [
+   "atual-3",
+   "descartada"
+  ]
+ ],
+ "uefi": [
+  [
+   "atual-3",
+   "descartada"
+  ]
+ ],
+ "cohere-qwen": [
+  [
+   "producao",
+   "entrou"
+  ],
+  [
+   "atual-2",
+   "entrou"
+  ],
+  [
+   "atual-3",
+   "entrou"
+  ]
+ ],
+ "cathedral": []
+}

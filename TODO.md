@@ -62,9 +62,20 @@ provas. Claude Code headless no Mac, em sombra, uma mudança por vez.
       20% abaixo do que foi ao ar (tabela em aprendizados). E um com o
       código de 29/10 (`43f841f`): 18 buscas e 31 pautas avaliadas, como a
       produção, contra 9 a 14 e 24 a 29 com o código novo; US$ 4,11. O prompt
-      de depois de 29/10 cortou buscas e uns 10% do custo. Ideia em aberto:
-      nota por critério para as candidatas e cobertura mínima fixa antes de
-      escolher, para a escolha das vagas 2 e 3 deixar de ser sorteio
+      de depois de 29/10 cortou buscas e uns 10% do custo
+- [ ] **Nota das pautas** — [ADR 0012](docs/decisions/0012-nota-das-pautas.md),
+      proposto em 02/11: régua de 5 critérios em `config/rubrica-pautas.md`,
+      o agente dá as notas e o código escolhe. Calibração de 02/11 sobre as 31
+      candidatas de 29/10: três rodadas, as mesmas três escolhidas, soma
+      variando no máximo 3 pontos. Próximo: régua v2 (foco 4 mais estreito;
+      backlog concorrendo na mesma ordem, sem o "dia fraco"), conferir nas
+      mesmas candidatas, e então a sombra na produção
+- [ ] **Base de fontes medida** — o que rende pauta e o que só dá erro, para
+      a lista do `config/sources.yaml` melhorar com dado. Em 02/11: 135 pautas
+      em 45 episódios vieram de 65 domínios; 44% de fora da lista fixa;
+      anthropic.com sozinha deu 32 (24%). Ver a conversa de 02/11: camadas
+      obrigatória, desejável e derivação; rendimento por domínio (lido,
+      falhou, candidata, nota média, vaga); editorias fixas e temas por pauta
 - [ ] **Agente de produção carrega a memória das sessões de desenvolvimento** —
       a transcrição de 30/10 tem o `MEMORY.md` de `~/.claude/projects/` e as
       instruções de memória automática, além do `CLAUDE.md`. Mesmo vazamento

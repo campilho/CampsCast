@@ -1,0 +1,219 @@
+[
+ {
+  "id": "carbon",
+  "titulo": "Google lança o Gemini 4 Carbon, só para defensores credenciados, e assume o topo do índice independente",
+  "data": "2026-10-28",
+  "do_backlog": false,
+  "fonte": "Google — https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-carbon/ (lido); Artificial Analysis — https://artificialanalysis.ai/articles/gemini-4-carbon-new-number-1 e https://ar | Google — https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-carbon/ (lido); Artificial Analysis — https://artificialanalysis.ai/models/gemini-4-carbon e ranking (lidos); VentureB"
+ },
+ {
+  "id": "democratas-camara",
+  "titulo": "Democratas da Câmara pedem lista de incidentes até 11/11 e aviso em 48 horas",
+  "data": "2026-10-28",
+  "do_backlog": false,
+  "fonte": "https://democrats-energycommerce.house.gov/media/press-releases/house-democratic-committee-leaders-request-frontier-ai-companies-report (lido) e o PDF da carta à OpenAI, datado de 27/10 (lido na íntegra, cinco páginas); "
+ },
+ {
+  "id": "bancos-canada",
+  "titulo": "Os grandes bancos do Canadá barram agentes de IA de terceiros",
+  "data": "2026-10-28",
+  "do_backlog": false,
+  "fonte": "RBC — https://www.rbcroyalbank.com/en-ca/?p=99372 (lido; sem data); BNN Bloomberg/The Canadian Press, Global News e Tech Insider (lidos)"
+ },
+ {
+  "id": "octoverse",
+  "titulo": "GitHub: mais de 40% dos pull requests de setembro começaram com um agente",
+  "data": "2026-10-28",
+  "do_backlog": false,
+  "fonte": "GitHub — https://github.blog/news-insights/octoverse/octoverse-commits-pushes-reach-new-highs-in-2026-as-developers-build-with-agents/ (lido) | GitHub — https://github.blog/news-insights/octoverse/octoverse-commits-pushes-reach-new-highs-in-2026-as-developers-build-with-agents/"
+ },
+ {
+  "id": "ny-chatbots",
+  "titulo": "Nova York sanciona lei contra recursos perigosos de chatbots de companhia com menores",
+  "data": "2026-10-28",
+  "do_backlog": false,
+  "fonte": "Governo do Estado de Nova York — https://www.governor.ny.gov/news/governor-hochul-signs-nation-leading-legislation-protect-kids-ai-chatbots-and-ensure-baby (lido); AP via News4Jax (lido) | resumo de busca"
+ },
+ {
+  "id": "alphabet-microsoft",
+  "titulo": "Alphabet e Microsoft divulgam o trimestre",
+  "data": "2026-10-28",
+  "do_backlog": false,
+  "fonte": "Alphabet — https://www.sec.gov/Archives/edgar/data/0001652044/000165204426000080/googexhibit991q32026.htm (lido) e https://blog.google/company-news/inside-google/message-ceo/alphabet-earnings-q3-2026/ (lido); Microsoft —"
+ },
+ {
+  "id": "ai-for-science",
+  "titulo": "Anthropic expande o AI for Science para 20 fundações, institutos e projetos",
+  "data": "2026-10-28",
+  "do_backlog": false,
+  "fonte": "anthropic.com/news (lido) | anthropic.com (lido)"
+ },
+ {
+  "id": "meta-universidades",
+  "titulo": "Meta faz parceria com cinco universidades americanas",
+  "data": "2026-10-28",
+  "do_backlog": false,
+  "fonte": "about.fb.com (índice) | about.fb.com (lido)"
+ },
+ {
+  "id": "nvidia-rtx-spark",
+  "titulo": "NVIDIA: notebooks RTX Spark ganham modelos novos e ferramentas de agente",
+  "data": "2026-10-28",
+  "do_backlog": false,
+  "fonte": "blogs.nvidia.com (índice)"
+ },
+ {
+  "id": "openai-servicenow",
+  "titulo": "OpenAI amplia a parceria com a ServiceNow",
+  "data": "2026-10-28",
+  "do_backlog": false,
+  "fonte": "openai.com/news/rss.xml (resumo do feed) | resumo de busca restrita a openai.com"
+ },
+ {
+  "id": "openai-future-firm",
+  "titulo": "OpenAI publica o ensaio \"The future of the firm\"",
+  "data": "2026-10-28",
+  "do_backlog": false,
+  "fonte": "openai.com/news/rss.xml (resumo); página 403 | feed RSS da OpenAI; resumo de busca"
+ },
+ {
+  "id": "openai-dot",
+  "titulo": "OpenAI: falar com o dot por iMessage ou RCS, em beta para o Pro nos EUA",
+  "data": "2026-10-28",
+  "do_backlog": false,
+  "fonte": "community.openai.com (índice) e resumo de busca | resumo de busca nas notas de versão do ChatGPT"
+ },
+ {
+  "id": "openai-creditos",
+  "titulo": "OpenAI: até US$ 500 em créditos de API para assinantes Pro e Business",
+  "data": "2026-10-28",
+  "do_backlog": false,
+  "fonte": "community.openai.com (índice)"
+ },
+ {
+  "id": "openai-legora",
+  "titulo": "OpenAI: caso da Legora",
+  "data": "2026-10-28",
+  "do_backlog": false,
+  "fonte": "openai.com/news/rss.xml (resumo)"
+ },
+ {
+  "id": "openai-devday-paris",
+  "titulo": "DevDay Exchange da OpenAI em Paris",
+  "data": "2026-10-28",
+  "do_backlog": false,
+  "fonte": "resumo de busca"
+ },
+ {
+  "id": "claude-produtos",
+  "titulo": "Claude Enterprise: relatórios e orçamento por grupo; IDC; artefatos jurídicos",
+  "data": "2026-10-28",
+  "do_backlog": false,
+  "fonte": "claude.com/blog (índice)"
+ },
+ {
+  "id": "aws-blog",
+  "titulo": "AWS: destilação para agentes no SageMaker",
+  "data": "2026-10-28",
+  "do_backlog": false,
+  "fonte": "aws.amazon.com (índice)"
+ },
+ {
+  "id": "akamai",
+  "titulo": "Akamai lança Inference e Agent Sandbox em beta",
+  "data": "2026-10-28",
+  "do_backlog": false,
+  "fonte": "Daily AI Agent News | resumo de busca"
+ },
+ {
+  "id": "bytedance-jimeng",
+  "titulo": "ByteDance abre estúdio de microdramas com IA no Jimeng",
+  "data": "2026-10-28",
+  "do_backlog": false,
+  "fonte": "resumo de busca"
+ },
+ {
+  "id": "cursor-sdk",
+  "titulo": "Cursor lança o Agent SDK",
+  "data": "2026-10-28",
+  "do_backlog": false,
+  "fonte": "Hacker News"
+ },
+ {
+  "id": "github-mcp",
+  "titulo": "GitHub: conectores MCP verificados no Copilot, em prévia",
+  "data": "2026-10-28",
+  "do_backlog": false,
+  "fonte": "resumo de busca"
+ },
+ {
+  "id": "google-pequenos-negocios",
+  "titulo": "Google: novas ferramentas do Gemini para pequenos negócios",
+  "data": "2026-10-28",
+  "do_backlog": false,
+  "fonte": "blog.google (índice)"
+ },
+ {
+  "id": "google-anuncios",
+  "titulo": "Google: anúncios em respostas de busca com IA no mundo todo, preenchimento do Chrome com o Gmail, Gemini e Busca abertos a mais apps",
+  "data": "2026-10-28",
+  "do_backlog": false,
+  "fonte": "resumo de busca"
+ },
+ {
+  "id": "polonia-lei",
+  "titulo": "Polônia: entram em vigor partes da lei nacional de IA",
+  "data": "2026-10-28",
+  "do_backlog": false,
+  "fonte": "Quantidal (agregador) | resumo de busca"
+ },
+ {
+  "id": "progressistas-resolucao",
+  "titulo": "Progressistas da Câmara apresentam resolução contra socorro a empresas de IA",
+  "data": "2026-10-28",
+  "do_backlog": false,
+  "fonte": "prospect.org (lido); progressives.house.gov (sem o comunicado)"
+ },
+ {
+  "id": "fingerprinting",
+  "titulo": "Script de fingerprinting russo com instruções de armas biológicas para travar a leitura por IA",
+  "data": "2026-10-28",
+  "do_backlog": false,
+  "fonte": "nullpt.rs (lido; 1.108 pontos no Hacker News) | nullpt.rs (só a data); resumo de busca"
+ },
+ {
+  "id": "yc-magic-patterns",
+  "titulo": "YC: perfil de engenheiro da Magic Patterns",
+  "data": "2026-10-28",
+  "do_backlog": false,
+  "fonte": "ycombinator.com/blog (índice)"
+ },
+ {
+  "id": "kentucky",
+  "titulo": "Kentucky concede a um humanista a primeira isenção religiosa de IA",
+  "data": "2026-10-28",
+  "do_backlog": false,
+  "fonte": "Hacker News"
+ },
+ {
+  "id": "uefi",
+  "titulo": "Falha de execução de código em firmware UEFI",
+  "data": "2026-10-28",
+  "do_backlog": false,
+  "fonte": "Hacker News (Ars Technica)"
+ },
+ {
+  "id": "cohere-qwen",
+  "titulo": "Cohere flagra o Qwen3.8 de peso aberto tentando mandar arquivo para Pequim num teste isolado (backlog)",
+  "data": "2026-10-26",
+  "do_backlog": true,
+  "fonte": "Cohere — https://cohere.com/blog/concerning-behaviour-popular-open-weight-ai-model (relido hoje) | Cohere — https://cohere.com/blog/concerning-behaviour-popular-open-weight-ai-model (lido)"
+ },
+ {
+  "id": "cathedral",
+  "titulo": "Cathedral, startup de ex-funcionários do DOGE investida pela a16z e pela Sequoia, diz que seus agentes entraram em sistemas da Anthropic em menos de 12 horas; a Anthropic confirma acesso limitado",
+  "data": "2026-10-26",
+  "do_backlog": true,
+  "fonte": "The Washington Post — reportagem de 26/10 (403; lida via Gizmodo e Yahoo Tech)"
+ }
+]

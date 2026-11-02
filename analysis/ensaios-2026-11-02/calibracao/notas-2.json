@@ -1,0 +1,565 @@
+{
+ "custo_usd": 0.641556,
+ "modelo": "claude-opus-5-5",
+ "esforco": "high",
+ "notas": [
+  {
+   "id": "octoverse",
+   "empresa": "GitHub",
+   "notas": {
+    "fonte": 5,
+    "foco": 2,
+    "impacto": 2,
+    "novidade": 5,
+    "memoria": 2
+   },
+   "por_que": {
+    "fonte": "post oficial do GitHub lido inteiro",
+    "foco": "GitHub (Microsoft) não está entre os players principais; é outra empresa com efeito no setor",
+    "impacto": "relatório de medição: mostra uma tendência, não muda o que alguém pode fazer",
+    "novidade": "o Octoverse e o uso de agentes no GitHub nunca foram ao ar",
+    "memoria": "toca de passagem o trabalho intelectual feito por máquina (T-07)"
+   }
+  },
+  {
+   "id": "google-anuncios",
+   "empresa": "Google",
+   "notas": {
+    "fonte": 2,
+    "foco": 4,
+    "impacto": 4,
+    "novidade": 5,
+    "memoria": 1
+   },
+   "por_que": {
+    "fonte": "só resumo de busca, nenhuma fonte oficial lida",
+    "foco": "anúncio de produto de player principal",
+    "impacto": "anúncio em resposta de busca com IA no mundo todo muda o jogo para os anunciantes, um segmento grande",
+    "novidade": "assunto inédito no programa",
+    "memoria": "sem ligação com tema ou fio"
+   }
+  },
+  {
+   "id": "akamai",
+   "empresa": "Akamai",
+   "notas": {
+    "fonte": 2,
+    "foco": 3,
+    "impacto": 3,
+    "novidade": 5,
+    "memoria": 2
+   },
+   "por_que": {
+    "fonte": "agregador e resumo de busca, sem fonte oficial",
+    "foco": "infraestrutura e nuvem",
+    "impacto": "produtos em beta para os clientes da Akamai",
+    "novidade": "o contrato com a Anthropic foi ao ar, mas esses produtos são inéditos",
+    "memoria": "sandbox de agente toca de passagem T-02"
+   }
+  },
+  {
+   "id": "claude-produtos",
+   "empresa": "Anthropic",
+   "notas": {
+    "fonte": 4,
+    "foco": 4,
+    "impacto": 3,
+    "novidade": 5,
+    "memoria": 1
+   },
+   "por_que": {
+    "fonte": "lido só o índice do blog oficial, outra página da própria fonte",
+    "foco": "anúncio de produto de player principal",
+    "impacto": "muda para os clientes do Claude Enterprise",
+    "novidade": "recursos inéditos no programa",
+    "memoria": "sem ligação com tema ou fio"
+   }
+  },
+  {
+   "id": "carbon",
+   "empresa": "Google DeepMind",
+   "notas": {
+    "fonte": 5,
+    "foco": 5,
+    "impacto": 5,
+    "novidade": 5,
+    "memoria": 4
+   },
+   "por_que": {
+    "fonte": "post oficial do Google lido, e a medição da Artificial Analysis também",
+    "foco": "lançamento de modelo de fronteira de player principal",
+    "impacto": "novo topo de capacidade no índice independente",
+    "novidade": "modelo inédito; o Argon foi ao ar, mas o Carbon é outro lançamento",
+    "memoria": "move T-05 e o F-003 (acesso só para credenciados) com um caso novo"
+   }
+  },
+  {
+   "id": "fingerprinting",
+   "empresa": "nullpt.rs",
+   "notas": {
+    "fonte": 5,
+    "foco": 1,
+    "impacto": 1,
+    "novidade": 5,
+    "memoria": 1
+   },
+   "por_que": {
+    "fonte": "o post do pesquisador, que é a fonte primária, foi lido",
+    "foco": "curiosidade de segurança, nicho",
+    "impacto": "sem consequência prática visível para o setor",
+    "novidade": "assunto inédito",
+    "memoria": "sem ligação com tema ou fio"
+   }
+  },
+  {
+   "id": "ny-chatbots",
+   "empresa": "Governo do Estado de Nova York",
+   "notas": {
+    "fonte": 5,
+    "foco": 2,
+    "impacto": 4,
+    "novidade": 5,
+    "memoria": 2
+   },
+   "por_que": {
+    "fonte": "comunicado oficial do governo lido",
+    "foco": "governo estadual, com efeito no setor de IA",
+    "impacto": "lei sancionada muda as regras para os chatbots de companhia num estado grande",
+    "novidade": "inédito; o F-018 é da Câmara da cidade, e os processos dos estados são outra coisa",
+    "memoria": "toca de passagem a proteção de crianças dos processos estaduais (F-024)"
+   }
+  },
+  {
+   "id": "meta-universidades",
+   "empresa": "Meta",
+   "notas": {
+    "fonte": 5,
+    "foco": 4,
+    "impacto": 2,
+    "novidade": 5,
+    "memoria": 1
+   },
+   "por_que": {
+    "fonte": "post oficial da Meta lido",
+    "foco": "anúncio de player principal",
+    "impacto": "parceria acadêmica, ainda sem efeito concreto",
+    "novidade": "assunto inédito",
+    "memoria": "sem ligação com tema ou fio"
+   }
+  },
+  {
+   "id": "openai-devday-paris",
+   "empresa": "OpenAI",
+   "notas": {
+    "fonte": 2,
+    "foco": 4,
+    "impacto": 2,
+    "novidade": 5,
+    "memoria": 1
+   },
+   "por_que": {
+    "fonte": "só resumo de busca",
+    "foco": "evento de player principal",
+    "impacto": "evento sem anúncio concreto conhecido",
+    "novidade": "inédito no programa",
+    "memoria": "sem ligação com tema ou fio"
+   }
+  },
+  {
+   "id": "aws-blog",
+   "empresa": "Amazon Web Services",
+   "notas": {
+    "fonte": 4,
+    "foco": 3,
+    "impacto": 3,
+    "novidade": 5,
+    "memoria": 1
+   },
+   "por_que": {
+    "fonte": "lido só o índice do blog oficial",
+    "foco": "nuvem",
+    "impacto": "recurso para os clientes do SageMaker",
+    "novidade": "assunto inédito",
+    "memoria": "aqui destilação é técnica de treino, não a acusação do T-04"
+   }
+  },
+  {
+   "id": "github-mcp",
+   "empresa": "GitHub",
+   "notas": {
+    "fonte": 2,
+    "foco": 2,
+    "impacto": 3,
+    "novidade": 5,
+    "memoria": 1
+   },
+   "por_que": {
+    "fonte": "só resumo de busca",
+    "foco": "outra empresa, com efeito no setor",
+    "impacto": "muda para os usuários do Copilot",
+    "novidade": "o roteiro do MCP foi ao ar, mas este recurso é inédito",
+    "memoria": "sem ligação com tema ou fio"
+   }
+  },
+  {
+   "id": "progressistas-resolucao",
+   "empresa": "Congressional Progressive Caucus",
+   "notas": {
+    "fonte": 2,
+    "foco": 2,
+    "impacto": 2,
+    "novidade": 5,
+    "memoria": 2
+   },
+   "por_que": {
+    "fonte": "só a imprensa (Prospect); o comunicado oficial não apareceu",
+    "foco": "governo, com efeito no setor",
+    "impacto": "resolução é proposta, sem efeito ainda",
+    "novidade": "assunto inédito",
+    "memoria": "toca de passagem quem sustenta a conta da IA (T-10)"
+   }
+  },
+  {
+   "id": "openai-creditos",
+   "empresa": "OpenAI",
+   "notas": {
+    "fonte": 4,
+    "foco": 4,
+    "impacto": 3,
+    "novidade": 5,
+    "memoria": 2
+   },
+   "por_que": {
+    "fonte": "lido só o índice da página oficial",
+    "foco": "anúncio de produto de player principal",
+    "impacto": "muda para os assinantes Pro e Business",
+    "novidade": "assunto inédito",
+    "memoria": "toca de passagem a guerra de preço (T-10)"
+   }
+  },
+  {
+   "id": "bytedance-jimeng",
+   "empresa": "ByteDance",
+   "notas": {
+    "fonte": 2,
+    "foco": 1,
+    "impacto": 2,
+    "novidade": 5,
+    "memoria": 1
+   },
+   "por_que": {
+    "fonte": "só resumo de busca",
+    "foco": "produto de consumo",
+    "impacto": "muda pouco, e só para os criadores da plataforma",
+    "novidade": "assunto inédito",
+    "memoria": "sem ligação com tema ou fio"
+   }
+  },
+  {
+   "id": "openai-future-firm",
+   "empresa": "OpenAI",
+   "notas": {
+    "fonte": 4,
+    "foco": 4,
+    "impacto": 2,
+    "novidade": 5,
+    "memoria": 2
+   },
+   "por_que": {
+    "fonte": "página deu 403; lido pelo resumo do feed oficial",
+    "foco": "publicação de player principal",
+    "impacto": "ensaio é sinal de visão, sem efeito prático",
+    "novidade": "assunto inédito",
+    "memoria": "toca de passagem o trabalho e a empresa com agentes (T-07)"
+   }
+  },
+  {
+   "id": "openai-legora",
+   "empresa": "OpenAI",
+   "notas": {
+    "fonte": 4,
+    "foco": 4,
+    "impacto": 1,
+    "novidade": 5,
+    "memoria": 1
+   },
+   "por_que": {
+    "fonte": "lido só o resumo do feed oficial",
+    "foco": "anúncio de player principal, ainda que seja um caso de cliente",
+    "impacto": "caso de marketing, sem consequência visível",
+    "novidade": "assunto inédito",
+    "memoria": "sem ligação com tema ou fio"
+   }
+  },
+  {
+   "id": "polonia-lei",
+   "empresa": "Governo da Polônia",
+   "notas": {
+    "fonte": 2,
+    "foco": 2,
+    "impacto": 4,
+    "novidade": 5,
+    "memoria": 2
+   },
+   "por_que": {
+    "fonte": "agregador e resumo de busca, sem fonte oficial",
+    "foco": "governo, com efeito no setor",
+    "impacto": "lei em vigor num país",
+    "novidade": "assunto inédito",
+    "memoria": "toca de passagem a regulação (T-03)"
+   }
+  },
+  {
+   "id": "uefi",
+   "empresa": "Ars Technica",
+   "notas": {
+    "fonte": 2,
+    "foco": 1,
+    "impacto": 2,
+    "novidade": 5,
+    "memoria": 1
+   },
+   "por_que": {
+    "fonte": "só imprensa pelo Hacker News",
+    "foco": "segurança de firmware, nicho e sem ligação clara com IA",
+    "impacto": "falha sem efeito conhecido no setor de IA",
+    "novidade": "assunto inédito",
+    "memoria": "sem ligação com tema ou fio"
+   }
+  },
+  {
+   "id": "ai-for-science",
+   "empresa": "Anthropic",
+   "notas": {
+    "fonte": 5,
+    "foco": 4,
+    "impacto": 3,
+    "novidade": 5,
+    "memoria": 2
+   },
+   "por_que": {
+    "fonte": "post oficial da Anthropic lido",
+    "foco": "anúncio de programa de player principal",
+    "impacto": "muda para as 20 instituições contempladas",
+    "novidade": "a ampliação do programa é inédita",
+    "memoria": "toca de passagem a ciência feita por máquina (T-08), sem falar de quem confere"
+   }
+  },
+  {
+   "id": "cursor-sdk",
+   "empresa": "Cursor",
+   "notas": {
+    "fonte": 2,
+    "foco": 2,
+    "impacto": 3,
+    "novidade": 5,
+    "memoria": 1
+   },
+   "por_que": {
+    "fonte": "só Hacker News, sem fonte oficial",
+    "foco": "outra empresa, com efeito no setor",
+    "impacto": "muda para os desenvolvedores que usam o Cursor",
+    "novidade": "assunto inédito",
+    "memoria": "sem ligação com tema ou fio"
+   }
+  },
+  {
+   "id": "nvidia-rtx-spark",
+   "empresa": "NVIDIA",
+   "notas": {
+    "fonte": 4,
+    "foco": 3,
+    "impacto": 3,
+    "novidade": 5,
+    "memoria": 1
+   },
+   "por_que": {
+    "fonte": "lido só o índice do blog oficial",
+    "foco": "hardware",
+    "impacto": "muda para quem compra esses notebooks",
+    "novidade": "assunto inédito",
+    "memoria": "sem ligação com tema ou fio"
+   }
+  },
+  {
+   "id": "openai-servicenow",
+   "empresa": "OpenAI",
+   "notas": {
+    "fonte": 4,
+    "foco": 4,
+    "impacto": 3,
+    "novidade": 5,
+    "memoria": 1
+   },
+   "por_que": {
+    "fonte": "lido só o resumo do feed oficial",
+    "foco": "anúncio de parceria de player principal",
+    "impacto": "muda para os clientes da ServiceNow",
+    "novidade": "assunto inédito",
+    "memoria": "sem ligação com tema ou fio"
+   }
+  },
+  {
+   "id": "google-pequenos-negocios",
+   "empresa": "Google",
+   "notas": {
+    "fonte": 4,
+    "foco": 4,
+    "impacto": 3,
+    "novidade": 5,
+    "memoria": 1
+   },
+   "por_que": {
+    "fonte": "lido só o índice do blog oficial",
+    "foco": "anúncio de produto de player principal",
+    "impacto": "muda para os pequenos negócios clientes do Google",
+    "novidade": "assunto inédito",
+    "memoria": "sem ligação com tema ou fio"
+   }
+  },
+  {
+   "id": "alphabet-microsoft",
+   "empresa": "Alphabet",
+   "notas": {
+    "fonte": 5,
+    "foco": 4,
+    "impacto": 2,
+    "novidade": 5,
+    "memoria": 2
+   },
+   "por_que": {
+    "fonte": "documento entregue à SEC e post oficial do CEO lidos",
+    "foco": "anúncio corporativo de player principal (Google), com nuvem e investimento",
+    "impacto": "o balanço informa números, não muda o que o setor faz",
+    "novidade": "assunto inédito no programa",
+    "memoria": "toca de passagem quem sustenta a conta da IA (T-10)"
+   }
+  },
+  {
+   "id": "openai-dot",
+   "empresa": "OpenAI",
+   "notas": {
+    "fonte": 4,
+    "foco": 4,
+    "impacto": 3,
+    "novidade": 4,
+    "memoria": 2
+   },
+   "por_que": {
+    "fonte": "índice da página oficial e resumo de busca",
+    "foco": "anúncio de produto de player principal",
+    "impacto": "muda para os assinantes Pro nos EUA",
+    "novidade": "desdobramento dos Dots, que foram ao ar em 30/09, com um canal novo",
+    "memoria": "toca de passagem os agentes sempre ligados (T-02)"
+   }
+  },
+  {
+   "id": "yc-magic-patterns",
+   "empresa": "Y Combinator",
+   "notas": {
+    "fonte": 4,
+    "foco": 3,
+    "impacto": 1,
+    "novidade": 5,
+    "memoria": 1
+   },
+   "por_que": {
+    "fonte": "lido só o índice do blog oficial",
+    "foco": "investidor listado no briefing",
+    "impacto": "perfil de engenheiro, sem consequência prática",
+    "novidade": "assunto inédito",
+    "memoria": "sem ligação com tema ou fio"
+   }
+  },
+  {
+   "id": "bancos-canada",
+   "empresa": "RBC",
+   "notas": {
+    "fonte": 4,
+    "foco": 4,
+    "impacto": 4,
+    "novidade": 4,
+    "memoria": 4
+   },
+   "por_que": {
+    "fonte": "página oficial do RBC lida, mas sem data; o resto, imprensa",
+    "foco": "agentes em serviços financeiros, o foco especial da semana",
+    "impacto": "muda o acesso de agentes ao sistema bancário de um país inteiro",
+    "novidade": "desdobramento dos bloqueios dos bancos americanos (20/10 e 23/10), com fato novo: o Canadá",
+    "memoria": "move T-02 com fato novo, a porta se fechando também fora dos EUA"
+   }
+  },
+  {
+   "id": "democratas-camara",
+   "empresa": "Democratas da Comissão de Energia e Comércio da Câmara dos EUA",
+   "notas": {
+    "fonte": 5,
+    "foco": 2,
+    "impacto": 2,
+    "novidade": 5,
+    "memoria": 4
+   },
+   "por_que": {
+    "fonte": "comunicado oficial e carta em PDF lidos na íntegra",
+    "foco": "governo, com efeito no setor",
+    "impacto": "carta e pedido, sem obrigação legal ainda",
+    "novidade": "ator e pedido inéditos no programa",
+    "memoria": "move T-03 e T-02 com fato novo, e o prazo de 11/11 abre um fio"
+   }
+  },
+  {
+   "id": "cohere-qwen",
+   "empresa": "Cohere",
+   "notas": {
+    "fonte": 5,
+    "foco": 2,
+    "impacto": 2,
+    "novidade": 5,
+    "memoria": 4
+   },
+   "por_que": {
+    "fonte": "post oficial da Cohere lido",
+    "foco": "outra empresa, com efeito no setor",
+    "impacto": "achado de teste: sinal, sem efeito ainda",
+    "novidade": "assunto inédito",
+    "memoria": "move T-09 e T-02 (peso aberto chinês agindo fora do controle) com fato novo"
+   }
+  },
+  {
+   "id": "kentucky",
+   "empresa": "Estado do Kentucky",
+   "notas": {
+    "fonte": 2,
+    "foco": 1,
+    "impacto": 1,
+    "novidade": 5,
+    "memoria": 1
+   },
+   "por_que": {
+    "fonte": "só Hacker News",
+    "foco": "curiosidade",
+    "impacto": "caso isolado, sem consequência visível",
+    "novidade": "assunto inédito",
+    "memoria": "sem ligação com tema ou fio"
+   }
+  },
+  {
+   "id": "cathedral",
+   "empresa": "Cathedral",
+   "notas": {
+    "fonte": 2,
+    "foco": 3,
+    "impacto": 2,
+    "novidade": 5,
+    "memoria": 4
+   },
+   "por_que": {
+    "fonte": "Washington Post deu 403, lido por outros veículos; nenhuma fonte oficial lida",
+    "foco": "startup investida pela a16z e pela Sequoia",
+    "impacto": "relato de invasão com acesso limitado, sem efeito ainda",
+    "novidade": "assunto inédito",
+    "memoria": "move T-02 com um caso novo de agentes dentro de sistemas alheios"
+   }
+  }
+ ]
+}

@@ -3,7 +3,7 @@
 ## Foco fixo
 Principais notícias de IA do dia anterior. Prioridade máxima: lançamentos de
 modelos de fronteira dos principais players (Anthropic, OpenAI, Google/DeepMind,
-Meta, Mistral, xAI). Em seguida: hardware/infra (NVIDIA, clouds) e movimentos
+Meta, Microsoft, Mistral, xAI). Em seguida: hardware/infra (NVIDIA, clouds) e movimentos
 relevantes de investidores (a16z, Y Combinator, Sequoia), e publicação de quem trabalha
 nos principais laboratórios (Boris Cherny, Andrej Karpathy, Sam Altman e Dario Amodei)
 
