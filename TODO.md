@@ -16,9 +16,9 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
       também usa. Depois, juntar o ramo e decidir o V1 diário
 - [ ] **LinkedIn — post sobre a memória** — rascunho em
       `privado/divulgacao.md`, com a métrica da linha de base (memória do
-      programa de 30% para 1,7% de erro). Não saiu em 13, 15, 20 nem 27/10;
-      talvez no feriado. Antes de postar, atualizar referências de tempo e
-      números. O autor posta à mão
+      programa de 30% para 1,7% de erro). Não saiu em 13, 15, 20 nem 27/10.
+      Pronto em 02/11 para terça, 03/11, entre 11h e 12h, com tempos
+      atualizados e números reconferidos. O autor posta à mão
 - [ ] **Sexta, 06/11 — conferir no relatório o que mudou em 30/10:** os avisos
       de "IA" dobrada na apresentação e de "assunto curto" sumiram? As páginas
       fechadas caíram (eram 15 a 18% por semana)? Por qual porta foi lida cada
@@ -59,9 +59,12 @@ provas. Claude Code headless no Mac, em sombra, uma mudança por vez.
       nota, 4 escolhas). Mais dois ensaios do mesmo dia em 02/11: a
       manchete sempre igual, a vaga do backlog em 3 de 4, a outra vaga com 4
       escolhas diferentes; custo entre US$ 3,66 e 3,80 nos três ensaios, uns
-      20% abaixo do que foi ao ar (tabela em aprendizados). Próximo, se
-      quisermos separar código de web: um ensaio com `--codigo` apontando para
-      o commit que rodou em 29/10
+      20% abaixo do que foi ao ar (tabela em aprendizados). E um com o
+      código de 29/10 (`43f841f`): 18 buscas e 31 pautas avaliadas, como a
+      produção, contra 9 a 14 e 24 a 29 com o código novo; US$ 4,11. O prompt
+      de depois de 29/10 cortou buscas e uns 10% do custo. Ideia em aberto:
+      nota por critério para as candidatas e cobertura mínima fixa antes de
+      escolher, para a escolha das vagas 2 e 3 deixar de ser sorteio
 - [ ] **Agente de produção carrega a memória das sessões de desenvolvimento** —
       a transcrição de 30/10 tem o `MEMORY.md` de `~/.claude/projects/` e as
       instruções de memória automática, além do `CLAUDE.md`. Mesmo vazamento

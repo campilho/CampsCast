@@ -80,8 +80,9 @@ preciso gravar a mesma fala, na mesma distância, ao mesmo tempo.
 
 ### Duas execuções do mesmo dia escolhem pautas diferentes
 
-Em 02/11, três ensaios (`scripts/ensaio.sh`) refizeram 29/10 com o mesmo
-estado e o código do dia, em sequência:
+Em 02/11, quatro ensaios (`scripts/ensaio.sh`) refizeram 29/10 com o mesmo
+estado, em sequência: três com o código de 02/11 e um com o código que rodou
+em 29/10 (`--codigo` no commit `43f841f`):
 
 | | manchete | vaga 2 | vaga 3 | turnos | US$ | buscas | páginas |
 |---|---|---|---|---|---|---|---|
@@ -89,15 +90,22 @@ estado e o código do dia, em sequência:
 | ensaio 1 | Gemini 4 Carbon | bancos do Canadá | Octoverse do GitHub | 84 | 3,78 | 14 | 31 |
 | ensaio 2 | Gemini 4 Carbon | Octoverse do GitHub | Cohere e o Qwen | 81 | 3,66 | 9 | 26 |
 | ensaio 3 | Gemini 4 Carbon | lei de Nova York sobre chatbots de companhia | Cohere e o Qwen | 87 | 3,80 | 13 | 29 |
+| ensaio 4, código de 29/10 | Gemini 4 Carbon | trimestre do Alphabet e da Microsoft | Octoverse do GitHub | 91 | 4,11 | 18 | 30 |
 
-A manchete se repetiu nas quatro; a pauta do backlog, em três; a outra vaga
-teve quatro escolhas diferentes. Todas justificadas no log, todas dentro da
-janela: em dia com várias pautas boas, a segunda e a terceira vaga são quase
-um sorteio entre elas. Já o custo quase não varia de um ensaio para outro
-(US$ 3,66 a 3,80, 81 a 87 turnos, 9,3 a 9,8 minutos); a execução que foi ao ar
-fica uns 20% acima dos três. Isso é diferença de condição, não ruído: o código
-mudou depois de 29/10 (três commits no prompt, um deles mandando ler a OpenAI
-pelo feed) e a web de quatro dias depois não é a mesma.
+A manchete se repetiu nas cinco execuções. Nas outras dez vagas apareceram
+seis pautas diferentes: a da Cohere em três, o Octoverse em três, e quatro
+que só saíram uma vez. Todas justificadas no log, todas dentro da janela: em
+dia com várias pautas boas, a segunda e a terceira vaga são quase um sorteio
+entre elas.
+
+Já o custo quase não varia com o mesmo código: US$ 3,66 a 3,80, 81 a 87
+turnos, 9,3 a 9,8 minutos. A execução que foi ao ar fica uns 20% acima, e o
+ensaio com o código de 29/10 explica metade disso: ele fez as mesmas 18
+buscas e avaliou as mesmas 31 pautas que a produção, contra 9 a 14 buscas e
+24 a 29 pautas com o código novo. Os três commits no prompt depois de 29/10
+(um deles mandando ler a OpenAI pelo feed, outro mandando ler fonte fechada
+por outra porta da própria fonte) cortaram buscas e uns 10% do custo. O resto
+é a web de quatro dias depois e o acaso de uma execução.
 
 Consequência para avaliar variantes do agente: **custo e turnos dá para
 comparar com poucas execuções, porque variam uns 3%; escolha de pautas, não**
