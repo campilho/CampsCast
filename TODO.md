@@ -75,7 +75,13 @@ provas. Claude Code headless no Mac, em sombra, uma mudança por vez.
       em 45 episódios vieram de 65 domínios; 44% de fora da lista fixa;
       anthropic.com sozinha deu 32 (24%). Ver a conversa de 02/11: camadas
       obrigatória, desejável e derivação; rendimento por domínio (lido,
-      falhou, candidata, nota média, vaga); editorias fixas e temas por pauta
+      falhou, candidata, nota média, vaga); editorias fixas e temas por pauta.
+      Por assunto, a Anthropic (50 títulos) e a OpenAI (49) estão empatadas; o
+      que pesa é o acesso: openai.com deu 403 em 42 de 42 logs e x.ai em 37, e
+      a xAI só foi pauta duas vezes. Laboratórios que já foram notícia e não
+      estão no briefing: Moonshot (Kimi), Zhipu (GLM), Alibaba (Qwen),
+      DeepSeek, MiniMax, Hugging Face, Reflection, Cohere, Sakana. Decidir se
+      os de peso aberto entram como segunda camada do briefing e das fontes
 - [ ] **Agente de produção carrega a memória das sessões de desenvolvimento** —
       a transcrição de 30/10 tem o `MEMORY.md` de `~/.claude/projects/` e as
       instruções de memória automática, além do `CLAUDE.md`. Mesmo vazamento

@@ -89,7 +89,7 @@ Com o mesmo dossiê, a régua tira quase toda a variação da escolha. O que
 sobra nas execuções reais vem do que cada uma encontra e de quem dá a nota ter
 dossiês diferentes; a sombra mede essa parte.
 
-**Dois ajustes para a v2.**
+**Três ajustes para a v2.**
 1. **Foco 4 largo demais.** O AI for Science (créditos e um programa para 20
    instituições) ficou em terceiro com foco 4, "outro anúncio de player
    principal", quando as cinco execuções reais o descartaram como "programa,
@@ -105,6 +105,16 @@ dossiês diferentes; a sombra mede essa parte.
    18, empatada com a carta dos democratas e a lei de Nova York. Proposta: o
    backlog concorre na mesma ordem que as da janela (a novidade já desconta o
    que envelheceu), e a regra do dia fraco sai.
+3. **A nota de fonte mede o nosso acesso, não a notícia.** O openai.com deu
+   403 em todos os 42 logs de pesquisa, e o x.ai em 37; o anthropic.com, em
+   5. Pela régua v1, notícia da OpenAI lida pelo feed ou por outra página da
+   empresa leva 4, e só pela imprensa leva 3, onde a mesma notícia da
+   Anthropic levaria 5. Na calibração, as da OpenAI tiveram fonte 3 ou 4, e o
+   AI for Science, 5. Um a dois pontos de diferença que vêm de quem nos
+   bloqueia. Proposta: fonte vira só porteira (tem fonte primária verificável
+   por alguma porta oficial — página, feed, outra página da empresa,
+   documento — ou é eliminada) e sai da soma, que passa a ir de 4 a 20. O que
+   foi lido e por onde continua registrado, para a estatística das fontes.
 
 **Limites.** O dossiê é mais pobre que o de uma execução real; foi uma
 chamada com todas as candidatas, não uma por candidata; e quem dá a nota é o
