@@ -50,11 +50,14 @@ provas. Claude Code headless no Mac, em sombra, uma mudança por vez.
       fora do repositório no estado do commit anterior ao dia, `env -i` e o
       `PATH` do plist, só o token do Claude no `.env`, S3 e aviso desligados.
       Dias com estado exato em outubro: 05, 13, 15, 19, 26 e 29/10; e 03/11,
-      do commit atual. Nos outros, só variante contra variante. Falta o primeiro
-      ensaio de verdade: o de 29/10, em 01/11, parou porque a rede do Mac
-      estava instável (35 de 41 leituras recusadas; o agente se recusou a
-      escrever sem fonte, como deve). Rodar de novo com a rede boa e comparar
-      com o episódio publicado
+      do commit atual. Nos outros, só variante contra variante. Primeiro ensaio
+      de verdade em 02/11, 29/10 com o código atual: ok, 84 turnos contra 110,
+      US$ 3,78 contra 4,62, 9,7 min contra 11,2, 1.409 palavras contra 1.381;
+      a manchete igual e as outras **duas pautas diferentes** do que foi ao ar
+      (ver `docs/aprendizados.md`, "Duas execuções do mesmo dia"). O log no
+      formato novo saiu certo e o `estudio.py` leu (30 de 32 leituras com
+      nota, 4 escolhas). Próximo: rodar o mesmo dia mais duas vezes, sem
+      mudar nada, para medir quanto varia sozinho antes de comparar variantes
 - [ ] **Agente de produção carrega a memória das sessões de desenvolvimento** —
       a transcrição de 30/10 tem o `MEMORY.md` de `~/.claude/projects/` e as
       instruções de memória automática, além do `CLAUDE.md`. Mesmo vazamento

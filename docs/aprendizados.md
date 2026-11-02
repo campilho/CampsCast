@@ -78,6 +78,20 @@ preciso gravar a mesma fala, na mesma distância, ao mesmo tempo.
 
 ## Agentes
 
+### Duas execuções do mesmo dia escolhem pautas diferentes
+
+O primeiro ensaio (`scripts/ensaio.sh`, 02/11) refez 29/10 com o mesmo estado
+e o mesmo código. A manchete foi a mesma, o Gemini 4 Carbon; as outras duas
+vagas, não: bancos do Canadá e o Octoverse do GitHub, contra a carta dos
+democratas da Câmara e o teste da Cohere com o Qwen, que tinham ido ao ar. As
+duas escolhas estão justificadas no log, e a janela foi respeitada. Custo e
+turnos também mudaram (US$ 3,78 e 84 contra 4,62 e 110). Uma amostra só, e a
+web de quatro dias depois não é a mesma; mas basta para a consequência: **uma
+variante do agente não se julga por "escolheu as mesmas pautas", nem por um
+custo de uma execução.** Primeiro mede-se quanto o mesmo agente varia sozinho,
+rodando o mesmo dia algumas vezes, e a comparação entre variantes usa uma
+rubrica de qualidade, como a do verificador.
+
 ### A memória precisa de duas camadas
 
 `covered-index.json` é a longa: título, fonte e resumo de tudo que já foi ao ar,
