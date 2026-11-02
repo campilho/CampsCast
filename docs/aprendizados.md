@@ -547,6 +547,18 @@ do registro existir guarda "não existe" por um dia — e quem está configurand
 justamente quem mais consultou antes. O domínio funciona para o mundo e não
 para você. Daí o `--resolve` do `set_base_url.py`.
 
+### Função do CloudFront salva não está no ar, e publicada também não
+
+Três passos, e só o último muda alguma coisa: salvar o código (estágio de
+desenvolvimento), **publicar** (copia para o estágio LIVE) e **associar** a
+uma distribuição, num comportamento e num evento (*Viewer request*). Depois
+da associação, a distribuição leva uns cinco minutos em "Deploying" (medido
+em 02/11: 330 s). Antes disso a resposta vem direto do S3, com
+`server: AmazonS3`, e é o jeito de saber que a função ainda não está no
+caminho. No mesmo dia, a raiz dava 403 com o `index.html` no bucket: o
+"Default root object" que o roteiro de configuração mandava preencher não
+estava preenchido.
+
 ### CloudFront reescreve a bucket policy se deixarem
 
 "Grant CloudFront access to origin" vem como *Yes* e restringe o bucket ao

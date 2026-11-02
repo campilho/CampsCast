@@ -69,10 +69,9 @@ provas. Claude Code headless no Mac, em sombra, uma mudança por vez.
       candidatas de 29/10: três rodadas, as mesmas três escolhidas, soma
       variando no máximo 3 pontos. Régua v2 aprovada e calibrada no mesmo dia
       (fonte como porteira, foco 4 mais estreito, backlog concorrendo junto):
-      as mesmas três de novo, soma sem variar em 20 de 31. **Decidir:** a
-      terceira vaga saiu por um ponto para créditos promocionais da OpenAI, à
-      frente da lei de Nova York; "política" mais estreita no foco 4 ou
-      impacto com peso 2 (ADR, "Calibração da v2"). Depois de terça: a sombra
+      as mesmas três de novo, soma sem variar em 20 de 31. A terceira vaga
+      saiu por um ponto para créditos promocionais da OpenAI; o autor escolheu
+      a "política" mais estreita no foco 4 (v2.1). Depois de terça: a sombra
 - [ ] **Base de fontes medida** — o que rende pauta e o que só dá erro, para
       a lista do `config/sources.yaml` melhorar com dado. Em 02/11: 135 pautas
       em 45 episódios vieram de 65 domínios; 44% de fora da lista fixa;
@@ -229,14 +228,15 @@ aposentar, juntar ou subir o teto.
 
 ## Fase 3 — feedback e site
 
-- [ ] **Site, beta 1: capa e estúdio** — requisitos em [docs/site.md](docs/site.md)
-      (v3, 01/11): capa na raiz, estúdio em `/estudio/`, sugestão e
-      privacidade. Feito: S1, S2 (visual do Claude Design) e a capa, com a
-      ilustração; script de publicação, policy e função do CloudFront prontos
-      (02/11). **Terça, 03/11, depois do episódio:** colar a policy e criar a
-      função no console, rodar `estudio.py` e `publica_site.py`, conferir no
-      ar (passo a passo em "Publicar o site"). Depois: o `publish.py` subir os
-      dados do estúdio a cada episódio, sem derrubar o episódio se falhar
+- [ ] **Site, beta 1: capa e estúdio** — **no ar desde 02/11** em
+      campscast.com.br ([docs/site.md](docs/site.md), v3). Até a automação, os
+      dados do estúdio sobem à mão depois de cada episódio:
+      `python3 scripts/estudio.py && python3 scripts/publica_site.py` (sem
+      isso, depois das 08:00 o estúdio mostra "atrasado"). **Quarta:** o
+      `publish.py` rodar os dois numa etapa que não derruba o episódio se
+      falhar, e decidir o que o estúdio mostra quando a gravação falha.
+      Opcional: preencher o "Default root object" (`index.html`) na
+      distribuição, redundante com a função
 - [ ] **Estúdio em miniatura, ao vivo no site** — no CampsVerso
       (`~/CampsVerso`, github.com/campilho/campsverso), projeto à parte e em
       andamento; em 30/10 ainda não fala do CampsCast. Protótipo "Estudio

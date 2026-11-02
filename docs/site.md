@@ -9,7 +9,10 @@
   os dados reais de uma gravação gerados por `scripts/estudio.py`. Para ver:
   `python3 scripts/estudio.py` e depois
   `python3 -m http.server 8765 --directory site`.
-- **Endereço:** `campscast.com.br`, hoje respondendo 403 na raiz.
+- **Endereço:** `campscast.com.br`, no ar desde 02/11/2026 (capa, estúdio,
+  sugestão e privacidade; `/studio` leva ao estúdio). Os dados do estúdio
+  ainda sobem à mão depois de cada episódio (`estudio.py` e
+  `publica_site.py`), até o `publish.py` fazer isso sozinho.
 
 ## A ideia
 

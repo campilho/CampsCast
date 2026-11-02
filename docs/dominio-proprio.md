@@ -56,7 +56,7 @@ minutos depois que o DNS propaga.
 | Cache policy | CachingOptimized |
 | Alternate domain names (CNAMEs) | `campscast.com.br`, `www.campscast.com.br` |
 | Custom SSL certificate | o do passo 1 |
-| Default root object | `index.html` |
+| Default root object | `index.html` (medido em 02/11: não estava preenchido; a função do site, `config/cloudfront-site.js`, cobre a raiz e as pastas) |
 
 Anote o domínio da distribuição, algo como `d111abcdef8.cloudfront.net`.
 
