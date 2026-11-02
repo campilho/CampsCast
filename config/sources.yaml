@@ -9,6 +9,7 @@ scan_order:
   - labs
   - hardware
   - investors
+  - abertos
   - people
   - aggregators
 
@@ -38,8 +39,14 @@ labs:
     url: https://ai.meta.com/blog/
   - name: Mistral AI News
     url: https://mistral.ai/news/
+  # x.ai/news deu 403 em 37 dos 42 logs até 02/11, e status.x.ai também
+  # fecha. Portas oficiais que abriram em 02/11, pelo mesmo leitor do agente.
   - name: xAI News
     url: https://x.ai/news
+    outras_portas:
+      - https://docs.x.ai/docs/models           # modelos da API: modelo novo aparece aqui
+      - https://docs.x.ai/docs/release-notes    # notas por mês, sem o dia: a data se confirma em outra porta
+      - https://github.com/xai-org              # SDKs e código aberto, com a data de cada atualização
 
 # Camada 0 — Hardware / infraestrutura
 hardware:
@@ -56,6 +63,30 @@ investors:
     url: https://www.ycombinator.com/blog
   - name: Sequoia Capital
     url: https://www.sequoiacap.com/stories/
+
+# Camada 1b — Laboratórios de peso aberto da China (desejável). Grandes
+# competidores: lançamento de modelo de fronteira deles é pauta forte. A página
+# de cada um no Hugging Face abre e mostra o que saiu, com data relativa ("há
+# 17 dias"); a data e o anúncio vêm da página oficial. Portas medidas em 02/11
+# pelo mesmo leitor do agente; qwen.ai/research e minimax.io/news não
+# renderizam o conteúdo, e z.ai/blog dá 404.
+abertos:
+  - name: Alibaba — Qwen
+    url: https://huggingface.co/Qwen
+  - name: DeepSeek
+    url: https://huggingface.co/deepseek-ai
+    outras_portas:
+      - https://api-docs.deepseek.com/news/     # anúncios da API, sem data na página
+  - name: Moonshot — Kimi
+    url: https://www.moonshot.ai/               # pesquisa, com data
+    outras_portas:
+      - https://huggingface.co/moonshotai
+  - name: Zhipu — GLM
+    url: https://docs.z.ai/release-notes/new-released   # lançamentos, com data
+    outras_portas:
+      - https://huggingface.co/zai-org
+  - name: MiniMax
+    url: https://huggingface.co/MiniMaxAI
 
 # Vozes-chave — checar em dias de rumor forte; usar com parcimônia,
 # e sempre buscando o post/anúncio original por trás da fala.

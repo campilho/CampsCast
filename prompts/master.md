@@ -96,7 +96,9 @@ Decida sozinho e siga em frente. Nunca peça confirmação.
    backlog, em `saved-items/historico/`, não entra nesta leitura.
 
 4. Pesquisa. Percorra as fontes na ordem `scan_order` de `sources.yaml`:
-   labs → hardware → investors. Use busca na web e leitura das páginas.
+   labs → hardware → investors → abertos (os laboratórios de peso aberto da
+   China: desejável, mas lançamento de modelo deles é pauta forte). Use busca
+   na web e leitura das páginas.
    Considere apenas o que foi publicado entre WINDOW_START e WINDOW_END,
    inclusive os dois extremos. Descarte o que for de antes ou de hoje.
    Toda pauta precisa de FONTE PRIMÁRIA
@@ -109,7 +111,8 @@ Decida sozinho e siga em frente. Nunca peça confirmação.
    fonte por outra porta antes de ir à imprensa — a cobertura é água já
    filtrada, com opinião dentro. Nesta ordem:
    1. outra porta da própria fonte: o mesmo conteúdo publicado por ela em
-      outro endereço (para a OpenAI, `outras_portas` em `sources.yaml`);
+      outro endereço (`outras_portas` em `sources.yaml`, que a OpenAI, a xAI
+      e alguns dos abertos têm);
    2. a cópia daquela página exata no arquivo público da Internet Archive:
       abra `https://archive.org/wayback/available?url=<url da página>`. Se
       houver cópia com status 200 e data (o número na URL da cópia) igual ou
