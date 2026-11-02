@@ -1,0 +1,49 @@
+custo por rodada: {1: 0.4941078, 2: 0.46552780000000005, 3: 0.4794878}
+rodada 1: escolhidas ['carbon', 'bancos-canada', 'openai-creditos']
+   as sete primeiras: [(19, 'carbon'), (16, 'bancos-canada'), (14, 'openai-creditos'), (13, 'ny-chatbots'), (13, 'ai-for-science'), (13, 'democratas-camara'), (12, 'claude-produtos')]
+rodada 2: escolhidas ['carbon', 'bancos-canada', 'openai-creditos']
+   as sete primeiras: [(19, 'carbon'), (16, 'bancos-canada'), (14, 'openai-creditos'), (13, 'ny-chatbots'), (13, 'ai-for-science'), (12, 'aws-blog'), (12, 'claude-produtos')]
+rodada 3: escolhidas ['carbon', 'bancos-canada', 'openai-creditos']
+   as sete primeiras: [(19, 'carbon'), (14, 'bancos-canada'), (14, 'openai-creditos'), (13, 'ny-chatbots'), (13, 'ai-for-science'), (13, 'democratas-camara'), (12, 'claude-produtos')]
+
+porteira (passa em quantas rodadas) e porta mais citada
+  openai-devday-paris      passa [False, False, False]  portas ['imprensa', 'imprensa', 'imprensa']
+  akamai                   passa [False, False, False]  portas ['imprensa', 'imprensa', 'imprensa']
+  bytedance-jimeng         passa [False, False, False]  portas ['imprensa', 'imprensa', 'imprensa']
+  cursor-sdk               passa [False, False, False]  portas ['imprensa', 'imprensa', 'imprensa']
+  github-mcp               passa [False, False, False]  portas ['imprensa', 'imprensa', 'imprensa']
+  google-anuncios          passa [False, False, False]  portas ['imprensa', 'imprensa', 'imprensa']
+  polonia-lei              passa [False, False, False]  portas ['imprensa', 'imprensa', 'imprensa']
+  progressistas-resolucao  passa [False, False, False]  portas ['imprensa', 'imprensa', 'imprensa']
+  kentucky                 passa [False, False, False]  portas ['imprensa', 'imprensa', 'imprensa']
+  uefi                     passa [False, False, False]  portas ['imprensa', 'imprensa', 'imprensa']
+  cathedral                passa [False, False, False]  portas ['imprensa', 'imprensa', 'imprensa']
+
+soma (4 a 20) por rodada, só as que passam
+  carbon                   [19, 19, 19] amp 0 foc=5 imp=5 nov=5 mem=4  [entrou em: atual-1, atual-2, atual-3, codigo-29-10, producao]
+  bancos-canada            [16, 16, 14] amp 2 foc=4 imp=4 nov=4 mem=4  [entrou em: atual-1]
+  openai-creditos          [14, 14, 14] amp 0 foc=4 imp=3 nov=5 mem=2
+  ai-for-science           [13, 13, 13] amp 0 foc=3 imp=3 nov=5 mem=2
+  democratas-camara        [13, 12, 13] amp 1 foc=2 imp=2 nov=5 mem=4  [entrou em: producao]
+  ny-chatbots              [13, 13, 13] amp 0 foc=2 imp=4 nov=5 mem=2  [entrou em: atual-3]
+  alphabet-microsoft       [12, 12, 12] amp 0 foc=3 imp=2 nov=5 mem=2  [entrou em: codigo-29-10]
+  claude-produtos          [12, 12, 12] amp 0 foc=3 imp=3 nov=5 mem=1
+  cohere-qwen              [12, 12, 12] amp 0 foc=2 imp=2 nov=4 mem=4  [entrou em: atual-2, atual-3, producao]
+  google-pequenos-negocios [12, 12, 12] amp 0 foc=3 imp=3 nov=5 mem=1
+  nvidia-rtx-spark         [12, 12, 12] amp 0 foc=3 imp=3 nov=5 mem=1
+  octoverse                [12, 12, 12] amp 0 foc=3 imp=2 nov=5 mem=2  [entrou em: atual-1, atual-2, codigo-29-10]
+  openai-dot               [12, 12, 11] amp 1 foc=3 imp=3 nov=4 mem=2
+  openai-future-firm       [12, 12, 12] amp 0 foc=3 imp=2 nov=5 mem=2
+  openai-servicenow        [12, 12, 12] amp 0 foc=3 imp=3 nov=5 mem=1
+  aws-blog                 [10, 12, 11] amp 2 foc=3 imp=2 nov=5 mem=1
+  meta-universidades       [11, 11, 11] amp 0 foc=3 imp=2 nov=5 mem=1
+  openai-legora            [10, 10, 10] amp 0 foc=3 imp=1 nov=5 mem=1
+  fingerprinting           [9, 9, 9] amp 0 foc=1 imp=1 nov=5 mem=2
+  yc-magic-patterns        [8, 8, 10] amp 2 foc=1 imp=1 nov=5 mem=1
+
+variação por critério
+  foco      3 de 31 variam; maior diferença 2
+  impacto   5 de 31 variam; maior diferença 2
+  novidade  3 de 31 variam; maior diferença 2
+  memoria   4 de 31 variam; maior diferença 1
+  soma: amplitude mediana 0, máxima 2, sem variação: 20 de 31

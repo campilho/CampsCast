@@ -107,6 +107,7 @@ Agregador serve para descobrir, nunca para citar.
 | `memoria/temas-sugeridos.md` | sugestões de tema (do agente; no futuro, de ouvintes) que o autor aprova ou recusa |
 | `memoria/fios.md` | fios em aberto: promessas, previsões e preocupações à espera de desfecho ([ADR 0008](docs/decisions/0008-memoria-em-camadas.md)) |
 | `prompts/master.md` | o agente |
+| `config/rubrica-pautas.md` | régua das pautas: porteira da fonte e quatro notas ([ADR 0012](docs/decisions/0012-nota-das-pautas.md)); ainda fora da produção |
 | `config/cloudfront-site.js` | função do CloudFront que abre o `index.html` das pastas do site e leva `/studio` ao estúdio; colada à mão no console |
 
 Relatório da semana: comando `/relatorio` (`.claude/commands/relatorio.md`).

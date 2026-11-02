@@ -1,8 +1,9 @@
 # ADR 0012 — Nota por critério para escolher as pautas
 
-- **Status:** proposto (02/11/2026). Régua v1 em
-  [`config/rubrica-pautas.md`](../../config/rubrica-pautas.md); calibração fora
-  do ar feita (abaixo); nada na produção
+- **Status:** proposto (02/11/2026). Régua v2 em
+  [`config/rubrica-pautas.md`](../../config/rubrica-pautas.md), com os três
+  ajustes da calibração da v1 aprovados pelo autor; as duas calibrações fora do
+  ar feitas (abaixo); nada na produção
 - **Data:** 2026-11-02
 
 ## Contexto
@@ -30,16 +31,18 @@ Há duas fontes de variação, e esta decisão trata da segunda:
 
 ## Decisão proposta
 
-1. **Uma régua de cinco critérios, notas de 1 a 5,** cada nota com uma
-   descrição curta: fonte, foco (o briefing), impacto, novidade e memória
-   (temas e fios). Fonte 1 ou 2 e novidade 1 eliminam, porque já são regras
-   do projeto (fonte primária, não repetir).
+1. **Uma porteira e quatro notas, de 1 a 5,** cada nota com uma descrição
+   curta: foco (o briefing), impacto, novidade e memória (temas e fios). A
+   porteira é a fonte primária, conferida por qualquer porta oficial; quem não
+   passa sai, e novidade 1 também, porque já são regras do projeto. O caminho
+   da fonte (URL, porta, quanto foi lido) fica nos metadados de cada
+   candidata, fora da nota. Essa é a v2; a v1 tinha a fonte como quinta nota
+   (abaixo, por que mudou).
 2. **O agente dá as notas, o código escolhe.** Uma linha por candidata em
    `runs/AAAA-MM-DD/candidatas.json`, cada nota com o seu "por quê". Um
-   script determinístico, com teste, elimina, soma (pesos iguais na v1),
-   desempata (impacto, foco, novidade, `id`), limita a duas pautas por
-   empresa e define "dia fraco" como menos de duas candidatas da janela com
-   soma 16 ou mais.
+   script determinístico, com teste, elimina, soma (pesos iguais, de 4 a
+   20), ordena as da janela e as do backlog juntas, desempata (impacto, foco,
+   novidade, `id`) e limita a duas pautas por empresa.
 3. **O Editor recebe as três e pode vetar uma,** com o motivo escrito no
    log; o código promove a seguinte. Veto frequente quer dizer régua errada.
 4. **Em etapas,** como o resto da Fase 3: calibração fora do ar (feita),
@@ -122,8 +125,44 @@ mesmo modelo que escreve o programa. O quarto lugar teve cinco candidatas
 entre 17 e 18: num dia assim um ponto decide, e a sombra precisa mostrar se,
 com dossiês reais, esse ponto oscila.
 
-**Próximo:** a régua v2 com os dois ajustes, uma rodada de conferência sobre
-as mesmas 31 candidatas, e então a sombra.
+## Calibração da v2 (02/11)
+
+Os três ajustes foram aprovados pelo autor no mesmo dia, com dois acréscimos:
+a Microsoft entrou na lista de players principais do briefing, e os cinco
+laboratórios de peso aberto da China (Alibaba, DeepSeek, Moonshot, Zhipu e
+MiniMax) viraram um grupo explícito, com foco 4 para lançamento de modelo de
+fronteira deles. Mesmas 31 candidatas, mesmo método, com o briefing novo; de
+US$ 0,47 a 0,49 por rodada.
+
+- **De novo as mesmas três nas três rodadas:** Gemini 4 Carbon (19),
+  bancos do Canadá (16, 16 e 14) e os créditos de API da OpenAI para
+  assinantes Pro e Business (14).
+- **Mais estável que a v1:** a soma não variou em 20 das 31 candidatas
+  (mediana 0, máximo 2).
+- **Os ajustes funcionaram.** O AI for Science caiu para foco 3 e soma 13.
+  A porteira deixou 11 de fora nas três rodadas, todas lidas só pela
+  imprensa, e passou todas as da OpenAI. O Octoverse subiu para foco 3 com a
+  Microsoft na lista. A pauta do backlog (Cohere) concorreu junto e ficou com
+  12.
+
+**O ponto novo: a terceira vaga se decide por um ponto.** Os créditos da
+OpenAI (14) ficaram um ponto à frente da lei de Nova York sobre chatbots de
+companhia e do AI for Science (13 nas três rodadas) e da carta dos democratas
+(13 em duas). Os créditos levaram foco 4 por "mexer em preço e
+acesso", o que a v2 escreveu para mudança de política; uma promoção de
+créditos cabe ali, mas talvez não devesse. Duas saídas, a decidir pelo autor:
+- **política mais estreita:** foco 4 só para mudança de preço ou acesso
+  duradoura e para todos os clientes; promoção, crédito e teste grátis ficam
+  em 3. Com isso, a lei de Nova York vence pelo desempate (impacto 4);
+- **impacto com peso 2:** a soma vai de 5 a 25 e quem muda mais coisa sobe.
+  Os créditos e a lei empatam em 17, e a lei vence no desempate.
+
+É o caso típico do veto do Editor: com as três escolhidas e as seguintes à
+vista, ele trocaria os créditos pela lei, com o motivo no log. Se a sombra
+mostrar vetos assim com frequência, a régua muda.
+
+**Próximo:** a decisão sobre a terceira vaga, a v2.1 e, depois de terça, a
+sombra na produção.
 
 ## Consequências
 

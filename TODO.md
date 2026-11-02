@@ -67,9 +67,12 @@ provas. Claude Code headless no Mac, em sombra, uma mudança por vez.
       proposto em 02/11: régua de 5 critérios em `config/rubrica-pautas.md`,
       o agente dá as notas e o código escolhe. Calibração de 02/11 sobre as 31
       candidatas de 29/10: três rodadas, as mesmas três escolhidas, soma
-      variando no máximo 3 pontos. Próximo: régua v2 (foco 4 mais estreito;
-      backlog concorrendo na mesma ordem, sem o "dia fraco"), conferir nas
-      mesmas candidatas, e então a sombra na produção
+      variando no máximo 3 pontos. Régua v2 aprovada e calibrada no mesmo dia
+      (fonte como porteira, foco 4 mais estreito, backlog concorrendo junto):
+      as mesmas três de novo, soma sem variar em 20 de 31. **Decidir:** a
+      terceira vaga saiu por um ponto para créditos promocionais da OpenAI, à
+      frente da lei de Nova York; "política" mais estreita no foco 4 ou
+      impacto com peso 2 (ADR, "Calibração da v2"). Depois de terça: a sombra
 - [ ] **Base de fontes medida** — o que rende pauta e o que só dá erro, para
       a lista do `config/sources.yaml` melhorar com dado. Em 02/11: 135 pautas
       em 45 episódios vieram de 65 domínios; 44% de fora da lista fixa;
@@ -80,8 +83,14 @@ provas. Claude Code headless no Mac, em sombra, uma mudança por vez.
       que pesa é o acesso: openai.com deu 403 em 42 de 42 logs e x.ai em 37, e
       a xAI só foi pauta duas vezes. Laboratórios que já foram notícia e não
       estão no briefing: Moonshot (Kimi), Zhipu (GLM), Alibaba (Qwen),
-      DeepSeek, MiniMax, Hugging Face, Reflection, Cohere, Sakana. Decidir se
-      os de peso aberto entram como segunda camada do briefing e das fontes
+      DeepSeek, MiniMax, Hugging Face, Reflection, Cohere, Sakana. Em 02/11: os
+      cinco chineses de peso aberto viraram grupo explícito no briefing e a
+      camada `abertos` (desejável) no `sources.yaml`, com as portas que abrem;
+      a xAI ganhou três `outras_portas` (docs.x.ai, as notas de lançamento e o
+      GitHub), todas medidas com o leitor do agente. O Kimi K3.1 Pro, de
+      24/10, foi ao ar em 26/10: os grandes chineses já aparecem; o grupo é
+      para não depender disso. Conferir no relatório de sexta se as portas
+      novas foram lidas
 - [ ] **Agente de produção carrega a memória das sessões de desenvolvimento** —
       a transcrição de 30/10 tem o `MEMORY.md` de `~/.claude/projects/` e as
       instruções de memória automática, além do `CLAUDE.md`. Mesmo vazamento
@@ -105,6 +114,18 @@ provas. Claude Code headless no Mac, em sombra, uma mudança por vez.
       no relatório de sexta; medir reprovações e voltas antes e depois
 - [ ] Fase 4: os mesmos papéis em Managed Agents ou no AgentCore, para
       comparar. Conferir antes se o WebSearch funciona no Bedrock
+- [ ] **No CampsVerso: uma redação com vários jornalistas, de modelos
+      diferentes** (ideia do autor, 02/11). Mais de um pesquisador, cada um num
+      modelo, e cada um cobrindo a casa que conhece melhor: o que pesquisa a
+      OpenAI pode ser um modelo da OpenAI, o que pesquisa a xAI, o próprio
+      Grok. Todos pesquisam também o resto, e todos dão as notas da régua do
+      [ADR 0012](docs/decisions/0012-nota-das-pautas.md). O Editor não recebe
+      só as três de cima: recebe as três melhores de cada jornalista e escolhe
+      pelas notas, pelo briefing e pelos temas. Ganhos a medir: cobertura (o
+      que um modelo acha e o outro não), acesso (casa que bloqueia um leitor
+      pode abrir para o seu) e viés (um modelo dando nota à casa dele, contra
+      os outros dando nota à mesma pauta). Depende da régua em produção e do
+      contrato de candidatas em `runs/AAAA-MM-DD/`
 
 ## Fase 3 — memória do agente
 
