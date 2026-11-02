@@ -1,4 +1,4 @@
-# Régua das pautas — v2 (02/11/2026)
+# Régua das pautas — v2.1 (02/11/2026)
 
 Cada candidata passa pela porteira da fonte e recebe quatro notas, de 1 a 5,
 cada uma com um "por quê" de uma linha. A nota sai da descrição abaixo, não da
@@ -8,7 +8,9 @@ elimina e escolhe é código ([ADR 0012](../docs/decisions/0012-nota-das-pautas.
 Da v1 para a v2: a fonte saiu da soma e virou porteira, porque media o nosso
 acesso (o openai.com e o x.ai nos bloqueiam quase todo dia) e não a notícia;
 o foco 4 ficou mais estreito; e o backlog concorre na mesma ordem que as
-pautas da janela.
+pautas da janela. Na v2.1, "política" no foco 4 passou a ser só mudança
+duradoura e para todos os clientes: a calibração da v2 deu a terceira vaga a
+créditos promocionais.
 
 ## A porteira: fonte primária
 
@@ -33,10 +35,10 @@ para o roteiro dizer de onde veio.
   xAI).
 - 4: lançamento de modelo de fronteira de um laboratório de peso aberto da
   China (a lista do briefing); anúncio de player principal que muda modelo,
-  produto central ou política (preço, acesso, regra de uso); ou o foco
-  especial da semana.
+  produto central ou política — preço, acesso ou regra de uso, de forma
+  duradoura e para todos os clientes; ou o foco especial da semana.
 - 3: programa, parceria, caso de cliente, evento ou ensaio de player
-  principal; outros anúncios dos laboratórios chineses; hardware e nuvem;
+  principal; promoção, crédito ou teste grátis; outros anúncios dos laboratórios chineses; hardware e nuvem;
   investidores (a16z, YC, Sequoia); publicação das pessoas listadas no
   briefing.
 - 2: outra empresa, governo ou laboratório, com efeito no setor de IA.

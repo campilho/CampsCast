@@ -161,8 +161,12 @@ créditos cabe ali, mas talvez não devesse. Duas saídas, a decidir pelo autor:
 vista, ele trocaria os créditos pela lei, com o motivo no log. Se a sombra
 mostrar vetos assim com frequência, a régua muda.
 
-**Próximo:** a decisão sobre a terceira vaga, a v2.1 e, depois de terça, a
-sombra na produção.
+**Decidido em 02/11 pelo autor: a política mais estreita** (régua v2.1).
+Corrige a descrição que errou sem mexer no peso de tudo. Pela soma da v2, os
+créditos caem para 13 e a lei de Nova York fica com a vaga pelo desempate
+(impacto 4); a confirmar na primeira rodada com a v2.1.
+
+**Próximo:** depois de terça, a sombra na produção.
 
 ## Consequências
 
