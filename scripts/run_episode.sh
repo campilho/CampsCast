@@ -13,7 +13,7 @@
 #   scripts/run_episode.sh --force               # roda em dia sem episódio
 #
 # Etapas: research, tts, publish, relatorio (só no último episódio da semana),
-# notify.
+# notify, site (no fim, só se o episódio foi publicado).
 #
 # Janela de notícias: calculada por scripts/window.py a partir do último dia já
 # coberto por algum episódio. Rodar no sábado ou no domingo é permitido e não
@@ -140,6 +140,20 @@ finaliza() {
     python3 scripts/estado.py --data "$EPISODE_DATE" --estado "$estado" \
       --etapa "$ETAPA_ATUAL" --motivo "$ULTIMO_ERRO" ${ARGS_ESTADO[@]+"${ARGS_ESTADO[@]}"} \
       >>"$LOG" 2>&1 || true
+    # Site: o estúdio e a capa com os números de hoje (scripts/estudio.py) e a
+    # subida (scripts/publica_site.py). Só depois de um episódio publicado, e
+    # depois do registro, que dá ao café a hora de saída e o custo. Não derruba
+    # nada: o episódio já está no ar, e sem isto o site fica com a gravação
+    # anterior e, depois das 08:00, avisa que a de hoje não chegou.
+    if [[ "$estado" == "ok" ]] && stage_enabled publish && stage_enabled site; then
+      if python3 scripts/estudio.py --date "$EPISODE_DATE" >>"$LOG" 2>&1 \
+          && python3 scripts/publica_site.py >>"$LOG" 2>&1; then
+        log "Site atualizado com a gravação de hoje."
+      else
+        log "AVISO: site não atualizado; o episódio não é afetado." \
+            "À mão: python3 scripts/estudio.py && python3 scripts/publica_site.py"
+      fi
+    fi
   fi
   exit $rc
 }

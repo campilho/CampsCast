@@ -559,6 +559,21 @@ caminho. No mesmo dia, a raiz dava 403 com o `index.html` no bucket: o
 "Default root object" que o roteiro de configuração mandava preencher não
 estava preenchido.
 
+### O site leu um ensaio como gravação, e um endereço como empresa
+
+No primeiro dia no ar (03/11), o estúdio tinha dois números falsos, os dois de
+ler texto em vez de estrutura:
+- **Uma gravação inteira às 16:38 que nunca houve.** Um `--dry-run` de 02/11
+  com a data de 03/11 escreveu no `logs/2026-11-03.log`, antes da gravação de
+  verdade, e o `estudio.py` lia o log inteiro. Agora cada execução começa no
+  cabeçalho, e a que se declara DRY-RUN fica de fora.
+- **"5 portas da OpenAI" com 2.** As consultas ao archive.org levam
+  `openai.com` no `?url=`, e a conta procurava o texto no endereço inteiro.
+  Agora conta pelo site que respondeu.
+
+Os dois passaram pelos testes porque nenhum fixture tinha dry-run no log nem
+arquivo público no meio das leituras. Achados olhando o que o site mostrou.
+
 ### CloudFront reescreve a bucket policy se deixarem
 
 "Grant CloudFront access to origin" vem como *Yes* e restringe o bucket ao

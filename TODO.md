@@ -229,12 +229,15 @@ aposentar, juntar ou subir o teto.
 ## Fase 3 — feedback e site
 
 - [ ] **Site, beta 1: capa e estúdio** — **no ar desde 02/11** em
-      campscast.com.br ([docs/site.md](docs/site.md), v3). Até a automação, os
-      dados do estúdio sobem à mão depois de cada episódio:
-      `python3 scripts/estudio.py && python3 scripts/publica_site.py` (sem
-      isso, depois das 08:00 o estúdio mostra "atrasado"). **Quarta:** o
-      `publish.py` rodar os dois numa etapa que não derruba o episódio se
-      falhar, e decidir o que o estúdio mostra quando a gravação falha.
+      campscast.com.br ([docs/site.md](docs/site.md), v3). Desde 04/11 o
+      `run_episode.sh` atualiza os dados e sobe o site no fim de cada
+      episódio publicado; falha vira AVISO no log, sem derrubar o episódio
+      (conferir na quarta: "Site atualizado" no `logs/2026-11-04.log`).
+      Falta: decidir o que o estúdio mostra quando a gravação falha (hoje fica
+      a anterior e, depois das 08:00, "atrasado"). E o "Ler o roteiro" e o log
+      de pesquisa: apontam para o GitHub e dão 404 até o commit do dia (em
+      03/11, das 05:15 até o commit da noite). Commit automático ou uma cópia
+      no próprio site, a decidir.
       Opcional: preencher o "Default root object" (`index.html`) na
       distribuição, redundante com a função
 - [ ] **Estúdio em miniatura, ao vivo no site** — no CampsVerso

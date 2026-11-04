@@ -10,9 +10,10 @@
   `python3 scripts/estudio.py` e depois
   `python3 -m http.server 8765 --directory site`.
 - **Endereço:** `campscast.com.br`, no ar desde 02/11/2026 (capa, estúdio,
-  sugestão e privacidade; `/studio` leva ao estúdio). Os dados do estúdio
-  ainda sobem à mão depois de cada episódio (`estudio.py` e
-  `publica_site.py`), até o `publish.py` fazer isso sozinho.
+  sugestão e privacidade; `/studio` leva ao estúdio). Desde 04/11 o
+  `run_episode.sh` atualiza os dados e sobe o site no fim de cada episódio
+  publicado (`estudio.py` e `publica_site.py`); se falhar, fica um AVISO no
+  log e o episódio segue.
 
 ## A ideia
 
@@ -315,7 +316,7 @@ corrigir qualquer coisa antes do seguinte):
    comportamento padrão, em *Viewer request*. Ela abre o `index.html` das
    pastas e leva `/studio` ao estúdio; endereço com extensão passa intacto.
 
-A cada publicação:
+A cada mudança no site (os dados de cada episódio o orquestrador já sobe):
 
 ```
 python3 scripts/estudio.py

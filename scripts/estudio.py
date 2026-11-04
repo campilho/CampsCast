@@ -397,8 +397,16 @@ def eventos_log(data: str, tts: dict) -> list[dict]:
         (r"^Nada novo a cobrir", "produtor", lambda m, l: "Repescagem: o episódio de hoje já saiu, nada a fazer"),
         (r"^(ERRO|Falhou|FAIL)", "produtor", lambda m, l: l),
     ]
-    eventos = []
+    # Um --dry-run escreve no log do dia que simula, até na véspera: em 03/11 o
+    # estúdio mostrou às 16:38 uma gravação inteira que nunca houve. Cada
+    # execução começa no cabeçalho, e a que se declara DRY-RUN fica de fora.
+    blocos = [[]]
     for linha in log.read_text(encoding="utf-8", errors="replace").splitlines():
+        if "════ CampsCast — episódio" in linha:
+            blocos.append([])
+        blocos[-1].append(linha)
+    eventos = []
+    for linha in (l for b in blocos if not any("MODO DRY-RUN" in x for x in b) for l in b):
         m0 = re.match(r"^\[(\d\d:\d\d:\d\d)\] (.*)", linha)
         if not m0:
             continue
@@ -574,7 +582,9 @@ def capitulos(eventos: list[dict]) -> list[dict]:
 def conversa(ep: dict, pq: dict, reg: dict, leituras: list[dict]) -> list[dict]:
     """O café: frases montadas com os números do dia. Nada aqui é fala gravada."""
     fechadas = [e for e in leituras if e.get("ok") is False]
-    openai = sum(1 for e in fechadas if "openai.com" in e.get("url", ""))
+    # Pelo site que respondeu: o archive.org consultado leva openai.com no ?url=.
+    openai = sum(1 for e in fechadas
+                 if (h := urlparse(e.get("url", "")).hostname or "") == "openai.com" or h.endswith(".openai.com"))
     linhas = []
     if pq.get("paginas"):
         frase = f"Abri {pq['paginas']} páginas em {pq['sites']} sites e fiz {pq['buscas']} buscas."

@@ -13,6 +13,10 @@ como o feed; imagens e fontes, com um dia. Assim uma mudança aparece sem
 precisar limpar o cache do CloudFront. O HTML sobe por último, para nenhuma
 página apontar para um arquivo que ainda não chegou.
 
+O run_episode.sh chama este script no fim de cada episódio publicado.
+SITE_ARQ troca o S3 por um arquivo local com as chaves que subiriam, como o
+ESTADO_ARQ do estado.py: é o que o smoke test usa.
+
 Uso:
     python3 scripts/estudio.py               # gera os dados do estúdio
     python3 scripts/publica_site.py --dry-run   # lista o que subiria
@@ -100,6 +104,12 @@ def main() -> int:
         for p, chave, tipo, cache in itens:
             print(f"  {chave:56} {p.stat().st_size / 1000:7.1f} kB  {tipo.split(';')[0]:24} {cache}")
         print(f"{len(itens)} arquivos, {total / 1_000_000:.2f} MB. Nada foi enviado (--dry-run).")
+        return 0
+
+    destino = os.environ.get("SITE_ARQ")
+    if destino:
+        pathlib.Path(destino).write_text("".join(f"{c}\n" for _, c, _, _ in itens), encoding="utf-8")
+        print(f"Site: {len(itens)} chaves em {destino}, nada no S3 (SITE_ARQ).")
         return 0
 
     from s3 import S3Error, load_credentials, load_env, put_object, resolve_bucket

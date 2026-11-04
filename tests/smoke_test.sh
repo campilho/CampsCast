@@ -60,6 +60,8 @@ export METRICAS_ARQ="$(mktemp)"
 export REGISTRO_SEM_SONO=1
 # Sem isto o orquestrador publicaria estado no S3 de produção a cada teste.
 export ESTADO_ARQ="$(mktemp)"
+# O mesmo para o site, que o orquestrador sobe no fim de cada episódio.
+export SITE_ARQ="$(mktemp)"
 # Sem rede o orquestrador para de cara; a suíte é offline e checa um nome que
 # sempre resolve. O teste de falta de rede troca por um que nunca resolve.
 export REDE_HOST=localhost
@@ -2168,6 +2170,56 @@ else
   bad "relatório de sexta sem o episódio do dia — ${REL_SEX:0:300}"
 fi
 
+# Site no fim do episódio (04/11): até aqui os dados do estúdio subiam à mão, e
+# sem isso o estúdio dizia "atrasado" a partir das 08:00. Sobe só depois de um
+# episódio publicado, e falhar não derruba o episódio. Sem o .env nesta cópia,
+# e sem áudio, o publish.py não sobe nada; o site vai para o SITE_ARQ.
+ENV_SITE=""
+if [[ -f .env ]]; then ENV_SITE="$(mktemp)"; mv .env "$ENV_SITE"; fi
+FAKE_SITE="$(mktemp -d)"; EST_SITE="$(mktemp -d)"
+cat > "$FAKE_SITE/claude" <<STUB
+#!/bin/sh
+cat > episodes/2026-08-25.md <<'MD'
+---
+episode: 2
+title: Terça de teste
+window_start: 2026-08-24
+window_end: 2026-08-24
+---
+CampsCast, episódio dois. Eu sou um agente de IA. Uma pauta. Ficha: Claude Opus cinco ponto cinco, cópia sintética da voz. Até o próximo episódio.
+MD
+printf '%s' '{"type":"result","is_error":false,"result":"OK episodes/2026-08-25.md 10 00:04","num_turns":1,"usage":{"input_tokens":1}}'
+STUB
+chmod +x "$FAKE_SITE/claude"
+roda_site() {  # $1: etapas; $2: SITE_ARQ
+  rm -f episodes/2026-08-25.md logs/2026-08-25.log; : > "$ESTADO_ARQ"
+  ESTUDIO_DIR="$EST_SITE" SITE_ARQ="$2" CLAUDE_BIN="$FAKE_SITE/claude" \
+    bash scripts/run_episode.sh --date 2026-08-25 --only "$1" >/dev/null 2>&1
+  echo "rc=$? $(grep -oE 'Site atualizado|AVISO: site não atualizado' logs/2026-08-25.log | tr '\n' ' ')$(grep -o '"estado": "[a-z]*"' "$ESTADO_ARQ")"
+}
+: > "$SITE_ARQ"
+SITE_OK="$(roda_site research,publish,site "$SITE_ARQ")"; SITE_CHAVES="$(cat "$SITE_ARQ")"
+: > "$SITE_ARQ"
+SITE_SEM_PUB="$(roda_site research,site "$SITE_ARQ")"; SITE_CHAVES_SEM_PUB="$(cat "$SITE_ARQ")"
+SITE_FALHA="$(roda_site research,publish,site /caminho/que/nao/existe/site.txt)"
+rm -rf "$FAKE_SITE" "$EST_SITE"; rm -f episodes/2026-08-25.md logs/2026-08-25.log logs/2026-08-25-*.json
+if [[ -n "$ENV_SITE" ]]; then mv "$ENV_SITE" .env; fi
+if [[ "$SITE_OK" == 'rc=0 Site atualizado "estado": "ok"' && "$SITE_CHAVES" == *"estudio/ultimo.json"* ]]; then
+  ok "episódio publicado sobe o site no fim, com os dados do dia"
+else
+  bad "site não subiu depois do episódio — $SITE_OK / ${SITE_CHAVES:0:80}"
+fi
+if [[ "$SITE_SEM_PUB" == 'rc=0 "estado": "ok"' && -z "$SITE_CHAVES_SEM_PUB" ]]; then
+  ok "sem a etapa de publicação, o site fica como está"
+else
+  bad "site subiu sem episódio publicado — $SITE_SEM_PUB / ${SITE_CHAVES_SEM_PUB:0:80}"
+fi
+if [[ "$SITE_FALHA" == 'rc=0 AVISO: site não atualizado "estado": "ok"' ]]; then
+  ok "falha ao subir o site vira aviso no log; o episódio continua ok"
+else
+  bad "falha no site afetou o episódio — $SITE_FALHA"
+fi
+
 # Expiração de fios (25/10): com 20 fios no teto e onze abertos contra um
 # fechado em três semanas, fio sem marco há 30 dias sai da leitura diária para
 # memoria/fios-expirados/AAAA.md. Nada se apaga, e rodar duas vezes não duplica.
@@ -2346,6 +2398,60 @@ if [[ "$EST_OK" == "ok" ]]; then
   ok "estúdio: transcrição vira eventos por personagem, no fuso de São Paulo, com a nota do log e sem caminho da máquina"
 else
   bad "dados do estúdio errados: $EST_OK"
+fi
+
+# Em 03/11 o estúdio tinha uma gravação inteira às 16:38, de "Abrindo o
+# estúdio" a "Gravação concluída", que nunca houve: um --dry-run de 02/11 com
+# a data de 03/11 escreveu no mesmo log, e o parser leu como gravação.
+DRY_EST="$(python3 - <<'PY' 2>&1
+import sys
+sys.path.insert(0, "scripts")
+from estudio import ROOT, eventos_log
+log = ROOT / "logs" / "1970-01-01.log"
+log.write_text("""[16:38:08] ════ CampsCast — episódio 1970-01-01 ════
+[16:38:08] MODO DRY-RUN — nada será executado de verdade.
+[16:38:08] ── [3/4] Publicação (feed.xml + S3)
+[16:38:08] ════ Concluído ════
+[05:00:06] ════ CampsCast — episódio 1970-01-01 ════
+[05:00:06] ── [1/4] Pesquisa e roteiro (claude -p headless)
+[05:15:18] ════ Concluído ════
+[06:00:04] ════ CampsCast — episódio 1970-01-01 ════
+Nada novo a cobrir: o último dia de notícia disponível já foi coberto.
+""", encoding="utf-8")
+try:
+    horas = [e["t"][11:16] for e in eventos_log("1970-01-01", {})]
+finally:
+    log.unlink()
+assert horas == ["05:00", "05:00", "05:15", "06:00"], horas
+print("ok")
+PY
+)"
+if [[ "$DRY_EST" == "ok" ]]; then
+  ok "estúdio: execução em --dry-run no log do dia não vira gravação"
+else
+  bad "estúdio lê dry-run como gravação: $DRY_EST"
+fi
+
+# Em 03/11 o café disse "8 portas fecharam na minha cara, 5 da OpenAI" com só
+# 2 da OpenAI: as consultas ao archive.org levam openai.com no ?url= e
+# contavam como dela. Conta pelo site que respondeu, não pelo texto do endereço.
+CAF="$(python3 - <<'PY' 2>&1
+import sys
+sys.path.insert(0, "scripts")
+from estudio import conversa
+leituras = [{"url": u, "ok": False} for u in (
+    "https://openai.com/index/x", "https://help.openai.com/en/articles/1",
+    "https://archive.org/wayback/available?url=openai.com/index/x", "https://www.axios.com/a")]
+leituras.append({"url": "https://deploymentsafety.openai.com/y", "ok": True})
+frase = conversa({"pautas": []}, {"paginas": 5, "sites": 4, "buscas": 0}, {}, leituras)[0]["texto"]
+assert frase.endswith("4 portas fecharam na minha cara, 2 da OpenAI."), frase
+print("ok")
+PY
+)"
+if [[ "$CAF" == "ok" ]]; then
+  ok "café do estúdio: porta da OpenAI contada pelo site que respondeu, não pelo ?url= do arquivo"
+else
+  bad "café do estúdio conta portas da OpenAI errado: $CAF"
 fi
 
 # O formato do log de pesquisa está no prompt e o site o lê: o exemplo do
