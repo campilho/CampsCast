@@ -38,9 +38,9 @@ Regras:
 - aberto: 2026-09-03 (ep. 6)
 - pergunta: sai critério público de admissão, ou verificação externa de quem recebe o acesso?
 - marcos:
-  - 2026-10-09 (ep. 31) — a Anthropic lança a Cyber Mission: modelos de fronteira e engenheiros para onze parceiras de infraestrutura crítica que ela mesma escolhe, e um scanner que manda relatório do modelo, sem revisão humana, a mantenedores de código aberto que pedirem
   - 2026-10-29 (ep. 44) — o Google lança o Gemini 4 Carbon (28/10), primeiro no índice independente, só para parte dos defensores cibernéticos nesta semana e depois para parceiros de confiança do Fairwind; público "em breve", sem data; segue sem critério de admissão publicado; dito no ar
   - 2026-10-30 (ep. 45) — a Mistral abre os pesos do Large 4 (29/10), mas a variante especializada para teste de invasão e red team fica em prévia só para parceiros como a Orange Cyberdefense, "subject to rigorous vetting and contractual safeguards", sem critério publicado; dito no ar ("só para parceiros escolhidos, com contrato")
+  - 2026-11-03 (ep. 46) — a OpenAI lança o GPT-6 Rosalind Research (30/10), mesmos pesos do GPT-6 Astra com menos recusas em biologia de duplo uso, só para organizações aprovadas, e publica na ficha de segurança quatro critérios de admissão (missão legítima em ciências da vida, uso de pesquisa crível, governança e supervisão de segurança, controles de segurança empresariais), com verificação de empresa e via própria para governos; é critério público, mas aplicado pela própria OpenAI, sem verificação de fora de quem entra; dito no ar
 - temas: T-05
 - situação: aberto
 - rever até: 2026-12-31
@@ -190,3 +190,11 @@ Regras:
 - temas: T-02, T-03
 - situação: aberto
 - rever até: 2026-12-15
+
+## F-033 · O sprint de segurança da OpenAI com a Cathedral: o que sai dele?
+- aberto: 2026-11-03 (ep. 46)
+- pergunta: o sprint interno anunciado em 02/11, com a Cathedral Systems usando os modelos da OpenAI contra as defesas dela, acontece, e a OpenAI ou a Cathedral publicam o que foi achado e corrigido? A Anthropic comenta a parceria, e a Cathedral publica o relatório sobre o caso da Anthropic?
+- marcos:
+- temas: T-03
+- situação: aberto
+- rever até: 2027-02-28
