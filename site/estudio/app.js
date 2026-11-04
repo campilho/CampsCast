@@ -608,7 +608,7 @@ function corpoFicha(p, aba) {
           <p class="nota"><a href="${esc(m.urls.backlog)}" target="_blank" rel="noopener">backlog.md no GitHub</a></p></details>`;
     }
     case "roteiro":
-      return `<p class="nota" style="margin:0">Episódio ${ep.numero} · ${numero(ep.palavras)} palavras · <a href="${esc(ep.roteiro_url)}" target="_blank" rel="noopener">o arquivo no GitHub</a></p>
+      return `<p class="nota" style="margin:0">Episódio ${ep.numero} · ${numero(ep.palavras)} palavras · <a href="${esc(ep.roteiro_url)}" target="_blank" rel="noopener">o roteiro com as fontes</a></p>
         <h3 style="font-size:18px;line-height:1.3">${esc(ep.titulo)}</h3><div class="roteiro">${ep.roteiro.map(x => `<p>${esc(x)}</p>`).join("")}</div>`;
     case "episodio": {
       const e = d.execucao;

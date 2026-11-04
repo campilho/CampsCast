@@ -2390,14 +2390,65 @@ assert d["eventos"][3]["origem"] == "agente"
 assert d["eventos"][1]["nota"] == "não abriu (403)", d["eventos"][1]
 assert d["pesquisa"]["escolhas"] == ["terceira vaga: A em vez de B — B não tinha fonte primária na janela"], d["pesquisa"]["escolhas"]
 assert sys.argv[2] not in texto, "caminho da máquina no arquivo público"
+# Em 03/11 os links do roteiro e do log iam para o GitHub e davam 404 até o
+# commit da noite. Agora o estúdio gera uma cópia de cada um no próprio site.
+import pathlib
+saida = pathlib.Path(sys.argv[1]).parent
+base = json.load(open("config/show.json"))["base_url"].rstrip("/")
+assert d["episodio"]["roteiro_url"] == f"{base}/estudio/roteiros/1970-01-01.html", d["episodio"]["roteiro_url"]
+assert d["pesquisa"]["url"] == f"{base}/estudio/pesquisa/1970-01-01.html", d["pesquisa"]["url"]
+rot = (saida / "roteiros" / "1970-01-01.html").read_text()
+pes = (saida / "pesquisa" / "1970-01-01.html").read_text()
+assert "Teste do estúdio" in rot and "<p>Corpo.</p>" in rot and 'href="https://example.com/a"' in rot, rot
+assert "openai.com/news/ — não abriu (403)" in pes and "<h1>Log de pesquisa — 1970-01-01</h1>" in pes, pes
+assert sys.argv[2] not in rot + pes, "caminho da máquina na página pública"
 print("ok")
 PY
 )"
 rm -rf "$EST_DIR"; rm -f "episodes/${FIXTURE_DATE}.md" "research/${FIXTURE_DATE}.md"
 if [[ "$EST_OK" == "ok" ]]; then
-  ok "estúdio: transcrição vira eventos por personagem, no fuso de São Paulo, com a nota do log e sem caminho da máquina"
+  ok "estúdio: transcrição vira eventos por personagem, no fuso de São Paulo, com a nota do log e sem caminho da máquina; roteiro e log viram páginas do site"
 else
   bad "dados do estúdio errados: $EST_OK"
+fi
+
+# O log de pesquisa é Markdown, e a página dele no site sai de um conversor
+# nosso, sem dependências: só o que os logs usam. Texto do log é dado de fora
+# (títulos e trechos de páginas), então nada dele vira HTML de verdade.
+MDH="$(python3 - <<'PY' 2>&1
+import re, sys
+sys.path.insert(0, "scripts")
+from paginas import md_html
+h = md_html("""# Log de pesquisa — 1970-01-01
+
+Janela: um parágrafo
+que continua na linha de baixo.
+
+## Páginas lidas
+1. openai.com/news — não abriu (403); **7** fechadas
+2. https://example.com/a?x=1&y=2 (lido); e `config/x.yaml`
+   continuação do item dois
+
+### 1. Uma pauta
+- fonte: OpenAI — https://openai.com/index/b/, lido
+  - sub-item <script>alert(1)</script>
+""")
+assert "<h1>Log de pesquisa — 1970-01-01</h1>" in h, h
+assert "<p>Janela: um parágrafo que continua na linha de baixo.</p>" in h, h
+assert "<h2>Páginas lidas</h2>" in h and "<h3>1. Uma pauta</h3>" in h, h
+assert h.count("<ol>") == 1 and h.count("<li>") == 4, h
+assert "<b>7</b> fechadas" in h and "<code>config/x.yaml</code>" in h, h
+assert re.search(r'<li><a href="https://example.com/a\?x=1&amp;y=2">[^<]+</a> \(lido\); e <code>config/x.yaml</code> continuação do item dois</li>', h), h
+assert '<a href="https://openai.com/index/b/">https://openai.com/index/b/</a>, lido' in h, h
+assert re.search(r"<li>fonte: .*?<ul>\s*<li>sub-item &lt;script&gt;", h, re.S), h
+assert "<script" not in h, h
+print("ok")
+PY
+)"
+if [[ "$MDH" == "ok" ]]; then
+  ok "log de pesquisa em HTML: títulos, listas com continuação, negrito, código e links, sem HTML do texto"
+else
+  bad "conversor do log de pesquisa: $MDH"
 fi
 
 # Em 03/11 o estúdio tinha uma gravação inteira às 16:38, de "Abrindo o
@@ -2613,11 +2664,19 @@ with tempfile.TemporaryDirectory() as d:
                  "fontes/OFL.txt", ".DS_Store", "capa/.DS_Store"]:
         (s / nome).parent.mkdir(parents=True, exist_ok=True)
         (s / nome).write_text("x")
+    # As páginas do roteiro e do log ficam na pasta de um dia para o outro; sobe
+    # só a do dia que o site mostra, e as antigas continuam no bucket.
+    (s / "estudio/ultimo.json").write_text('{"data": "2026-11-03"}')
+    for nome in ["estudio/roteiros/2026-11-03.html", "estudio/pesquisa/2026-11-03.html",
+                 "estudio/roteiros/2026-10-30.html"]:
+        (s / nome).parent.mkdir(parents=True, exist_ok=True)
+        (s / nome).write_text("x")
     itens = ps.lista(s)
     chaves = [c for _, c, _, _ in itens]
     assert set(chaves) == {"index.html", "capa/capa.css", "capa/capa-960.jpg", "estudio/index.html", "estudio/app.js",
                            "estudio/elenco.json", "estudio/ultimo.json", "sugestao/index.html",
-                           "privacidade/index.html", "fontes/a.woff2", "fontes/OFL.txt"}, chaves
+                           "privacidade/index.html", "fontes/a.woff2", "fontes/OFL.txt",
+                           "estudio/roteiros/2026-11-03.html", "estudio/pesquisa/2026-11-03.html"}, chaves
     assert chaves[-1] == "index.html" and all(c.endswith(".html") for c in chaves[-4:]), chaves
     tipos = {c: (t, k) for _, c, t, k in itens}
     assert tipos["estudio/index.html"] == ("text/html; charset=utf-8", "max-age=300"), tipos

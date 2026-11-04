@@ -43,6 +43,13 @@ CONTRATO = "campscast.estudio/1"
 FUSO = ZoneInfo("America/Sao_Paulo")
 REPO = "https://github.com/campilho/CampsCast/blob/main"
 
+
+def no_site(caminho: str) -> str:
+    """Endereço público de um arquivo do site. O roteiro e o log de pesquisa
+    moram aqui, não no GitHub: lá só existem depois do commit da noite."""
+    show = json.loads((ROOT / "config" / "show.json").read_text(encoding="utf-8"))
+    return f"{show.get('base_url', '').rstrip('/')}/{caminho}"
+
 # Quem é quem. `por_tras` diz o que de fato faz o trabalho hoje — o site mostra
 # isso ao clicar no personagem, para que a separação não pareça mais do que é.
 # `situacao`: "ativo", "em_parte" (já faz um pedaço) ou "em_breve" (ainda não
@@ -459,7 +466,7 @@ def pesquisa(data: str) -> dict:
     return {"paginas": num("Páginas abertas"), "fechadas": num("Fechadas"), "sites": num("Sites distintos"),
             "buscas": num("Buscas na web"), "pautas_avaliadas": num("Pautas avaliadas"),
             "notas": notas, "escolhas": escolhas,
-            "descartadas": descartadas, "url": f"{REPO}/research/{data}.md"}
+            "descartadas": descartadas, "url": no_site(f"estudio/pesquisa/{data}.html")}
 
 
 def secao(texto: str, titulo: str) -> str:
@@ -530,7 +537,7 @@ def episodio(data: str) -> dict:
                         "do_backlog": any(parecido(b, p.get("title", "")) for b in do_backlog)}
                        for p in fm.get("topics") or [] if isinstance(p, dict)],
             "roteiro": [p.strip() for p in corpo.split("\n\n") if p.strip()],
-            "roteiro_url": f"{REPO}/episodes/{data}.md",
+            "roteiro_url": no_site(f"estudio/roteiros/{data}.html"),
             "mp3": f"{show.get('base_url', '').rstrip('/')}/audio/{data}.mp3"}
 
 
@@ -686,6 +693,15 @@ def main() -> int:
     escreve("elenco.json", elenco)
     escreve(f"{data}.json", dia)
     escreve("ultimo.json", dia)
+    import paginas
+    (saida / "roteiros").mkdir(exist_ok=True)
+    log = ROOT / "research" / f"{data}.md"
+    (saida / "roteiros" / f"{data}.html").write_text(
+        paginas.roteiro(data, dia["episodio"], com_pesquisa=log.exists()), encoding="utf-8")
+    if log.exists():
+        (saida / "pesquisa").mkdir(exist_ok=True)
+        (saida / "pesquisa" / f"{data}.html").write_text(
+            paginas.pesquisa(data, log.read_text(encoding="utf-8"), dia["episodio"]["numero"]), encoding="utf-8")
     faltam = orfaos()
     if faltam:
         print(f"aviso: sem personagem no site: {', '.join(faltam)}", file=sys.stderr)

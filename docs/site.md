@@ -41,6 +41,7 @@ estúdio fica a um clique.
 | `/studio` | Redireciona para `/estudio/` | função do CloudFront |
 | `/sugestao/` | Sugira um tema; por e-mail até o formulário (S4) | `site/sugestao/index.html` |
 | `/privacidade/` | Privacidade | `site/privacidade/index.html` |
+| `/estudio/roteiros/AAAA-MM-DD.html`, `/estudio/pesquisa/AAAA-MM-DD.html` | Cópia do roteiro (com as fontes) e do log de pesquisa de cada dia | `scripts/paginas.py`, chamado pelo `estudio.py` |
 | `/feed.xml`, `/cover.jpg`, `/audio/` | O podcast, como hoje; a publicação do site não toca neles | `publish.py` |
 
 As páginas usam caminhos absolutos, e as fontes vêm de `/fontes/`. A capa e
@@ -179,7 +180,7 @@ Abre a ficha dele, com três abas:
    |---|---|---|
    | Jornalista | Leituras | os números da ficha técnica (do log de pesquisa) e as páginas na ordem em que abriu (da transcrição), com as que não abriram em vermelho e a nota "no log" de cada uma; as buscas |
    | Editor | Pautas e memória | as pautas que entraram, com a fonte; as escolhas ("por que esta e não aquela"); as descartadas com o motivo (42 em 30/10); temas com o estado de cada um; fios em aberto; backlog; o botão "sugerir um tema" |
-   | Roteirista | Roteiro | o roteiro inteiro, com link para o arquivo no GitHub |
+   | Roteirista | Roteiro | o roteiro inteiro, com link para a cópia no site, com as fontes |
    | Locutor | Episódio | o player, a duração, os créditos gastos |
    | Produtor | Etapas | a duração de cada etapa, o custo de modelo, a repescagem |
    | Vigia | Plantão | o estado da última gravação, a conferência do roteiro, as próximas gravações e os dias sem episódio |
@@ -191,7 +192,12 @@ Abre a ficha dele, com três abas:
 copia para o arquivo de dados o que a ficha mostra (lista de leituras,
 roteiro, temas, fios) e a ficha leva o link para o arquivo no GitHub. Assim a
 página não depende de outro site responder, e o arquivo de dados é o
-contrato.
+contrato. O roteiro e o log de pesquisa são exceção: o link vai para uma
+cópia no próprio site (`/estudio/roteiros/` e `/estudio/pesquisa/`), porque no
+GitHub eles só existem depois do commit da noite e, em 03/11, deram 404 das
+05:15 até lá. As cópias ficam em `estudio/`, que a bucket policy já abre; o
+`publica_site.py` sobe só as do dia que o `ultimo.json` mostra, e as antigas
+continuam no bucket.
 
 ## Instruções por personagem
 

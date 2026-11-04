@@ -38,3 +38,7 @@ gravacoes/
 # Dados do estúdio, gerados por scripts/estudio.py a cada execução; o código
 # da página mora na mesma pasta e entra no git
 site/estudio/*.json
+# E as cópias do roteiro e do log de cada dia (scripts/paginas.py); o original
+# está em episodes/ e research/
+site/estudio/roteiros/
+site/estudio/pesquisa/

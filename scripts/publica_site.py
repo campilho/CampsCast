@@ -25,6 +25,7 @@ Uso:
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import pathlib
 import re
@@ -53,6 +54,10 @@ PREFIXOS_DO_PODCAST = ("audio/", "referencias/")
 # lê o ultimo.json.
 FORA = {"estudio/folha.html"}
 DIA = re.compile(r"^estudio/\d{4}-\d{2}-\d{2}\.json$")
+# O roteiro e o log de pesquisa de cada dia (scripts/paginas.py) se acumulam
+# na pasta; sobe só o do dia que o ultimo.json mostra. Os anteriores já estão
+# no bucket, e o link de quem os compartilhou continua valendo.
+PAGINA_DO_DIA = re.compile(r"^estudio/(roteiros|pesquisa)/(\d{4}-\d{2}-\d{2})\.html$")
 DADOS = ("estudio/elenco.json", "estudio/ultimo.json")
 
 
@@ -62,6 +67,10 @@ class Recusa(RuntimeError):
 
 def lista(site: pathlib.Path = SITE) -> list[tuple[pathlib.Path, str, str, str]]:
     """(arquivo, chave, tipo, cache) de tudo o que sobe, com o HTML no fim."""
+    try:
+        hoje = json.loads((site / "estudio" / "ultimo.json").read_text(encoding="utf-8")).get("data")
+    except (OSError, ValueError, AttributeError):
+        hoje = None
     itens = []
     for p in sorted(site.rglob("*")):
         if not p.is_file() or any(parte.startswith(".") for parte in p.relative_to(site).parts):
@@ -70,6 +79,8 @@ def lista(site: pathlib.Path = SITE) -> list[tuple[pathlib.Path, str, str, str]]
         if chave in DO_PODCAST or chave.startswith(PREFIXOS_DO_PODCAST):
             raise Recusa(f"site/{chave} cairia em cima do podcast ({chave}); nada foi enviado.")
         if chave in FORA or DIA.match(chave) or p.suffix not in TIPOS:
+            continue
+        if (m := PAGINA_DO_DIA.match(chave)) and m.group(2) != hoje:
             continue
         tipo, cache = TIPOS[p.suffix]
         itens.append((p, chave, tipo, cache))

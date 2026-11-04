@@ -234,10 +234,9 @@ aposentar, juntar ou subir o teto.
       episódio publicado; falha vira AVISO no log, sem derrubar o episódio
       (conferir na quarta: "Site atualizado" no `logs/2026-11-04.log`).
       Falta: decidir o que o estúdio mostra quando a gravação falha (hoje fica
-      a anterior e, depois das 08:00, "atrasado"). E o "Ler o roteiro" e o log
-      de pesquisa: apontam para o GitHub e dão 404 até o commit do dia (em
-      03/11, das 05:15 até o commit da noite). Commit automático ou uma cópia
-      no próprio site, a decidir.
+      a anterior e, depois das 08:00, "atrasado"). O "Ler o roteiro" e o log
+      de pesquisa davam 404 até o commit da noite (03/11); decidido no mesmo
+      dia: cópia no próprio site (`scripts/paginas.py`), sem push automático.
       Opcional: preencher o "Default root object" (`index.html`) na
       distribuição, redundante com a função
 - [ ] **Estúdio em miniatura, ao vivo no site** — no CampsVerso
