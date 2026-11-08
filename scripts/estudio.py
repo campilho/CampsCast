@@ -322,14 +322,15 @@ def de_quem_fala(texto: str, anterior: str) -> str:
 
 
 def eventos_agente(path: pathlib.Path) -> list[dict]:
+    """Eventos da transcrição e das dos subagentes. Desde 05/11 quem lê as
+    páginas é um subagente: as leituras dele são do Jornalista, como eram
+    antes, e o relatório que ele devolve ao agente (longo, em inglês) não
+    vira fala de ninguém. A ordem no tempo vem do sort em monta()."""
+    from transcricoes import entradas
     eventos: list[dict] = []
     por_id: dict[str, dict] = {}
     anterior = "editor"
-    for linha in path.read_text(encoding="utf-8", errors="replace").splitlines():
-        try:
-            d = json.loads(linha)
-        except json.JSONDecodeError:
-            continue
+    for d, do_subagente in entradas(path):
         ts = d.get("timestamp")
         if d.get("type") == "system" and "safeguards" in str(d.get("content", "")) and ts:
             eventos.append({"t": hora(ts), "quem": anterior, "origem": "sistema", "acao": "interrompido",
@@ -348,8 +349,9 @@ def eventos_agente(path: pathlib.Path) -> list[dict]:
                     ev = {"t": hora(ts), "origem": "ferramenta", **ev}
                     eventos.append(ev)
                     por_id[x.get("id", "")] = ev
-                    anterior = ev["quem"]
-            elif d["type"] == "assistant" and tipo == "text":
+                    if not do_subagente:
+                        anterior = ev["quem"]
+            elif d["type"] == "assistant" and tipo == "text" and not do_subagente:
                 txt = x.get("text", "").strip()
                 if not txt or txt.startswith(("OK ", "FAIL ")):
                     continue
@@ -361,7 +363,10 @@ def eventos_agente(path: pathlib.Path) -> list[dict]:
                     continue
                 corpo = x.get("content")
                 corpo = corpo if isinstance(corpo, str) else json.dumps(corpo, ensure_ascii=False)
-                m = re.search(r"HTTP (\d{3})", corpo[:300])
+                # Só 4xx e 5xx fecham a porta. O WebFetch de dentro do
+                # subagente (desde 05/11) diz o código também quando abre:
+                # "Fetched … (HTTP 200 OK, …)".
+                m = re.search(r"HTTP ([45]\d\d)", corpo[:300])
                 ev["ok"] = not (x.get("is_error") or m)
                 if not ev["ok"]:
                     cod = m.group(1) if m else "erro"
@@ -596,7 +601,8 @@ def conversa(ep: dict, pq: dict, reg: dict, leituras: list[dict]) -> list[dict]:
     if pq.get("paginas"):
         frase = f"Abri {pq['paginas']} páginas em {pq['sites']} sites e fiz {pq['buscas']} buscas."
         if fechadas:
-            frase += f" {len(fechadas)} portas fecharam na minha cara" + (f", {openai} da OpenAI." if openai else ".")
+            frase += (f" {len(fechadas)} portas fecharam" if len(fechadas) > 1 else " 1 porta fechou") \
+                + " na minha cara" + (f", {openai} da OpenAI." if openai else ".")
         linhas.append({"quem": "jornalista", "texto": frase})
     if pq.get("pautas_avaliadas"):
         n_back = sum(1 for p in ep["pautas"] if p["do_backlog"])

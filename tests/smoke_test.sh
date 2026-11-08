@@ -1338,6 +1338,56 @@ else
   bad "registro não extraiu o esforço da transcrição"
 fi
 
+# Desde 05/11/2026 o agente não lê páginas com o WebFetch: chama um subagente
+# "web-fetch", e as leituras ficam na transcrição dele, em
+# <sessao>/subagents/. Quem lia só a principal contou zero leituras em 05 e
+# 06/11, com 46 e 68 páginas lidas de fato.
+if SUB_OK="$(python3 - <<'FIM' 2>&1
+import json, pathlib, subprocess, sys, tempfile
+sys.path.insert(0, "scripts")
+from registro import contagem_transcricao
+from research_trail import trail
+uso = lambda i, nome, inp, mid: {"type": "assistant", "timestamp": "2026-11-06T08:00:00Z",
+    "message": {"id": mid, "model": "claude-opus-5-5", "role": "assistant",
+                "usage": {"input_tokens": 1, "cache_creation_input_tokens": 100, "output_tokens": 1},
+                "content": [{"type": "tool_use", "id": i, "name": nome, "input": inp}]}}
+tmp = pathlib.Path(tempfile.mkdtemp())
+principal = tmp / "s1.jsonl"
+principal.write_text("\n".join(json.dumps(l) for l in [
+    uso("b1", "WebSearch", {"query": "openai"}, "m1"),
+    uso("g1", "Agent", {"subagent_type": "web-fetch", "description": "Ler duas páginas", "prompt": "x"}, "m2"),
+]) + "\n")
+sub = tmp / "s1" / "subagents"
+sub.mkdir(parents=True)
+(sub / "agent-a1.jsonl").write_text("\n".join(json.dumps(l) for l in [
+    uso("f1", "WebFetch", {"url": "https://openai.com/index/a", "prompt": "x"}, "m3"),
+    uso("f2", "WebFetch", {"url": "https://example.org/b", "prompt": "x"}, "m4"),
+]) + "\n")
+(sub / "agent-a1.meta.json").write_text('{"agentType": "web-fetch"}')
+r = contagem_transcricao(principal)
+assert r["leituras"] == 2 and r["buscas"] == 1 and r["subagentes"] == 1, r
+assert r["chamadas"] == 4 and r["cache_escrito"] == 400, r
+t = trail(principal)
+assert t["lidas"] == ["https://openai.com/index/a", "https://example.org/b"], t
+# O acompanhamento ao vivo também segue o subagente, e diz o que ele foi fazer.
+out = subprocess.run([sys.executable, "scripts/watch_agent.py", "--file", str(principal), "--once"],
+                     capture_output=True, text=True).stdout
+assert "ajudante: Ler duas páginas" in out and "lendo: https://example.org/b" in out, out
+# Na conta do cache, o subagente é outro contexto: o relatório que ele devolve
+# é web no contexto principal, e o cache que ele lê fica numa coluna à parte.
+from memoria_custo import categoria, lido_subagentes
+assert categoria("Agent", {"subagent_type": "web-fetch", "prompt": "x"}) == "web"
+for f in sub.glob("agent-*.jsonl"):
+    f.write_text(f.read_text().replace('"output_tokens": 1}', '"cache_read_input_tokens": 50, "output_tokens": 1}'))
+assert lido_subagentes(principal) == 100, lido_subagentes(principal)
+print("ok")
+FIM
+)" && [[ "$SUB_OK" == "ok" ]]; then
+  ok "registro, rastro e acompanhamento contam as leituras feitas por subagente"
+else
+  bad "leituras do subagente fora da conta: $SUB_OK"
+fi
+
 # ----------------------------------------------- 16 registro de execução e custo
 # A ficha técnica falada já anunciou o modelo errado por quatro episódios. A
 # descrição pública do podcast repetiu o mesmo erro por mais tempo, porque
@@ -2107,19 +2157,24 @@ fi
 
 # Fonte que falha sempre se distingue de fonte que falha às vezes só com as
 # tentativas ao lado: em outubro, openai.com deu 403 em 33 de 33 leituras.
+# Uma das leituras vem de um subagente, como desde 05/11.
 TR_DIR="$(mktemp -d)"
 printf '%s' '{"session_id": "sessao-fontes"}' > logs/2026-09-29-1-agente.json
 python3 - "$TR_DIR/sessao-fontes.jsonl" <<'PYF'
-import json, sys
-linhas = []
+import json, pathlib, sys
+principal = pathlib.Path(sys.argv[1])
+(principal.parent / principal.stem / "subagents").mkdir(parents=True)
+arquivos = {}
 for i, (url, txt) in enumerate([("https://openai.com/news", "Request failed with status code 403"),
                                 ("https://openai.com/index/x", "HTTP 403 Forbidden"),
                                 ("https://www.anthropic.com/news", "texto da página")]):
-    linhas.append({"type": "assistant", "message": {"content": [
+    f = principal.parent / principal.stem / "subagents" / "agent-x.jsonl" if i == 1 else principal
+    arquivos.setdefault(f, []).append({"type": "assistant", "message": {"content": [
         {"type": "tool_use", "id": f"t{i}", "name": "WebFetch", "input": {"url": url}}]}})
-    linhas.append({"type": "user", "message": {"content": [
+    arquivos[f].append({"type": "user", "message": {"content": [
         {"type": "tool_result", "tool_use_id": f"t{i}", "content": txt, "is_error": "403" in txt}]}})
-open(sys.argv[1], "w").write("\n".join(json.dumps(l) for l in linhas) + "\n")
+for f, linhas in arquivos.items():
+    f.write_text("\n".join(json.dumps(l) for l in linhas) + "\n")
 PYF
 REL_F="$(TRANSCRICOES_DIR="$TR_DIR" METRICAS_ARQ=/dev/null python3 scripts/relatorio.py --data 2026-10-02 2>/dev/null)"
 rm -rf "$TR_DIR"; rm -f logs/2026-09-29-1-agente.json
@@ -2375,6 +2430,20 @@ linhas = [
     uso("1970-01-01T08:00:09Z", "c", "Write", {"file_path": f"{raiz}/episodes/1970-01-01.md", "content": "x"}),
 ]
 open(saida, "w").write("\n".join(json.dumps(l) for l in linhas) + "\n")
+# A leitura feita por um subagente (desde 05/11) entra na linha do tempo; o
+# relatório que ele devolve, em inglês e longo, não vira fala de ninguém.
+import pathlib
+sub = pathlib.Path(saida).with_suffix("") / "subagents"
+sub.mkdir(parents=True)
+linhas = [
+    uso("1970-01-01T08:00:08Z", "d", "WebFetch", {"url": "https://example.org/pagina", "prompt": "x"}),
+    {"type": "user", "timestamp": "1970-01-01T08:00:08Z", "message": {"content": [{"type": "tool_result", "tool_use_id": "d", "content": "HTTP 404 Not Found"}]}},
+    {"type": "assistant", "timestamp": "1970-01-01T08:00:08Z", "message": {"content": [{"type": "text", "text": "1. example.org/pagina: HTTP 404."}]}},
+    # no subagente a leitura que abriu também diz o código: 200 não é porta fechada
+    uso("1970-01-01T08:00:08Z", "e", "WebFetch", {"url": "https://example.org/aberta", "prompt": "x"}),
+    {"type": "user", "timestamp": "1970-01-01T08:00:08Z", "message": {"content": [{"type": "tool_result", "tool_use_id": "e", "content": "Fetched https://example.org/aberta (HTTP 200 OK, text/html, 10 characters)."}]}},
+]
+(sub / "agent-s.jsonl").write_text("\n".join(json.dumps(l) for l in linhas) + "\n")
 PY
 ESTUDIO_DIR="$EST_DIR/saida" TRANSCRICOES_DIR="$EST_DIR" METRICAS_ARQ="$EST_DIR/metricas.jsonl" \
   python3 scripts/estudio.py --date "$FIXTURE_DATE" >/dev/null 2>&1
@@ -2383,7 +2452,9 @@ import json, sys
 texto = open(sys.argv[1]).read()
 d = json.loads(texto)
 quem = [e["quem"] for e in d["eventos"]]
-assert quem == ["editor", "jornalista", "jornalista", "editor", "roteirista"], quem
+assert quem == ["editor", "jornalista", "jornalista", "editor", "jornalista", "jornalista", "jornalista", "roteirista"], quem
+assert not any("example.org/pagina: HTTP" in e["texto"] for e in d["eventos"]), d["eventos"]
+assert [l["ok"] for l in d["pesquisa"]["leituras"]] == [False, False, True], d["pesquisa"]["leituras"]
 assert d["eventos"][0]["t"] == "1970-01-01T05:00:00-03:00", d["eventos"][0]["t"]
 assert d["eventos"][2]["texto"] == "openai.com/news não abriu (403)", d["eventos"][2]
 assert d["eventos"][3]["origem"] == "agente"
@@ -2407,7 +2478,7 @@ PY
 )"
 rm -rf "$EST_DIR"; rm -f "episodes/${FIXTURE_DATE}.md" "research/${FIXTURE_DATE}.md"
 if [[ "$EST_OK" == "ok" ]]; then
-  ok "estúdio: transcrição vira eventos por personagem, no fuso de São Paulo, com a nota do log e sem caminho da máquina; roteiro e log viram páginas do site"
+  ok "estúdio: transcrição e subagentes viram eventos por personagem, no fuso de São Paulo, com a nota do log e sem caminho da máquina; roteiro e log viram páginas do site"
 else
   bad "dados do estúdio errados: $EST_OK"
 fi
@@ -2496,6 +2567,9 @@ leituras = [{"url": u, "ok": False} for u in (
 leituras.append({"url": "https://deploymentsafety.openai.com/y", "ok": True})
 frase = conversa({"pautas": []}, {"paginas": 5, "sites": 4, "buscas": 0}, {}, leituras)[0]["texto"]
 assert frase.endswith("4 portas fecharam na minha cara, 2 da OpenAI."), frase
+# Em 04/11 só uma porta fechou, e o café disse "1 portas fecharam".
+uma = conversa({"pautas": []}, {"paginas": 5, "sites": 4, "buscas": 0}, {}, leituras[3:])[0]["texto"]
+assert uma.endswith("1 porta fechou na minha cara."), uma
 print("ok")
 PY
 )"

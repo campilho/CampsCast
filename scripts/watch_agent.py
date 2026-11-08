@@ -28,6 +28,8 @@ import sys
 import time
 import typing
 
+from transcricoes import subagentes
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 POLL_SECONDS = 1.0
 
@@ -103,6 +105,8 @@ def summarize(tool: str, inp: dict) -> str:
     if tool == "WebFetch":
         url = inp.get("url", "")
         return f"lendo: {url[:90]}"
+    if tool == "Agent":
+        return f"ajudante: {inp.get('description', '')[:90]}"
     if tool in ("Read", "Write", "Edit"):
         path = str(inp.get("file_path", ""))
         try:
@@ -131,7 +135,7 @@ def emit(line: str, log: "typing.TextIO | None") -> None:
 
 
 def render(raw: str, started: float, counters: dict, prefix: str = "",
-           log: "typing.TextIO | None" = None) -> None:
+           log: "typing.TextIO | None" = None, subagente: bool = False) -> None:
     try:
         d = json.loads(raw)
     except json.JSONDecodeError:
@@ -151,8 +155,9 @@ def render(raw: str, started: float, counters: dict, prefix: str = "",
             counters[tool] = counters.get(tool, 0) + 1
             counters["_total"] = counters.get("_total", 0) + 1
             emit(f"{prefix}{stamp} {counters['_total']:>3}. "
-                 f"{summarize(tool, block.get('input', {}))}", log)
-        elif block.get("type") == "text":
+                 + ("  · " if subagente else "")
+                 + summarize(tool, block.get("input", {})), log)
+        elif block.get("type") == "text" and not subagente:
             text = (block.get("text") or "").strip()
             if text:
                 first = text.splitlines()[0][:100]
@@ -197,25 +202,31 @@ def main() -> int:
 
     started = time.time()
     counters: dict = {}
-    pos = 0
+    # Desde 05/11 as páginas são lidas por subagentes, cada um com a própria
+    # transcrição numa pasta ao lado da sessão (scripts/transcricoes.py). Cada
+    # arquivo guarda a sua posição; os do subagente entram quando aparecem.
+    posicoes: dict[pathlib.Path, int] = {path: 0}
 
     while True:
-        try:
-            with path.open(encoding="utf-8", errors="replace") as fh:
-                fh.seek(pos)
-                # readline() em vez de `for line in fh`: iterar desabilita
-                # tell(), e aqui a posição é justamente o que precisa persistir
-                # entre as passadas para não reprocessar o arquivo inteiro.
-                while True:
-                    line = fh.readline()
-                    if not line:
-                        break
-                    if not line.endswith("\n"):
-                        break               # linha ainda sendo escrita
-                    render(line, started, counters, args.prefix, log)
-                    pos = fh.tell()
-        except FileNotFoundError:
-            pass
+        for f in subagentes(path):
+            posicoes.setdefault(f, 0)
+        for f in list(posicoes):
+            try:
+                with f.open(encoding="utf-8", errors="replace") as fh:
+                    fh.seek(posicoes[f])
+                    # readline() em vez de `for line in fh`: iterar desabilita
+                    # tell(), e aqui a posição é justamente o que precisa
+                    # persistir entre as passadas para não reprocessar tudo.
+                    while True:
+                        line = fh.readline()
+                        if not line:
+                            break
+                        if not line.endswith("\n"):
+                            break               # linha ainda sendo escrita
+                        render(line, started, counters, args.prefix, log, subagente=f != path)
+                        posicoes[f] = fh.tell()
+            except FileNotFoundError:
+                pass
 
         if args.once:
             break

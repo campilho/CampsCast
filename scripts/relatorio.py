@@ -87,10 +87,12 @@ def titulo_episodio(data: str) -> str:
 
 
 def falhas_de_leitura(ini: str, fim: str) -> tuple[collections.Counter, collections.Counter]:
-    """Leituras de página por domínio, nas transcrições do agente: as que
-    falharam e todas as tentativas. Sem as tentativas, fonte que falha sempre
-    não se distingue de fonte que falha às vezes."""
+    """Leituras de página por domínio, nas transcrições do agente e dos
+    subagentes dele (desde 05/11 as leituras moram lá): as que falharam e
+    todas as tentativas. Sem as tentativas, fonte que falha sempre não se
+    distingue de fonte que falha às vezes."""
     from memoria_custo import transcricoes_dir
+    from transcricoes import entradas
     pasta, conta, tentou = transcricoes_dir(), collections.Counter(), collections.Counter()
     for ag in sorted((ROOT / "logs").glob("*-agente.json")):
         if not ini <= ag.name[:10] <= fim:
@@ -103,8 +105,7 @@ def falhas_de_leitura(ini: str, fim: str) -> tuple[collections.Counter, collecti
         if not sid or not t.exists():
             continue
         urls = {}
-        for linha in t.open(encoding="utf-8"):
-            r = json.loads(linha)
+        for r, _ in entradas(t):
             conteudo = r.get("message", {}).get("content")
             if r.get("type") == "assistant":
                 for c in conteudo or []:

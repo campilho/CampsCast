@@ -22,10 +22,11 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
 - [ ] **Leitura por subagente desde 05/11** — o WebFetch saiu das ferramentas
       do agente e entrou um subagente "web-fetch" (Opus 5.5), sem mudança de
       versão do CLI (2.1.283 de 03 a 06/11). Custo de US$ 7,03 e 7,83, o cache
-      escrito triplicou. Em ordem: (1) as medições que leem a transcrição
-      passam a ler também `<sessao>/subagents/` (estúdio, relatório, rastro);
-      (2) ver se dá para manter o WebFetch direto; (3) conferir se as
-      citações de 05 e 06/11 batem com as páginas
+      escrito triplicou. (1) Feito em 08/11: as medições leem também
+      `<sessao>/subagents/` (`scripts/transcricoes.py`), e os registros de 05
+      e 06/11 foram recontados. Falta: (2) ver se dá para manter o WebFetch
+      direto; (3) conferir se as citações de 05 e 06/11 batem com as páginas
+      — o subagente recebe a página crua, e o agente, o resumo dele
 - [ ] **07–08/11 — relatório mensal de audiência de outubro**, com a revisão
       de custos do [ADR 0007](docs/decisions/0007-custo-por-episodio.md) (ver
       Recorrente)

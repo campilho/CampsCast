@@ -574,6 +574,34 @@ ler texto em vez de estrutura:
 Os dois passaram pelos testes porque nenhum fixture tinha dry-run no log nem
 arquivo público no meio das leituras. Achados olhando o que o site mostrou.
 
+### O agente passou a ler por subagente, e as medições ficaram cegas
+
+Em 05/11 o WebFetch sumiu das ferramentas do agente e entrou, no lugar, um
+subagente "web-fetch" do Claude Code, no mesmo Opus 5.5. Nada mudou do nosso
+lado: o CLI era o 2.1.283 de 03 a 06/11. O agente se adaptou sozinho, mandando
+de 10 a 11 subagentes por dia, cada um com uma lista de endereços e o pedido de
+código HTTP, data e números.
+- **As medições não viram.** As leituras ficam em
+  `<sessao>/subagents/agent-*.jsonl`, e o registro, o relatório, o estúdio, o
+  rastro e o vigia ao vivo liam só `<sessao>.jsonl`: zero leituras em 05 e
+  06/11, com 46 e 68 de fato. O estúdio perdeu as portas fechadas, e o
+  relatório da semana, a tabela de fontes de dois dos quatro dias. Agora todos
+  leem por `scripts/transcricoes.py`, e o cache escrito e o lido batem com o
+  total que o próprio CLI informa.
+- **A resposta da leitura mudou de forma.** O WebFetch de dentro do subagente
+  devolve a página crua, com "Fetched … (HTTP 200 OK, …)" na primeira linha; o
+  de antes devolvia um resumo feito por um modelo pequeno. O estúdio tomava
+  qualquer "HTTP NNN" por porta fechada e, na primeira regeneração, deu as 114
+  leituras como fechadas. Só 4xx e 5xx fecham.
+- **Ficou mais caro.** US$ 7,03 e 7,83, contra 4,57 a 5,03 de média nas quatro
+  semanas anteriores. Cada subagente abre o próprio contexto: o cache escrito
+  foi de ~200 mil para 557 e 783 mil tokens. O cache lido caiu, porque as
+  páginas não entram mais no contexto principal; os subagentes leram só 0,1 e
+  0,5 milhão.
+
+Achado no relatório da semana, pelo "0" na coluna de leituras ao lado do maior
+custo até então.
+
 ### CloudFront reescreve a bucket policy se deixarem
 
 "Grant CloudFront access to origin" vem como *Yes* e restringe o bucket ao

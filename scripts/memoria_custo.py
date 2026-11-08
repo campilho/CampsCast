@@ -16,13 +16,17 @@ Este script lê a transcrição que o Claude Code grava em ~/.claude/projects/
     backlog   saved-items/backlog.md e o histórico em saved-items/historico/
     fios      memoria/: fios em aberto, fechados e temas
     roteiros  episodes/
-    web       WebFetch e WebSearch
+    web       WebFetch e WebSearch, e o relatório que o subagente devolve
     outros    o resto (config, research, scripts)
 
 Tokens por bloco são estimados pela razão caracteres/token medida na própria
 execução: crescimento do contexto contra caracteres que entraram. A coluna
 "expl." diz quanto do cache lido a conta explica; o que falta é sobretudo o
 texto que o próprio modelo gera, que também fica no contexto.
+
+Desde 05/11/2026 as páginas são lidas por subagentes (scripts/transcricoes.py).
+Cada um é outro contexto, que não cresce junto com o principal: a conta acima
+é só do principal, e o cache que os subagentes leem sai na coluna "subag.".
 
 Primeira medição em 03/10/2026: memória (índice, backlog e roteiros) era ~42%
 do cache lido nos dias do Opus 5.5.
@@ -63,7 +67,7 @@ def categoria(nome: str, entrada) -> str:
         return "backlog"
     if re.search(r"episodes/", s):
         return "roteiros"
-    if nome in ("WebFetch", "WebSearch"):
+    if nome in ("WebFetch", "WebSearch", "Agent"):
         return "web"
     return "outros"
 
@@ -73,6 +77,22 @@ def _texto(resultado: dict) -> str:
     if isinstance(t, list):
         t = " ".join(x.get("text", "") for x in t if isinstance(x, dict))
     return t or ""
+
+
+def lido_subagentes(caminho: pathlib.Path) -> int:
+    """Cache lido pelos subagentes da sessão, cada mensagem uma vez."""
+    from transcricoes import subagentes
+    vistos, total = set(), 0
+    for f in subagentes(caminho):
+        for linha in f.open(encoding="utf-8", errors="replace"):
+            try:
+                msg = json.loads(linha).get("message") or {}
+            except ValueError:
+                continue
+            if isinstance(msg, dict) and msg.get("id") and msg["id"] not in vistos:
+                vistos.add(msg["id"])
+                total += (msg.get("usage") or {}).get("cache_read_input_tokens", 0)
+    return total
 
 
 def analisa(caminho: pathlib.Path) -> dict:
@@ -123,7 +143,7 @@ def main() -> int:
 
     pasta = transcricoes_dir()
     print(f"{'data':10} {'cham':>4} {'lido':>6} {'base':>5}  "
-          + "  ".join(f"{c:>12}" for c in CATEGORIAS) + "  expl.")
+          + "  ".join(f"{c:>12}" for c in CATEGORIAS) + "  expl.  subag.")
     print(f"{'':10} {'':>4} {'':>6} {'':>5}  "
           + "  ".join(f"{'lido  peso':>12}" for _ in CATEGORIAS))
     for ag in sorted((ROOT / "logs").glob("*-agente.json")):
@@ -146,9 +166,11 @@ def main() -> int:
         celulas = "  ".join(f"{r['chars'][c] / 1000:5.0f}K {pct(r['contrib'][c]):4.0f}%"
                             for c in CATEGORIAS)
         explicado = pct(r["base"] + sum(r["contrib"].values()))
+        sub = lido_subagentes(transcricao)
         print(f"{data} {r['chamadas']:4} {r['lido'] / 1e6:5.1f}M {pct(r['base']):4.0f}%  "
-              f"{celulas}  {explicado:4.0f}%")
-    print("\nlido = caracteres que entraram no contexto; peso = parte do cache lido.")
+              f"{celulas}  {explicado:4.0f}%" + (f"  {sub / 1e6:5.1f}M" if sub else ""))
+    print("\nlido = caracteres que entraram no contexto; peso = parte do cache lido;"
+          "\nsubag. = cache lido pelos subagentes, fora da conta do contexto principal.")
     return 0
 
 

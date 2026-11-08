@@ -53,13 +53,12 @@ def session_for(date: str) -> pathlib.Path | None:
 
 
 def trail(path: pathlib.Path) -> dict:
+    """Buscas e páginas lidas, na sessão e nos subagentes dela: desde 05/11 as
+    leituras são feitas por um subagente (scripts/transcricoes.py)."""
+    from transcricoes import entradas
     buscas: list[str] = []
     lidas: list[str] = []
-    for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
-        try:
-            d = json.loads(line)
-        except json.JSONDecodeError:
-            continue
+    for d, _ in entradas(path):
         msg = d.get("message")
         if not isinstance(msg, dict) or msg.get("role") != "assistant":
             continue

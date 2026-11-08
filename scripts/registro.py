@@ -181,18 +181,15 @@ def sono(inicio: dt.datetime, fim: dt.datetime) -> dict | None:
 
 # ------------------------------------------------------------------ claude
 def contagem_transcricao(caminho: pathlib.Path) -> dict | None:
-    """Chamadas, tokens e ferramentas lidos da transcrição da sessão."""
+    """Chamadas, tokens e ferramentas lidos da transcrição da sessão e das dos
+    subagentes que ela chamou (scripts/transcricoes.py): desde 05/11 as
+    leituras de página moram lá."""
+    from transcricoes import entradas, subagentes
     ids, ferramentas, esforcos = set(), {}, set()
     tot = {"entrada": 0, "cache_escrito": 0, "cache_lido": 0, "saida": 0}
-    try:
-        linhas = caminho.read_text(errors="ignore").splitlines()
-    except Exception:
+    if not caminho.exists():
         return None
-    for l in linhas:
-        try:
-            entrada = json.loads(l)
-        except Exception:
-            continue
+    for entrada, _ in entradas(caminho):
         # O esforço fica no topo de cada entrada. Vale o que a transcrição diz,
         # não o que o orquestrador pediu: foi assim que se descobriu que o
         # Opus 5 rodava em "high" sem ninguém ter pedido.
@@ -217,6 +214,7 @@ def contagem_transcricao(caminho: pathlib.Path) -> dict | None:
     return {"chamadas": len(ids), **tot,
             "buscas": ferramentas.get("WebSearch", 0),
             "leituras": ferramentas.get("WebFetch", 0),
+            "subagentes": len(subagentes(caminho)),
             "esforco": ",".join(sorted(esforcos)) or None}
 
 
