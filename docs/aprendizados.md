@@ -600,7 +600,9 @@ código HTTP, data e números.
   0,5 milhão.
 
 Achado no relatório da semana, pelo "0" na coluna de leituras ao lado do maior
-custo até então.
+custo até então. Era um experimento da Anthropic, ligado por interruptor remoto
+(`tengu_clever_orbit`), desligado em 08/11; o orquestrador agora fixa o modo de
+leitura e vigia o experimento ([ADR 0013](decisions/0013-leitura-de-paginas.md)).
 
 ### CloudFront reescreve a bucket policy se deixarem
 

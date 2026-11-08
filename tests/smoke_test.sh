@@ -62,6 +62,10 @@ export REGISTRO_SEM_SONO=1
 export ESTADO_ARQ="$(mktemp)"
 # O mesmo para o site, que o orquestrador sobe no fim de cada episódio.
 export SITE_ARQ="$(mktemp)"
+# Os interruptores do Claude Code vêm de um cache vazio, não do ~/.claude.json
+# da máquina: um experimento ligado de verdade viraria aviso em todo teste.
+export CLAUDE_JSON="$(mktemp)"; printf '{}' > "$CLAUDE_JSON"
+export INTERRUPTORES_ARQ="$(mktemp)"; rm -f "$INTERRUPTORES_ARQ"
 # Sem rede o orquestrador para de cara; a suíte é offline e checa um nome que
 # sempre resolve. O teste de falta de rede troca por um que nunca resolve.
 export REDE_HOST=localhost
@@ -1388,6 +1392,56 @@ else
   bad "leituras do subagente fora da conta: $SUB_OK"
 fi
 
+# O experimento de 05/11 (tengu_clever_orbit) chegou sem mudança de versão e só
+# foi visto pelo custo, quatro dias depois. Agora cada execução registra o
+# estado dele antes do agente e confere depois o que a sessão de fato fez.
+CC_DIR="$(mktemp -d)"
+CC_OK="$(python3 - "$CC_DIR" <<'FIM' 2>&1
+import json, os, pathlib, subprocess, sys
+d = pathlib.Path(sys.argv[1])
+cfg, snap = d / "claude.json", d / "interruptores.json"
+env = {**os.environ, "CLAUDE_JSON": str(cfg), "INTERRUPTORES_ARQ": str(snap),
+       "CLAUDE_CODE_WEB_FETCH_AGENT": "0", "TRANSCRICOES_DIR": str(d)}
+roda = lambda *a: subprocess.run([sys.executable, "scripts/confere_claude.py", *a],
+                                 capture_output=True, text=True, env=env)
+cfg.write_text(json.dumps({"cachedGrowthBookFeatures": {"tengu_clever_orbit": True, "tengu_outro": 1}}))
+r = roda("antes")
+assert r.returncode == 0, r.stderr
+assert "tengu_clever_orbit ligado" in r.stdout and "CLAUDE_CODE_WEB_FETCH_AGENT=0" in r.stdout, r.stdout
+assert "tengu_clever_orbit: ligado" in r.stderr, r.stderr
+cfg.write_text(json.dumps({"cachedGrowthBookFeatures": {"tengu_clever_orbit": False, "tengu_outro": 2}}))
+r = roda("antes")
+assert r.stdout == "", r.stdout
+assert "tengu_clever_orbit: desligado" in r.stderr and "2 interruptores mudaram desde a execução anterior: tengu_clever_orbit, tengu_outro" in r.stderr, r.stderr
+# Depois: a sessão usou o web-fetch e recebeu página crua, e apareceu um modelo
+# que não é o principal nem o pequeno do CLI.
+uso = lambda i, nome, inp: {"type": "assistant", "message": {"content": [{"type": "tool_use", "id": i, "name": nome, "input": inp}]}}
+(d / "s9.jsonl").write_text(json.dumps(uso("a1", "Agent", {"subagent_type": "web-fetch", "prompt": "x"})) + "\n")
+(d / "s9" / "subagents").mkdir(parents=True)
+(d / "s9" / "subagents" / "agent-z.jsonl").write_text("\n".join(json.dumps(l) for l in [
+    uso("f1", "WebFetch", {"url": "https://example.org"}),
+    {"type": "user", "message": {"content": [{"type": "tool_result", "tool_use_id": "f1",
+     "content": "Fetched https://example.org (HTTP 200 OK, text/html, 10 characters)."}]}}]) + "\n")
+ag = d / "agente.json"
+ag.write_text(json.dumps({"session_id": "s9", "modelUsage": {"claude-opus-5-5": {}, "claude-haiku-4-5-20251001": {}, "claude-sonnet-9": {}}}))
+r = roda("depois", "--agente", str(ag), "--modelo", "claude-opus-5-5")
+assert "1 vez pelo subagente web-fetch" in r.stdout and "1 página crua" in r.stdout, r.stdout
+assert "modelo inesperado: claude-sonnet-9" in r.stdout and "inesperado: claude-haiku" not in r.stdout, r.stdout
+# Execução como a de antes de 05/11: nada a avisar.
+(d / "s8.jsonl").write_text(json.dumps(uso("f2", "WebFetch", {"url": "https://example.org"})) + "\n")
+ag.write_text(json.dumps({"session_id": "s8", "modelUsage": {"claude-opus-5-5": {}, "claude-haiku-4-5-20251001": {}}}))
+r = roda("depois", "--agente", str(ag), "--modelo", "claude-opus-5-5")
+assert r.returncode == 0 and r.stdout == "", (r.stdout, r.stderr)
+print("ok")
+FIM
+)"
+rm -rf "$CC_DIR"
+if [[ "$CC_OK" == "ok" ]]; then
+  ok "experimento do Claude Code vigiado: estado antes do agente, interruptores que mudaram e o que a sessão fez"
+else
+  bad "vigia do Claude Code: $CC_OK"
+fi
+
 # ----------------------------------------------- 16 registro de execução e custo
 # A ficha técnica falada já anunciou o modelo errado por quatro episódios. A
 # descrição pública do podcast repetiu o mesmo erro por mais tempo, porque
@@ -2371,15 +2425,23 @@ MD
 printf '%s' '{"type":"result","is_error":false,"result":"OK episodes/2026-08-25.md 10 00:04","num_turns":1,"usage":{"input_tokens":1}}'
 STUB
 chmod +x "$FAKE_FIO/claude"
+printf '%s' '{"cachedGrowthBookFeatures": {"tengu_clever_orbit": true}}' > "$FIO_DIR/claude.json"
 FIOS_ARQ="$FIO_DIR/ruim.md" PAUTAS_INDICE="$FIO_DIR/indice.json" CLAUDE_BIN="$FAKE_FIO/claude" \
+  CLAUDE_JSON="$FIO_DIR/claude.json" INTERRUPTORES_ARQ="$FIO_DIR/interruptores.json" \
   bash scripts/run_episode.sh --date 2026-08-25 --only research >/dev/null 2>&1 || true
 ULTIMA="$(tail -1 "$METRICAS_ARQ" 2>/dev/null)"
+LOG_CC="$(grep -c 'Claude Code — tengu_clever_orbit: ligado' logs/2026-08-25.log 2>/dev/null)"
 rm -rf "$FAKE_FIO" "$FIO_DIR"; rm -f episodes/2026-08-25.md logs/2026-08-25.log logs/2026-08-25-*.json
 if [[ "$ULTIMA" == *'"avisos_roteiro": ['*"fios: "* && "$ULTIMA" == *"repetição: "* \
       && "$ULTIMA" == *'"fios_abertos": '* ]]; then
   ok "avisos de fios e de repetição chegam ao registro, com o tamanho dos fios"
 else
   bad "fios ou repetição não chegaram ao registro: ${ULTIMA:-vazio}"
+fi
+if [[ "$ULTIMA" == *"claude code: experimento tengu_clever_orbit ligado"* && "$LOG_CC" == "1" ]]; then
+  ok "experimento do Claude Code ligado vira linha no log e aviso no registro, que o relatório da semana mostra"
+else
+  bad "experimento ligado não chegou ao log ($LOG_CC) ou ao registro: ${ULTIMA:0:200}"
 fi
 
 # ------------------------------------------------------------- dados do estúdio
@@ -2681,6 +2743,9 @@ assert (copia / ".env").read_text().splitlines() == [l for l in (ens / "env").re
 amb = (ens / "ambiente").read_text()
 assert "AWS_SECRET_ACCESS_KEY" not in amb and "METRICAS_ARQ" not in amb, "ambiente não é o do launchd"
 assert f"ESTADO_ARQ={copia}/logs/estado.json" in amb, "estado não desviado"
+# De 05 a 08/11 um experimento da Anthropic trocou o WebFetch por um subagente
+# (ADR 0013). O orquestrador fixa o modo de leitura; não fica no sorteio.
+assert "CLAUDE_CODE_WEB_FETCH_AGENT=0" in amb.splitlines(), "modo de leitura não fixado"
 assert os.path.realpath((ens / "onde").read_text().strip()) == os.path.realpath(copia), "agente fora da cópia"
 assert json.loads((copia / "logs" / "estado.json").read_text())["estado"] == "ok"
 reg = json.loads((copia / "metricas" / "execucoes.jsonl").read_text().splitlines()[-1])

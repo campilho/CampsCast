@@ -4,7 +4,7 @@ Podcast diário de IA em português, escrito e narrado por agentes, publicado em
 dias úteis. Rodando em produção desde 24/08/2026.
 
 > **Antes de mexer em qualquer coisa:** `bash tests/smoke_test.sh`
-> São 170 testes, offline, sem custo. Rode antes e depois de alterar.
+> São 172 testes, offline, sem custo. Rode antes e depois de alterar.
 
 ## Regra número um
 
@@ -39,6 +39,12 @@ pausa de dias. Vive em `scripts/window.py`; cada roteiro grava `window_start` e
 (`speed` em `voice_settings`) exige remedir com
 `scripts/calibrate_pace.py --apply`.
 
+**Leitura de páginas fixada.** O agente lê com o WebFetch dele mesmo:
+`CLAUDE_CODE_WEB_FETCH_AGENT=0` no `run_episode.sh`. De 05 a 08/11/2026 um
+experimento da Anthropic trocou isso por um subagente sem aviso nem versão nova
+([ADR 0013](docs/decisions/0013-leitura-de-paginas.md)); o `confere_claude.py`
+avisa se voltar.
+
 **Sem dependências.** Nada de `pip install`. Duração de MP3 lendo frames MPEG,
 upload ao S3 assinando SigV4, tudo em biblioteca padrão. Quem clona precisa de
 Python e do Claude CLI.
@@ -65,6 +71,7 @@ Agregador serve para descobrir, nunca para citar.
 | `confere_backlog.py` | confere se o backlog guarda só pauta ativa; registra, não bloqueia |
 | `confere_fios.py` | confere fios (teto de 40, marcos, datas) e temas (teto de 10); registra |
 | `expira_fios.py` | move fio sem marco há 30 dias para `memoria/fios-expirados/`; roda antes do agente |
+| `confere_claude.py` | vigia do Claude Code: experimento da Anthropic ligado na conta, interruptores que mudaram, subagente ou modelo inesperado na sessão ([ADR 0013](docs/decisions/0013-leitura-de-paginas.md)); registra |
 | `confere_repeticao.py` | avisa pauta do dia com link já usado antes; ignora páginas de listagem |
 | `relatorio.py` | relatório semanal do autor: decisões pendentes, temas, fios, fontes que falharam, avisos; `--semana`, `--fecha-semana` |
 | `confere_roteiro.py` | confere o que a abertura e a ficha não podem deixar de dizer; registra, não bloqueia |

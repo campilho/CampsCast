@@ -24,9 +24,13 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
       versão do CLI (2.1.283 de 03 a 06/11). Custo de US$ 7,03 e 7,83, o cache
       escrito triplicou. (1) Feito em 08/11: as medições leem também
       `<sessao>/subagents/` (`scripts/transcricoes.py`), e os registros de 05
-      e 06/11 foram recontados. Falta: (2) ver se dá para manter o WebFetch
-      direto; (3) conferir se as citações de 05 e 06/11 batem com as páginas
-      — o subagente recebe a página crua, e o agente, o resumo dele
+      e 06/11 foram recontados. (2) Feito em 08/11: era um experimento da
+      Anthropic; o orquestrador fixa `CLAUDE_CODE_WEB_FETCH_AGENT=0` e o
+      `confere_claude.py` vigia ([ADR 0013](docs/decisions/0013-leitura-de-paginas.md)).
+      **Segunda, 09/11:** o log deve trazer "tengu_clever_orbit: desligado" (ou
+      ligado, com aviso) e "sessão: web-fetch 0"; o custo, voltar a ~US$ 5.
+      Falta: (3) comparar a leitura no Haiku 5.5 e no Sonnet 5.5 e decidir o
+      Jornalista (`docs/plano-leitura-por-subagente.md`)
 - [ ] **07–08/11 — relatório mensal de audiência de outubro**, com a revisão
       de custos do [ADR 0007](docs/decisions/0007-custo-por-episodio.md) (ver
       Recorrente)

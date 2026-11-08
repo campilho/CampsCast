@@ -54,6 +54,12 @@ CLAUDE_MODEL="${CLAUDE_MODEL:-claude-opus-5-5}"
 # degrau abaixo. Trocar de modelo sem fixar isto trocaria duas coisas de uma
 # vez, e qualquer diferença no episódio ficaria sem dono.
 CLAUDE_EFFORT="${CLAUDE_EFFORT:-high}"
+# Leitura de páginas fixada também: WebFetch no próprio agente (ADR 0013). De 05
+# a 08/11/2026 um experimento da Anthropic, ligado por interruptor remoto e sem
+# mudança de versão, trocou o WebFetch por um subagente "web-fetch": +57% de
+# custo e as medições cegas por quatro dias. Com isto a produção sai do sorteio;
+# scripts/confere_claude.py avisa se o experimento voltar mesmo assim.
+export CLAUDE_CODE_WEB_FETCH_AGENT="${CLAUDE_CODE_WEB_FETCH_AGENT:-0}"
 
 # ---------- args ----------
 EPISODE_DATE=""
@@ -379,6 +385,12 @@ $PAUTAS"
     log "Parâmetros no prompt: $(printf '%s' "$PARAMETROS" | grep -c '^- ') valores"
     log "DRY-RUN: $CLAUDE_BIN -p \"\$(cat prompts/master.md) + parâmetros\" --model $CLAUDE_MODEL --effort $CLAUDE_EFFORT --output-format json --permission-mode acceptEdits"
   else
+    # Experimentos do Claude Code: o estado no cache do CLI vai para o log, e
+    # experimento vigiado ligado vira aviso no registro (ADR 0013).
+    CC_ERR="$(mktemp)"
+    AVISOS_CLAUDE="$(python3 scripts/confere_claude.py antes 2>"$CC_ERR" || true)"
+    while IFS= read -r l; do log "$l"; done < "$CC_ERR"; rm -f "$CC_ERR"
+
     # A etapa demora vários minutos e a saída do CLI só chega no fim, porque
     # precisa ser capturada inteira para ser validada. Sem isso o terminal fica
     # mudo e parece travado. O watcher lê a transcrição que o próprio CLI grava
@@ -471,7 +483,12 @@ $PAUTAS"
       --data "$EPISODE_DATE" 2>>"$LOG" || true)"
     AVISOS_REPETICAO="$(python3 scripts/confere_repeticao.py "$SCRIPT_PATH" \
       --indice "${PAUTAS_INDICE:-covered-index.json}" --data "$EPISODE_DATE" 2>>"$LOG" || true)"
-    for extra in "$AVISOS_BACKLOG" "$AVISOS_FIOS" "$AVISOS_REPETICAO"; do
+    # O que a sessão de fato fez: o cache do CLI é só indício (ADR 0013).
+    CC_ERR="$(mktemp)"
+    AVISOS_SESSAO="$(python3 scripts/confere_claude.py depois --agente "${BASE_REGISTRO}-agente.json" \
+      --modelo "$CLAUDE_MODEL" 2>"$CC_ERR" || true)"
+    while IFS= read -r l; do log "$l"; done < "$CC_ERR"; rm -f "$CC_ERR"
+    for extra in "${AVISOS_CLAUDE:-}" "$AVISOS_SESSAO" "$AVISOS_BACKLOG" "$AVISOS_FIOS" "$AVISOS_REPETICAO"; do
       [[ -n "$extra" ]] && AVISOS_ROTEIRO="${AVISOS_ROTEIRO:+$AVISOS_ROTEIRO
 }$extra"
     done
