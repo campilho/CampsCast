@@ -4,7 +4,7 @@ Podcast diário de IA em português, escrito e narrado por agentes, publicado em
 dias úteis. Rodando em produção desde 24/08/2026.
 
 > **Antes de mexer em qualquer coisa:** `bash tests/smoke_test.sh`
-> São 172 testes, offline, sem custo. Rode antes e depois de alterar.
+> São 175 testes, offline, sem custo. Rode antes e depois de alterar.
 
 ## Regra número um
 
@@ -72,6 +72,7 @@ Agregador serve para descobrir, nunca para citar.
 | `confere_fios.py` | confere fios (teto de 40, marcos, datas) e temas (teto de 10); registra |
 | `expira_fios.py` | move fio sem marco há 30 dias para `memoria/fios-expirados/`; roda antes do agente |
 | `confere_claude.py` | vigia do Claude Code: experimento da Anthropic ligado na conta, interruptores que mudaram, subagente ou modelo inesperado na sessão ([ADR 0013](docs/decisions/0013-leitura-de-paginas.md)); registra |
+| `jornalista.py` | o Jornalista: subagente que lê as páginas, e o hook que barra o WebFetch fora dele; só com `JORNALISTA=1` (e `JORNALISTA_MODELO`), desligado na produção ([plano](docs/plano-leitura-por-subagente.md)) |
 | `confere_repeticao.py` | avisa pauta do dia com link já usado antes; ignora páginas de listagem |
 | `relatorio.py` | relatório semanal do autor: decisões pendentes, temas, fios, fontes que falharam, avisos; `--semana`, `--fecha-semana` |
 | `confere_roteiro.py` | confere o que a abertura e a ficha não podem deixar de dizer; registra, não bloqueia |
@@ -89,6 +90,7 @@ Agregador serve para descobrir, nunca para citar.
 | `set_base_url.py` | troca o endereço do feed, verificando antes; `--resolve` |
 | `install_launchd.sh` | instala o agendamento com os caminhos reais da máquina |
 | `registro.py` | registro diário de execução e custo em `metricas/execucoes.jsonl`; `mostra`, `reconstroi` |
+| `precos.py` | preço dos modelos; o registro refaz por ele o custo de modelo que o CLI não conhece e cobraria como Opus |
 | `memoria_custo.py` | reparte o cache lido de cada execução entre prompt, índice, backlog, roteiros e web; o dos subagentes, à parte |
 | `transcricoes.py` | a transcrição de uma sessão com as dos subagentes dela; desde 05/11 as leituras de página moram lá |
 | `estado.py` | publica `estado.json` no S3 dizendo como a execução terminou; é o que o vigia externo lê |
@@ -116,6 +118,7 @@ Agregador serve para descobrir, nunca para citar.
 | `memoria/temas-sugeridos.md` | sugestões de tema (do agente; no futuro, de ouvintes) que o autor aprova ou recusa |
 | `memoria/fios.md` | fios em aberto: promessas, previsões e preocupações à espera de desfecho ([ADR 0008](docs/decisions/0008-memoria-em-camadas.md)) |
 | `prompts/master.md` | o agente |
+| `prompts/jornalista.md` | o Jornalista, e `prompts/leitura-pelo-jornalista.md`, o que o agente principal ganha no prompt quando ele está ligado |
 | `config/rubrica-pautas.md` | régua das pautas: porteira da fonte e quatro notas ([ADR 0012](docs/decisions/0012-nota-das-pautas.md)); ainda fora da produção |
 | `config/cloudfront-site.js` | função do CloudFront que abre o `index.html` das pastas do site e leva `/studio` ao estúdio; colada à mão no console |
 

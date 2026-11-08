@@ -13,6 +13,7 @@
 #   scripts/ensaio.sh --data 2026-10-29 --dry-run      # monta a cópia e mostra o que rodaria
 #   scripts/ensaio.sh --data 2026-10-29 --pasta DIR    # onde montar (padrão ~/CampsCast-ensaios/)
 #   scripts/ensaio.sh --data 2026-11-02 --force        # dia sem episódio
+#   JORNALISTA=1 scripts/ensaio.sh --data 2026-11-06   # com o Jornalista (plano de leitura)
 #
 # A cópia é a árvore de um commit (episódios, memória, backlog, índice) com o
 # código por cima: scripts/, prompts/, config/, tests/, .claude/ e CLAUDE.md da
@@ -49,7 +50,7 @@ while [[ $# -gt 0 ]]; do
     --pasta)   PASTA="$2"; shift 2 ;;
     --dry-run) DRY_RUN=1; shift ;;
     --force)   FORCE=1; shift ;;
-    -h|--help) sed -n '2,33p' "$0"; exit 0 ;;
+    -h|--help) sed -n '2,34p' "$0"; exit 0 ;;
     *) echo "Argumento desconhecido: $1" >&2; exit 2 ;;
   esac
 done
@@ -175,6 +176,11 @@ ARGS=(--date "$DATA" --only research)
 # existirem. Fora do teste nenhuma existe, e o ambiente é o do launchd.
 TESTE=()
 for v in REDE_HOST REDE_ESPERA_S REGISTRO_SEM_SONO; do
+  [[ -n "${!v:-}" ]] && TESTE+=("$v=${!v}")
+done
+# As chaves das variantes em comparação também passam, se vierem: é assim que
+# se ensaia o Jornalista (JORNALISTA=1 scripts/ensaio.sh --data …).
+for v in JORNALISTA JORNALISTA_MODELO; do
   [[ -n "${!v:-}" ]] && TESTE+=("$v=${!v}")
 done
 echo

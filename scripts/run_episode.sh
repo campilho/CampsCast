@@ -60,6 +60,13 @@ CLAUDE_EFFORT="${CLAUDE_EFFORT:-high}"
 # custo e as medições cegas por quatro dias. Com isto a produção sai do sorteio;
 # scripts/confere_claude.py avisa se o experimento voltar mesmo assim.
 export CLAUDE_CODE_WEB_FETCH_AGENT="${CLAUDE_CODE_WEB_FETCH_AGENT:-0}"
+# Jornalista (docs/plano-leitura-por-subagente.md): com JORNALISTA=1 as páginas
+# são lidas por um subagente nosso, com prompt e modelo próprios, e o WebFetch
+# do agente principal fica barrado por um hook. Desligado por padrão: com 0 o
+# prompt e os argumentos do CLI são os de sempre. Testado por ensaio
+# (scripts/ensaio.sh) antes de qualquer decisão sobre a produção.
+JORNALISTA="${JORNALISTA:-0}"
+JORNALISTA_MODELO="${JORNALISTA_MODELO:-claude-sonnet-5-5}"
 
 # ---------- args ----------
 EPISODE_DATE=""
@@ -370,7 +377,13 @@ valores, sem recalcular e sem consultar o relógio do sistema.
     PAUTAS="(indisponível: não foi possível ler o covered-index.json. Consulte o arquivo por busca, título a título, antes de escolher as pautas.)"
     log "AVISO: lista de pautas indisponível; o agente vai consultar o índice direto."
   fi
-  PROMPT_AGENTE="$(cat prompts/master.md)
+  LEITURA=""
+  if [[ "$JORNALISTA" == "1" ]]; then
+    LEITURA="
+
+$(cat prompts/leitura-pelo-jornalista.md)"
+  fi
+  PROMPT_AGENTE="$(cat prompts/master.md)$LEITURA
 
 $PARAMETROS
 
@@ -384,6 +397,7 @@ $PAUTAS"
   if [[ $DRY_RUN -eq 1 ]]; then
     log "Parâmetros no prompt: $(printf '%s' "$PARAMETROS" | grep -c '^- ') valores"
     log "DRY-RUN: $CLAUDE_BIN -p \"\$(cat prompts/master.md) + parâmetros\" --model $CLAUDE_MODEL --effort $CLAUDE_EFFORT --output-format json --permission-mode acceptEdits"
+    [[ "$JORNALISTA" == "1" ]] && log "DRY-RUN: Jornalista ligado ($JORNALISTA_MODELO): --agents, hook do WebFetch e prompts/leitura-pelo-jornalista.md"
   else
     # Experimentos do Claude Code: o estado no cache do CLI vai para o log, e
     # experimento vigiado ligado vira aviso no registro (ADR 0013).
@@ -400,6 +414,15 @@ $PAUTAS"
       --log "$LOG" --prefix "           " --quiet 2>/dev/null &
     WATCHER_PID=$!
 
+    FERRAMENTAS="Read,Write,Edit,Glob,Grep,WebSearch,WebFetch"
+    EXTRA_CLAUDE=()
+    if [[ "$JORNALISTA" == "1" ]]; then
+      FERRAMENTAS="$FERRAMENTAS,Agent"
+      EXTRA_CLAUDE=(--agents "$(python3 scripts/jornalista.py agentes --modelo "$JORNALISTA_MODELO")"
+                    --settings "$(python3 scripts/jornalista.py hook)")
+      log "Jornalista ligado: lê as páginas no $JORNALISTA_MODELO; o WebFetch do agente principal fica barrado"
+    fi
+
     # --strict-mcp-config e --disable-slash-commands: o agente do podcast não
     # herda servidores MCP nem skills da configuração de usuário do Claude Code.
     # Em 04/10 o Agent Toolkit for AWS instalou os dele para o Mac inteiro.
@@ -410,8 +433,9 @@ $PAUTAS"
         --effort "$CLAUDE_EFFORT" \
         --output-format json \
         --permission-mode acceptEdits \
-        --allowedTools "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch" \
+        --allowedTools "$FERRAMENTAS" \
         --strict-mcp-config --disable-slash-commands \
+        ${EXTRA_CLAUDE[@]+"${EXTRA_CLAUDE[@]}"} \
         2>>"$LOG"
     )"
     AGENT_RC=$?
@@ -485,8 +509,9 @@ $PAUTAS"
       --indice "${PAUTAS_INDICE:-covered-index.json}" --data "$EPISODE_DATE" 2>>"$LOG" || true)"
     # O que a sessão de fato fez: o cache do CLI é só indício (ADR 0013).
     CC_ERR="$(mktemp)"
-    AVISOS_SESSAO="$(python3 scripts/confere_claude.py depois --agente "${BASE_REGISTRO}-agente.json" \
-      --modelo "$CLAUDE_MODEL" 2>"$CC_ERR" || true)"
+    ARGS_CC=(--agente "${BASE_REGISTRO}-agente.json" --modelo "$CLAUDE_MODEL")
+    [[ "$JORNALISTA" == "1" ]] && ARGS_CC+=(--jornalista "$JORNALISTA_MODELO")
+    AVISOS_SESSAO="$(python3 scripts/confere_claude.py depois "${ARGS_CC[@]}" 2>"$CC_ERR" || true)"
     while IFS= read -r l; do log "$l"; done < "$CC_ERR"; rm -f "$CC_ERR"
     for extra in "${AVISOS_CLAUDE:-}" "$AVISOS_SESSAO" "$AVISOS_BACKLOG" "$AVISOS_FIOS" "$AVISOS_REPETICAO"; do
       [[ -n "$extra" ]] && AVISOS_ROTEIRO="${AVISOS_ROTEIRO:+$AVISOS_ROTEIRO

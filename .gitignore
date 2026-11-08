@@ -42,3 +42,6 @@ site/estudio/*.json
 # está em episodes/ e research/
 site/estudio/roteiros/
 site/estudio/pesquisa/
+
+# Teste A da leitura: páginas de terceiros e o que os modelos escreveram sobre elas
+analysis/leitura/saida/

@@ -232,16 +232,41 @@ def resumo_claude(dados: dict | None, modelo: str | None) -> dict | None:
     else:
         tokens = {"entrada": u.get("input_tokens"), "cache_escrito": u.get("cache_creation_input_tokens"),
                   "cache_lido": u.get("cache_read_input_tokens"), "saida": u.get("output_tokens")}
+    principal = modelo or next(iter(por_modelo), None)
+    custo, custo_cli = _custo(por_modelo, principal), dados.get("total_cost_usd")
     return {
-        "modelo": modelo or next(iter(por_modelo), None),
+        "modelo": principal,
         "turnos": dados.get("num_turns"),
         **tokens,
         "buscas_servidor": servidor.get("web_search_requests"),
-        "custo_estimado_usd": dados.get("total_cost_usd"),
+        "custo_estimado_usd": custo if custo is not None else custo_cli,
+        **({"custo_cli_usd": custo_cli} if custo is not None else {}),
         "duracao_api_s": round((dados.get("duration_api_ms") or 0) / 1000) or None,
         "com_erro": bool(dados.get("is_error")),
         "sessao": dados.get("session_id"),
     }
+
+
+def _custo(por_modelo: dict, principal: str | None) -> float | None:
+    """O custo refeito quando o CLI não conhece algum modelo da sessão
+    (`costBasis: "unknown"`, cobrado como Opus): esse sai da nossa tabela
+    (scripts/precos.py), os outros ficam com a conta do CLI. None quando não
+    há o que refazer, ou quando o modelo também não está na tabela."""
+    from precos import custo
+    if not any((v or {}).get("costBasis") == "unknown" for v in por_modelo.values()):
+        return None
+    total = 0.0
+    for m, v in por_modelo.items():
+        v = v or {}
+        if v.get("costBasis") != "unknown":
+            total += v.get("costUSD") or 0
+            continue
+        # A sessão principal grava cache de 1 hora (2×); os subagentes, de 5.
+        c = custo(v.get("canonicalModel") or m, v, escrita=2.0 if m == principal else 1.25)
+        if c is None:
+            return None
+        total += c
+    return total
 
 
 def _transcricao_da_sessao(sessao: str | None) -> pathlib.Path | None:

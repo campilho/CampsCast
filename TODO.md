@@ -29,8 +29,14 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
       `confere_claude.py` vigia ([ADR 0013](docs/decisions/0013-leitura-de-paginas.md)).
       **Segunda, 09/11:** o log deve trazer "tengu_clever_orbit: desligado" (ou
       ligado, com aviso) e "sessão: web-fetch 0"; o custo, voltar a ~US$ 5.
-      Falta: (3) comparar a leitura no Haiku 5.5 e no Sonnet 5.5 e decidir o
-      Jornalista (`docs/plano-leitura-por-subagente.md`)
+      (3) Feito em 08/11: o Teste A comparou a leitura em quatro modelos, e só
+      o Sonnet 5.5 passou no critério; o Jornalista está implementado e
+      desligado (`JORNALISTA=1`, `docs/plano-leitura-por-subagente.md`).
+      Primeiro ensaio (04/11) em 08/11: funcionou de ponta a ponta, US$ 6,68
+      contra 5,25, e o contexto do Editor não encolheu (plano, "Primeiro
+      ensaio"). Falta: (4) mais ensaios na semana (`JORNALISTA=1
+      scripts/ensaio.sh --data …`), uma mudança por vez — relatório mais
+      curto, arquivo público um por vez —; e o autor decidir se vai à produção
 - [ ] **07–08/11 — relatório mensal de audiência de outubro**, com a revisão
       de custos do [ADR 0007](docs/decisions/0007-custo-por-episodio.md) (ver
       Recorrente)

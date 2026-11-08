@@ -2726,7 +2726,8 @@ chmod +x "$ENS/claude"
 printf 'AWS_SECRET_ACCESS_KEY=nao-pode-ir\nCLAUDE_CODE_OAUTH_TOKEN=token-de-teste\nCLAUDE_BIN=%s\n' "$ENS/claude" > "$ENS/env"
 METRICAS_ANTES="$(shasum "$METRICAS_ARQ")"
 ens() { ENSAIO_ORIGEM="$ORI" ENSAIO_ENV="$ENS/env" ENSAIO_PLIST="$ENS/sem-plist" bash scripts/ensaio.sh "$@" 2>&1; }
-OUT_ENS="$(ens --data 2026-10-29 --pasta "$ENS/copia")" && RC_ENS=0 || RC_ENS=$?
+# JORNALISTA_MODELO sozinho não liga nada: só prova que a chave da variante passa.
+OUT_ENS="$(JORNALISTA_MODELO=claude-haiku-5-5 ens --data 2026-10-29 --pasta "$ENS/copia")" && RC_ENS=0 || RC_ENS=$?
 OUT_INEXATO="$(ens --data 2026-10-29 --de "$(git -C "$ORI" rev-parse HEAD~2)" --pasta "$ENS/inexato" --dry-run)"
 OUT_FEITO="$(ens --data 2026-10-29 --de "$(git -C "$ORI" rev-parse HEAD)" --pasta "$ENS/feito")" && RC_FEITO=0 || RC_FEITO=$?
 ENS_OK="$(python3 - "$ENS" "$RC_ENS" "$(git -C "$ORI" status --porcelain)" "$METRICAS_ANTES" "$(shasum "$METRICAS_ARQ")" <<'PY' 2>&1
@@ -2746,6 +2747,7 @@ assert f"ESTADO_ARQ={copia}/logs/estado.json" in amb, "estado não desviado"
 # De 05 a 08/11 um experimento da Anthropic trocou o WebFetch por um subagente
 # (ADR 0013). O orquestrador fixa o modo de leitura; não fica no sorteio.
 assert "CLAUDE_CODE_WEB_FETCH_AGENT=0" in amb.splitlines(), "modo de leitura não fixado"
+assert "JORNALISTA_MODELO=claude-haiku-5-5" in amb.splitlines(), "chave da variante não passou ao ensaio"
 assert os.path.realpath((ens / "onde").read_text().strip()) == os.path.realpath(copia), "agente fora da cópia"
 assert json.loads((copia / "logs" / "estado.json").read_text())["estado"] == "ok"
 reg = json.loads((copia / "metricas" / "execucoes.jsonl").read_text().splitlines()[-1])
@@ -2890,6 +2892,140 @@ if [[ "$CF" == "ok" ]]; then
   ok "função do CloudFront: índice das pastas, /studio, e feed e MP3 intactos"
 else
   bad "função do CloudFront: $CF"
+fi
+
+head_ "21. Jornalista e custo de modelo que o CLI não conhece"
+
+# O CLI 2.1.283 não conhece o Haiku 5.5 nem o Sonnet 5.5: marca o custo deles
+# como "unknown" e cobra como Opus 5.5 (ADR 0013). O registro refaz a conta
+# desses pela tabela própria e guarda a do CLI ao lado.
+if CUSTO_OK="$(python3 - <<'FIM' 2>&1
+import sys
+sys.path.insert(0, "scripts")
+from registro import resumo_claude
+u = lambda **k: {"inputTokens": 0, "outputTokens": 0, "cacheReadInputTokens": 0, "cacheCreationInputTokens": 0, **k}
+d = {"usage": {"input_tokens": 1}, "total_cost_usd": 10.5, "modelUsage": {
+    "claude-opus-5-5": u(costUSD=5.0, costBasis="list"),
+    "claude-sonnet-5-5": u(inputTokens=1_000_000, outputTokens=100_000, cacheReadInputTokens=1_000_000,
+                           cacheCreationInputTokens=400_000, costUSD=5.5, costBasis="unknown")}}
+r = resumo_claude(d, "claude-opus-5-5")
+# Sonnet 5.5 como subagente: 2 + 1 + 0,2 + 0,4 × 2 × 1,25 = 4,2; mais os 5 do Opus.
+assert abs(r["custo_estimado_usd"] - 9.2) < 1e-9 and r["custo_cli_usd"] == 10.5, r
+r = resumo_claude({"usage": {}, "total_cost_usd": 7.83, "modelUsage": {"claude-opus-5-5": u(costUSD=7.83, costBasis="list")}},
+                  "claude-opus-5-5")
+assert r["custo_estimado_usd"] == 7.83 and "custo_cli_usd" not in r, r
+print("ok")
+FIM
+)" && [[ "$CUSTO_OK" == "ok" ]]; then
+  ok "custo de modelo que o CLI não conhece sai da tabela própria, não do preço do Opus"
+else
+  bad "custo de modelo desconhecido do CLI: $CUSTO_OK"
+fi
+
+# Com JORNALISTA=1, um hook barra o WebFetch fora do Jornalista. A tentativa
+# barrada fica na transcrição como erro, e não pode virar leitura nem porta
+# fechada em nenhuma medição.
+JN_DIR="$(mktemp -d)"
+JN_OK="$(python3 - "$JN_DIR" <<'FIM' 2>&1
+import json, os, pathlib, subprocess, sys
+d = pathlib.Path(sys.argv[1])
+sys.path.insert(0, "scripts")
+import jornalista
+from transcricoes import BARRADA
+barra = lambda e: subprocess.run([sys.executable, "scripts/jornalista.py", "barra"], input=json.dumps(e),
+                                 capture_output=True, text=True)
+r = barra({"tool_name": "WebFetch", "tool_input": {"url": "https://x"}})
+assert r.returncode == 2 and BARRADA in r.stderr and '"jornalista"' in r.stderr, r
+assert barra({"tool_name": "WebFetch", "agent_id": "a1", "agent_type": "jornalista"}).returncode == 0
+assert barra({"tool_name": "WebFetch", "agent_id": "a1", "agent_type": "general-purpose"}).returncode == 2
+assert barra({"tool_name": "Read"}).returncode == 0
+r = subprocess.run([sys.executable, "scripts/jornalista.py", "barra"], input="não é json", capture_output=True, text=True)
+assert r.returncode == 0, "entrada estranha não pode barrar"
+ag = jornalista.agentes("claude-haiku-5-5")["jornalista"]
+assert ag["tools"] == ["WebFetch", "Read"] and ag["model"] == "claude-haiku-5-5", ag
+assert ag["prompt"] == pathlib.Path("prompts/jornalista.md").read_text(), "prompt do Jornalista"
+cmd = jornalista.hook()["hooks"]["PreToolUse"][0]
+assert cmd["matcher"] == "WebFetch" and cmd["hooks"][0]["command"].endswith("/scripts/jornalista.py barra"), cmd
+assert pathlib.Path(cmd["hooks"][0]["command"].split()[1]).exists(), cmd
+# Uma sessão: o principal tenta o WebFetch, é barrado, chama o Jornalista,
+# e o Jornalista lê duas páginas, uma fechada.
+uso = lambda i, nome, inp, mid: {"type": "assistant", "timestamp": "2026-11-09T08:00:00Z",
+    "message": {"id": mid, "model": "claude-opus-5-5", "role": "assistant",
+                "usage": {"input_tokens": 1, "output_tokens": 1},
+                "content": [{"type": "tool_use", "id": i, "name": nome, "input": inp}]}}
+res = lambda i, texto, erro=False: {"type": "user", "timestamp": "2026-11-09T08:00:01Z",
+    "message": {"role": "user", "content": [{"type": "tool_result", "tool_use_id": i, "content": texto, "is_error": erro}]}}
+(d / "s1.jsonl").write_text("\n".join(json.dumps(l) for l in [
+    uso("w1", "WebFetch", {"url": "https://openai.com/index/barrada", "prompt": "x"}, "m1"),
+    res("w1", f"PreToolUse:WebFetch hook error: [python3 jornalista.py barra]: {jornalista.MOTIVO}", True),
+    uso("g1", "Agent", {"subagent_type": "jornalista", "description": "Ler os labs", "prompt": "x"}, "m2"),
+]) + "\n")
+sub = d / "s1" / "subagents"; sub.mkdir(parents=True)
+(sub / "agent-j1.jsonl").write_text("\n".join(json.dumps(l) for l in [
+    uso("f1", "WebFetch", {"url": "https://openai.com/index/a", "prompt": "x"}, "m3"),
+    res("f1", "Request failed with status code 403", True),
+    uso("f2", "WebFetch", {"url": "https://example.org/b", "prompt": "x"}, "m4"),
+    res("f2", "# Resumo\nPublicado em 6 de novembro."),
+]) + "\n")
+(sub / "agent-j1.meta.json").write_text('{"agentType": "jornalista"}')
+from registro import contagem_transcricao
+from research_trail import trail
+from estudio import eventos_agente
+r = contagem_transcricao(d / "s1.jsonl")
+assert r["leituras"] == 2 and r["subagentes"] == 1, r
+assert trail(d / "s1.jsonl")["lidas"] == ["https://openai.com/index/a", "https://example.org/b"]
+fechadas = [e["url"] for e in eventos_agente(d / "s1.jsonl") if e.get("acao") == "fechada"]
+assert fechadas == ["https://openai.com/index/a"], fechadas
+# O vigia: com o Jornalista, o modelo dele é esperado; conta pedidos e barradas.
+env = {**os.environ, "TRANSCRICOES_DIR": str(d)}
+agj = d / "agente.json"
+agj.write_text(json.dumps({"session_id": "s1", "modelUsage": {"claude-opus-5-5": {}, "claude-haiku-4-5-20251001": {},
+                                                               "claude-haiku-5-5": {}}}))
+vig = lambda *a: subprocess.run([sys.executable, "scripts/confere_claude.py", "depois", "--agente", str(agj),
+                                 "--modelo", "claude-opus-5-5", *a], capture_output=True, text=True, env=env)
+r = vig("--jornalista", "claude-haiku-5-5")
+assert r.stdout == "" and "jornalista 1, barradas 1" in r.stderr, (r.stdout, r.stderr)
+assert "modelo inesperado: claude-haiku-5-5" in vig().stdout, "sem o Jornalista, o modelo dele é inesperado"
+# Jornalista ligado e não chamado; ou o hook falhou e o principal leu direto.
+(d / "s2.jsonl").write_text(json.dumps(uso("w2", "WebFetch", {"url": "https://x"}, "m5")) + "\n")
+agj.write_text(json.dumps({"session_id": "s2", "modelUsage": {"claude-opus-5-5": {}}}))
+r = vig("--jornalista", "claude-haiku-5-5")
+assert "nunca chamado" in r.stdout and "leu 1 página direto" in r.stdout, r.stdout
+print("ok")
+FIM
+)"
+rm -rf "$JN_DIR"
+if [[ "$JN_OK" == "ok" ]]; then
+  ok "Jornalista: hook barra o WebFetch fora dele, e a tentativa barrada não vira leitura nem porta fechada"
+else
+  bad "Jornalista: $JN_OK"
+fi
+
+# Desligado, o orquestrador chama o CLI como sempre; ligado, passa o Jornalista,
+# o hook e o acréscimo ao prompt, e libera a ferramenta Agent.
+FAKE_JN="$(mktemp -d)"
+cat > "$FAKE_JN/claude" <<STUB
+#!/bin/sh
+printf '%s\n' "\$@" > "$FAKE_JN/args.txt"
+printf '%s' '{"type":"result","is_error":true,"result":"parado de propósito","usage":{}}'
+STUB
+chmod +x "$FAKE_JN/claude"
+CLAUDE_BIN="$FAKE_JN/claude" bash scripts/run_episode.sh --date 2026-08-25 --only research >/dev/null 2>&1 || true
+ARGS_DESL="$(cat "$FAKE_JN/args.txt" 2>/dev/null)"
+JORNALISTA=1 JORNALISTA_MODELO=claude-haiku-5-5 CLAUDE_BIN="$FAKE_JN/claude" \
+  bash scripts/run_episode.sh --date 2026-08-25 --only research >/dev/null 2>&1 || true
+ARGS_LIG="$(cat "$FAKE_JN/args.txt" 2>/dev/null)"
+LOG_LIG="$(cat logs/2026-08-25.log 2>/dev/null)"
+rm -rf "$FAKE_JN"; rm -f logs/2026-08-25.log logs/2026-08-25-*.json
+if [[ "$ARGS_DESL" != *"--agents"* && "$ARGS_DESL" != *"--settings"* && "$ARGS_DESL" != *"Leitura de páginas nesta execução"* \
+      && "$ARGS_DESL" == *"WebSearch,WebFetch"* && "$ARGS_DESL" != *",Agent"* \
+      && "$ARGS_LIG" == *"--agents"* && "$ARGS_LIG" == *'"model": "claude-haiku-5-5"'* \
+      && "$ARGS_LIG" == *"jornalista.py barra"* && "$ARGS_LIG" == *"WebFetch,Agent"* \
+      && "$ARGS_LIG" == *"## Leitura de páginas nesta execução: pelo Jornalista"* \
+      && "$LOG_LIG" == *"Jornalista ligado: lê as páginas no claude-haiku-5-5"* ]]; then
+  ok "Jornalista desligado por padrão; ligado, o CLI recebe o subagente, o hook e o acréscimo ao prompt"
+else
+  bad "chave do Jornalista no orquestrador — desligado: $(printf '%s' "$ARGS_DESL" | grep -c -- '--agents') --agents; ligado: $(printf '%s' "$ARGS_LIG" | grep -- '^--' | tr '\n' ' ')"
 fi
 
 # ------------------------------------------------------------------- resultado

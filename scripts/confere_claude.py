@@ -12,7 +12,10 @@ voltar, mesmo com a variável no lugar. Registra, não bloqueia.
     antes    o estado dos interruptores vigiados no cache do CLI (~/.claude.json)
              e quais interruptores mudaram desde a execução anterior.
     depois   o que a sessão de fato fez, pela transcrição: chamadas ao subagente
-             web-fetch, página crua no lugar do resumo, modelo inesperado.
+             web-fetch, página crua no lugar do resumo, modelo inesperado. Com
+             --jornalista (scripts/jornalista.py), o modelo dele é esperado, e
+             vira aviso o Jornalista que não foi chamado e a página que o agente
+             principal leu direto, passando pelo hook.
 
 O cache é só indício: em 08/11 ele dizia "desligado" enquanto uma sessão aberta
 recebia o subagente. Quem confirma é o "depois".
@@ -87,22 +90,29 @@ def antes() -> int:
     return 0
 
 
-def depois(agente: pathlib.Path, modelo: str) -> int:
+def depois(agente: pathlib.Path, modelo: str, jornalista: str | None = None) -> int:
     from memoria_custo import transcricoes_dir
-    from transcricoes import entradas
+    from transcricoes import barradas, entradas
     try:
         dados = json.loads(agente.read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return 0
     sid = dados.get("session_id")
-    chamadas = cruas = 0
+    chamadas = cruas = pedidos = diretas = barrou = 0
     if sid and (t := transcricoes_dir() / f"{sid}.jsonl").exists():
-        for r, _ in entradas(t):
+        barrou = len(barradas(t))
+        for r, do_subagente in entradas(t):
             conteudo = (r.get("message") or {}).get("content")
             for c in conteudo if isinstance(conteudo, list) else []:
-                if c.get("type") == "tool_use" and c.get("name") in ("Agent", "Task") \
-                        and (c.get("input") or {}).get("subagent_type") == "web-fetch":
+                tipo = (c.get("input") or {}).get("subagent_type") if c.get("type") == "tool_use" else None
+                if c.get("name") in ("Agent", "Task") and tipo == "web-fetch":
                     chamadas += 1
+                if c.get("name") in ("Agent", "Task") and tipo == "jornalista":
+                    pedidos += 1
+                # As barradas já saíram de entradas(): o que sobra no agente
+                # principal passou pelo hook.
+                if c.get("type") == "tool_use" and c.get("name") == "WebFetch" and not do_subagente:
+                    diretas += 1
                 if c.get("type") == "tool_result":
                     texto = c.get("content")
                     if isinstance(texto, list):
@@ -115,12 +125,18 @@ def depois(agente: pathlib.Path, modelo: str) -> int:
         partes = [f"{chamadas} vez{'es' if chamadas != 1 else ''} pelo subagente web-fetch"] if chamadas else []
         partes += [f"{cruas} página{'s' if cruas != 1 else ''} crua{'s' if cruas != 1 else ''} no lugar do resumo"] if cruas else []
         print(f"claude code: a sessão leu {' e '.join(partes)}{apesar} (ADR 0013)")
+    if jornalista and not pedidos:
+        print("claude code: Jornalista ligado e nunca chamado (scripts/jornalista.py)")
+    if jornalista and diretas:
+        print(f"claude code: com o Jornalista ligado, o agente principal leu {diretas}"
+              f" página{'s' if diretas != 1 else ''} direto: o hook do WebFetch não barrou")
     inesperados = sorted(m for m in (dados.get("modelUsage") or {})
-                         if m != modelo and not m.startswith(PEQUENOS))
+                         if m not in (modelo, jornalista) and not m.startswith(PEQUENOS))
     for m in inesperados:
         print(f"claude code: modelo inesperado: {m} (o principal é {modelo or '?'};"
-              f" o pequeno do CLI, {PEQUENOS[0]})")
-    print(f"Claude Code — sessão: web-fetch {chamadas}, páginas cruas {cruas},"
+              f" o pequeno do CLI, {PEQUENOS[0]}{f'; o Jornalista, {jornalista}' if jornalista else ''})")
+    extra = f", jornalista {pedidos}, barradas {barrou}" if jornalista else ""
+    print(f"Claude Code — sessão: web-fetch {chamadas}, páginas cruas {cruas}{extra},"
           f" modelos {', '.join(sorted(dados.get('modelUsage') or {})) or '—'}", file=sys.stderr)
     return 0
 
@@ -132,10 +148,11 @@ def main() -> int:
     d = sub.add_parser("depois")
     d.add_argument("--agente", required=True, help="JSON final do claude -p (logs/*-agente.json)")
     d.add_argument("--modelo", default="", help="modelo principal pedido ao CLI")
+    d.add_argument("--jornalista", default=None, help="modelo do Jornalista, se ligado")
     a = ap.parse_args()
     if a.cmd == "antes":
         return antes()
-    return depois(pathlib.Path(a.agente), a.modelo)
+    return depois(pathlib.Path(a.agente), a.modelo, a.jornalista)
 
 
 if __name__ == "__main__":

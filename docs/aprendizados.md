@@ -604,6 +604,27 @@ custo até então. Era um experimento da Anthropic, ligado por interruptor remot
 (`tengu_clever_orbit`), desligado em 08/11; o orquestrador agora fixa o modo de
 leitura e vigia o experimento ([ADR 0013](decisions/0013-leitura-de-paginas.md)).
 
+### Subagente nosso no Claude Code: o que só o código do CLI mostrou
+
+Montando o Jornalista (08/11, CLI 2.1.283), quatro intuições caíram:
+- **Tirar a ferramenta do agente principal tira dos subagentes.** Com
+  `--tools` sem WebFetch, o Jornalista, que declarava WebFetch, nasceu sem
+  ferramenta e não rodou. Quem separa os dois é um hook PreToolUse: o
+  `agent_id` só vem na chamada de subagente.
+- **Página crua não é coisa do WebFetch, é do subagente embutido.** O WebFetch
+  devolve a página inteira só para o "web-fetch" da Anthropic (`isBuiltIn` e
+  esse nome); para todos os outros, o resumo do modelo pequeno. Um agente
+  nosso com o mesmo nome não passa.
+- **Subagente nosso roda em segundo plano** por padrão, e o relatório chega
+  numa notificação; o embutido é a exceção. O `-p` espera todos antes de
+  terminar.
+- **O CLI passa o idioma do sistema ao modelo.** Com `LANG=pt_BR.UTF-8`, o
+  mesmo pedido em inglês saiu respondido em português. O launchd não define
+  `LANG`; teste que quer o ambiente da produção também não pode definir.
+
+E no Teste A ([plano](plano-leitura-por-subagente.md)), sem `LANG` nenhum, o
+Haiku 5.5 trocou de língua em 3 de 21 relatórios e traduziu as citações junto.
+
 ### CloudFront reescreve a bucket policy se deixarem
 
 "Grant CloudFront access to origin" vem como *Yes* e restringe o bucket ao
