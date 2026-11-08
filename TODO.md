@@ -2,7 +2,7 @@
 
 Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
 [PROJETO.md](PROJETO.md); o que já foi feito, no git, nos ADRs e em
-[docs/aprendizados.md](docs/aprendizados.md). Atualizada em 02/11/2026.
+[docs/aprendizados.md](docs/aprendizados.md). Atualizada em 08/11/2026.
 
 ## Semana de 02/11 — segunda é feriado (Finados)
 
@@ -19,16 +19,13 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
       programa de 30% para 1,7% de erro). Não saiu em 13, 15, 20 nem 27/10.
       Pronto em 02/11 para terça, 03/11, entre 11h e 12h, com tempos
       atualizados e números reconferidos. O autor posta à mão
-- [ ] **Sexta, 06/11 — conferir no relatório o que mudou em 30/10:** os avisos
-      de "IA" dobrada na apresentação e de "assunto curto" sumiram? As páginas
-      fechadas caíram (eram 15 a 18% por semana)? Por qual porta foi lida cada
-      pauta da OpenAI (fonte, outra porta, arquivo, imprensa)? A faixa nova de
-      palavras (alvo 1272, a 159 ppm) manteve os episódios entre 8 e 10 minutos?
-- [ ] **Terça, 03/11 — log de pesquisa com "Páginas lidas" e "Escolhas"**
-      (passo 8 do prompt, 31/10): toda página ganhou nota? Houve escolha
-      registrada? Quanto cresceram o log e a saída do modelo (30/10: 17,6 mil
-      caracteres de log, 88 mil tokens de saída)? Rodar
-      `python3 scripts/estudio.py` e ver as notas no protótipo
+- [ ] **Leitura por subagente desde 05/11** — o WebFetch saiu das ferramentas
+      do agente e entrou um subagente "web-fetch" (Opus 5.5), sem mudança de
+      versão do CLI (2.1.283 de 03 a 06/11). Custo de US$ 7,03 e 7,83, o cache
+      escrito triplicou. Em ordem: (1) as medições que leem a transcrição
+      passam a ler também `<sessao>/subagents/` (estúdio, relatório, rastro);
+      (2) ver se dá para manter o WebFetch direto; (3) conferir se as
+      citações de 05 e 06/11 batem com as páginas
 - [ ] **07–08/11 — relatório mensal de audiência de outubro**, com a revisão
       de custos do [ADR 0007](docs/decisions/0007-custo-por-episodio.md) (ver
       Recorrente)
@@ -232,7 +229,7 @@ aposentar, juntar ou subir o teto.
       campscast.com.br ([docs/site.md](docs/site.md), v3). Desde 04/11 o
       `run_episode.sh` atualiza os dados e sobe o site no fim de cada
       episódio publicado; falha vira AVISO no log, sem derrubar o episódio
-      (conferir na quarta: "Site atualizado" no `logs/2026-11-04.log`).
+      (conferido de 04 a 06/11).
       Falta: decidir o que o estúdio mostra quando a gravação falha (hoje fica
       a anterior e, depois das 08:00, "atrasado"). O "Ler o roteiro" e o log
       de pesquisa davam 404 até o commit da noite (03/11); decidido no mesmo
@@ -325,6 +322,17 @@ aposentar, juntar ou subir o teto.
       03/01/2027 não houver nenhum acesso por lá, tirar o programa da Apple. Se
       ficar, corrigir a frequência que a Apple mostra ("duas vezes por
       semana") e a página Podcasts do Connect, que aparece vazia
+
+## Feito em novembro
+
+- **04/11:** site atualizado pelo orquestrador no fim do episódio; roteiro e
+  log de pesquisa com cópia no próprio site
+- **08/11, conferência da semana 45:** sem aviso de "IA" dobrada nem de
+  assunto curto; páginas fechadas de 16% (26 a 30/10) para 9,5% (03 a 06/11),
+  pela conta do próprio agente; episódios de 1.335 a 1.466 palavras, 8:44 a
+  9:21. O log de pesquisa traz "Páginas lidas" e "Escolhas" nos quatro dias,
+  com 16 a 19 mil caracteres (17,6 mil em 30/10). F-004 estendido até 15/12:
+  o contrato de oito semanas venceu em 04/11 sem publicação da METR
 
 ## Feito em outubro
 

@@ -38,9 +38,9 @@ Regras:
 - aberto: 2026-09-03 (ep. 6)
 - pergunta: sai critério público de admissão, ou verificação externa de quem recebe o acesso?
 - marcos:
-  - 2026-10-29 (ep. 44) — o Google lança o Gemini 4 Carbon (28/10), primeiro no índice independente, só para parte dos defensores cibernéticos nesta semana e depois para parceiros de confiança do Fairwind; público "em breve", sem data; segue sem critério de admissão publicado; dito no ar
   - 2026-10-30 (ep. 45) — a Mistral abre os pesos do Large 4 (29/10), mas a variante especializada para teste de invasão e red team fica em prévia só para parceiros como a Orange Cyberdefense, "subject to rigorous vetting and contractual safeguards", sem critério publicado; dito no ar ("só para parceiros escolhidos, com contrato")
   - 2026-11-03 (ep. 46) — a OpenAI lança o GPT-6 Rosalind Research (30/10), mesmos pesos do GPT-6 Astra com menos recusas em biologia de duplo uso, só para organizações aprovadas, e publica na ficha de segurança quatro critérios de admissão (missão legítima em ciências da vida, uso de pesquisa crível, governança e supervisão de segurança, controles de segurança empresariais), com verificação de empresa e via própria para governos; é critério público, mas aplicado pela própria OpenAI, sem verificação de fora de quem entra; dito no ar
+  - 2026-11-06 (ep. 49) — a OpenAI lança o GPT-6 Cyber (05/11), no nível Crítico, só para clientes aprovados do Daybreak Red, e a ficha de segurança escreve o critério: verificação de identidade e elegibilidade, casos de uso, práticas de segurança e declarações legais; SSO, MFA, dispositivos gerenciados, lista de IPs; pessoas físicas por convite, com chave física; novo grupo para infraestrutura crítica. Critério escrito, aplicado pela própria OpenAI; dito no ar
 - temas: T-05
 - situação: aberto
 - rever até: 2026-12-31
@@ -54,7 +54,7 @@ Regras:
   - 2026-10-30 (ep. 45) — do lado da OpenAI, um piloto embutido: um funcionário da METR e um da Redwood passaram três semanas dentro da OpenAI (21/07 a 11/08) testando o monitoramento de desalinhamento; o relatório público (22/10) acha cerca de 10% do tráfego interno elegível de Codex sem vigilância entre maio e julho e agentes capazes de adiar o monitoramento, mas a OpenAI tinha direito de cortar e cortou um achado; a OpenAI cita o teste no post de 29/10 e diz ter corrigido a maioria; dito no ar. Na Anthropic, a METR ainda não publicou nada no regime sem veto; o Google segue sem anúncio
 - temas: T-03
 - situação: aberto
-- rever até: 2026-11-15
+- rever até: 2026-12-15
 
 ## F-005 · Acordo voluntário da Casa Branca: vira texto oficial e auditor?
 - aberto: 2026-09-30 (ep. 24)
@@ -77,22 +77,6 @@ Regras:
 - temas: T-04
 - situação: aberto
 - rever até: 2026-12-31
-
-## F-018 · Nova York: validador independente e botão de desligar viram lei? A SpaceXAI depõe?
-- aberto: 2026-10-06 (ep. 28)
-- pergunta: a Câmara de Nova York aprova o projeto de Julie Menin (Intro 2602: validação por terceiro, botão de desligar humano, multa de US$ 25 mil), as empresas respondem por escrito às perguntas da sessão, e a Justiça obriga a SpaceXAI a depor?
-- marcos:
-- temas: T-03
-- situação: aberto
-- rever até: 2027-03-31
-
-## F-019 · Austrália: o aviso obrigatório de incidente de IA vira projeto de lei?
-- aberto: 2026-10-07 (ep. 29)
-- pergunta: o governo australiano apresenta até o fim de 2026 o projeto que obriga a avisar a organização atingida e o ASD em incidente de IA, com definição do que conta como incidente — e OpenAI e Anthropic mantêm o apoio que deram no Parlamento em 06/10?
-- marcos:
-- temas: T-02, T-03
-- situação: aberto
-- rever até: 2027-01-31
 
 ## F-021 · Senado americano: o quadro da Cantwell vira projeto de lei, com auditoria obrigatória?
 - aberto: 2026-10-08 (ep. 30)
@@ -130,6 +114,7 @@ Regras:
 - pergunta: depois da consulta pública (até 15/11) do Anúncio nº 48, de 16/10, o MOFCOM e o MOST publicam o catálogo final com os 23 itens de IA? O limiar (2 trilhões de parâmetros, ou entre os dez primeiros) se mantém, a exceção para o que já é aberto continua, e algum laboratório chinês deixa de abrir pesos ou de servir clientes de fora por causa dele?
 - marcos:
   - 2026-10-26 (ep. 41) — primeiro caso de teste: o Kimi K3.1 Pro, da Moonshot (23/10), tem cerca de 2,8 trilhões de parâmetros e é quarto no índice independente — preenche as duas condições do limiar —, e os pesos estão prometidos até 04/11, antes do fim da consulta; o post da Moonshot não menciona a regra (a ligação apareceu só em fórum); dito no ar
+  - 2026-11-05 (ep. 48) — os pesos do Kimi K3.1 Pro ficam públicos no Hugging Face em 04/11, onze dias antes do fim da consulta; a licença (MIT com condições para serviço acima de US$ 20 milhões por ano e para produto com mais de 100 milhões de usuários) não traz restrição regional nem de exportação, e nem a página do modelo nem a licença mencionam a regra; pela proposta, o que já é aberto fica de fora; dito no ar
 - temas: T-04
 - situação: aberto
 - rever até: 2027-01-31
@@ -158,14 +143,6 @@ Regras:
 - temas: T-04
 - situação: aberto
 - rever até: 2027-01-31
-
-## F-029 · Kimi K3.1 Pro: os pesos saem até 4 de novembro, e a capacidade cibernética tirada no treino resiste?
-- aberto: 2026-10-26 (ep. 41)
-- pergunta: a Moonshot publica os pesos do Kimi K3.1 Pro até 04/11, como prometeu, e com que licença? Sai avaliação de terceiro da capacidade cibernética do modelo aberto, inclusive depois de ajuste fino, que confira os 81% medidos pela própria empresa (contra 90,5% sem o corte de dados)?
-- marcos:
-- temas: T-09, T-05, T-04
-- situação: aberto
-- rever até: 2026-12-15
 
 ## F-030 · Anthropic na bolsa: a oferta sai, a que preço, e o controle dos fundadores e do LTBT se mantém?
 - aberto: 2026-10-27 (ep. 42)
@@ -198,3 +175,28 @@ Regras:
 - temas: T-03
 - situação: aberto
 - rever até: 2027-02-28
+
+## F-034 · As 948 falhas do Linux: o modelo cibernético sem nome sai, para quem, e os mantenedores aceitam as correções?
+- aberto: 2026-11-05 (ep. 48)
+- pergunta: a OpenAI lança ou nomeia o "upcoming cyber model" usado na rodada de outubro que achou 948 falhas de escalada de privilégio no kernel do Linux, e com que regra de acesso (Daybreak Red, clientes aprovados, governo)? Quantas das correções enviadas pelo Patch the Planet os mantenedores do kernel aceitam, quantas viram CVE, e alguém de fora confere os números?
+- marcos:
+  - 2026-11-06 (ep. 49) — primeira parte respondida: o modelo é o GPT-6 Cyber, lançado em 05/11 só para clientes aprovados do Daybreak Red (US$ 20 e US$ 100 por milhão); a OpenAI diz ter enviado 304 achados críticos aos mantenedores com correções candidatas, e acrescenta 81 falhas altas inéditas no Firefox — o boletim da Mozilla de 27/10 credita 41 falhas altas à OpenAI, primeira conferência de fora de parte dos números. Quantas correções do Linux foram aceitas segue sem resposta; dito no ar
+- temas: T-05
+- situação: aberto
+- rever até: 2027-03-31
+
+## F-035 · Inkling 2 Small: os pesos saem na semana seguinte, sob Apache 2.0, e os testes de fora são publicados?
+- aberto: 2026-11-06 (ep. 49)
+- pergunta: a Thinking Machines Lab publica os pesos do Inkling 2 Small sob Apache 2.0 "next week" (semana de 09/11), como prometeu em 05/11? Publica quem fez os testes de segurança de fora e o que acharam, e a Artificial Analysis passa a listá-lo como aberto (31 pontos, acima do Muse Spark Open, 25)?
+- marcos:
+- temas: T-09
+- situação: aberto
+- rever até: 2026-12-15
+
+## F-036 · Claude Code e o e-mail no cabeçalho: a correção prometida sai?
+- aberto: 2026-11-06 (ep. 49)
+- pergunta: o lançamento do Claude Code prometido para o início da semana de 09/11 tira o e-mail da conta do contexto do modelo, como disse a equipe? A issue 107757 é fechada, e a Anthropic publica nota oficial dizendo desde quando e quantos usuários foram afetados?
+- marcos:
+- temas: T-02
+- situação: aberto
+- rever até: 2026-11-30
