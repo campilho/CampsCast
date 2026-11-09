@@ -198,6 +198,58 @@ Para os próximos ensaios, uma mudança por vez: relatório mais curto (só o qu
 pesa na decisão, sem fatos de página "nada na janela"), e o arquivo público
 consultado um por vez.
 
+**Decisão do autor (08/11): o Jornalista é arquitetura, não economia.** A
+conta de onde vai o custo (aprendizados, "Separar em agentes não barateia
+sozinho") mostrou que nem ele nem um Roteirista separado baixam o custo por
+si: o Editor já recebia resumos, e a escrita acontece em poucas chamadas. O
+valor está em cada agente ser especialista no seu papel, com um prompt que
+melhora de versão em versão. Paralelismo não é requisito: o pipeline não tem
+pressa.
+
+## Modelo pequeno no Haiku 5.5 — o corte de custo mais provável
+
+O Haiku 4.5 resume as páginas e faz as buscas no modo direto (US$ 1,05 em
+04/11). No Teste A, o Haiku 5.5 trouxe 80% dos números do Opus, contra 59% do
+4.5, por um quarto do preço. Trocar é uma variável, `ANTHROPIC_DEFAULT_HAIKU_MODEL`,
+que o `ensaio.sh` deixa passar; o vigia aceita o modelo pedido. Estimativa:
+~US$ 0,40 no lugar de 1,05 (as buscas custam US$ 0,01 cada em qualquer
+modelo). O risco medido é a troca de língua.
+
+### Ensaio (08/11, dia 04/11, modo direto)
+
+Dois ensaios do mesmo dia, um depois do outro, com a mesma web (a de 08/11):
+o resumidor no Haiku 5.5 e a base, no Haiku 4.5 de sempre. A base saiu perto
+da produção de 04/11 (5,05 contra 5,25), então a diferença é do resumidor.
+
+| | Haiku 5.5 | base, Haiku 4.5 |
+|---|---|---|
+| custo (US$) | **3,75** (o CLI estimaria 7,71) | 5,05 |
+| Opus 5.5, o Editor | 3,47 — cache lido 5,4 M | 4,03 — cache lido 7,4 M |
+| modelo pequeno | **0,28** — 18 buscas | 1,02 — 23 buscas |
+| chamadas do Editor / turnos | 38 / 77 | — / 101 |
+| páginas lidas / fechadas | 31 / 2 | 46 / 3 |
+| resumos: média por página | 2.091 caracteres, 44 números | 1.361 caracteres, 25 números |
+| resumos em português | 0 de 29 | 0 de 43 |
+| minutos | 9,7 | 11,2 |
+
+- **A queda não é só do resumidor:** o Editor leu 15 páginas a menos e buscou
+  menos. Os resumos do Haiku 5.5 trazem quase o dobro de números por página,
+  e o volume total que entra no Editor ficou igual (61 mil contra 59 mil
+  caracteres): menos páginas, cada uma com mais. É a explicação provável, mas
+  é uma amostra; ensaios do mesmo dia já variaram uns 3% no custo, e aqui a
+  diferença é de 26%.
+- **Pautas:** duas das três iguais (o parecer do tribunal europeu e a marca
+  d'água da Anthropic); a terceira trocou — escolha de pauta varia de ensaio
+  para ensaio mesmo com o mesmo código.
+- **O registro precisava da tabela própria:** o CLI estimaria US$ 7,71, com o
+  Haiku 5.5 a preço de Opus. A conta refeita também esquecia o US$ 0,01 por
+  busca; corrigido com teste antes, e a tabela agora bate até o centavo com a
+  do CLI no Haiku 4.5.
+
+Falta: o autor ler os dois roteiros de 04/11 lado a lado, e um segundo dia de
+ensaio. Se confirmar, vai à produção como versão nova do Editor (o
+`modelo_pequeno` da ficha), num dia sem outra mudança.
+
 **Como testar na semana sem arriscar o episódio.** A produção segue como está.
 O `scripts/ensaio.sh` roda dias passados com `JORNALISTA=1`, numa cópia fora do
 repositório e sem S3, e compara com o episódio publicado daquele dia: pautas
@@ -208,6 +260,4 @@ ensaios, de ~US$ 5 e 15 minutos cada.
 
 - **Atualizar o CLI** (2.1.283): versões novas conhecem o Haiku 5.5 e o Sonnet
   5.5 (apelidos e preço), mas trazem outras mudanças. Testar por ensaio.
-- **Modelo pequeno no Haiku 5.5** (`ANTHROPIC_DEFAULT_HAIKU_MODEL`): o resumo
-  das páginas e as buscas ficam ~10× mais baratos (cerca de US$ 0,6 por
-  episódio). Entra no Teste A como o braço Haiku 5.5.
+- **Modelo pequeno no Haiku 5.5**: passou a ser parte do plano (seção acima).

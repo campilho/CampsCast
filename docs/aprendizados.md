@@ -625,6 +625,46 @@ Montando o Jornalista (08/11, CLI 2.1.283), quatro intuições caíram:
 E no Teste A ([plano](plano-leitura-por-subagente.md)), sem `LANG` nenhum, o
 Haiku 5.5 trocou de língua em 3 de 21 relatórios e traduziu as citações junto.
 
+### Separar em agentes não barateia sozinho
+
+A intuição: um Jornalista que lê e um Roteirista que escreve, cada um com
+contexto pequeno, sairiam mais baratos que um agente só com tudo dentro.
+Medido em 08/11, no episódio de 04/11 (US$ 5,25) e no ensaio do Jornalista:
+
+| 04/11, produção | US$ |
+|---|---|
+| Opus: gravar no cache o que entra no contexto (1 hora, 2× a entrada) | 1,66 |
+| Opus: reler o contexto a cada chamada (7,7 M tokens a US$ 0,20) | 1,54 |
+| Opus: texto que escreve (roteiro, log, raciocínio) | 1,01 |
+| Haiku 4.5: resumo das páginas e 29 buscas | 1,05 |
+
+- **O Editor nunca recebeu página inteira.** Até 04/11 o WebFetch entregava o
+  resumo do Haiku 4.5; no ensaio, o Jornalista entregou o relatório dele
+  sobre o mesmo resumo. Entraram no Editor 164 mil caracteres num caso e 160
+  mil no outro: o Jornalista reescreveu, não condensou, e custou US$ 0,69 a
+  mais.
+- **A escrita acontece quando o contexto já está cheio, mas por poucas
+  chamadas.** Até a última busca foram 38 chamadas e US$ 2,85; depois dela, 12
+  chamadas e US$ 1,36, das quais 0,58 é o texto do roteiro e do log, que
+  qualquer agente pagaria. Um Roteirista com 60 mil tokens no lugar de 190 mil
+  pouparia uns US$ 0,35 de releitura e pagaria uns 0,30 para montar o próprio
+  contexto, mais o dossiê que o Editor escreveria para ele: empate.
+- **Reler é barato; o que pesa é o que entra cedo.** Cache lido no Opus 5.5
+  custa 5% da entrada. O que encarece é o trecho que entra no começo e é
+  relido em todas as chamadas seguintes — o índice inteiro foi 47% do cache
+  lido em 29/09, e a lista no prompt o levou a 1-3%.
+
+O que barateia é diminuir o que entra (o índice virou lista; um relatório
+do Jornalista só com as candidatas) ou trocar o modelo de quem lê muito (o
+resumidor). Separar em agentes é arquitetura: regras de cada papel,
+paralelismo, o desenho do CampsVerso — não economia.
+
+**O cache de 1 hora é da assinatura.** No código do CLI 2.1.283, a sessão
+principal grava cache de 1 hora com o motivo "subscriber"; com chave de API o
+padrão é 5 minutos (1,25×), e `CLAUDE_CODE_PROMPT_CACHE_TTL` escolhe. Em 04/11,
+a 5 minutos, a gravação cairia de US$ 1,66 para 1,04 e o episódio, para ~4,60.
+Projeção de custo na nuvem que parte do registro de hoje sai alta.
+
 ### CloudFront reescreve a bucket policy se deixarem
 
 "Grant CloudFront access to origin" vem como *Yes* e restringe o bucket ao

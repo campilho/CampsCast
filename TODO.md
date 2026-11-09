@@ -36,7 +36,13 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
       contra 5,25, e o contexto do Editor não encolheu (plano, "Primeiro
       ensaio"). Falta: (4) mais ensaios na semana (`JORNALISTA=1
       scripts/ensaio.sh --data …`), uma mudança por vez — relatório mais
-      curto, arquivo público um por vez —; e o autor decidir se vai à produção
+      curto, arquivo público um por vez —; e o autor decidir se vai à produção.
+      O Jornalista 1.1 (um pedido por vez) está na ficha (`config/agentes.json`),
+      sem medição. **Resumidor no Haiku 5.5** (ensaio de 04/11 em 08/11): US$
+      3,75 contra 5,05 da base no mesmo dia, com o Editor lendo 31 páginas em
+      vez de 46. Falta o autor ler os dois roteiros e um segundo dia de ensaio;
+      confirmando, vai à produção como versão nova do Editor, num dia sem outra
+      mudança
 - [ ] **07–08/11 — relatório mensal de audiência de outubro**, com a revisão
       de custos do [ADR 0007](docs/decisions/0007-custo-por-episodio.md) (ver
       Recorrente)

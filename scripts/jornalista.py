@@ -47,8 +47,8 @@ DESCRICAO = ("Lê páginas da web para o CampsCast. Recebe endereços, a janela 
 # A frase volta ao agente principal como resposta do WebFetch barrado; o
 # pedaço BARRADA é o que as medições procuram para não contá-la.
 MOTIVO = (f"Nesta execução as páginas são {BARRADA}. Chame a ferramenta Agent com subagent_type "
-          f'"{NOME}", os endereços, a janela e o que você precisa de cada página; vários pedidos na '
-          "mesma mensagem leem em paralelo.")
+          f'"{NOME}", os endereços, a janela e o que você precisa de cada página; um pedido por vez, '
+          "o próximo depois que o relatório do anterior chegar.")
 
 
 def agentes(modelo: str) -> dict:

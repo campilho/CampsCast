@@ -179,8 +179,10 @@ for v in REDE_HOST REDE_ESPERA_S REGISTRO_SEM_SONO; do
   [[ -n "${!v:-}" ]] && TESTE+=("$v=${!v}")
 done
 # As chaves das variantes em comparação também passam, se vierem: é assim que
-# se ensaia o Jornalista (JORNALISTA=1 scripts/ensaio.sh --data …).
-for v in JORNALISTA JORNALISTA_MODELO; do
+# se ensaia o Jornalista (JORNALISTA=1 scripts/ensaio.sh --data …) e o modelo
+# pequeno do CLI, que resume as páginas e faz as buscas
+# (ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-5-5 scripts/ensaio.sh --data …).
+for v in JORNALISTA JORNALISTA_MODELO ANTHROPIC_DEFAULT_HAIKU_MODEL; do
   [[ -n "${!v:-}" ]] && TESTE+=("$v=${!v}")
 done
 echo

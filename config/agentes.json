@@ -1,0 +1,51 @@
+{
+  "_sobre": "Ficha dos agentes do CampsCast: a versão de cada um e o que mudou de uma para outra. A última versão de cada agente é a que está nos arquivos agora; a suíte confere a impressão digital dos prompts, o modelo e as ferramentas contra o código. Mudou o prompt, o modelo ou as ferramentas: versão nova aqui, no mesmo commit. Versão nova de agente que já está na produção só vai ao ar depois de ensaio contra a anterior. Número pequeno (1.1) para instrução; grande (2.0) para ferramenta, modelo ou papel. modelo_pequeno é o que o CLI usa para resumir as páginas do WebFetch e fazer as buscas (ANTHROPIC_DEFAULT_HAIKU_MODEL; sem ela, o padrão do CLI). scripts/agentes.py lê e confere.",
+  "agentes": {
+    "editor": {
+      "nome": "Editor",
+      "papel": "O agente principal: lê a memória, pesquisa, escolhe as pautas, escreve o roteiro e o log, e atualiza índice, backlog, temas e fios.",
+      "personagens": ["editor", "jornalista", "roteirista", "arquivista"],
+      "producao": true,
+      "historico": [
+        {
+          "versao": "1.0",
+          "desde": "2026-11-08",
+          "prompts": {"prompts/master.md": "b6646477af7d"},
+          "modelo": "claude-opus-5-5",
+          "esforco": "high",
+          "modelo_pequeno": "claude-haiku-4-5",
+          "ferramentas": ["Read", "Write", "Edit", "Glob", "Grep", "WebSearch", "WebFetch"],
+          "mudou": "Primeira versão com ficha: o prompt-mestre como está desde 02/11; o primeiro episódio com ele foi o nº 46, de 03/11. Antes dela, 14 mudanças no git desde 31/08 (git log -- prompts/master.md). A leitura de páginas fica no próprio agente, com o WebFetch fixado (ADR 0013).",
+          "medido": "03 e 04/11, no modo direto: US$ 4,98 e 5,25 por episódio. Ensaio de 04/11 refeito em 08/11, com a web de 08/11: US$ 5,05."
+        }
+      ]
+    },
+    "jornalista": {
+      "nome": "Jornalista",
+      "papel": "Lê as páginas para o Editor: cuida das portas fechadas e devolve, por endereço lido, resultado, data, tipo de fonte, fatos, citações e a nota do log.",
+      "personagens": ["jornalista"],
+      "producao": false,
+      "chave": "JORNALISTA=1",
+      "historico": [
+        {
+          "versao": "1.0",
+          "desde": "2026-11-08",
+          "prompts": {"prompts/jornalista.md": "d473955716c5", "prompts/leitura-pelo-jornalista.md": "51bd7c6c0691"},
+          "modelo": "claude-sonnet-5-5",
+          "ferramentas": ["WebFetch", "Read"],
+          "mudou": "Primeira versão. Modelo escolhido pelo Teste A: o único que passou no critério (91% dos números do Opus, sem citação inventada).",
+          "medido": "Ensaio de 04/11: US$ 6,68 contra 5,25 da produção; o contexto do Editor não encolheu (160 mil caracteres de relatório contra 164 mil de resumo); 9 pedidos, vários em paralelo, e 6 das 11 portas fechadas foram 429 do arquivo público."
+        },
+        {
+          "versao": "1.1",
+          "desde": "2026-11-08",
+          "prompts": {"prompts/jornalista.md": "d473955716c5", "prompts/leitura-pelo-jornalista.md": "e87667e01481"},
+          "modelo": "claude-sonnet-5-5",
+          "ferramentas": ["WebFetch", "Read"],
+          "mudou": "Um pedido por vez: o Editor manda o próximo só depois que o relatório do anterior chega. Era o paralelismo que fazia o arquivo público recusar (429).",
+          "medido": null
+        }
+      ]
+    }
+  }
+}

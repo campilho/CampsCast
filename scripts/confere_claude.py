@@ -42,8 +42,14 @@ VIGIADOS = {
     "tengu_clever_orbit": "subagente web-fetch no lugar do WebFetch, de 05 a 08/11/2026; ADR 0013",
 }
 # O modelo "pequeno" do CLI resume as páginas do WebFetch e faz as buscas.
-# Trocar de modelo pequeno muda custo e qualidade da leitura: vira aviso.
+# Trocar de modelo pequeno muda custo e qualidade da leitura: vira aviso, a
+# menos que a troca tenha sido pedida (ANTHROPIC_DEFAULT_HAIKU_MODEL, num ensaio).
 PEQUENOS = ("claude-haiku-4-5",)
+
+
+def pequenos() -> tuple[str, ...]:
+    pedido = os.environ.get("ANTHROPIC_DEFAULT_HAIKU_MODEL") or os.environ.get("ANTHROPIC_SMALL_FAST_MODEL")
+    return (pedido, *PEQUENOS) if pedido else PEQUENOS
 
 
 def cache_cli() -> dict:
@@ -131,10 +137,10 @@ def depois(agente: pathlib.Path, modelo: str, jornalista: str | None = None) -> 
         print(f"claude code: com o Jornalista ligado, o agente principal leu {diretas}"
               f" página{'s' if diretas != 1 else ''} direto: o hook do WebFetch não barrou")
     inesperados = sorted(m for m in (dados.get("modelUsage") or {})
-                         if m not in (modelo, jornalista) and not m.startswith(PEQUENOS))
+                         if m not in (modelo, jornalista) and not m.startswith(pequenos()))
     for m in inesperados:
         print(f"claude code: modelo inesperado: {m} (o principal é {modelo or '?'};"
-              f" o pequeno do CLI, {PEQUENOS[0]}{f'; o Jornalista, {jornalista}' if jornalista else ''})")
+              f" o pequeno do CLI, {pequenos()[0]}{f'; o Jornalista, {jornalista}' if jornalista else ''})")
     extra = f", jornalista {pedidos}, barradas {barrou}" if jornalista else ""
     print(f"Claude Code — sessão: web-fetch {chamadas}, páginas cruas {cruas}{extra},"
           f" modelos {', '.join(sorted(dados.get('modelUsage') or {})) or '—'}", file=sys.stderr)

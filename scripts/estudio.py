@@ -665,6 +665,7 @@ def monta(data: str) -> dict:
             "creditos_elevenlabs": (reg.get("elevenlabs") or {}).get("creditos"),
             "audio_s": (reg.get("elevenlabs") or {}).get("audio_s"),
             "transcricao": bool(tr),
+            "agentes": reg.get("agentes"),
         },
         "eventos": eventos,
         "capitulos": capitulos(eventos),
@@ -674,6 +675,29 @@ def monta(data: str) -> dict:
         "conversa": conversa(ep, pq, reg, leituras),
         "agenda": agenda(data),
     }
+
+
+def ficha_agentes() -> dict:
+    """A ficha dos agentes (config/agentes.json): versões e o que mudou em
+    cada uma. Material para o estúdio contar a evolução de cada personagem."""
+    try:
+        from agentes import ficha
+        return ficha()["agentes"]
+    except (OSError, ValueError, KeyError):
+        return {}
+
+
+def quem_faz(personagem: str) -> dict | None:
+    """O agente da produção que faz o personagem hoje, com a versão: o mais
+    especializado entre os que o fazem (o Jornalista próprio, quando estiver
+    na produção, no lugar do Editor)."""
+    candidatos = [(nome, ag) for nome, ag in ficha_agentes().items()
+                  if ag.get("producao") and personagem in ag.get("personagens", [])]
+    if not candidatos:
+        return None
+    nome, ag = min(candidatos, key=lambda c: len(c[1].get("personagens", [])))
+    v = ag["historico"][-1]
+    return {"id": nome, "nome": ag.get("nome", nome), "versao": v["versao"], "desde": v["desde"]}
 
 
 def main() -> int:
@@ -692,7 +716,10 @@ def main() -> int:
     saida.mkdir(parents=True, exist_ok=True)
 
     elenco = {"contrato": CONTRATO, "personagens": [{**p, "situacao": p.get("situacao", "ativo"),
-                                                     "instrucoes": instrucoes(p["id"])} for p in ELENCO]}
+                                                     "instrucoes": instrucoes(p["id"]),
+                                                     **({"agente": ag} if (ag := quem_faz(p["id"])) else {})}
+                                                    for p in ELENCO],
+              "agentes": ficha_agentes()}
     dia = monta(data)
     escreve = lambda nome, obj: (saida / nome).write_text(json.dumps(obj, ensure_ascii=False, indent=1) + "\n",
                                                           encoding="utf-8")

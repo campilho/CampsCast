@@ -25,6 +25,9 @@ PRECOS = {  # modelo canônico → entrada, saída, cache lido
     "claude-haiku-4-5": {"in": 1.0, "out": 5.0, "lido": 0.10},
 }
 HAIKU55_ACIMA_DE_100K = {"in": 0.50, "out": 2.50, "lido": 0.05}
+# Cada busca na web custa US$ 0,01, em qualquer modelo; o CLI a soma no custo
+# do modelo que buscou (o pequeno), e a conta refeita também.
+BUSCA = 0.01
 
 
 def canonico(modelo: str) -> str | None:
@@ -37,7 +40,8 @@ def canonico(modelo: str) -> str | None:
 
 def custo(modelo: str, uso: dict, escrita: float = 1.25, faixa: dict | None = None) -> float | None:
     """Custo em US$ de um modelo, com os campos do `modelUsage` do CLI
-    (inputTokens, outputTokens, cacheReadInputTokens, cacheCreationInputTokens).
+    (inputTokens, outputTokens, cacheReadInputTokens, cacheCreationInputTokens,
+    webSearchRequests).
     `escrita` é o multiplicador da escrita de cache. None se o modelo não
     estiver na tabela."""
     nome = canonico(modelo)
@@ -45,5 +49,6 @@ def custo(modelo: str, uso: dict, escrita: float = 1.25, faixa: dict | None = No
         return None
     p = faixa or PRECOS[nome]
     g = lambda k: (uso or {}).get(k) or 0
-    return (g("inputTokens") * p["in"] + g("cacheCreationInputTokens") * p["in"] * escrita
-            + g("cacheReadInputTokens") * p["lido"] + g("outputTokens") * p["out"]) / 1e6
+    return ((g("inputTokens") * p["in"] + g("cacheCreationInputTokens") * p["in"] * escrita
+             + g("cacheReadInputTokens") * p["lido"] + g("outputTokens") * p["out"]) / 1e6
+            + g("webSearchRequests") * BUSCA)

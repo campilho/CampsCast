@@ -73,6 +73,14 @@ def _json(caminho) -> dict | None:
         return None
 
 
+def _json_texto(texto: str) -> dict | None:
+    try:
+        d = json.loads(texto) if texto else None
+    except ValueError:
+        return None
+    return d if isinstance(d, dict) else None
+
+
 def _recente(caminho, desde: float) -> bool:
     p = pathlib.Path(caminho) if caminho else None
     return bool(p and p.exists() and p.stat().st_mtime >= desde - 5)
@@ -339,6 +347,8 @@ def cmd_fecha(a) -> int:
         # None: o roteiro não foi conferido nesta execução. []: conferido, limpo.
         "avisos_roteiro": ([l for l in a.avisos.splitlines() if l.strip()]
                            if a.conferido == "1" else None),
+        # Que versão de cada agente rodou (config/agentes.json, scripts/agentes.py).
+        "agentes": _json_texto(a.agentes),
     }
     registra(linha)
     print(f"Registro: {a.estado}, {linha['duracao_s']} s → {arquivo()}")
@@ -479,7 +489,7 @@ def main() -> int:
         f.add_argument(f"--{campo}", required=True)
     for campo in ("fim", "pesquisa", "narracao", "publicacao", "aviso",
                   "agente", "tts", "indicadores", "modelo", "erro",
-                  "conferido", "avisos"):
+                  "conferido", "avisos", "agentes"):
         f.add_argument(f"--{campo}", default="")
     r = sub.add_parser("resultado"); r.add_argument("arquivo")
     i = sub.add_parser("indicadores"); i.add_argument("--data", required=True)

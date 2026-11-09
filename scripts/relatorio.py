@@ -189,6 +189,12 @@ def monta(d: dt.date) -> tuple[str, dict]:
             total = f"{sum(custos):.2f}".replace(".", ",")
             L += ["", f"Custo do agente a preço de API: US$ {total} na semana "
                       "(não cobrado; roda na assinatura)."]
+        # Que versão de cada agente rodou (config/agentes.json): a semana em que
+        # uma versão nova entra é a semana de comparar custo e avisos.
+        versoes = collections.Counter(f"{k} {v}" for r in regs for k, v in (r.get("agentes") or {}).items())
+        if versoes:
+            L += ["", "Agentes: " + " · ".join(f"{nv} em {n} execuç{'ões' if n > 1 else 'ão'}"
+                                               for nv, n in sorted(versoes.items())) + "."]
     else:
         L.append("Nenhuma execução registrada na semana.")
 

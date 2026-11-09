@@ -67,6 +67,9 @@ export CLAUDE_CODE_WEB_FETCH_AGENT="${CLAUDE_CODE_WEB_FETCH_AGENT:-0}"
 # (scripts/ensaio.sh) antes de qualquer decisão sobre a produção.
 JORNALISTA="${JORNALISTA:-0}"
 JORNALISTA_MODELO="${JORNALISTA_MODELO:-claude-sonnet-5-5}"
+# Que versão de cada agente rodou (config/agentes.json): vai para o log e para
+# o registro, para custo e qualidade serem lidos por versão.
+AGENTES_VERSOES=""
 
 # ---------- args ----------
 EPISODE_DATE=""
@@ -128,7 +131,7 @@ finaliza() {
       --publicacao "$T_PUBLICACAO" --aviso "$T_AVISO" --modelo "${CLAUDE_MODEL:-}" \
       --agente "${BASE_REGISTRO}-agente.json" --tts "${BASE_REGISTRO}-tts.json" \
       --indicadores "${BASE_REGISTRO}-indicadores.json" --erro "$ULTIMO_ERRO" \
-      --conferido "$ROTEIRO_CONFERIDO" --avisos "$AVISOS_ROTEIRO" \
+      --conferido "$ROTEIRO_CONFERIDO" --avisos "$AVISOS_ROTEIRO" --agentes "${AGENTES_VERSOES:-}" \
       >>"$LOG" 2>&1 || true
     # Relatório do autor: junta o que pede decisão e o que deu errado na semana
     # (scripts/relatorio.py). Não bloqueia nada: falhar aqui não derruba um
@@ -414,6 +417,10 @@ $PAUTAS"
       --log "$LOG" --prefix "           " --quiet 2>/dev/null &
     WATCHER_PID=$!
 
+    AGENTES_VERSOES="$(python3 scripts/agentes.py ativos --jornalista "$JORNALISTA" 2>>"$LOG" || true)"
+    log "Agentes: $(printf '%s' "$AGENTES_VERSOES" | python3 -c 'import json,sys
+try: print(" · ".join(f"{k} {v}" for k, v in json.load(sys.stdin).items()))
+except ValueError: print("ficha ilegível")' 2>/dev/null)"
     FERRAMENTAS="Read,Write,Edit,Glob,Grep,WebSearch,WebFetch"
     EXTRA_CLAUDE=()
     if [[ "$JORNALISTA" == "1" ]]; then

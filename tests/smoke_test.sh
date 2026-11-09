@@ -1427,6 +1427,15 @@ ag.write_text(json.dumps({"session_id": "s9", "modelUsage": {"claude-opus-5-5": 
 r = roda("depois", "--agente", str(ag), "--modelo", "claude-opus-5-5")
 assert "1 vez pelo subagente web-fetch" in r.stdout and "1 página crua" in r.stdout, r.stdout
 assert "modelo inesperado: claude-sonnet-9" in r.stdout and "inesperado: claude-haiku" not in r.stdout, r.stdout
+# Modelo pequeno trocado de propósito (ANTHROPIC_DEFAULT_HAIKU_MODEL, num
+# ensaio) é esperado; trocado sem ninguém pedir, aviso.
+ag.write_text(json.dumps({"session_id": "s9", "modelUsage": {"claude-opus-5-5": {}, "claude-haiku-5-5": {}}}))
+r = roda("depois", "--agente", str(ag), "--modelo", "claude-opus-5-5")
+assert "modelo inesperado: claude-haiku-5-5" in r.stdout, r.stdout
+env["ANTHROPIC_DEFAULT_HAIKU_MODEL"] = "claude-haiku-5-5"
+r = roda("depois", "--agente", str(ag), "--modelo", "claude-opus-5-5")
+assert "inesperado" not in r.stdout, r.stdout
+del env["ANTHROPIC_DEFAULT_HAIKU_MODEL"]
 # Execução como a de antes de 05/11: nada a avisar.
 (d / "s8.jsonl").write_text(json.dumps(uso("f2", "WebFetch", {"url": "https://example.org"})) + "\n")
 ag.write_text(json.dumps({"session_id": "s8", "modelUsage": {"claude-opus-5-5": {}, "claude-haiku-4-5-20251001": {}}}))
@@ -2170,7 +2179,7 @@ fi
 # lugar só. Serve ao /relatorio e ao passo automático de sexta.
 REL_DIR="$(mktemp -d)"; mkdir -p "$REL_DIR/episodes"
 printf -- '---\ndate: 2026-09-28\nepisode: 22\ntitle: Pauta da segunda\n---\nx\n' > "$REL_DIR/episodes/2026-09-28.md"
-printf '%s\n' '{"data": "2026-09-28", "estado": "ok", "claude": {"custo_estimado_usd": 3.77}, "elevenlabs": {"creditos": 4237}, "episodio": {"numero": 22, "palavras": 1339, "audio_s": 529}, "indicadores": {"fios_bytes": 4800, "fios_abertos": 1}, "avisos_roteiro": ["fios: F-001 passou do rever até 2026-09-27"]}' \
+printf '%s\n' '{"data": "2026-09-28", "estado": "ok", "claude": {"custo_estimado_usd": 3.77}, "elevenlabs": {"creditos": 4237}, "episodio": {"numero": 22, "palavras": 1339, "audio_s": 529}, "indicadores": {"fios_bytes": 4800, "fios_abertos": 1}, "avisos_roteiro": ["fios: F-001 passou do rever até 2026-09-27"], "agentes": {"editor": "1.0"}}' \
   > "$REL_DIR/metricas.jsonl"
 python3 - "$FIO_DIR" "$REL_DIR" <<'PYF'
 import sys, pathlib
@@ -2192,7 +2201,8 @@ if [[ "$REL" == *"2026-W40"* && "$REL" == *"Pauta da segunda"* && "$REL" == *"S-
       && "$REL" != *"S-002"* && "$REL" == *"F-001"*"2026-10-01"* && "$REL" == *"T-01"* \
       && "$REL" == *"passou do rever até"* && "$RESUMO" == *'"sugestoes_pendentes": 1'* \
       && "$RESUMO" == *'"fios_vencidos": 1'* && "$RESUMO" == *'"episodios": 1'* \
-      && "$REL" == *"(teto de 40)"* && "$REL" == *"1 expirado"* && "$RESUMO" == *'"fios_expirados": 1'* ]]; then
+      && "$REL" == *"(teto de 40)"* && "$REL" == *"1 expirado"* && "$RESUMO" == *'"fios_expirados": 1'* \
+      && "$REL" == *"Agentes: editor 1.0 em 1 execução."* ]]; then
   ok "relatório do autor junta episódios, decisões pendentes, temas, fios e avisos da semana"
 else
   bad "relatório do autor errado: ${RESUMO:-sem resumo} / $(printf '%s' "$REL" | head -c 300)"
@@ -2727,7 +2737,8 @@ printf 'AWS_SECRET_ACCESS_KEY=nao-pode-ir\nCLAUDE_CODE_OAUTH_TOKEN=token-de-test
 METRICAS_ANTES="$(shasum "$METRICAS_ARQ")"
 ens() { ENSAIO_ORIGEM="$ORI" ENSAIO_ENV="$ENS/env" ENSAIO_PLIST="$ENS/sem-plist" bash scripts/ensaio.sh "$@" 2>&1; }
 # JORNALISTA_MODELO sozinho não liga nada: só prova que a chave da variante passa.
-OUT_ENS="$(JORNALISTA_MODELO=claude-haiku-5-5 ens --data 2026-10-29 --pasta "$ENS/copia")" && RC_ENS=0 || RC_ENS=$?
+OUT_ENS="$(JORNALISTA_MODELO=claude-haiku-5-5 ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-5-5 \
+  ens --data 2026-10-29 --pasta "$ENS/copia")" && RC_ENS=0 || RC_ENS=$?
 OUT_INEXATO="$(ens --data 2026-10-29 --de "$(git -C "$ORI" rev-parse HEAD~2)" --pasta "$ENS/inexato" --dry-run)"
 OUT_FEITO="$(ens --data 2026-10-29 --de "$(git -C "$ORI" rev-parse HEAD)" --pasta "$ENS/feito")" && RC_FEITO=0 || RC_FEITO=$?
 ENS_OK="$(python3 - "$ENS" "$RC_ENS" "$(git -C "$ORI" status --porcelain)" "$METRICAS_ANTES" "$(shasum "$METRICAS_ARQ")" <<'PY' 2>&1
@@ -2748,6 +2759,7 @@ assert f"ESTADO_ARQ={copia}/logs/estado.json" in amb, "estado não desviado"
 # (ADR 0013). O orquestrador fixa o modo de leitura; não fica no sorteio.
 assert "CLAUDE_CODE_WEB_FETCH_AGENT=0" in amb.splitlines(), "modo de leitura não fixado"
 assert "JORNALISTA_MODELO=claude-haiku-5-5" in amb.splitlines(), "chave da variante não passou ao ensaio"
+assert "ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-5-5" in amb.splitlines(), "modelo pequeno da variante não passou"
 assert os.path.realpath((ens / "onde").read_text().strip()) == os.path.realpath(copia), "agente fora da cópia"
 assert json.loads((copia / "logs" / "estado.json").read_text())["estado"] == "ok"
 reg = json.loads((copia / "metricas" / "execucoes.jsonl").read_text().splitlines()[-1])
@@ -2914,6 +2926,12 @@ assert abs(r["custo_estimado_usd"] - 9.2) < 1e-9 and r["custo_cli_usd"] == 10.5,
 r = resumo_claude({"usage": {}, "total_cost_usd": 7.83, "modelUsage": {"claude-opus-5-5": u(costUSD=7.83, costBasis="list")}},
                   "claude-opus-5-5")
 assert r["custo_estimado_usd"] == 7.83 and "custo_cli_usd" not in r, r
+# O modelo pequeno faz as buscas, e cada uma custa US$ 0,01 em qualquer modelo:
+# o CLI soma no costUSD, e a conta refeita também (ensaio de 08/11 com o Haiku 5.5).
+d = {"usage": {}, "total_cost_usd": 1.0, "modelUsage": {
+    "claude-haiku-5-5": u(inputTokens=1_000_000, outputTokens=100_000, webSearchRequests=18, costUSD=1.0, costBasis="unknown")}}
+r = resumo_claude(d, "claude-opus-5-5")
+assert abs(r["custo_estimado_usd"] - (0.10 + 0.05 + 0.18)) < 1e-9, r
 print("ok")
 FIM
 )" && [[ "$CUSTO_OK" == "ok" ]]; then
@@ -3001,6 +3019,57 @@ else
   bad "Jornalista: $JN_OK"
 fi
 
+# A ficha dos agentes (config/agentes.json) é a versão de cada um. Prompt,
+# modelo ou ferramentas que mudam sem versão nova fazem o teste falhar: é
+# assim que o registro pode dizer que versão rodou.
+FICHA_DIR="$(mktemp -d)"
+if FICHA_OK="$(python3 - "$FICHA_DIR" <<'FIM' 2>&1
+import json, os, pathlib, re, subprocess, sys
+d = pathlib.Path(sys.argv[1])
+sys.path.insert(0, "scripts")
+import agentes, jornalista, estudio
+r = subprocess.run([sys.executable, "scripts/agentes.py", "confere"], capture_output=True, text=True)
+assert r.returncode == 0, r.stdout
+f = agentes.ficha()["agentes"]
+orq = pathlib.Path("scripts/run_episode.sh").read_text()
+padrao = lambda var: re.search(rf'^{var}="\$\{{{var}:-([^}}]+)\}}"', orq, re.M).group(1)
+ed, jn = f["editor"]["historico"][-1], f["jornalista"]["historico"][-1]
+assert ed["modelo"] == padrao("CLAUDE_MODEL") and ed["esforco"] == padrao("CLAUDE_EFFORT"), "modelo do Editor fora da ficha"
+assert ",".join(ed["ferramentas"]) == re.search(r'^\s*FERRAMENTAS="([^"$]+)"', orq, re.M).group(1), "ferramentas do Editor"
+assert jn["modelo"] == padrao("JORNALISTA_MODELO"), "modelo do Jornalista fora da ficha"
+# O resumidor das páginas: sem variável no orquestrador, é o padrão do CLI.
+m = re.search(r'ANTHROPIC_DEFAULT_HAIKU_MODEL="\$\{ANTHROPIC_DEFAULT_HAIKU_MODEL:-([^}]+)\}"', orq)
+assert ed["modelo_pequeno"] == (m.group(1) if m else "claude-haiku-4-5"), "modelo pequeno do Editor fora da ficha"
+assert jn["ferramentas"] == jornalista.agentes(jn["modelo"])["jornalista"]["tools"], "ferramentas do Jornalista"
+assert set(jn["prompts"]) == {"prompts/jornalista.md", "prompts/leitura-pelo-jornalista.md"}
+for nome, ag in f.items():
+    vs = [v["versao"] for v in ag["historico"]]
+    assert len(set(vs)) == len(vs) and all(re.fullmatch(r"\d+\.\d+(\.\d+)?", v) for v in vs), vs
+    assert set(ag["personagens"]) <= {p["id"] for p in estudio.ELENCO}, ag["personagens"]
+ativos = lambda j: subprocess.run([sys.executable, "scripts/agentes.py", "ativos", "--jornalista", j],
+                                  capture_output=True, text=True, env={**os.environ, **extra})
+extra = {}
+assert json.loads(ativos("0").stdout) == {"editor": ed["versao"]}
+assert json.loads(ativos("1").stdout) == {"editor": ed["versao"], "jornalista": jn["versao"]}
+# Prompt mudado sem versão nova: a execução registra, com aviso no log.
+falsa = json.loads(pathlib.Path("config/agentes.json").read_text())
+falsa["agentes"]["editor"]["historico"][-1]["prompts"]["prompts/master.md"] = "000000000000"
+(d / "agentes.json").write_text(json.dumps(falsa))
+extra = {"AGENTES_ARQ": str(d / "agentes.json")}
+r = ativos("0")
+assert json.loads(r.stdout) == {"editor": ed["versao"] + "+mudado"} and "mudou e a ficha não" in r.stderr, (r.stdout, r.stderr)
+# O estúdio: quem faz o Jornalista hoje é o Editor, porque o Jornalista não está na produção.
+assert estudio.quem_faz("jornalista")["id"] == "editor" and estudio.quem_faz("locutor") is None
+assert set(estudio.ficha_agentes()) == {"editor", "jornalista"}
+print("ok")
+FIM
+)" && [[ "$FICHA_OK" == "ok" ]]; then
+  ok "ficha dos agentes bate com prompts, modelos e ferramentas; prompt mudado sem versão vira aviso"
+else
+  bad "ficha dos agentes: $FICHA_OK"
+fi
+rm -rf "$FICHA_DIR"
+
 # Desligado, o orquestrador chama o CLI como sempre; ligado, passa o Jornalista,
 # o hook e o acréscimo ao prompt, e libera a ferramenta Agent.
 FAKE_JN="$(mktemp -d)"
@@ -3016,14 +3085,17 @@ JORNALISTA=1 JORNALISTA_MODELO=claude-haiku-5-5 CLAUDE_BIN="$FAKE_JN/claude" \
   bash scripts/run_episode.sh --date 2026-08-25 --only research >/dev/null 2>&1 || true
 ARGS_LIG="$(cat "$FAKE_JN/args.txt" 2>/dev/null)"
 LOG_LIG="$(cat logs/2026-08-25.log 2>/dev/null)"
+REG_LIG="$(tail -1 "$METRICAS_ARQ" 2>/dev/null | python3 -c 'import json,sys; print(json.dumps(json.load(sys.stdin).get("agentes"), sort_keys=True))' 2>/dev/null)"
+VERS_LIG="$(python3 scripts/agentes.py ativos --jornalista 1 | python3 -c 'import json,sys; print(json.dumps(json.load(sys.stdin), sort_keys=True))')"
 rm -rf "$FAKE_JN"; rm -f logs/2026-08-25.log logs/2026-08-25-*.json
 if [[ "$ARGS_DESL" != *"--agents"* && "$ARGS_DESL" != *"--settings"* && "$ARGS_DESL" != *"Leitura de páginas nesta execução"* \
       && "$ARGS_DESL" == *"WebSearch,WebFetch"* && "$ARGS_DESL" != *",Agent"* \
       && "$ARGS_LIG" == *"--agents"* && "$ARGS_LIG" == *'"model": "claude-haiku-5-5"'* \
       && "$ARGS_LIG" == *"jornalista.py barra"* && "$ARGS_LIG" == *"WebFetch,Agent"* \
       && "$ARGS_LIG" == *"## Leitura de páginas nesta execução: pelo Jornalista"* \
-      && "$LOG_LIG" == *"Jornalista ligado: lê as páginas no claude-haiku-5-5"* ]]; then
-  ok "Jornalista desligado por padrão; ligado, o CLI recebe o subagente, o hook e o acréscimo ao prompt"
+      && "$LOG_LIG" == *"Jornalista ligado: lê as páginas no claude-haiku-5-5"* \
+      && "$LOG_LIG" == *"Agentes: editor "*" · jornalista "* && -n "$VERS_LIG" && "$REG_LIG" == "$VERS_LIG" ]]; then
+  ok "Jornalista desligado por padrão; ligado, o CLI recebe o subagente, o hook e o acréscimo ao prompt, e o registro guarda as versões"
 else
   bad "chave do Jornalista no orquestrador — desligado: $(printf '%s' "$ARGS_DESL" | grep -c -- '--agents') --agents; ligado: $(printf '%s' "$ARGS_LIG" | grep -- '^--' | tr '\n' ' ')"
 fi
