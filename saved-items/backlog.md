@@ -18,9 +18,14 @@ Regras:
 
 ---
 
-## OpenAI prepara, para depois das eleições, campanha por "limites de velocidade" obrigatórios para os sistemas mais poderosos
-- data_original: 2026-11-01
-- fonte: Axios — https://www.axios.com/2026/11/01/scoop-openai-post-midterm-policy (403; lido só por resumos de busca)
-- validade: 2026-11-06
-- resumo: furo do Axios: logo depois de 03/11, a OpenAI lança ofensiva de política com salvaguardas obrigatórias para manter humanos no controle e rebatiza centros de dados de "campi de computação"; Chris Lehane falou ao veículo. Só vale com a proposta publicada pela OpenAI, que vira a fonte.
+## Meituan abre os pesos do LongCat-2.5, cerca de 1,6 trilhão de parâmetros, sob licença MIT
+- data_original: 2026-11-10
+- fonte: Meituan LongCat — https://huggingface.co/meituan-longcat/LongCat-2.5
+- validade: 2026-11-17
+- resumo: modelo de peso aberto com cerca de 1,6 trilhão de parâmetros (48 bilhões ativos), contexto de 1 milhão de tokens, licença MIT e números próprios fortes em agentes; sem seção de segurança. Falta anúncio oficial lido e medição independente (Artificial Analysis) antes de ir ao ar (T-09).
 
+## Google DeepMind lança o Gemini Robotics 2.5, modelo de visão, linguagem e ação para robôs, com piloto de 96% na fábrica da Mercedes-Benz
+- data_original: 2026-11-10
+- fonte: Google DeepMind — https://deepmind.google/blog/gemini-robotics-2-5-accelerates-real-world-physical-intelligence/
+- validade: 2026-11-17
+- resumo: mais 30% a 100% de sucesso e 20% a 30% mais rápido que o Gemini Robotics 2 em mais de 200 tarefas; 96% num piloto de produção da Mercedes-Benz; teste novo ASIMOV-Jailbreak (99,5% de resistência, número próprio); vai para Apptronik, Agile e Mercedes. Números todos do DeepMind; a execução de 11/11 não o considerou.

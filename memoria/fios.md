@@ -38,9 +38,9 @@ Regras:
 - aberto: 2026-09-03 (ep. 6)
 - pergunta: sai critério público de admissão, ou verificação externa de quem recebe o acesso?
 - marcos:
-  - 2026-10-30 (ep. 45) — a Mistral abre os pesos do Large 4 (29/10), mas a variante especializada para teste de invasão e red team fica em prévia só para parceiros como a Orange Cyberdefense, "subject to rigorous vetting and contractual safeguards", sem critério publicado; dito no ar ("só para parceiros escolhidos, com contrato")
-  - 2026-11-03 (ep. 46) — a OpenAI lança o GPT-6 Rosalind Research (30/10), mesmos pesos do GPT-6 Astra com menos recusas em biologia de duplo uso, só para organizações aprovadas, e publica na ficha de segurança quatro critérios de admissão (missão legítima em ciências da vida, uso de pesquisa crível, governança e supervisão de segurança, controles de segurança empresariais), com verificação de empresa e via própria para governos; é critério público, mas aplicado pela própria OpenAI, sem verificação de fora de quem entra; dito no ar
   - 2026-11-06 (ep. 49) — a OpenAI lança o GPT-6 Cyber (05/11), no nível Crítico, só para clientes aprovados do Daybreak Red, e a ficha de segurança escreve o critério: verificação de identidade e elegibilidade, casos de uso, práticas de segurança e declarações legais; SSO, MFA, dispositivos gerenciados, lista de IPs; pessoas físicas por convite, com chave física; novo grupo para infraestrutura crítica. Critério escrito, aplicado pela própria OpenAI; dito no ar
+  - 2026-11-10 (ep. 51) — a Anthropic lança o Claude Mythos 5.2 (09/11), o mesmo modelo do Fable 5.2 com travas de cibersegurança e biologia mais soltas, só para aprovados no Cyber Verification Program e no Life Sciences Verification Program, pelo mesmo preço do Fable (US$ 8 e US$ 40 por milhão; o GPT-6 Cyber custa duas vezes e meia isso); nenhum critério novo publicado no anúncio, e a aprovação segue com a própria Anthropic; dito no ar ("quem decide quem entra continua sendo a empresa")
+  - 2026-11-11 (ep. 52) — o Google abre ao público o Gemini 4 Carbon (10/11), treze dias depois de lançá-lo só para parte dos defensores do Fairwind; a versão pública vem com salvaguardas de uso geral e, segundo a VentureBeat, a de menos travas para segurança segue só no Fairwind (desenho do Fable/Mythos); o anúncio não traz critério novo de admissão ao Fairwind, que segue com o próprio Google; dito no ar
 - temas: T-05
 - situação: aberto
 - rever até: 2026-12-31
@@ -78,18 +78,12 @@ Regras:
 - situação: aberto
 - rever até: 2026-12-31
 
-## F-021 · Senado americano: o quadro da Cantwell vira projeto de lei, com auditoria obrigatória?
-- aberto: 2026-10-08 (ep. 30)
-- pergunta: a senadora Maria Cantwell apresenta projeto de lei a partir dos seis princípios de 07/10 (padrão do NIST, auditoria independente antes do lançamento, aviso de incidente)? O projeto do líder da maioria, John Thune, sai, e algum dos dois traz auditoria ou aviso obrigatório?
-- marcos:
-- temas: T-03
-- situação: aberto
-- rever até: 2027-03-31
-
 ## F-022 · Muse Wonder: a Meta publica o relatório de segurança prometido, e o Full chega à API?
 - aberto: 2026-10-13 (ep. 32)
 - pergunta: a Meta publica o relatório completo de segurança do Muse Wonder ("available soon" no anúncio de 12/10), com avaliações de risco cibernético e biológico, e o Wonder Full sai da assinatura do Muse Code para a API?
 - marcos:
+  - 2026-11-09 (ep. 50) — a Meta leva ao Muse e ao Meta AI (06/11) versões especializadas dos modelos "trained using Muse Wonder", com memória e foco ativos e números só internos; o anúncio não fala de segurança, e a lista do blog de pesquisa da Meta não tem relatório de segurança do Wonder depois de 12/10 (o mais próximo é de 08/09, sobre o Muse); o Wonder Full na API não foi conferido; dito no ar ("não encontrei esse relatório")
+  - 2026-11-10 (ep. 51) — a Meta lança o Muse Ember (09/11) com um parágrafo de segurança (avaliado pelo Superintelligence Scaling Framework, abaixo dos limites de alto risco em química e biologia, cibersegurança e controle), mas a lista do blog de pesquisa segue sem relatório de segurança do Muse Wonder depois de 12/10; pela busca, o Wonder Full continua só na assinatura do Muse Code, sem API; dito no ar ("continua sem aparecer")
 - situação: aberto
 - rever até: 2026-11-30
 
@@ -148,6 +142,7 @@ Regras:
 - aberto: 2026-10-27 (ep. 42)
 - pergunta: depois do S-1 de 26/10 (Nasdaq, código ANT, sem preço nem quantidade), a oferta é precificada e as ações começam a ser negociadas? A versão final mantém a classe F com 50,1% dos votos e o LTBT elegendo a maioria do conselho pela classe T? O prospecto completo diz o que a FTC e a Comissão Europeia pediram?
 - marcos:
+  - 2026-11-11 (ep. 52) — a Anthropic lança o roadshow (10/11): 825 milhões de ações classe A (801,4 milhões da empresa, 23,6 milhões de acionistas atuais) a US$ 70 a US$ 78, cerca de US$ 58 a 64 bilhões pelas contas do roteiro, mais opção de 123,75 milhões de ações em 30 dias; Nasdaq Global Select, ANT; Goldman Sachs e Morgan Stanley; registro ainda não efetivo; sem valor da empresa, sem data de precificação e sem menção à classe F nem ao LTBT; dito no ar
 - temas: T-03, T-10
 - situação: aberto
 - rever até: 2027-01-31
@@ -164,6 +159,7 @@ Regras:
 - aberto: 2026-10-29 (ep. 44)
 - pergunta: a Anthropic, o Google, a Meta, a OpenAI e a empresa de Musk (SpaceXSI no comunicado) respondem até 11/11 ao pedido de Pallone, Lofgren e Raskin (cartas de 27/10, divulgadas em 28/10) com a lista de incidentes de modelos desalinhados? Algum aviso em 48 horas (24 com infraestrutura crítica) vem a público? Depois das eleições de 03/11, alguma das três comissões convoca audiência ou intima?
 - marcos:
+  - 2026-11-12 (ep. 53) — o prazo de 11/11 passou sem resposta pública encontrada de nenhuma das cinco empresas (busca de 12/11; a cobertura também não registra resposta). Dito no ar, em contraste com o canal de incidentes que Washington negocia com Pequim ("no plano federal, o aviso continua voluntário")
 - temas: T-02, T-03
 - situação: aberto
 - rever até: 2026-12-15
@@ -172,6 +168,7 @@ Regras:
 - aberto: 2026-11-03 (ep. 46)
 - pergunta: o sprint interno anunciado em 02/11, com a Cathedral Systems usando os modelos da OpenAI contra as defesas dela, acontece, e a OpenAI ou a Cathedral publicam o que foi achado e corrigido? A Anthropic comenta a parceria, e a Cathedral publica o relatório sobre o caso da Anthropic?
 - marcos:
+  - 2026-11-09 (ep. 50) — o padrão se repete: em 06/11 a OpenAI anuncia parceria com a Hacktron, que em julho tomou contas de funcionários e chegou ao repositório interno dela com ataque montado pelo Claude Opus 5 (recompensa de US$ 6.500), e amplia o acesso da Hacktron ao Daybreak Red; foco nas conexões com serviços de terceiros, sem duração nem promessa de publicar os achados. Do sprint com a Cathedral, nada publicado; dito no ar
 - temas: T-03
 - situação: aberto
 - rever até: 2027-02-28
@@ -185,18 +182,53 @@ Regras:
 - situação: aberto
 - rever até: 2027-03-31
 
-## F-035 · Inkling 2 Small: os pesos saem na semana seguinte, sob Apache 2.0, e os testes de fora são publicados?
-- aberto: 2026-11-06 (ep. 49)
-- pergunta: a Thinking Machines Lab publica os pesos do Inkling 2 Small sob Apache 2.0 "next week" (semana de 09/11), como prometeu em 05/11? Publica quem fez os testes de segurança de fora e o que acharam, e a Artificial Analysis passa a listá-lo como aberto (31 pontos, acima do Muse Spark Open, 25)?
-- marcos:
-- temas: T-09
-- situação: aberto
-- rever até: 2026-12-15
-
 ## F-036 · Claude Code e o e-mail no cabeçalho: a correção prometida sai?
 - aberto: 2026-11-06 (ep. 49)
 - pergunta: o lançamento do Claude Code prometido para o início da semana de 09/11 tira o e-mail da conta do contexto do modelo, como disse a equipe? A issue 107757 é fechada, e a Anthropic publica nota oficial dizendo desde quando e quantos usuários foram afetados?
 - marcos:
+  - 2026-11-10 (ep. 51) — a versão 2.1.321 (09/11, a que trouxe o Fable 5.2) muda a checagem do e-mail da conta: passa a recusar só comando de terminal que contém o e-mail e nomeia um User-Agent, sem perguntar; o changelog não diz que o e-mail saiu do contexto; a issue segue aberta, com relato de 09/11 do envio passando por curl com o complemento de privacidade da 2.1.319; dito no ar
 - temas: T-02
 - situação: aberto
 - rever até: 2026-11-30
+
+## F-037 · RSA de 1024 bits e os agentes do DeepMind: os artigos saem e alguém de fora confirma?
+- aberto: 2026-11-09 (ep. 50)
+- pergunta: os dois artigos de trabalho anunciados em 06/11 (falsificação de assinatura RSA-1024 cerca de 1.600 vezes mais eficiente, por estimativa teórica; quebra em lote cerca de 30 vezes mais barata por chave) são publicados, no ePrint, no arXiv ou em conferência, com o nome do modelo que moveu os agentes? Algum criptógrafo que não é coautor confirma ou contesta os números, e alguém demonstra o ganho na prática além dos 3,5 vezes medidos numa chave já quebrada?
+- marcos:
+- temas: T-08, T-05
+- situação: aberto
+- rever até: 2027-03-31
+
+## F-038 · O freio deliberado do Fable 5.2: alguém de fora confirma que a capacidade de acelerar a IA ficou no nível do Opus 5.5?
+- aberto: 2026-11-10 (ep. 51)
+- pergunta: a Anthropic diz que limitou no treino do Fable 5.2 e do Mythos 5.2 (09/11) as capacidades de pesquisa que mais aceleram a IA — otimização de kernels de acelerador e arquitetura de grandes modelos — ao nível do Opus 5.5. A METR, o instituto britânico ou outro avaliador de fora publica medição que confirme ou conteste esse limite? A ficha de segurança diz como foi medido, e algum outro laboratório anuncia freio parecido?
+- marcos:
+- temas: T-01, T-03
+- situação: aberto
+- rever até: 2027-03-31
+
+## F-039 · AlphaProof Code e o Signal: os artefatos saem, e alguém de fora confere?
+- aberto: 2026-11-11 (ep. 52)
+- pergunta: o Google DeepMind anunciou em 10/11 que agentes movidos pelo Gemini Carbon provaram, em mais de seis milhões de linhas de Lean e quatro semanas, propriedades de segurança do código compilado do protocolo do Signal, e prometeu abrir os artefatos da verificação. Os artefatos e o artigo técnico saem, dizendo quais componentes do protocolo foram cobertos? O Signal publica algo próprio, algum verificador que não é da equipe confere as provas, e o AlphaProof Code fica disponível para outros projetos?
+- marcos:
+- temas: T-08
+- situação: aberto
+- rever até: 2027-02-28
+
+## F-007 · Canal EUA–China para incidentes de IA: sai protocolo escrito?
+- aberto: 2026-09-25 (ep. 21)
+- pergunta: a rodada de Shenzhen produz protocolo escrito, com definição do que conta como incidente e de quem verifica?
+- marcos:
+  - 2026-09-28 (ep. 22) — Casa Branca cria o Diálogo de Superinteligência com a China
+  - 2026-11-12 (ep. 53) — volta dos expirados: Scott Bessent (discurso de 10/11 no NCUSCR, texto do Tesouro de 11/11) diz que os dois países devem trocar boas práticas de avaliação e teste de modelos avançados antes do lançamento e manter o julgamento humano no comando, e que o canal direto servirá para avisar incidentes graves com modelos de superinteligência; vai com Trump a Shenzhen na semana seguinte, e a Reuters dá a reunião do diálogo em 18 e 19/11, na APEC. Sem definição de incidente, sem verificação e sem dizer se os laboratórios participam; dito no ar
+- temas: T-04
+- situação: aberto
+- rever até: 2026-12-31
+
+## F-040 · NVIDIA sem Jensen Huang: a investigação conclui algo sobre a inteligência estrangeira, e quem assume?
+- aberto: 2026-11-13 (ep. 54)
+- pergunta: depois da renúncia de Huang (12/11; o 8-K dá 11/11), sem motivo no comunicado, a investigação independente do conselho (Joon H. Kim e Wachtell, Lipton, Rosen & Katz, desde 10/11) publica conclusão sobre as reportagens de que ele foi alvo de inteligência estrangeira e sobre o comprometimento de segredos ou da segurança nacional? Huang depõe no Congresso antes de 26/11, como diz o TechCrunch, e o que sai disso? O conselho nomeia CEO permanente no lugar de Colette Kress, e a regra de venda de chips à China muda por causa do caso?
+- marcos:
+- temas: T-04
+- situação: aberto
+- rever até: 2027-03-31
