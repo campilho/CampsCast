@@ -1198,3 +1198,25 @@ nunca viu a história; a correção de 12/11 trocou o comunicado de 08/11 pelo d
 
 **Antes de escrever regra que dependa de ler um tipo de fonte, conte se a
 ferramenta chega lá.**
+
+### O verificador barato concordava com o roteiro
+
+Ensaio do verificador V1 em 14/11 (`verificacao/v1/resumo.md`), pela chave de
+API, US$ 37,72. Os subagentes no Sonnet conferiram oito episódios e acharam
+2,0% de erro. Na calibração, refazendo às cegas dois episódios da linha de
+base, eles pegaram 1 dos 7 erros que ela tinha achado, e nos que deixaram
+passar a régua escrita dava razão à linha de base. No Opus, a mesma calibração
+pegou 5 dos 7. Com o Opus, os seis episódios restantes deram 11,3% (20 de 177,
+todos leves), contra 5,9% da linha de base nos episódios 27 a 40 — subida no
+limite da significância, com seis episódios só. Metade dos erros é a paráfrase
+que acrescenta: o roteiro tira da fonte o "appeared", o "could", o "as many
+as".
+
+Dois detalhes de bastidor: o apelido "sonnet" dos subagentes rodou o Sonnet 5,
+não o 5.5; e a primeira etapa saiu do escopo porque o arquivo com as
+instruções dela não chegou ao CLI (caminho relativo depois de um `cd`), e só o
+`--max-budget-usd` segurou o gasto.
+
+**Um número de erro baixo pode ser o verificador concordando com o roteiro.
+Antes de comparar taxas, calibre o verificador contra erros já conhecidos.**
+

@@ -31,21 +31,16 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
       que nem o feed nem a API do Hugging Face (data de criação) pegam.
       Depois, ensaio de um Editor com a lista no prompt, usando as listas
       gravadas na sombra
-- [ ] **Verificador V1 — ensaio pela API, não mais na nuvem.** O ensaio na
-      nuvem não rodou, e o crédito promocional expirou em 05/11 sem uso.
-      `prompts/verificador-v1.md` e a rubrica fixa `prompts/verificador-rubrica.md`
-      seguem prontos: conferir os episódios do 41 em diante e calibrar nos
-      episódios 35 e 38 da linha de base. Caminho novo: os créditos da API da
-      Anthropic do autor (US$ 138,03 em 14/11, divididos com outro projeto),
-      com `ANTHROPIC_API_KEY` só na sessão do verificador, para não gastar o
-      limite do Max que o episódio das 05:00 usa. **Orçamento de US$ 50
-      aprovado pelo autor em 14/11** ([docs/custos.md](docs/custos.md)). No
-      ritmo da linha de base (US$ 3,70 por episódio), os 16 episódios (14
-      novos e 2 de calibração) dariam uns US$ 59: rodar em duas etapas — a
-      calibração e os três mais recentes, medir, e o resto até o teto —, num
-      worktree fora da pasta da produção, com `--max-budget-usd` e a chave
-      com nome próprio no `.env` (nunca `ANTHROPIC_API_KEY`). Depois do
-      ensaio, decidir o V1 diário
+- [x] **Verificador V1 — ensaio pela API** (14/11, US$ 37,72 dos US$ 50,
+      [docs/custos.md](docs/custos.md); resultado em
+      `verificacao/v1/resumo.md` e em `docs/aprendizados.md`, "O verificador
+      barato concordava com o roteiro"). Os 14 episódios novos conferidos: 8
+      com subagentes no Sonnet (2,0%, um piso: na calibração pegaram 1 dos 7
+      erros da linha de base) e 6 no Opus (11,3%, contra 5,9% da linha de
+      base; o Opus pegou 5 dos 7 na calibração). Metade dos erros é paráfrase
+      que tira a cautela da fonte. Para a v2 da rubrica: a regra 5 pune meio
+      ponto de arredondamento, e a regra 10 depende do web.archive.org, que o
+      WebFetch não abre
 - [ ] **LinkedIn — post sobre a memória** — não saiu (adiado em 13, 15, 20 e
       27/10 e em 03/11). Rascunho em `privado/divulgacao.md`, com a métrica da
       linha de base (memória do programa de 30% para 1,7% de erro). Reconferir
@@ -126,14 +121,17 @@ provas. Claude Code headless no Mac, em sombra, uma mudança por vez.
       que o `a038297` fechou para MCP e skills. Na fila, uma mudança por vez: cortar e medir
       com o `ensaio.sh` se o episódio muda
 - [ ] **V1. Verificador diário** — `claude -p` separado depois do agente, com
-      a rubrica v1; registra, não bloqueia. Depois do ensaio pela API (acima).
-      A linha de base custou US$ 3,70 por episódio, quase o dobro do agente:
-      medir se dá para conferir menos (só número, data e citação) ou com
-      modelo menor
+      a rubrica v1; registra, não bloqueia. O ensaio de 14/11 decidiu o
+      modelo: Opus, porque o Sonnet concorda com o roteiro (1 de 7 erros na
+      calibração). No Opus, uns US$ 2 a 3 por episódio a preço de API.
+      Decidir se roda no Max ou na API depois de medir quanto do Max o
+      episódio já gasta (semana de 16/11)
 - [ ] **Precisão no roteiro** — os erros da linha de base se repetem em quatro
       formas: datas, contagem, paráfrase que acrescenta, modal mudado. Propor
       uma lista curta de conferência no `master.md`, ou esperar o revisor (V2).
-      Depois do resultado do V1
+      O V1 confirmou o principal (14/11): metade dos erros dos episódios 41 a
+      46 é paráfrase que tira a cautela da fonte ("appeared", "could", "as
+      many as"). Candidato a Editor 1.2, com ensaio, depois de medir o 1.1
 - [ ] **V2. Revisor** com rubrica, em ciclo com o roteiro (no máximo duas
       voltas)
 - [ ] **Ideia futura: o que a imprensa disse** (ideia do autor, 12/11). Para

@@ -66,7 +66,7 @@ aviso no log: o episódio roda sempre no Max.
 | Experimento | Fonte | Orçamento | Gasto | Situação |
 |---|---|---|---|---|
 | Linha de base dos fatos (ADR 0010) | crédito promocional da nuvem (US$ 250) | — | US$ 149 | feito em 25/10; os US$ 101 restantes expiraram em 05/11 sem uso |
-| Verificador V1, ensaio (episódios 41 a 54 e calibração nos 35 e 38) | crédito de API da Anthropic do autor, dividido com o CampsVerso (saldo de US$ 138,03 em 14/11), pela `chave-campscast` | **US$ 50** | — | aprovado pelo autor em 14/11; teste da chave: US$ 0,01 |
+| Verificador V1, ensaio (episódios 41 a 54 e calibração nos 35 e 38) | crédito de API da Anthropic do autor, dividido com o CampsVerso (saldo de US$ 138,03 em 14/11), pela `chave-campscast` | **US$ 50** | US$ 37,72 | feito em 14/11: etapa 1 (US$ 17,07, 8 episódios novos e a calibração, subagentes no Sonnet), etapa 2a (US$ 6,17, a calibração no Opus), etapa 2b (US$ 14,47, os 6 episódios restantes no Opus) e teste da chave (US$ 0,01); sobraram US$ 12,28 |
 
 ## Lançamentos
 
@@ -79,3 +79,6 @@ aviso no log: o episódio roda sempre no Max.
 | 05/11/2026 | Anthropic | crédito expirado | US$ 101 | sobra do crédito da nuvem, sem uso |
 | 14/11/2026 | Anthropic | orçamento | US$ 50 | verificador V1, do crédito de API do autor |
 | 14/11/2026 | Anthropic | gasto | US$ 0,01 | teste da `chave-campscast` (Haiku, uma chamada) |
+| 14/11/2026 | Anthropic | gasto | US$ 17,07 | verificador V1, etapa 1: Opus 5.5 US$ 2,22, subagentes no Sonnet 5 US$ 12,01, Haiku 4.5 US$ 2,84 |
+| 14/11/2026 | Anthropic | gasto | US$ 6,17 | verificador V1, etapa 2a (calibração no Opus): Opus 5.5 US$ 3,16, subagentes no Opus 5 US$ 2,37, Haiku 4.5 US$ 0,65 |
+| 14/11/2026 | Anthropic | gasto | US$ 14,47 | verificador V1, etapa 2b (6 episódios no Opus): Opus 5.5 US$ 11,20, Haiku 4.5 US$ 2,14, Sonnet 5 US$ 1,14 |
