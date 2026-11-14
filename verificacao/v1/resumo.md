@@ -9,9 +9,13 @@ dois verificadores diferentes, e as contas ficam separadas:
 | etapa 2a | calibração refeita (35 e 38) | Opus | [opus/](opus/calibracao.md) |
 | etapa 2b | 6 episódios: 26, 27, 28, 29 e 30/10 e 03/11 | Opus | `AAAA-MM-DD.md`, linhas com `"verificador": "opus"` no `afirmacoes.jsonl` |
 
-**Que modelos rodaram de fato.** Pelo `modelUsage` das sessões, o apelido
-"sonnet" rodou o `claude-sonnet-5` e o "opus" rodou o `claude-opus-5`, não as
-versões 5.5. O coordenador das três rodadas foi o Opus 5.5. O roteirista dos
+**Que modelos rodaram de fato.** Contado mensagem a mensagem no stream de cada
+sessão (corrigido em 14/11; a versão anterior dizia que "opus" rodou o Opus 5,
+o que vinha das instruções da etapa e só vale em parte): o apelido "sonnet"
+rodou o `claude-sonnet-5` nos dez subagentes da etapa 1. O "opus" rodou o
+`claude-opus-5-5` nos seis da etapa 2b e no do episódio 35 da calibração; o do
+episódio 38 começou no Opus 5.5 e passou ao `claude-opus-5` depois de 14
+mensagens, sem motivo registrado. O coordenador das três rodadas foi o Opus 5.5. O roteirista dos
 episódios 27 a 40 da linha de base era o Opus 5.5. A linha de base não registra
 qual modelo conferiu.
 
@@ -143,7 +147,7 @@ Nenhum, nas três rodadas.
 
 ## Método e limites
 
-- Um subagente no Opus (`claude-opus-5`) por episódio, com a rubrica inteira.
+- Um subagente no Opus (`claude-opus-5-5`) por episódio, com a rubrica inteira.
   O coordenador reabriu a fonte de todos os 22 `impreciso` e derrubou dois,
   ambos de 03/11. No primeiro, a página diz "~70-95x" no próprio resumo. No
   segundo, a ficha diz, sem ressalva, "still refusing requests for biological
