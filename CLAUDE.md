@@ -51,7 +51,9 @@ upload ao S3 assinando SigV4, tudo em biblioteca padrão. Quem clona precisa de
 Python e do Claude CLI.
 
 **Fonte primária.** Notícia só entra com post oficial, paper ou release.
-Agregador serve para descobrir, nunca para citar.
+Agregador serve para descobrir, nunca para citar. Publicação oficial que
+ficou fechada por todas as portas pode entrar pela cobertura de pelo menos
+três veículos, dito no ar; reportagem não é publicação oficial (Editor 1.1).
 
 ## Ferramentas
 

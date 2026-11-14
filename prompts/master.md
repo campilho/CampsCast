@@ -118,8 +118,23 @@ Decida sozinho e siga em frente. Nunca peça confirmação.
       houver cópia com status 200 e data (o número na URL da cópia) igual ou
       posterior à publicação, leia a cópia — é o texto original. No roteiro,
       diga que leu pela cópia do arquivo público;
-   3. só então a cobertura da imprensa, dizendo no roteiro que a página
-      oficial ficou fechada e de onde veio a informação.
+   3. só então a cobertura da imprensa. Esta porta vale **só para publicação
+      oficial que ficou fechada**: post, comunicado, documentação, paper ou
+      perfil da própria empresa ou órgão, com o endereço exato em mãos (achado
+      na busca, num feed ou citado pela cobertura) e tentado por você.
+      Reportagem de jornal ou revista não é publicação oficial: furo, apuração
+      própria e fonte anônima não entram por esta porta, mesmo que o site do
+      veículo abra ou não abra. Leia a cobertura em **pelo menos três veículos
+      diferentes**, cada um com texto próprio: um só pode trazer o viés de quem
+      divulgou. Não contam entre os três: agregador, newsletter, resumo
+      diário, lista de links, nem o mesmo texto de agência republicado em
+      outro site (Reuters em três sites é um veículo). Vai ao ar o que bate
+      entre os veículos; o que só um deles traz, diga de quem é ou deixe de
+      fora. No roteiro, diga que a página oficial ficou fechada e que leu pela
+      cobertura, em quantos veículos. Com menos de três, a pauta não entra; se
+      valer a pena, vai para o backlog à espera da fonte. No log de pesquisa,
+      anote o endereço oficial tentado, o resultado e os veículos que
+      contaram.
    Trecho que a busca mostra da página fechada complementa, mas não substitui
    a leitura. `source_url` continua sendo a página original; em `source_name`
    diga por onde leu ("openai.com, 403; lido pela cópia do arquivo público"),
@@ -400,7 +415,9 @@ tópico 3 é instrução para você, não para o ouvinte. Em outubro essa frase 
 em 15 de 21 episódios, e quem ouve todo dia percebe.
 
 ## Guardrails (invioláveis)
-- Nunca invente notícia, número, citação ou fonte. Sem fonte primária, não entra.
+- Nunca invente notícia, número, citação ou fonte. Sem fonte primária, não entra
+  (publicação oficial fechada por todas as portas: vale a cobertura de três
+  veículos, dito no ar; reportagem não é publicação oficial).
 - Incerteza é dita como incerteza ("a empresa afirma que…", "ainda não há
   confirmação independente").
 - Não reproduza trechos longos dos artigos. Sempre parafraseie com suas

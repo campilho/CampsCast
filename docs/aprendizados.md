@@ -1149,3 +1149,52 @@ e confere se os valores estão lá.
 está sendo compensado.** A diferença só aparece no dia em que a reconstrução e a
 intenção divergem. Confira no transcript o que o agente de fato recebeu, não o
 que o orquestrador acredita ter mandado.
+
+### Os jornais que dão o furo são os que a ferramenta não abre
+
+Em 10/11/2026, antes de decidir se reportagem de jornal poderia entrar quando a
+fonte fechasse, contamos as 1.371 leituras de página das transcrições guardadas
+(893 da produção, de 13/10 a 10/11, e 478 de ensaios) e sondamos 19 jornais com
+o mesmo WebFetch da produção (`claude -p` em `env -i`, Haiku 4.5, US$ 0,08).
+As portas fecham de três jeitos, com causas diferentes:
+
+- **O Claude Code recusa o domínio**, sem código HTTP: "Claude Code is unable
+  to fetch from www.nytimes.com". Assim com New York Times, Wall Street Journal,
+  Financial Times, Reuters, AP, The Verge, Wired, Ars Technica, Guardian,
+  Folha, Valor e web.archive.org. Não é paywall nem resposta do site: a
+  mensagem é da ferramenta. Primeira aparição nas transcrições: 14/10.
+- **O site responde 403**: Bloomberg, Washington Post, Axios (5 de 5 na
+  produção) e GlobeNewswire, o distribuidor de comunicados; entre as fontes
+  primárias, openai.com (39 vezes em quatro semanas) e x.ai (18).
+- **Abre só a vitrine**: The Information (manchetes e aviso de assinatura) e,
+  nesta sonda, TechCrunch (manchete e primeiros parágrafos; na produção, 10 de
+  10 inteiras).
+
+Abriram com o texto inteiro: CNBC e NBC. Dois efeitos:
+
+1. Quem costuma dar o furo (NYT, WSJ, FT, Bloomberg, Reuters, The Information)
+   está fechado; quem repercute (CNBC, NBC, TechCrunch, Fortune, The Register)
+   abre. Qualquer regra de "três coberturas" vai se apoiar na repercussão.
+2. O passo do arquivo público no procedimento de porta fechada do prompt não
+   entrega: a consulta em archive.org respondeu 12 de 35 vezes (o resto, 429), e
+   abrir a cópia em web.archive.org falhou 6 de 6, recusada pela ferramenta.
+
+O caso que motivou a conta, a NVIDIA e Jensen Huang, mostrou outra coisa: o
+furo do New York Times saiu em 29/10, a CNBC repercutiu no mesmo dia, o
+Financial Times avançou em 06/11, e em 08/11 saíram a admissão de Huang e o
+primeiro comunicado do conselho, que abriu a investigação (17:00); o segundo,
+dos conselheiros independentes, contratando os advogados, veio em 10/11, às
+16:07 (datas da página e do feed de nvidianews.nvidia.com, conferidas em
+13/11). Nenhuma das execuções cuja janela continha um
+desses marcos viu a história: zero menções a "Megaspeed" nas transcrições de
+30/10, 09/11 e 11/11. As de 10/11 e 12/11 a viram, pelo AI Weekly, um dia
+depois, e a descartaram por estar fora da janela (e por ser bastidor). A
+produção lê blogs.nvidia.com, que está nas fontes, e não a sala de imprensa,
+que não está. A perda foi de descoberta, não de acesso. A renúncia de Huang,
+em 12/11, foi ao ar em 13/11: o agente chegou à sala de imprensa por busca.
+(Corrigido em 12/11 e de novo em 13/11: a primeira versão dizia que a produção
+nunca viu a história; a correção de 12/11 trocou o comunicado de 08/11 pelo de
+10/11, quando são dois.)
+
+**Antes de escrever regra que dependa de ler um tipo de fonte, conte se a
+ferramenta chega lá.**

@@ -168,6 +168,15 @@ créditos caem para 13 e a lei de Nova York fica com a vaga pelo desempate
 
 **Próximo:** depois de terça, a sombra na produção.
 
+## Adendo de 13/11: porteira v2.2
+
+Com o Editor 1.1 (`config/agentes.json`), a partir do episódio de 16/11,
+a publicação oficial fechada por todas as portas passa pela porteira
+quando lida pela cobertura de
+três veículos com texto próprio, e o roteiro diz isso no ar. Reportagem
+continua fora: o escopo foi decidido pelo autor em 12/11, para que jornal
+e revista de interesse geral não virem fonte diária.
+
 ## Consequências
 
 - A escolha passa a ser auditável e mostrável: a tabela de notas pode ir para

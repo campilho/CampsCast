@@ -10,7 +10,8 @@ acesso (o openai.com e o x.ai nos bloqueiam quase todo dia) e não a notícia;
 o foco 4 ficou mais estreito; e o backlog concorre na mesma ordem que as
 pautas da janela. Na v2.1, "política" no foco 4 passou a ser só mudança
 duradoura e para todos os clientes: a calibração da v2 deu a terceira vaga a
-créditos promocionais.
+créditos promocionais. Na v2.2 (16/11, com o Editor 1.1), a publicação
+oficial fechada por todas as portas passa pela cobertura de três veículos.
 
 ## A porteira: fonte primária
 
@@ -20,8 +21,15 @@ oficial: a página do anúncio, o feed, outra página da própria empresa
 release, changelog, carta, lei) ou o repositório oficial. Não importa se
 abriu inteira ou em parte, nem por qual porta.
 
-**Não passa**, e a candidata sai: só imprensa ou agregador, sem a fonte
-oficial; rumor; fonte anônima.
+**Passa também** (v2.2) a publicação oficial identificada, com o endereço
+exato tentado, que ficou fechada por todas as portas, quando lida pela
+cobertura de pelo menos três veículos com texto próprio. Agregador,
+newsletter, resumo diário e o mesmo texto de agência em outro site não
+contam. O roteiro diz no ar que leu pela cobertura, e em quantos.
+
+**Não passa**, e a candidata sai: só imprensa ou agregador, sem uma
+publicação oficial identificada; reportagem, ainda que de veículo grande
+(furo e apuração própria não são publicação oficial); rumor; fonte anônima.
 
 O caminho fica registrado em cada candidata (`fonte`, abaixo): a URL, a porta
 e o quanto foi lido. Não entra na nota; serve para a estatística das fontes e

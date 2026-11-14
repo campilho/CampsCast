@@ -17,6 +17,17 @@
           "ferramentas": ["Read", "Write", "Edit", "Glob", "Grep", "WebSearch", "WebFetch"],
           "mudou": "Primeira versão com ficha: o prompt-mestre como está desde 02/11; o primeiro episódio com ele foi o nº 46, de 03/11. Antes dela, 14 mudanças no git desde 31/08 (git log -- prompts/master.md). A leitura de páginas fica no próprio agente, com o WebFetch fixado (ADR 0013).",
           "medido": "03 e 04/11, no modo direto: US$ 4,98 e 5,25 por episódio. Ensaio de 04/11 refeito em 08/11, com a web de 08/11: US$ 5,05."
+        },
+        {
+          "versao": "1.1",
+          "desde": "2026-11-16",
+          "prompts": {"prompts/master.md": "e8fb793dc9d0"},
+          "modelo": "claude-opus-5-5",
+          "esforco": "high",
+          "modelo_pequeno": "claude-haiku-4-5",
+          "ferramentas": ["Read", "Write", "Edit", "Glob", "Grep", "WebSearch", "WebFetch"],
+          "mudou": "Publicação oficial fechada por todas as portas (a página, outra porta, a cópia do arquivo): a cobertura vale só com pelo menos três veículos diferentes, cada um com texto próprio; agregador, newsletter, resumo diário e o mesmo texto de agência em outro site não contam. Reportagem de jornal ou revista não é publicação oficial e não entra por esta porta. O roteiro diz que leu pela cobertura e em quantos veículos; o log anota o endereço oficial tentado. Com menos de três, a pauta não entra. Regra do autor depois do RSA do DeepMind em 09/11 (o X recusou, lido por cinco coberturas); o escopo foi decidido em 12/11, depois de o primeiro texto ter sido aplicado a uma reportagem do New York Times no ensaio de 09/11.",
+          "medido": "Ensaio de 09/11 (estado exato) em 12/11: US$ 6,25 contra 7,88 da produção (1.0), 134 turnos contra 161, 14,0 contra 15,7 min. Quatro furos de reportagem descartados como reportagem; a porta da cobertura usada em três publicações oficiais fechadas (DeepMind 404, Apiiro 403, OpenAI 403), com três ou quatro veículos cada e dito no ar. Achou o RSA, que o primeiro texto perdeu. Pontos levados ao autor: o mesmo site (Let's Data Science) contou nas três pautas, e um comentário no Hacker News foi citado como fonte."
         }
       ]
     },
