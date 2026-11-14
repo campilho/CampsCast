@@ -88,6 +88,22 @@ exatamente o valor do Max. Para a escolha de onde rodar na Fase 3:
 Essa conta só fecha porque o Opus 5.5 custa metade do Opus 5. No Opus 5, a
 mediana de US$ 8,66 daria uns US$ 190 por mês por API.
 
+## Revisão de outubro de 2026
+
+Feita em 14/11, pelo registro de execução; as faturas do mês não foram
+reconferidas.
+
+| | Setembro | Outubro |
+|---|---|---|
+| Episódios | 21 | 21 |
+| Claude, a preço de API | US$ 98,87 (13 medidos), mediana US$ 8,30 | **US$ 100,13** (21 medidos), mediana **US$ 4,75** |
+| ElevenLabs, créditos | 76.752, mediana 4.300 por episódio | 70.326, mediana 3.339 |
+
+A conta do Claude bateu com a previsão acima: um mês inteiro no Opus 5.5
+custaria uns US$ 100 por API, o preço do Max. O ciclo da ElevenLabs vai do dia
+23 ao 22, então o total do mês não se compara direto com a cota; por episódio,
+a narração ficou em uns 3.300 créditos, com o Eleven v4 desde 26/10.
+
 ## Pontos para decidir
 
 - **O plano anual da ElevenLabs** tem desconto, mas fica para depois das

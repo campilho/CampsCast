@@ -2,57 +2,54 @@
 
 Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
 [PROJETO.md](PROJETO.md); o que já foi feito, no git, nos ADRs e em
-[docs/aprendizados.md](docs/aprendizados.md). Atualizada em 08/11/2026.
+[docs/aprendizados.md](docs/aprendizados.md). Atualizada em 14/11/2026.
 
-## Semana de 02/11 — segunda é feriado (Finados)
+## Semana de 16/11 — sexta, 20/11, é feriado (Consciência Negra)
 
-- [ ] **Até quarta, 04/11 — verificador na nuvem, ensaio do V1.**
-      `prompts/verificador-v1.md`, com a rubrica fixa
-      `prompts/verificador-rubrica.md`: confere os episódios do 41 em diante e
-      calibra a rubrica nos episódios 35 e 38 da linha de base. Ambiente com
-      rede aberta, ramo `claude/verificador-v1`, uns US$ 25 a 35 do crédito,
-      que expira às 04:59 de quinta, 05/11. Abrir de dia: se o crédito acabar
-      no meio, a sessão passa a gastar o limite do Max, que o episódio das 05:00
-      também usa. Depois, juntar o ramo e decidir o V1 diário
-- [ ] **LinkedIn — post sobre a memória** — rascunho em
-      `privado/divulgacao.md`, com a métrica da linha de base (memória do
-      programa de 30% para 1,7% de erro). Não saiu em 13, 15, 20 nem 27/10.
-      Pronto em 02/11 para terça, 03/11, entre 11h e 12h, com tempos
-      atualizados e números reconferidos. O autor posta à mão
-- [ ] **Leitura por subagente desde 05/11** — o WebFetch saiu das ferramentas
-      do agente e entrou um subagente "web-fetch" (Opus 5.5), sem mudança de
-      versão do CLI (2.1.283 de 03 a 06/11). Custo de US$ 7,03 e 7,83, o cache
-      escrito triplicou. (1) Feito em 08/11: as medições leem também
-      `<sessao>/subagents/` (`scripts/transcricoes.py`), e os registros de 05
-      e 06/11 foram recontados. (2) Feito em 08/11: era um experimento da
-      Anthropic; o orquestrador fixa `CLAUDE_CODE_WEB_FETCH_AGENT=0` e o
-      `confere_claude.py` vigia ([ADR 0013](docs/decisions/0013-leitura-de-paginas.md)).
-      **Segunda, 09/11:** o log deve trazer "tengu_clever_orbit: desligado" (ou
-      ligado, com aviso) e "sessão: web-fetch 0"; o custo, voltar a ~US$ 5.
-      (3) Feito em 08/11: o Teste A comparou a leitura em quatro modelos, e só
-      o Sonnet 5.5 passou no critério; o Jornalista está implementado e
-      desligado (`JORNALISTA=1`, `docs/plano-leitura-por-subagente.md`).
-      Primeiro ensaio (04/11) em 08/11: funcionou de ponta a ponta, US$ 6,68
-      contra 5,25, e o contexto do Editor não encolheu (plano, "Primeiro
-      ensaio"). Falta: (4) mais ensaios na semana (`JORNALISTA=1
-      scripts/ensaio.sh --data …`), uma mudança por vez — relatório mais
-      curto, arquivo público um por vez —; e o autor decidir se vai à produção.
-      O Jornalista 1.1 (um pedido por vez) está na ficha (`config/agentes.json`),
-      sem medição. **Resumidor no Haiku 5.5** (ensaio de 04/11 em 08/11): US$
-      3,75 contra 5,05 da base no mesmo dia, com o Editor lendo 31 páginas em
-      vez de 46. Falta o autor ler os dois roteiros e um segundo dia de ensaio;
-      confirmando, vai à produção como versão nova do Editor, num dia sem outra
-      mudança
-- [ ] **07–08/11 — relatório mensal de audiência de outubro**, com a revisão
-      de custos do [ADR 0007](docs/decisions/0007-custo-por-episodio.md) (ver
-      Recorrente)
+- [ ] **Segunda, 16/11 — primeiro episódio do Editor 1.1** (publicação oficial
+      fechada por todas as portas entra com três veículos de texto próprio,
+      dito no ar; reportagem não entra). Conferir: custo contra a semana
+      anterior, se a porta foi usada e como (endereço tentado no log, veículos
+      que contaram) e se algum furo de reportagem passou. Do ensaio de 12/11,
+      ficaram para o autor: o mesmo site menor (Let's Data Science) contando
+      como veículo nas três pautas, um comentário no Hacker News citado como
+      fonte e o X que não foi tentado. Nenhuma outra mudança no agente até medir
+- [ ] **Varredura por feeds (H2), em sombra desde 13/11** —
+      [plano](docs/plano-varredura-por-feeds.md). Fase 0 em 12/11, sem custo: os
+      feeds e sitemaps trazem 93% das pautas de sites com feed (53 de 57 desde
+      01/10) em 28 a 37 linhas por dia. `scripts/varredura.py` roda depois do
+      agente e grava `logs/varredura-AAAA-MM-DD.md`, fora do prompt. Até
+      19/11: comparar todo dia a lista com o que o agente leu e com o que foi
+      ao ar (seis medidas no plano) e podar as fontes que só ocupam linha.
+      Primeiro dia (13/11): 34 linhas, duas das três pautas na lista; faltou o
+      Inkling 2 Small, pesos num repositório criado em 04/11 e aberto em 12/11,
+      que nem o feed nem a API do Hugging Face (data de criação) pegam.
+      Depois, ensaio de um Editor com a lista no prompt, usando as listas
+      gravadas na sombra
+- [ ] **Verificador V1 — ensaio pela API, não mais na nuvem.** O ensaio na
+      nuvem não rodou, e o crédito promocional expirou em 05/11 sem uso.
+      `prompts/verificador-v1.md` e a rubrica fixa `prompts/verificador-rubrica.md`
+      seguem prontos: conferir os episódios do 41 em diante e calibrar nos
+      episódios 35 e 38 da linha de base. Caminho novo: os créditos da API da
+      Anthropic do autor (US$ 138,03 em 14/11, divididos com outro projeto),
+      com `ANTHROPIC_API_KEY` só na sessão do verificador, para não gastar o
+      limite do Max que o episódio das 05:00 usa. Antes de rodar: estimar o
+      custo e o autor dizer quanto do crédito pode ir para isso (a linha de
+      base custou US$ 3,70 por episódio; do 41 ao 54 são 14 episódios, uns
+      US$ 50 nesse ritmo, contra a estimativa de US$ 25 a 35 de 02/11).
+      Depois do ensaio, decidir o V1 diário
+- [ ] **LinkedIn — post sobre a memória** — não saiu (adiado em 13, 15, 20 e
+      27/10 e em 03/11). Rascunho em `privado/divulgacao.md`, com a métrica da
+      linha de base (memória do programa de 30% para 1,7% de erro). Reconferir
+      números e tempos antes de postar. O autor posta à mão. O efeito de ficar
+      sem divulgação em outubro está no relatório de audiência (`privado/`)
 
 ## Fase 3 — onde está
 
 Critério de saída (PROJETO.md): dez dias úteis seguidos sem o Mac ligado,
 formulário no ar com as sugestões chegando ao agente, e site novo publicado.
-Em 30/10, nenhum dos três começou: outubro foi de memória (ADR 0008), voz
-(ADR 0011) e verificação de fatos (ADR 0010).
+Em 14/11: o site está no ar desde 02/11 (beta 1); o formulário e a
+independência do Mac não começaram.
 
 ## Fase 3 — vários agentes
 
@@ -60,6 +57,17 @@ Proposta no [ADR 0010](docs/decisions/0010-redacao-com-varios-agentes.md):
 estudar orquestração e aprendizado de agentes com o podcast como banco de
 provas. Claude Code headless no Mac, em sombra, uma mudança por vez.
 
+- [ ] **Tema de fundo: uma redação de agentes especialistas** (o autor quer,
+      14/11). O podcast do futuro tem vários agentes, cada um com um ofício —
+      quem descobre o que saiu, quem lê, quem confere, quem guarda a memória,
+      quem escreve — e não um agente só fazendo tudo. Os itens abaixo (V1 a
+      V5, a redação de vários modelos no CampsVerso) são os passos. A lição do
+      Jornalista 1.x, arquivado em 14/11: um especialista que só lê páginas
+      para o Editor não pagou o próprio custo, porque o Editor seguiu buscando
+      e o contexto dele não encolheu (`docs/plano-leitura-por-subagente.md`).
+      O próximo especialista tem de tirar trabalho inteiro do Editor — a
+      descoberta (varredura), a conferência (V1), a memória (V3) —, e não um
+      pedaço dele
 - [ ] **`scripts/ensaio.sh` antes de tudo** — feito em 01/11, com teste: cópia
       fora do repositório no estado do commit anterior ao dia, `env -i` e o
       `PATH` do plist, só o token do Claude no `.env`, S3 e aviso desligados.
@@ -85,7 +93,7 @@ provas. Claude Code headless no Mac, em sombra, uma mudança por vez.
       (fonte como porteira, foco 4 mais estreito, backlog concorrendo junto):
       as mesmas três de novo, soma sem variar em 20 de 31. A terceira vaga
       saiu por um ponto para créditos promocionais da OpenAI; o autor escolheu
-      a "política" mais estreita no foco 4 (v2.1). Depois de terça: a sombra
+      a "política" mais estreita no foco 4 (v2.1). Na fila, uma mudança por vez: a sombra
 - [ ] **Base de fontes medida** — o que rende pauta e o que só dá erro, para
       a lista do `config/sources.yaml` melhorar com dado. Em 02/11: 135 pautas
       em 45 episódios vieram de 65 domínios; 44% de fora da lista fixa;
@@ -107,10 +115,10 @@ provas. Claude Code headless no Mac, em sombra, uma mudança por vez.
 - [ ] **Agente de produção carrega a memória das sessões de desenvolvimento** —
       a transcrição de 30/10 tem o `MEMORY.md` de `~/.claude/projects/` e as
       instruções de memória automática, além do `CLAUDE.md`. Mesmo vazamento
-      que o `a038297` fechou para MCP e skills. Depois de terça: cortar e medir
+      que o `a038297` fechou para MCP e skills. Na fila, uma mudança por vez: cortar e medir
       com o `ensaio.sh` se o episódio muda
 - [ ] **V1. Verificador diário** — `claude -p` separado depois do agente, com
-      a rubrica v1; registra, não bloqueia. Depois do ensaio na nuvem (acima).
+      a rubrica v1; registra, não bloqueia. Depois do ensaio pela API (acima).
       A linha de base custou US$ 3,70 por episódio, quase o dobro do agente:
       medir se dá para conferir menos (só número, data e citação) ou com
       modelo menor
@@ -120,6 +128,16 @@ provas. Claude Code headless no Mac, em sombra, uma mudança por vez.
       Depois do resultado do V1
 - [ ] **V2. Revisor** com rubrica, em ciclo com o roteiro (no máximo duas
       voltas)
+- [ ] **Ideia futura: o que a imprensa disse** (ideia do autor, 12/11). Para
+      a notícia que vem de blog oficial (OpenAI, Anthropic e afins), um passo
+      que procura a cobertura e a opinião da imprensa, inclusive dos veículos
+      gerais que não são fonte diária (NYT, The Economist), e dá ao roteiro o
+      contraponto ou a crítica que o post oficial não traz. Antes de desenhar,
+      medir duas coisas: quantos roteiros já citam reação da imprensa, e quais
+      veículos a ferramenta abre (em 11/11: NYT, WSJ, FT, Reuters e Bloomberg
+      fechados; CNBC, NBC, TechCrunch e The Register abertos — ver
+      aprendizados, "Os jornais que dão o furo"). Candidato natural a
+      subagente barato, depois da escolha das pautas, como o V1
 - [ ] **V3. Arquivista** — a memória sai do agente principal; junta com o C2
 - [ ] **V4. Pesquisa em paralelo** — subagentes por camada de fontes, e o
       contrato em `runs/AAAA-MM-DD/`
@@ -276,11 +294,14 @@ aposentar, juntar ou subir o teto.
 - [ ] **Relatório semanal do autor** — sai sozinho no último episódio da
       semana; o vigia avisa no celular. Decidir as pendências com `/relatorio`
 - [ ] **Relatório mensal de audiência** — primeiro fim de semana do mês, em
-      `privado/audiencia.md`: exportação diária do Spotify, tela principal
-      (seguidores) e tabela de episódios, lidas pela extensão Claude in Chrome
-      (a exportação vem sem números). Junto, a revisão de custos do ADR 0007 e
-      uma olhada no Apple Podcasts Connect (Análise e relatórios). A extensão
-      **não** se usa no LinkedIn, cujos termos proíbem automação
+      `privado/audiencia.md`: plays por dia do mês, tela principal
+      (seguidores) e tabela de episódios, lidas pela extensão Claude in Chrome,
+      sem baixar arquivo (desde 14/11, os plays por dia saem do gráfico do
+      painel, num período personalizado; a soma confere com o total). Junto, a
+      revisão de custos do ADR 0007 pelo registro, as faturas do mês e uma
+      olhada no Apple Podcasts Connect (Análise e relatórios). A extensão
+      **não** se usa no LinkedIn, cujos termos proíbem automação. Próximo:
+      novembro, em 05–06/12
 - [ ] **Apagar sugestões com mais de 12 meses** — é o prazo da página de
       privacidade. Até o formulário (S4), as sugestões chegam por e-mail ao
       `contato@`, encaminhado ao Gmail do autor: no relatório mensal de
@@ -320,8 +341,6 @@ aposentar, juntar ou subir o teto.
 
 ## Datas fixas
 
-- [ ] **05/11/2026, 04:59 — o crédito da nuvem expira** (US$ 101 em 25/10).
-      Não paga rotinas; paga sessões na nuvem abertas à mão
 - [ ] **03/01/2027 — Apple Podcasts: sem nenhum acesso, sair** (ver Divulgação)
 - [ ] **05/08/2027 — renovar `campscast.com.br`** no registro.br (R$ 40 por
       ano), um mês antes do vencimento em 05/09/2027
@@ -342,6 +361,21 @@ aposentar, juntar ou subir o teto.
 
 ## Feito em novembro
 
+- **14/11:** relatório de audiência de outubro em `privado/audiencia.md` e
+  revisão de custos de outubro no
+  [ADR 0007](docs/decisions/0007-custo-por-episodio.md) (US$ 100,13 a preço de
+  API em 21 episódios). Linha do Jornalista 1.x arquivada pelo autor: nenhuma
+  versão baixou o custo sem perder pauta (1.2 a US$ 5,98 contra 5,05 do modo
+  direto; o resumidor no Haiku 5.5 barateou, mas perdeu o RSA). O código fica,
+  desligado (`JORNALISTA=1`); o tema dos agentes especialistas segue em "Fase 3
+  — vários agentes". O crédito promocional da nuvem expirou em 05/11 sem uso
+- **13/11:** Editor 1.1 no repositório, valendo a partir de 16/11 (o episódio
+  de 13/11, sexta, ainda saiu no 1.0); varredura por feeds em sombra
+- **12/11:** fase 0 da varredura (inventário de feeds e teste com o passado);
+  ensaio do Editor 1.1 com o texto apertado
+- **08/11:** leitura de páginas fixada no WebFetch depois do experimento da
+  Anthropic ([ADR 0013](docs/decisions/0013-leitura-de-paginas.md)); ficha de
+  versão dos agentes (`config/agentes.json`)
 - **04/11:** site atualizado pelo orquestrador no fim do episódio; roteiro e
   log de pesquisa com cópia no próprio site
 - **08/11, conferência da semana 45:** sem aviso de "IA" dobrada nem de
