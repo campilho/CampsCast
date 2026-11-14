@@ -2965,6 +2965,26 @@ assert ag["prompt"] == pathlib.Path("prompts/jornalista.md").read_text(), "promp
 cmd = jornalista.hook()["hooks"]["PreToolUse"][0]
 assert cmd["matcher"] == "WebFetch" and cmd["hooks"][0]["command"].endswith("/scripts/jornalista.py barra"), cmd
 assert pathlib.Path(cmd["hooks"][0]["command"].split()[1]).exists(), cmd
+# 1.2: o Editor espera o relatório parado. Um segundo hook põe
+# run_in_background false em todo pedido ao Jornalista, para o relatório voltar
+# como resposta da ferramenta, e não pela fila de notificações.
+esp = jornalista.hook()["hooks"]["PreToolUse"][1]
+assert esp["matcher"] == "Agent" and esp["hooks"][0]["command"].endswith("/scripts/jornalista.py espera"), esp
+espera = lambda e: subprocess.run([sys.executable, "scripts/jornalista.py", "espera"], input=json.dumps(e),
+                                  capture_output=True, text=True)
+r = espera({"tool_name": "Agent", "tool_input": {"subagent_type": "jornalista", "prompt": "p", "run_in_background": True}})
+s = json.loads(r.stdout)["hookSpecificOutput"]
+assert r.returncode == 0 and s["hookEventName"] == "PreToolUse", r
+assert s["updatedInput"] == {"subagent_type": "jornalista", "prompt": "p", "run_in_background": False}, s
+r = espera({"tool_name": "Agent", "tool_input": {"subagent_type": "jornalista", "prompt": "p"}})
+assert json.loads(r.stdout)["hookSpecificOutput"]["updatedInput"]["run_in_background"] is False, r
+for e in ({"tool_name": "Agent", "tool_input": {"subagent_type": "jornalista", "run_in_background": False}},
+          {"tool_name": "Agent", "tool_input": {"subagent_type": "general-purpose", "run_in_background": True}},
+          {"tool_name": "WebFetch", "tool_input": {"url": "https://x"}}):
+    r = espera(e)
+    assert r.returncode == 0 and r.stdout.strip() == "", (e, r)
+r = subprocess.run([sys.executable, "scripts/jornalista.py", "espera"], input="não é json", capture_output=True, text=True)
+assert r.returncode == 0 and r.stdout.strip() == "", "entrada estranha não pode mexer no pedido"
 # Uma sessão: o principal tenta o WebFetch, é barrado, chama o Jornalista,
 # e o Jornalista lê duas páginas, uma fechada.
 uso = lambda i, nome, inp, mid: {"type": "assistant", "timestamp": "2026-11-09T08:00:00Z",
@@ -3091,7 +3111,8 @@ rm -rf "$FAKE_JN"; rm -f logs/2026-08-25.log logs/2026-08-25-*.json
 if [[ "$ARGS_DESL" != *"--agents"* && "$ARGS_DESL" != *"--settings"* && "$ARGS_DESL" != *"Leitura de páginas nesta execução"* \
       && "$ARGS_DESL" == *"WebSearch,WebFetch"* && "$ARGS_DESL" != *",Agent"* \
       && "$ARGS_LIG" == *"--agents"* && "$ARGS_LIG" == *'"model": "claude-haiku-5-5"'* \
-      && "$ARGS_LIG" == *"jornalista.py barra"* && "$ARGS_LIG" == *"WebFetch,Agent"* \
+      && "$ARGS_LIG" == *"jornalista.py barra"* && "$ARGS_LIG" == *"jornalista.py espera"* \
+      && "$ARGS_LIG" == *"WebFetch,Agent"* \
       && "$ARGS_LIG" == *"## Leitura de páginas nesta execução: pelo Jornalista"* \
       && "$LOG_LIG" == *"Jornalista ligado: lê as páginas no claude-haiku-5-5"* \
       && "$LOG_LIG" == *"Agentes: editor "*" · jornalista "* && -n "$VERS_LIG" && "$REG_LIG" == "$VERS_LIG" ]]; then

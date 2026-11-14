@@ -43,7 +43,16 @@
           "modelo": "claude-sonnet-5-5",
           "ferramentas": ["WebFetch", "Read"],
           "mudou": "Um pedido por vez: o Editor manda o próximo só depois que o relatório do anterior chega. Era o paralelismo que fazia o arquivo público recusar (429).",
-          "medido": null
+          "medido": "Ensaio de 04/11, rodado em 09/11: US$ 6,98 (1.0: 6,68; modo direto no mesmo dia, em 08/11: 5,05). Os 6 pedidos saíram um por vez, cada um depois do relatório anterior, e as portas fechadas caíram de 11 para 1, sem nenhum 429. O contexto do Editor não encolheu: os relatórios somam 52 mil caracteres, quase os 59 mil dos resumos do modo direto, e o Editor fez 50 buscas na web contra 23, com o 'enquanto espera, pode buscar' da própria 1.1."
+        },
+        {
+          "versao": "1.2",
+          "desde": "2026-11-09",
+          "prompts": {"prompts/jornalista.md": "d473955716c5", "prompts/leitura-pelo-jornalista.md": "667dfb5c032a"},
+          "modelo": "claude-sonnet-5-5",
+          "ferramentas": ["WebFetch", "Read"],
+          "mudou": "O Editor espera o relatório parado: pede com run_in_background false, e um hook garante, de modo que o relatório volte como resposta da chamada e não numa notificação. Saiu do prompt o 'enquanto espera, pode buscar na web'. Ataca as buscas dobradas da 1.1 e o cache escrito a cada notificação.",
+          "medido": "Ensaio de 04/11, rodado em 09/11: US$ 5,98 (1.1: 6,98; modo direto: 5,05). Os relatórios voltaram como resposta da chamada. O Editor fez 39 chamadas ao modelo (1.1: 59; modo direto: 51), e o Opus custou 4,00, o mesmo do modo direto. Sobram o Sonnet (0,53) e as buscas: o Editor fez 49, contra 23 no modo direto, então não era a espera que as puxava. Nenhum 429."
         }
       ]
     }

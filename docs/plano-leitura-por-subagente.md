@@ -206,6 +206,91 @@ valor está em cada agente ser especialista no seu papel, com um prompt que
 melhora de versão em versão. Paralelismo não é requisito: o pipeline não tem
 pressa.
 
+### Jornalista 1.1 — um pedido por vez (ensaio de 04/11, rodado em 09/11)
+
+Mesmo comando, mesmo estado, com a 1.1. A web é a de 09/11, um dia depois
+dos outros ensaios. "Base" é o modo direto no mesmo dia, ensaiado em 08/11.
+
+| | 1.1 | 1.0 | base |
+|---|---|---|---|
+| custo (US$) | 6,98 | 6,68 | 5,05 |
+| Opus 5.5, Editor | 5,00 | 4,53 | 4,03 |
+| cache escrito / lido do Editor | 305 mil / 10,0 M | 303 mil / 8,6 M | 203 mil / 7,4 M |
+| Sonnet 5.5, Jornalista | 0,51 | 0,69 | — |
+| Haiku 4.5, resumos e buscas | 1,46 | 1,46 | 1,02 |
+| pedidos ao Jornalista | 6, um por vez | 9, em paralelo | — |
+| páginas lidas / fechadas | 33 / 1 | 46 / 11 | 46 / — |
+| buscas do Editor | 50 | 43 | 23 |
+| o que a leitura pôs no Editor | relatórios, 52 mil caracteres | relatórios, 66 mil | resumos, 59 mil |
+| o que as buscas puseram no Editor | 172 mil caracteres | 150 mil | 81 mil |
+| maior contexto do Editor | 262 mil tokens | 247 mil | 221 mil |
+| minutos | 12,5 | 10,0 | 11,2 |
+
+A mudança da 1.1 fez o que devia. Cada pedido saiu depois do relatório do
+anterior: 10:09 → 10:10, 10:11 → 10:12, e assim até o sexto. As portas
+fechadas caíram de 11 para 1, um 403 da OpenAI, e não houve nenhum 429. O
+tempo quase não mudou.
+
+O custo não baixou, e agora se vê onde ele está:
+
+- **O relatório não condensa.** O Jornalista devolve uns 1.600 caracteres por
+  página lida, o tamanho do resumo do Haiku que o Editor recebia direto.
+- **O Editor busca o dobro.** Sem poder abrir página, ele usa a busca como
+  leitura: 50 buscas contra 23, e 172 mil caracteres de resultado contra 81
+  mil. A frase "Enquanto espera, pode buscar na web", da própria 1.1,
+  convida a isso.
+- **Relatório que chega pela fila é cache escrito a mais.** Cada notificação
+  entra no contexto como texto novo, e a escrita do Editor custa 2× a entrada
+  (cache de 1 hora). Foram 305 mil tokens escritos contra 203 mil no modo
+  direto.
+
+As pautas foram XSA-523 do Xen (crédito à Anthropic), o relatório anual do
+NCSC e as habilidades de química do Antigravity. Só o NCSC coincide com a
+produção, mas a web é outra. O roteiro está em
+`analysis/leitura/saida/roteiros-04-11/jornalista-1.1.md`.
+
+Candidatos à 1.2, um de cada vez. O primeiro é o Editor esperar parado:
+chamar o Jornalista em primeiro plano, com `run_in_background: false`, para
+o relatório voltar como resultado da ferramenta, e tirar o "pode buscar
+enquanto espera". Ataca as buscas e a escrita pela fila. O segundo é o
+relatório mais curto. O Haiku 5.5 no resumidor vale com ou sem o
+Jornalista, e é a mudança de maior efeito medida até aqui.
+
+### Jornalista 1.2 — o Editor espera parado (ensaio de 04/11, rodado em 09/11)
+
+O Editor pede com `run_in_background: false`, e um segundo hook
+(`jornalista.py espera`) garante isso. Assim o relatório volta como resposta
+da chamada, não por notificação. Saiu do prompt o "enquanto espera, pode
+buscar na web". Antes, um teste com um subagente de brinquedo confirmou que o
+CLI 2.1.283 respeita o campo, e que o hook vence o `true` pedido pelo modelo.
+
+| | 1.2 | 1.1 | base |
+|---|---|---|---|
+| custo (US$) | **5,98** | 6,98 | 5,05 |
+| Opus 5.5, Editor | **4,00** | 5,00 | 4,03 |
+| chamadas do Editor | **39** | 59 | 51 |
+| cache escrito / lido do Editor | 281 mil / 6,5 M | 305 mil / 10,0 M | 203 mil / 7,4 M |
+| Sonnet 5.5, Jornalista | 0,53 | 0,51 | — |
+| Haiku 4.5, resumos e buscas | 1,45 | 1,46 | 1,02 |
+| buscas do Editor | 49 | 50 | 23 |
+| o que as buscas puseram no Editor | 157 mil caracteres | 172 mil | 81 mil |
+| o que a leitura pôs no Editor | relatórios, 53 mil | relatórios, 52 mil | resumos, 59 mil |
+| páginas lidas / fechadas | 36 / 6, nenhum 429 | 33 / 1 | 46 / — |
+| minutos | 13,6 | 12,5 | 11,2 |
+
+A espera em primeiro plano tirou 20 chamadas do Editor, e o Opus voltou ao
+custo do modo direto. O resto do custo a mais é o Jornalista (Sonnet, 0,53)
+e as buscas, que continuaram em 49. Quem puxava as buscas não era a espera. O
+Editor sem WebFetch descobre pela busca o que no modo direto descobria
+abrindo as páginas de listagem, e só depois manda os endereços ao
+Jornalista. Por isso a busca é o próximo alvo, e não o relatório: ela põe no
+Editor três vezes mais texto que os relatórios.
+
+Nos relatórios da 1.1, 20 dos 33 blocos de página eram de página fora da
+janela ou sem data, e ocupavam 57% do texto. Encurtar esses blocos para uma
+linha tiraria uns 25 mil caracteres do Editor. Ajuda, mas pesa menos que a
+busca.
+
 ## Modelo pequeno no Haiku 5.5 — o corte de custo mais provável
 
 O Haiku 4.5 resume as páginas e faz as buscas no modo direto (US$ 1,05 em
@@ -249,6 +334,32 @@ da produção de 04/11 (5,05 contra 5,25), então a diferença é do resumidor.
 Falta: o autor ler os dois roteiros de 04/11 lado a lado, e um segundo dia de
 ensaio. Se confirmar, vai à produção como versão nova do Editor (o
 `modelo_pequeno` da ficha), num dia sem outra mudança.
+
+### Segundo dia (09/11, modo direto, contra a produção do mesmo dia)
+
+Ensaio de 09/11 rodado na noite de 09/11. Partiu do mesmo commit da produção
+das 05:00, com a web do mesmo dia: é a comparação mais próxima até aqui.
+
+| | Haiku 5.5 | produção 09/11 |
+|---|---|---|
+| custo (US$) | **5,09** (o CLI estimaria 11,11) | 7,88 |
+| Opus 5.5, o Editor | 4,73 — cache lido 9,2 M | 6,34 — cache lido 14,8 M |
+| modelo pequeno | **0,36** | 1,54 |
+| chamadas do Editor | 54 | 79 |
+| páginas lidas / buscas | 62 / 17 | 71 / 40 |
+| resumos: média por página | 1.840 caracteres | 1.130 caracteres |
+| minutos | 13,5 | 15,7 |
+
+- **De novo, o corte vem em duas partes.** O resumidor mais barato tira
+  US$ 1,18. O Editor que buscou menos tira mais 1,61. A primeira parte é
+  certa; a segunda apareceu nos dois dias, mas pode ser variação de execução.
+- **Nenhuma pauta em comum com a produção.** O ensaio escolheu a
+  investigação do conselho da NVIDIA (pelo comunicado oficial), a memória de
+  agentes da Anthropic e o fim do AI Frontiers, contado por John Langford. Não
+  achou o RSA do DeepMind, a manchete da produção. Viu a Hacktron e a
+  descartou: a página da OpenAI deu 403, e a cópia do arquivo não abriu. Com
+  17 buscas em vez de 40, achou menos. É o lado ruim de buscar menos, e
+  precisa entrar na conta junto com o custo.
 
 **Como testar na semana sem arriscar o episódio.** A produção segue como está.
 O `scripts/ensaio.sh` roda dias passados com `JORNALISTA=1`, numa cópia fora do

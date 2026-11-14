@@ -8,9 +8,12 @@ agente principal `prompts/leitura-pelo-jornalista.md`:
 
     agentes --modelo M   o JSON do --agents: o Jornalista, com o prompt de
                          prompts/jornalista.md, o modelo M, WebFetch e Read
-    hook                 o JSON do --settings: um hook PreToolUse que barra o
-                         WebFetch de quem não for o Jornalista
-    barra                o hook em si: lê a chamada no stdin; sai 2 para barrar
+    hook                 o JSON do --settings: dois hooks PreToolUse, um que
+                         barra o WebFetch de quem não for o Jornalista e outro
+                         que põe os pedidos a ele em primeiro plano
+    barra                o primeiro: lê a chamada no stdin; sai 2 para barrar
+    espera               o segundo (1.2): devolve o pedido com
+                         run_in_background false
 
 Medido em 08/11/2026, no CLI 2.1.283:
 - o `--tools` tira a ferramenta também dos subagentes: com o WebFetch fora
@@ -22,6 +25,11 @@ Medido em 08/11/2026, no CLI 2.1.283:
   embutido: no código do CLI, `isBuiltIn` e o nome "web-fetch" (ADR 0013);
 - subagente que não é o embutido roda em segundo plano, a menos que a chamada
   peça o contrário; o `-p` espera os relatórios chegarem antes de terminar.
+
+Medido em 09/11/2026, no mesmo CLI, com um subagente de teste: com
+`run_in_background: false`, o relatório volta como resposta da ferramenta; e um
+hook PreToolUse que devolve `updatedInput` com esse campo vence o `true` que o
+modelo pediu (a transcrição guarda o pedido original).
 
 O hook não pode derrubar a pesquisa do dia: entrada que não se entende passa.
 """
@@ -47,8 +55,8 @@ DESCRICAO = ("Lê páginas da web para o CampsCast. Recebe endereços, a janela 
 # A frase volta ao agente principal como resposta do WebFetch barrado; o
 # pedaço BARRADA é o que as medições procuram para não contá-la.
 MOTIVO = (f"Nesta execução as páginas são {BARRADA}. Chame a ferramenta Agent com subagent_type "
-          f'"{NOME}", os endereços, a janela e o que você precisa de cada página; um pedido por vez, '
-          "o próximo depois que o relatório do anterior chegar.")
+          f'"{NOME}", run_in_background false, os endereços, a janela e o que você precisa de cada '
+          "página; o relatório volta como resposta da chamada.")
 
 
 def agentes(modelo: str) -> dict:
@@ -66,8 +74,12 @@ def agentes(modelo: str) -> dict:
 
 
 def hook() -> dict:
-    cmd = f"python3 {shlex.quote(str(pathlib.Path(__file__).resolve()))} barra"
-    return {"hooks": {"PreToolUse": [{"matcher": "WebFetch", "hooks": [{"type": "command", "command": cmd}]}]}}
+    """Dois ganchos antes de cada ferramenta: `barra` tira o WebFetch do agente
+    principal, e `espera` (1.2) põe todo pedido ao Jornalista em primeiro plano."""
+    base = f"python3 {shlex.quote(str(pathlib.Path(__file__).resolve()))}"
+    gancho = lambda ferramenta, sub: {"matcher": ferramenta,
+                                      "hooks": [{"type": "command", "command": f"{base} {sub}"}]}
+    return {"hooks": {"PreToolUse": [gancho("WebFetch", "barra"), gancho("Agent", "espera")]}}
 
 
 def barra(entrada: str) -> int:
@@ -83,6 +95,32 @@ def barra(entrada: str) -> int:
     return 2
 
 
+def espera(entrada: str) -> str | None:
+    """Pedido ao Jornalista sem `run_in_background: false` → a entrada corrigida,
+    no formato que o CLI aceita de um hook PreToolUse (`updatedInput`).
+
+    Em segundo plano, o padrão do CLI 2.1.283 para subagente nosso, cada
+    relatório chega numa notificação: o Editor segue trabalhando enquanto isso
+    (no ensaio da 1.1, buscou o dobro na web) e cada notificação entra no cache
+    como texto novo. Em primeiro plano, o relatório é a resposta da chamada. O
+    prompt pede isso; o hook garante. A transcrição guarda o pedido como o
+    Editor o fez, sem a correção."""
+    try:
+        d = json.loads(entrada)
+    except ValueError:
+        return None
+    if not isinstance(d, dict) or d.get("tool_name") != "Agent":
+        return None
+    pedido = d.get("tool_input")
+    if not isinstance(pedido, dict) or pedido.get("subagent_type") != NOME:
+        return None
+    if pedido.get("run_in_background") is False:
+        return None
+    return json.dumps({"hookSpecificOutput": {"hookEventName": "PreToolUse",
+                                              "updatedInput": {**pedido, "run_in_background": False}}},
+                      ensure_ascii=False)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="O Jornalista do CampsCast (plano de leitura).")
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -90,12 +128,18 @@ def main() -> int:
     a.add_argument("--modelo", required=True)
     sub.add_parser("hook")
     sub.add_parser("barra")
+    sub.add_parser("espera")
     args = ap.parse_args()
     if args.cmd == "agentes":
         print(json.dumps(agentes(args.modelo), ensure_ascii=False))
         return 0
     if args.cmd == "hook":
         print(json.dumps(hook(), ensure_ascii=False))
+        return 0
+    if args.cmd == "espera":
+        saida = espera(sys.stdin.read())
+        if saida:
+            print(saida)
         return 0
     return barra(sys.stdin.read())
 
