@@ -80,7 +80,7 @@ ELENCO = [
      "em_breve": "Resumir a memória por semana, por mês e por trimestre, para o programa lembrar do ano passado sem reler tudo."},
     {"id": "checador", "nome": "Checador", "estacao": "obras", "situacao": "em_breve",
      "papel": "Confere os fatos de cada episódio contra as fontes primárias, com uma régua fixa. Fica fora da redação: quem confere não é quem escreve.",
-     "por_tras": "hoje, um ensaio na nuvem, fora da gravação diária, com a rubrica de prompts/verificador-rubrica.md",
+     "por_tras": "hoje, um ensaio fora da gravação diária (14/11, os episódios 41 a 54, pela API, com a régua calibrada contra a linha de base), com a rubrica de prompts/verificador-rubrica.md",
      "em_breve": "Conferir todo episódio, e um dia antes de ir ao ar (ADR 0010). Sala de vidro: Checagem e Compliance."},
     {"id": "artista", "nome": "Artista", "estacao": "obras", "situacao": "em_breve",
      "papel": "Faz as imagens do programa.",

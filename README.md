@@ -6,8 +6,10 @@
 > publicado de forma autônoma por agentes de IA.
 > Roda localmente num MacBook Pro M3, com Claude Code em modo headless,
 > TTS na ElevenLabs e publicação via feed RSS em S3.
+> No site, [campscast.com.br](https://campscast.com.br), dá para assistir a
+> cada gravação no estúdio, evento a evento.
 
-**Status:** Fase 1 concluída em 05/09/2026 · Fase 2 concluída em 03/10/2026 · Fase 3 a partir de 05/10 · **Autor:** Fernando Campilho · Detalhes de arquitetura em [PROJETO.md](PROJETO.md)
+**Status:** Fase 1 concluída em 05/09/2026 · Fase 2 concluída em 03/10/2026 · Fase 3 em andamento desde 05/10 · **Autor:** Fernando Campilho · Detalhes de arquitetura em [PROJETO.md](PROJETO.md)
 
 ---
 
@@ -27,6 +29,7 @@
 | **Pocket Casts** | busque por *CampsCast* |
 | **Podcast Index** | [podcastindex.org](https://podcastindex.org/search?q=campscast) |
 | **RSS direto** | `https://campscast.com.br/feed.xml` |
+| **Site** | [campscast.com.br](https://campscast.com.br): o último episódio, o estúdio e como sugerir um tema |
 
 O feed serve qualquer app que aceite URL de RSS.
 
@@ -46,12 +49,20 @@ O feed serve qualquer app que aceite URL de RSS.
 | 15–25/09 | Nove episódios seguidos publicados sem ninguém em casa |
 | 28/09 | O agente passa a ser o Claude Opus 5.5 e anuncia o próprio upgrade no ar: "a partir de hoje, quem escreve este roteiro é o Claude Opus cinco ponto cinco, o modelo que o meu antecessor, o Opus cinco, noticiou aqui no episódio dezenove" |
 | 01/10 | O [post de lançamento no LinkedIn](https://www.linkedin.com/posts/fernandocampilho_ontem-o-apresentador-do-meu-podcast-anunciou-share-7510711037797752833-sHT2) é destacado pelo LinkedIn News na matéria ["Novos agentes, modelos e IPOs: as conversas da semana sobre IA"](https://www.linkedin.com/news/story/novos-agentes-modelos-e-ipos-as-conversas-da-semana-sobre-ia-7629556/) |
+| 03/10 | Fase 2 concluída. O programa ganha memória em camadas: temas de fundo, fios em aberto à espera de desfecho e um relatório semanal com o que pede decisão do autor ([ADR 0008](docs/decisions/0008-memoria-em-camadas.md)). O custo por episódio fica medido ([ADR 0007](docs/decisions/0007-custo-por-episodio.md)) |
+| 25/10 | Linha de base dos fatos: um verificador confere os 40 primeiros episódios contra as fontes primárias — 949 afirmações, 7,9% de erro, todos leves ([ADR 0010](docs/decisions/0010-redacao-com-varios-agentes.md)) |
+| 26/10 | A narração passa ao Eleven v4, com o mesmo clone da voz ([ADR 0011](docs/decisions/0011-narracao-no-eleven-v4.md)) |
+| 02/11 | O site entra no ar em [campscast.com.br](https://campscast.com.br), com o estúdio em pixel art; desde 04/11 ele se atualiza sozinho no fim de cada episódio |
+| 05–08/11 | Um experimento da Anthropic troca, sem aviso nem versão nova, a leitura de páginas do agente por um subagente, e o custo sobe 57%. O relatório da semana pega a mudança, e a leitura é fixada de volta ([ADR 0013](docs/decisions/0013-leitura-de-paginas.md)) |
+| 09/11 | Episódio 50 |
+| 14/11 | Ensaio do verificador nos 14 episódios mais recentes, com a régua calibrada contra a linha de base. O verificador mais barato concordava com o roteiro; no mais caro, os erros leves dos episódios 41 a 46 sobem para 11,3%, metade por tirar da notícia a cautela da fonte (`verificacao/v1/`) |
 
 ## A voz
 
 Os episódios são narrados por uma clonagem profissional da voz do autor,
 treinada com 28 minutos gravados no celular, em blocos de dois minutos entre
-pousos do aeroporto de Congonhas.
+pousos do aeroporto de Congonhas. Desde 26/10, o modelo é o Eleven v4, com o
+mesmo clone ([ADR 0011](docs/decisions/0011-narracao-no-eleven-v4.md)).
 
 O caminho até lá está medido em [docs/benchmarks-audio.md](docs/benchmarks-audio.md):
 qual cômodo, qual aparelho, qual distância, com número em vez de impressão. A
@@ -73,18 +84,58 @@ material. Ouça as pausas entre as frases.
 
 ---
 
+## O site
+
+[campscast.com.br](https://campscast.com.br) é servido do mesmo bucket do
+podcast, pelo CloudFront, e o `run_episode.sh` o atualiza no fim de cada
+episódio publicado. Se a publicação do site falhar, o episódio segue.
+
+| Endereço | O que tem |
+|---|---|
+| `/` | A capa: o que é o CampsCast, como ouvir, o último episódio e os números da última gravação |
+| `/estudio/` (ou `/studio`) | O estúdio em pixel art: cada personagem no seu posto conforme o relógio de São Paulo, e o **replay da gravação**, evento a evento |
+| `/estudio/roteiros/AAAA-MM-DD.html` | O roteiro do dia, com as fontes |
+| `/estudio/pesquisa/AAAA-MM-DD.html` | O log de pesquisa do dia: o que foi lido, o que foi descartado e por quê |
+| `/sugestao/` | Sugerir um tema |
+| `/privacidade/` | Privacidade: sem cookies e sem rastreamento |
+
+Os personagens (Produtor, Jornalista, Editor, Roteirista, Locutor, Vigia,
+Arquivista) são os papéis do pipeline. O que eles dizem nos balões **sai do
+registro da gravação, não da imaginação**: o estúdio mostra só o que
+aconteceu. Detalhes, elenco e o contrato dos dados em [docs/site.md](docs/site.md).
+
+---
+
 ## Pipeline
 
 ```
-launchd (seg–sex, 05:00)
+launchd (seg–sex, 05:00; repescagem às 06:00 e 07:00)
    └─► scripts/run_episode.sh
-         ├─ [1] claude -p prompts/master.md   → episodes/YYYY-MM-DD.md
-         ├─ [2] scripts/tts.py                → audio/YYYY-MM-DD.mp3
-         ├─ [3] scripts/publish.py            → feed/feed.xml + S3
-         └─ [4] scripts/notify.py             → e-mail / notificação macOS
+         ├─ [1] claude -p prompts/master.md   → episodes/ e research/ do dia
+         │       (lê e atualiza a memória: temas, fios em aberto, backlog)
+         ├─ [2] scripts/tts.py                → audio/AAAA-MM-DD.mp3
+         ├─ [3] scripts/publish.py            → feed.xml no S3, atrás do CloudFront
+         ├─ [4] scripts/notify.py             → e-mail / notificação macOS
+         └─ depois: registro de custo e do uso do Max, estado.json, o site,
+            e no último episódio da semana o relatório do autor
 ```
 
-Cada etapa pode rodar isolada — veja `--only` e `--skip` abaixo.
+Cada etapa pode rodar isolada — veja `--only` e `--skip` abaixo. Às 07:30, uma
+rotina na nuvem confere se o episódio do dia está no ar e avisa no celular.
+
+---
+
+## Quanto custa
+
+O que o CampsCast acrescenta às contas é cerca de **R$ 6,25 por episódio**:
+ElevenLabs, domínios e AWS. O agente roda na assinatura Max do Claude, que o
+autor já tinha e divide com outros usos. A preço de API, os 21 episódios de
+outubro custariam US$ 100,13, quase exatamente o preço do Max. A partir de
+16/11, o log de cada episódio diz quanto da janela de 5 horas e da semana do
+Max ele gastou.
+
+As contas estão no [ADR 0007](docs/decisions/0007-custo-por-episodio.md) e em
+[docs/custos.md](docs/custos.md), com o orçamento de cada experimento.
 
 ---
 
@@ -97,10 +148,10 @@ Cada etapa pode rodar isolada — veja `--only` e `--skip` abaixo.
 
 | Ferramenta | Necessária para | Instalar |
 |---|---|---|
-| Python 3.11+ | todos os scripts (só stdlib) | já vem no macOS / python.org |
+| Python 3.11+ | todos os scripts (só stdlib) | python.org (o `/usr/bin/python3` da Apple é 3.9 e não serve) |
 | Claude Code CLI | etapa 1 (pesquisa e roteiro) | `npm i -g @anthropic-ai/claude-code` |
 | Conta AWS (só chaves) | etapa 3 (upload S3) | sem CLI: `scripts/s3.py` assina em SigV4 |
-| Conta ElevenLabs | etapa 2 (narração) | Starter US$ 5/mês — ver [docs/setup-elevenlabs.md](docs/setup-elevenlabs.md) |
+| Conta ElevenLabs | etapa 2 (narração) | Starter (US$ 5/mês) para vozes prontas; Creator (US$ 22/mês) para clonar a própria voz — ver [docs/setup-elevenlabs.md](docs/setup-elevenlabs.md) |
 
 Nenhuma dependência Python externa. Não existe `pip install` neste projeto, e o
 upload para o S3 não usa a AWS CLI — a assinatura SigV4 está em
@@ -247,34 +298,28 @@ python3 scripts/window.py --date 2026-08-23 --human
 config/briefing.md      contrato editorial — edite para mudar o rumo da semana
 config/sources.yaml     fontes por camada (labs → hardware → investidores)
 config/show.json        metadados do podcast (título, capa, URLs do feed)
-config/tts.json         voz e modelo da ElevenLabs
+config/tts.json         voz, modelo e ritmo medido da ElevenLabs
+config/agentes.json     versão de cada agente, com o que mudou e o que se mediu
 prompts/master.md       prompt-mestre do agente
-scripts/window.py       calcula a janela de notícias (ver seção abaixo)
-scripts/schedule.py     decide se o dia tem episódio (dias úteis, feriados)
-scripts/calibrate_pace.py  mede o ritmo real de fala e corrige a faixa de palavras
-scripts/audio_metrics.py  métricas de áudio (espectro, reverberação, dinâmica)
-scripts/check_recording.py avalia gravação; --sala mede ambiente, --sintetico p/ TTS
-scripts/monitor.py         medidor ao vivo no terminal enquanto você grava
-scripts/prep_voice_samples.py converte para .wav e audita a pasta antes do upload
-scripts/prep_voice_samples.py converte gravações para o formato que a ElevenLabs aceita
-scripts/s3.py           upload para o S3 (SigV4 em Python puro, sem AWS CLI)
-scripts/set_base_url.py troca o endereço público do feed, verificando antes
-scripts/watch_agent.py  espelha a atividade do agente ao vivo
-episodes/               1 roteiro por dia — é a memória do podcast
+scripts/                o pipeline, as conferências e as medições (tabela no CLAUDE.md)
+episodes/               1 roteiro por dia
 research/               log de pesquisa: o que foi considerado e descartado
-saved-items/backlog.md  pautas relevantes que não couberam
-covered-index.json      dedup barato: o que já foi ao ar
-analysis/               [Fase 3] análises escritas pelo Fernando Campilho
-audio/  feed/  logs/    gerados; fora do git
+memoria/                temas, fios em aberto e o relatório semanal do autor
+saved-items/            backlog de pautas que não couberam, e o histórico dele
+covered-index.json      o que já foi ao ar, para não repetir
+verificacao/            conferência dos fatos: linha de base e o ensaio v1
+metricas/               registro de cada execução: tempo, tokens, custo
+site/                   capa e estúdio de campscast.com.br
 docs/decisions/         ADRs
 docs/aprendizados.md    o que quebrou, por quê, e o que ficou de método
+docs/custos.md          o que é pago, créditos, chaves e orçamentos
+docs/site.md            o site: páginas, personagens, dados
 docs/benchmarks-audio.md medições comparadas de sala, aparelho e distância
+docs/setup-*.md         macOS, S3, ElevenLabs
+docs/dominio-*.md       domínio próprio: .com.br, Route 53 e CloudFront
 CLAUDE.md               orientação para quem (ou o quê) pegar o projeto
-docs/gravacao-voz.md    guia para gravar o material da voz profissional
-docs/publicacao-diretorios.md  requisitos de Apple, Spotify e Pocket Casts
-docs/dominio-proprio.md  migrar o feed para domínio próprio
-docs/dominio-registro-br-route53.md  .com.br + Route 53 + CloudFront, passo a passo
 tests/smoke_test.sh     valida tudo offline
+audio/  feed/  logs/    gerados; fora do git
 ```
 
 ---
@@ -319,6 +364,11 @@ sudo pmset -c sleep 0
 sudo pmset repeat wakeorpoweron MTWRF 04:55:00
 ```
 
+E **na tomada**: durante a gravação, o `caffeinate` impede o Mac de dormir, mas
+só com energia externa. Com a tampa fechada e na bateria, ele dorme no meio da
+pesquisa — em 11/11, foram 97 minutos de atraso. Se a primeira tentativa
+falhar, o launchd tenta de novo às 06:00 e às 07:00.
+
 ---
 
 ## Problemas comuns
@@ -344,6 +394,15 @@ API. Veja [docs/setup-elevenlabs.md](docs/setup-elevenlabs.md#3-escolher-o-plano
 corrigido ([ADR 0003](docs/decisions/0003-costura-de-mp3.md)). Confira qualquer
 episódio com `afinfo audio/AAAA-MM-DD.mp3`, que mostra a duração como um player
 a vê — a soma de frames do `publish.py` não pega esse tipo de falha.
+
+**Episódio saiu muito depois das 05:00** — veja a coluna "dormiu" de
+`python3 scripts/registro.py mostra`. Se o Mac dormiu no meio, ele estava fora
+da tomada ou com a tampa fechada.
+
+**`AVISO: ANTHROPIC_API_KEY no ambiente`** — com essa variável o Claude CLI
+cobraria o episódio na API em vez da assinatura. O orquestrador a remove antes
+do agente; uma chave de API para experimentos fica no `.env` com outro nome
+(veja [docs/custos.md](docs/custos.md)).
 
 **Episódio vazio ou pautas repetidas** — cheque o `window_end` do último
 arquivo em `episodes/`. É ele que define onde a próxima execução começa.

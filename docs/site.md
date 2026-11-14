@@ -71,7 +71,7 @@ Elenco aprovado pelo autor em 31/10.
 | **Locutor** | ativo | narra o roteiro com a cópia sintética da voz do autor | ElevenLabs v4, por `tts.py` | `tts.py` e `config/tts.json` |
 | **Vigia** | ativo | depois do roteiro, confere o que não pode faltar; no fim, publica o estado; às 07:30, confere da nuvem se o episódio está no ar | `confere_roteiro.py`, `estado.py` e a rotina na nuvem | as docstrings desses scripts |
 | **Arquivista** | em parte | tira da leitura diária o que já passou: fio parado há 30 dias, pauta usada ou vencida, fio fechado. Nada se apaga, tudo se arquiva. Em breve: os resumos da memória por semana, mês e trimestre | `expira_fios.py`, sem IA, e o próprio agente quando move pauta e fio para o arquivo | `expira_fios.py` e `confere_backlog.py` |
-| **Checador** | em breve | confere os fatos de cada episódio contra as fontes primárias, com régua fixa. Fica numa sala de vidro fora da redação, "Checagem e Compliance": quem confere não é quem escreve | hoje, o ensaio V1 na nuvem, fora da gravação | `prompts/verificador-rubrica.md` |
+| **Checador** | em breve | confere os fatos de cada episódio contra as fontes primárias, com régua fixa. Fica numa sala de vidro fora da redação, "Checagem e Compliance": quem confere não é quem escreve | hoje, o ensaio V1, fora da gravação (14/11, pela API, `verificacao/v1/`) | `prompts/verificador-rubrica.md` |
 | **Artista** | em breve | capa de cada episódio e imagens para posts e vídeos | ainda não existe; a capa é fixa | — |
 | **Marketing** | em breve | rascunha os posts (LinkedIn, Instagram, vídeos curtos do YouTube) e o plano de expansão; nada sai em nome do autor sem a aprovação dele | ainda não existe; o autor escreve os posts | — |
 
