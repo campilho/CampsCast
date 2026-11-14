@@ -20,6 +20,7 @@ launchd (seg-sex 05:00, repescagem 06:00 e 07:00)
   └─ scripts/run_episode.sh
        ├─ [1] claude -p prompts/master.md  → episodes/AAAA-MM-DD.md
        │                                   → research/AAAA-MM-DD.md
+       │    └─ scripts/varredura.py        → logs/varredura-AAAA-MM-DD.md (sombra, fora do prompt)
        ├─ [2] scripts/tts.py               → audio/AAAA-MM-DD.mp3
        ├─ [3] scripts/publish.py           → feed.xml → S3 → CloudFront
        └─ [4] scripts/notify.py
@@ -74,6 +75,7 @@ Agregador serve para descobrir, nunca para citar.
 | `confere_claude.py` | vigia do Claude Code: experimento da Anthropic ligado na conta, interruptores que mudaram, subagente ou modelo inesperado na sessão ([ADR 0013](docs/decisions/0013-leitura-de-paginas.md)); registra |
 | `agentes.py` | a ficha dos agentes: que versão roda (vai ao log, ao registro e ao estúdio) e se os prompts batem com ela; `ativos`, `confere`, `mostra` |
 | `jornalista.py` | o Jornalista: subagente que lê as páginas, e o hook que barra o WebFetch fora dele; só com `JORNALISTA=1` (e `JORNALISTA_MODELO`), desligado na produção ([plano](docs/plano-leitura-por-subagente.md)) |
+| `varredura.py` | o que as fontes publicaram na janela, pelos feeds e sitemaps, sem modelo; em sombra, depois do agente e fora do prompt, em `logs/varredura-AAAA-MM-DD.md`; `VARREDURA=0` desliga ([plano](docs/plano-varredura-por-feeds.md)) |
 | `confere_repeticao.py` | avisa pauta do dia com link já usado antes; ignora páginas de listagem |
 | `relatorio.py` | relatório semanal do autor: decisões pendentes, temas, fios, fontes que falharam, avisos; `--semana`, `--fecha-semana` |
 | `confere_roteiro.py` | confere o que a abertura e a ficha não podem deixar de dizer; registra, não bloqueia |
@@ -121,6 +123,7 @@ Agregador serve para descobrir, nunca para citar.
 | `prompts/master.md` | o agente |
 | `config/agentes.json` | ficha dos agentes: versão de cada um, prompts, modelo, ferramentas, o que mudou e o que se mediu |
 | `prompts/jornalista.md` | o Jornalista, e `prompts/leitura-pelo-jornalista.md`, o que o agente principal ganha no prompt quando ele está ligado |
+| `config/varredura.json` | feeds, sitemaps e APIs que o `varredura.py` lê, com teto por fonte e prazos; fora do `sources.yaml` porque o agente lê aquele |
 | `config/rubrica-pautas.md` | régua das pautas: porteira da fonte e quatro notas ([ADR 0012](docs/decisions/0012-nota-das-pautas.md)); ainda fora da produção |
 | `config/cloudfront-site.js` | função do CloudFront que abre o `index.html` das pastas do site e leva `/studio` ao estúdio; colada à mão no console |
 

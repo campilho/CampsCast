@@ -494,6 +494,25 @@ except ValueError: print("ficha ilegível")' 2>/dev/null)"
   fi
   log "Roteiro: $SCRIPT_PATH"
 
+  # Varredura dos feeds (H2, docs/plano-varredura-por-feeds.md), em sombra: o
+  # que as fontes publicaram na janela, lido dos feeds sem modelo nenhum, para
+  # comparar com o que o agente leu e com o que foi ao ar. Roda DEPOIS do
+  # agente e não entra no prompt: o agente tem Glob e Grep, e a lista do dia
+  # nunca existe enquanto ele trabalha. Como a janela termina ontem, rodar
+  # agora dá a mesma lista que às 05:00. Não bloqueia: tem prazo total, e
+  # falha vira aviso. VARREDURA=0 desliga.
+  if [[ "${VARREDURA:-1}" == "1" ]]; then
+    if [[ $DRY_RUN -eq 1 ]]; then
+      log "DRY-RUN: python3 scripts/varredura.py --de $WINDOW_START --ate $WINDOW_END (sombra, fora do prompt)"
+    elif VARR_OUT="$(python3 scripts/varredura.py --de "$WINDOW_START" --ate "$WINDOW_END" \
+        --episodio "$EPISODE_DATE" --saida "logs/varredura-${EPISODE_DATE}" \
+        --estado "logs/varredura-vistos.json" 2>>"$LOG")"; then
+      log "$VARR_OUT"
+    else
+      log "AVISO: varredura dos feeds falhou; o episódio não é afetado."
+    fi
+  fi
+
   # Abertura e encerramento variam livremente; o que é compromisso de
   # transparência é conferido aqui. Não bloqueia, registra: é a medição de
   # quanto a liberdade do agente custa em regra quebrada.

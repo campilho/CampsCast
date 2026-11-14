@@ -185,6 +185,10 @@ done
 for v in JORNALISTA JORNALISTA_MODELO ANTHROPIC_DEFAULT_HAIKU_MODEL; do
   [[ -n "${!v:-}" ]] && TESTE+=("$v=${!v}")
 done
+# A varredura dos feeds (scripts/varredura.py) lê os feeds de agora, não os do
+# dia ensaiado: num dia passado, a lista não seria a que a produção teria
+# visto. Desligada no ensaio, a menos que se peça (VARREDURA=1).
+TESTE+=("VARREDURA=${VARREDURA:-0}")
 echo
 set +e
 env -i HOME="$HOME" USER="${USER:-}" LOGNAME="${LOGNAME:-${USER:-}}" SHELL="${SHELL:-/bin/zsh}" \

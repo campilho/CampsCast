@@ -69,6 +69,9 @@ export INTERRUPTORES_ARQ="$(mktemp)"; rm -f "$INTERRUPTORES_ARQ"
 # Sem rede o orquestrador para de cara; a suíte é offline e checa um nome que
 # sempre resolve. O teste de falta de rede troca por um que nunca resolve.
 export REDE_HOST=localhost
+# A varredura dos feeds roda depois do agente e iria à internet de verdade em
+# todo teste do orquestrador. Desligada aqui; a seção dela liga com feeds locais.
+export VARREDURA=0
 
 ok()   { printf '  \033[32m✓\033[0m %s\n' "$1"; PASS=$((PASS+1)); }
 bad()  { printf '  \033[31m✗\033[0m %s\n' "$1"; FAIL=$((FAIL+1)); }
@@ -3119,6 +3122,231 @@ if [[ "$ARGS_DESL" != *"--agents"* && "$ARGS_DESL" != *"--settings"* && "$ARGS_D
   ok "Jornalista desligado por padrão; ligado, o CLI recebe o subagente, o hook e o acréscimo ao prompt, e o registro guarda as versões"
 else
   bad "chave do Jornalista no orquestrador — desligado: $(printf '%s' "$ARGS_DESL" | grep -c -- '--agents') --agents; ligado: $(printf '%s' "$ARGS_LIG" | grep -- '^--' | tr '\n' ' ')"
+fi
+
+# ---------------------------------------------------------- varredura dos feeds
+# H2 (docs/plano-varredura-por-feeds.md): os feeds dizem o que saiu na janela
+# sem modelo nenhum. Tudo aqui é local: arquivos file:// e um servidor HTTP na
+# própria máquina que responde 403 ou goteja um byte a cada 0,25 s.
+head_ "Varredura dos feeds"
+VARR="$(python3 - <<'PYVARR' 2>&1
+import gzip, json, os, pathlib, subprocess, sys, tempfile, time
+d = pathlib.Path(tempfile.mkdtemp())
+erros = []
+def grava(nome, texto):
+    p = d / nome
+    (p.write_bytes(texto) if isinstance(texto, bytes) else p.write_text(texto, encoding="utf-8"))
+    return "file://" + str(p)
+
+rss = """<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>t</title>
+<item><title>Fala do secretário</title><link>https://exemplo.test/fala</link>
+<pubDate>Wed, 11 Nov 2026 01:15:00 +0000</pubDate><description>discurso da noite</description></item>
+<item><title><![CDATA[<b>Modelo</b> `novo` &amp; melhor]]></title><link>https://exemplo.test/modelo</link>
+<pubDate>Wed, 11 Nov 2026 14:00:00 +0000</pubDate><description>""" + "palavra " * 60 + """</description></item>
+<item><title>Repetido</title><link>https://exemplo.test/repetido/</link>
+<pubDate>Wed, 11 Nov 2026 15:00:00 +0000</pubDate></item>
+</channel></rss>"""
+atom = """<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom"><title>a</title>
+<entry><title>Antes da meia-noite</title><link rel="replies" href="https://exemplo.test/comentarios"/>
+<link rel="alternate" href="https://exemplo.test/atom-1"/><published>2026-11-11T02:30:00Z</published></entry>
+<entry><title>De tarde</title><link href="https://exemplo.test/atom-2"/>
+<updated>2026-11-11T10:00:00-08:00</updated><summary>resumo atom</summary></entry>
+<entry><title>Repetido no atom</title><link href="https://exemplo.test/repetido"/><published>2026-11-11T16:00:00Z</published></entry>
+</feed>"""
+def sitemap(*urls):
+    corpo = "".join(f"<url><loc>{u}</loc><lastmod>{m}</lastmod></url>" for u, m in urls)
+    return f'<?xml version="1.0"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{corpo}</urlset>'
+sm1 = sitemap(("https://exemplo.test/news/a", "2026-11-11T12:00:00Z"), ("https://exemplo.test/legal/x", "2026-11-11"),
+              ("https://exemplo.test/news/b", "2026-11-11"))
+sm2 = sitemap(("https://exemplo.test/news/a", "2026-11-11T12:00:00Z"), ("https://exemplo.test/news/b", "2026-11-11"),
+              ("https://exemplo.test/news/c", "2026-11-11T18:00:00Z"))
+muitos = '<rss version="2.0"><channel>' + "".join(
+    f"<item><title>Item {i}</title><link>https://muitos.test/{i}</link><pubDate>Wed, 11 Nov 2026 1{i}:00:00 +0000</pubDate></item>"
+    for i in range(8)) + "</channel></rss>"
+hf = json.dumps([{"id": "org/modelo-x", "createdAt": "2026-11-11T09:00:00.000Z", "pipeline_tag": "text-generation"},
+                 {"id": "org/velho", "createdAt": "2026-10-01T09:00:00.000Z"}])
+entidade = '<?xml version="1.0"?><!DOCTYPE r [<!ENTITY a "aaaa">]><rss><channel><item><title>&a;</title></item></channel></rss>'
+
+servidor = d / "servidor.py"
+servidor.write_text('''
+import http.server, socketserver, sys, time
+class H(http.server.BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == "/fechado":
+            self.send_response(403); self.end_headers(); return
+        if self.path == "/gotejando":
+            self.send_response(200); self.end_headers()
+            for _ in range(60):
+                try:
+                    self.wfile.write(b" "); self.wfile.flush()
+                except OSError:
+                    return
+                time.sleep(0.25)
+            return
+        self.send_response(404); self.end_headers()
+    def log_message(self, *a): pass
+class S(socketserver.ThreadingTCPServer):
+    daemon_threads = True
+srv = S(("127.0.0.1", 0), H)
+open(sys.argv[1], "w").write(str(srv.server_address[1]))
+srv.serve_forever()
+''')
+porta_arq = d / "porta"
+srv = subprocess.Popen([sys.executable, str(servidor), str(porta_arq)])
+for _ in range(50):
+    if porta_arq.exists() and porta_arq.read_text():
+        break
+    time.sleep(0.1)
+porta = porta_arq.read_text()
+
+feeds = [
+    {"nome": "RSS", "url": grava("rss.xml", rss)},
+    {"nome": "Atom", "url": grava("atom.xml", atom)},
+    {"nome": "Site", "tipo": "sitemap", "url": grava("sm.xml", sm1), "caminhos": "^/news/"},
+    {"nome": "Muitos", "url": grava("muitos.xml", muitos)},
+    {"nome": "HF", "tipo": "hf", "url": grava("hf.json", hf)},
+    {"nome": "Comprimido", "url": grava("gz.xml", gzip.compress(rss.replace("exemplo.test", "gz.test").encode()))},
+    {"nome": "Entidade", "url": grava("ent.xml", entidade)},
+    {"nome": "Quebrado", "url": grava("q.xml", "<rss><channel><item>")},
+    {"nome": "Ausente", "url": "file://" + str(d / "nao-existe.xml")},
+    {"nome": "Fechado", "url": f"http://127.0.0.1:{porta}/fechado"},
+    {"nome": "Gotejando", "url": f"http://127.0.0.1:{porta}/gotejando"},
+]
+cfg = d / "cfg.json"
+cfg.write_text(json.dumps({"teto_por_fonte": 6, "prazo_por_feed_s": 2, "prazo_total_s": 3, "feeds": feeds}))
+indice = d / "indice.json"
+indice.write_text(json.dumps({"items": [{"episode": "2026-11-05", "source_url": "https://exemplo.test/news/a/"}]}))
+# Ambiente do launchd: sem LANG, com o texto em português saindo em UTF-8.
+amb = {"PATH": os.environ["PATH"], "HOME": os.environ.get("HOME", "/tmp")}
+def roda(de, saida, *extra):
+    t = time.monotonic()
+    r = subprocess.run([sys.executable, "scripts/varredura.py", "--config", str(cfg), "--de", de, "--ate", de,
+                        "--episodio", "2026-11-12", "--indice", str(indice), "--saida", str(d / saida), *extra],
+                       capture_output=True, text=True, env=amb)
+    return r, time.monotonic() - t
+try:
+    r, seg = roda("2026-11-11", "l11", "--estado", str(d / "vistos.json"))
+    r10, _ = roda("2026-11-10", "l10")
+finally:
+    pass
+if r.returncode != 0:
+    erros.append(f"rc {r.returncode}: {r.stderr[-300:]}")
+if seg > 6:
+    erros.append(f"prazo total não segurou: {seg:.1f} s")
+l = json.loads((d / "l11.json").read_text(encoding="utf-8"))
+md = (d / "l11.md").read_text(encoding="utf-8")
+f = {x["nome"]: x for x in l["fontes"]}
+links = lambda nome, lista=l: [i["link"] for i in {x["nome"]: x for x in lista["fontes"]}[nome]["na_janela"]]
+# Virada do dia: 01:15 UTC de 11/11 é 22:15 de 10/11 em Brasília (o caso Bessent).
+l10 = json.loads((d / "l10.json").read_text(encoding="utf-8"))
+if "https://exemplo.test/fala" in links("RSS") or "https://exemplo.test/fala" not in links("RSS", l10):
+    erros.append("fuso: item de 22:15 de 10/11 caiu no dia errado")
+if links("Atom") != ["https://exemplo.test/atom-2"] or "https://exemplo.test/atom-1" not in links("Atom", l10):
+    erros.append(f"atom: {links('Atom')}")
+if not any("15:00" in i["data"] for i in f["Atom"]["na_janela"]):
+    erros.append("atom: -08:00 não virou 15:00 em Brasília")
+titulo = [i for i in f["RSS"]["na_janela"] if i["link"].endswith("/modelo")][0]
+if titulo["titulo"] != "Modelo novo & melhor" or len(titulo["resumo"]) > 160 or not titulo["resumo"].endswith("…"):
+    erros.append(f"limpeza: {titulo['titulo']!r} / {len(titulo['resumo'])}")
+if "https://exemplo.test/repetido" in links("Atom"):
+    erros.append("endereço repetido entre feeds apareceu duas vezes")
+site = f["Site"]["na_janela"]
+if sorted(i["link"] for i in site) != ["https://exemplo.test/news/a", "https://exemplo.test/news/b"]:
+    erros.append(f"sitemap: caminhos {[i['link'] for i in site]}")
+if any(i.get("pagina") != "nova ou editada" for i in site):
+    erros.append("sitemap sem estado deveria dizer 'nova ou editada'")
+if "- 11/11 · b · https://exemplo.test/news/b" not in md:
+    erros.append("sitemap só com data: não deveria inventar hora")
+if "já foi ao ar em 05/11" not in md:
+    erros.append("marca de já foi ao ar")
+if "- +2 desta fonte na janela, fora da lista" not in md or md.count("muitos.test/") != 6:
+    erros.append("teto por fonte")
+if links("HF") != ["https://huggingface.co/org/modelo-x"]:
+    erros.append(f"hf: {links('HF')}")
+if len(f["Comprimido"]["na_janela"]) != 2 or f["Comprimido"]["erro"]:
+    erros.append(f"gzip: {f['Comprimido']['erro']}")
+esperado = {"Entidade": "entidade", "Quebrado": "XML inválido", "Ausente": "rede", "Fechado": "HTTP 403",
+            "Gotejando": "prazo total"}
+for nome, trecho in esperado.items():
+    if trecho not in (f[nome]["erro"] or ""):
+        erros.append(f"{nome}: {f[nome]['erro']}")
+if "### Falharam" not in md or "Varredura:" not in r.stdout:
+    erros.append("falhas fora da lista ou sem linha de resumo")
+# Sitemap mudado: vale quando a página foi vista pela primeira vez. A da linha
+# de base (primeira leitura) não se sabe dizer; a que nunca foi vista é nova.
+(d / "sm.xml").write_text(sm2, encoding="utf-8")
+pag = lambda saida: {i["link"]: i["pagina"] for i in json.loads((d / f"{saida}.json").read_text())["fontes"][2]["na_janela"]}
+roda("2026-11-11", "l11b", "--estado", str(d / "vistos.json"))
+if pag("l11b") != {"https://exemplo.test/news/a": "nova ou editada", "https://exemplo.test/news/b": "nova ou editada",
+                   "https://exemplo.test/news/c": "nova"}:
+    erros.append(f"estado do sitemap, linha de base: {pag('l11b')}")
+# Vista antes do começo da janela: editada. Vista depois da meia-noite, fora da
+# linha de base: nova, mesmo já estando na leitura anterior (publicada de madrugada).
+sm_url = feeds[2]["url"]
+(d / "vistos2.json").write_text(json.dumps({"linha_de_base": {sm_url: "2026-11-01T05:00:00-03:00"},
+    "vistas": {sm_url: {"exemplo.test/news/a": "2026-11-01T05:00:00-03:00",
+                        "exemplo.test/news/b": "2026-11-11T05:15:00-03:00"}}}))
+roda("2026-11-11", "l11c", "--estado", str(d / "vistos2.json"))
+depois = json.loads((d / "vistos2.json").read_text())["vistas"][sm_url]
+if pag("l11c") != {"https://exemplo.test/news/a": "editada", "https://exemplo.test/news/b": "nova",
+                   "https://exemplo.test/news/c": "nova"} \
+        or depois["exemplo.test/news/a"] != "2026-11-01T05:00:00-03:00" or "exemplo.test/news/c" not in depois:
+    erros.append(f"estado do sitemap: {pag('l11c')} / {depois}")
+cfg.write_text("{ não é json")
+if roda("2026-11-11", "l-ruim")[0].returncode != 2:
+    erros.append("configuração ilegível não deu rc 2")
+srv.kill()
+print(";".join(erros) if erros else "ok")
+PYVARR
+)"
+if [[ "$VARR" == "ok" ]]; then
+  ok "varredura: fuso de Brasília, RSS, Atom, sitemap, Hugging Face e gzip; teto, repetidos e já ao ar; falha e prazo não param"
+else
+  bad "varredura: $VARR"
+fi
+
+# No orquestrador, em sombra: depois do agente, fora do prompt, sem bloquear.
+FAKE_VAR="$(mktemp -d)"
+printf '<rss version="2.0"><channel><item><title>Saiu ontem</title><link>https://exemplo.test/ontem</link><pubDate>Mon, 24 Aug 2026 15:00:00 +0000</pubDate></item></channel></rss>' > "$FAKE_VAR/feed.xml"
+printf '{"feeds":[{"nome":"Local","url":"file://%s/feed.xml"}]}' "$FAKE_VAR" > "$FAKE_VAR/cfg.json"
+cat > "$FAKE_VAR/claude" <<STUB
+#!/bin/sh
+printf '%s' "\$2" > "$FAKE_VAR/prompt.txt"
+ls logs/varredura-2026-08-25.md > "$FAKE_VAR/durante.txt" 2>&1
+cat > episodes/2026-08-25.md <<'MD'
+---
+date: 2026-08-25
+window_start: 2026-08-24
+window_end: 2026-08-24
+title: teste
+words: 10
+estimated_duration: 0:04
+topics: []
+from_backlog: []
+---
+
+Corpo de teste.
+MD
+printf '%s' '{"type":"result","is_error":false,"result":"OK","usage":{}}'
+STUB
+chmod +x "$FAKE_VAR/claude"
+OUT_VAR="$(VARREDURA=1 VARREDURA_CONFIG="$FAKE_VAR/cfg.json" CLAUDE_BIN="$FAKE_VAR/claude" \
+  bash scripts/run_episode.sh --date 2026-08-25 --only research 2>&1 || true)"
+LISTA_VAR="$(cat logs/varredura-2026-08-25.md 2>/dev/null)"
+rm -f episodes/2026-08-25.md logs/varredura-2026-08-25.* logs/varredura-vistos.json
+OUT_VAR_RUIM="$(VARREDURA=1 VARREDURA_CONFIG="/nao/existe.json" CLAUDE_BIN="$FAKE_VAR/claude" \
+  bash scripts/run_episode.sh --date 2026-08-25 --only research 2>&1 || true)"
+OUT_VAR_DESL="$(CLAUDE_BIN="$FAKE_VAR/claude" bash scripts/run_episode.sh --date 2026-08-25 --only research 2>&1 || true)"
+PROMPT_VAR="$(cat "$FAKE_VAR/prompt.txt" 2>/dev/null)"; DURANTE_VAR="$(cat "$FAKE_VAR/durante.txt" 2>/dev/null)"
+rm -rf "$FAKE_VAR"; rm -f episodes/2026-08-25.md logs/2026-08-25.log logs/2026-08-25-*.json logs/varredura-*
+if [[ "$OUT_VAR" == *"Varredura: 1 itens na janela"* && "$LISTA_VAR" == *"Saiu ontem"* \
+      && "$OUT_VAR" == *"Concluído"* && "$DURANTE_VAR" == *"No such file"* \
+      && "$PROMPT_VAR" != *"Publicado na janela"* \
+      && "$OUT_VAR_RUIM" == *"AVISO: varredura dos feeds falhou"* && "$OUT_VAR_RUIM" == *"Concluído"* \
+      && "$OUT_VAR_DESL" != *"Varredura:"* ]]; then
+  ok "varredura em sombra: grava depois do agente, fica fora do prompt e não bloqueia"
+else
+  bad "varredura no orquestrador: $(printf '%s' "$OUT_VAR" | grep -i -m2 'varredura\|ERRO')"
 fi
 
 # ------------------------------------------------------------------- resultado
