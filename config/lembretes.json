@@ -1,0 +1,13 @@
+{
+ "_sobre": "Lembretes do autor. Cada um aparece em 'Para decidir' no relatório semanal (scripts/relatorio.py) a partir de 14 dias antes da data, até ela passar. Datas no horário de Brasília. Ver docs/custos.md.",
+ "lembretes": [
+  {
+   "data": "2026-12-24",
+   "texto": "a chave de API chave-campscast (verificador) vence em 31/12, às 23:00: renovar no Console e trocar o valor de ANTHROPIC_API_KEY_VERIFICADOR no .env"
+  },
+  {
+   "data": "2026-12-30",
+   "texto": "a chave de API chave-campscast vence amanhã, 31/12, às 23:00: renovar hoje"
+  }
+ ]
+}

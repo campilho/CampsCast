@@ -72,6 +72,9 @@ export REDE_HOST=localhost
 # A varredura dos feeds roda depois do agente e iria à internet de verdade em
 # todo teste do orquestrador. Desligada aqui; a seção dela liga com feeds locais.
 export VARREDURA=0
+# A leitura do limite do Max chama o Claude CLI antes e depois do agente; com o
+# stub dos testes não haveria o que ler. Desligada aqui; a seção dela liga.
+export LIMITES_MAX=0
 
 ok()   { printf '  \033[32m✓\033[0m %s\n' "$1"; PASS=$((PASS+1)); }
 bad()  { printf '  \033[31m✗\033[0m %s\n' "$1"; FAIL=$((FAIL+1)); }
@@ -3347,6 +3350,169 @@ if [[ "$OUT_VAR" == *"Varredura: 1 itens na janela"* && "$LISTA_VAR" == *"Saiu o
   ok "varredura em sombra: grava depois do agente, fica fora do prompt e não bloqueia"
 else
   bad "varredura no orquestrador: $(printf '%s' "$OUT_VAR" | grep -i -m2 'varredura\|ERRO')"
+fi
+
+# ------------------------------------------------------------ limite do Max
+# scripts/limites_max.py lê a utilização da janela de 5 horas e da semana no
+# evento rate_limit_event do stream-json do CLI, antes e depois do agente.
+head_ "Limite do Max"
+FAKE_MAX="$(mktemp -d)"
+# Stub do CLI: na chamada da leitura (stream-json) devolve o evento, com o uso
+# subindo a cada chamada; na do agente, escreve o roteiro e devolve o JSON.
+cat > "$FAKE_MAX/claude" <<STUB
+#!/bin/sh
+case "\$*" in
+  *stream-json*)
+    if [ -n "\$MAX_STUB_MODO" ]; then
+      case "\$MAX_STUB_MODO" in
+        sem-evento) printf '%s\n' '{"type":"result","subtype":"success","result":"ok"}' ;;
+        lento) sleep 5 ;;
+      esac
+      exit 0
+    fi
+    n=\$(cat "$FAKE_MAX/n" 2>/dev/null || echo 0); n=\$((n+1)); echo \$n > "$FAKE_MAX/n"
+    if [ \$n -eq 1 ]; then u5=0.09; us=0.18; else u5=0.12; us=0.2; fi
+    printf '%s\n' '{"type":"system","subtype":"init"}'
+    printf '{"type":"rate_limit_event","rate_limit_info":{"status":"allowed","unifiedWindows":{"five_hour":{"utilization":%s,"resetsAt":1794685200},"seven_day":{"utilization":%s,"resetsAt":1794708000}}}}\n' "\$u5" "\$us"
+    printf '%s\n' '{"type":"result","subtype":"success","result":"ok"}'
+    pwd > "$FAKE_MAX/cwd"
+    ;;
+  *)
+    cat > episodes/2026-08-25.md <<'MD'
+---
+date: 2026-08-25
+window_start: 2026-08-24
+window_end: 2026-08-24
+title: teste
+words: 10
+estimated_duration: 0:04
+topics: []
+from_backlog: []
+---
+
+Corpo de teste.
+MD
+    printf '%s' '{"type":"result","is_error":false,"result":"OK","usage":{}}'
+    ;;
+esac
+STUB
+chmod +x "$FAKE_MAX/claude"
+MAXL="$(FAKE_MAX="$FAKE_MAX" python3 - <<'PYMAX' 2>&1
+import json, os, subprocess, sys, time
+sys.path.insert(0, "scripts")
+import limites_max as lm
+erros = []
+d = os.environ["FAKE_MAX"]
+roda = lambda **amb: subprocess.run([sys.executable, "scripts/limites_max.py", "--prazo", "2"], capture_output=True, text=True,
+                                    env={**os.environ, "CLAUDE_BIN": d + "/claude", **amb})
+r = roda(); j = json.loads(r.stdout)
+if r.returncode != 0 or j.get("cinco_horas") != 0.09 or j.get("semana") != 0.18 or not j.get("reset_semana", "").startswith("2026-11-14T23:00"):
+    erros.append(f"leitura: {r.stdout.strip()}")
+if open(d + "/cwd").read().strip() == os.getcwd():
+    erros.append("a leitura rodou na pasta do projeto")
+r = roda(MAX_STUB_MODO="sem-evento"); j = json.loads(r.stdout)
+if r.returncode != 0 or "erro" not in j:
+    erros.append(f"sem evento: {r.stdout.strip()}")
+r = roda(MAX_STUB_MODO="sem-evento", ANTHROPIC_API_KEY="x"); j = json.loads(r.stdout)
+if "ANTHROPIC_API_KEY" not in j.get("erro", ""):
+    erros.append(f"chave de API no ambiente não foi apontada: {j}")
+t0 = time.monotonic(); r = roda(MAX_STUB_MODO="lento"); j = json.loads(r.stdout)
+if r.returncode != 0 or "sem resposta" not in j.get("erro", "") or time.monotonic() - t0 > 4:
+    erros.append(f"prazo: {r.stdout.strip()}")
+r = subprocess.run([sys.executable, "scripts/limites_max.py"], capture_output=True, text=True,
+                   env={**os.environ, "CLAUDE_BIN": "/nao/existe"})
+if r.returncode != 0 or "não encontrado" not in json.loads(r.stdout).get("erro", ""):
+    erros.append(f"CLI ausente: {r.stdout.strip()}")
+a = {"cinco_horas": 0.09, "semana": 0.18, "reset_cinco_horas": "x", "reset_semana": "s"}
+if lm.delta(a, {**a, "cinco_horas": 0.12, "semana": 0.2}) != {"cinco_horas": 3, "semana": 2}:
+    erros.append("diferença em pontos")
+if lm.delta(a, {**a, "cinco_horas": 0.02, "reset_cinco_horas": "y"})["cinco_horas"] != "reiniciou":
+    erros.append("janela que reiniciou no meio")
+if lm.delta(a, None) != {"cinco_horas": None, "semana": None} or "sem leitura" not in lm.resumo(a, {"erro": "e"}):
+    erros.append("leitura faltando")
+print(";".join(erros) if erros else "ok")
+PYMAX
+)"
+if [[ "$MAXL" == "ok" ]]; then
+  ok "limite do Max: lê as duas janelas fora da pasta do projeto; sem evento, sem CLI ou lento, sai com erro e rc 0"
+else
+  bad "limite do Max: $MAXL"
+fi
+
+# No orquestrador: lê antes e depois do agente, loga a diferença e grava no registro.
+rm -f "$FAKE_MAX/n"
+OUT_MAX="$(LIMITES_MAX=1 CLAUDE_BIN="$FAKE_MAX/claude" bash scripts/run_episode.sh --date 2026-08-25 --only research 2>&1 || true)"
+REG_MAX="$(tail -1 "$METRICAS_ARQ" 2>/dev/null)"
+rm -f episodes/2026-08-25.md logs/2026-08-25.log logs/2026-08-25-*.json
+OUT_MAX_DESL="$(CLAUDE_BIN="$FAKE_MAX/claude" bash scripts/run_episode.sh --date 2026-08-25 --only research 2>&1 || true)"
+N_DESL="$(cat "$FAKE_MAX/n" 2>/dev/null)"
+rm -rf "$FAKE_MAX"; rm -f episodes/2026-08-25.md logs/2026-08-25.log logs/2026-08-25-*.json
+if [[ "$OUT_MAX" == *"Max: 5 h 9% → 12% (+3) · semana 18% → 20% (+2)"* && "$OUT_MAX" == *"Concluído"* \
+      && "$REG_MAX" == *'"gasto_pontos": {"cinco_horas": 3, "semana": 2}'* && "$N_DESL" == "2" \
+      && "$OUT_MAX_DESL" != *"Max:"* ]]; then
+  ok "limite do Max no orquestrador: antes e depois do agente, no log e no registro; LIMITES_MAX=0 não chama"
+else
+  bad "limite do Max no orquestrador: $(printf '%s' "$OUT_MAX" | grep -m2 'Max\|ERRO') / registro: ${REG_MAX:0:200}"
+fi
+
+# Chave de API no ambiente: o episódio tem de rodar no Max, nunca na API.
+FAKE_KEY="$(mktemp -d)"
+cat > "$FAKE_KEY/claude" <<STUB
+#!/bin/sh
+printf '%s' "\${ANTHROPIC_API_KEY:-ausente}" > "$FAKE_KEY/viu"
+cat > episodes/2026-08-25.md <<'MD'
+---
+date: 2026-08-25
+window_start: 2026-08-24
+window_end: 2026-08-24
+title: teste
+words: 10
+estimated_duration: 0:04
+topics: []
+from_backlog: []
+---
+
+Corpo de teste.
+MD
+printf '%s' '{"type":"result","is_error":false,"result":"OK","usage":{}}'
+STUB
+chmod +x "$FAKE_KEY/claude"
+OUT_KEY="$(ANTHROPIC_API_KEY=sk-ant-teste CLAUDE_BIN="$FAKE_KEY/claude" bash scripts/run_episode.sh --date 2026-08-25 --only research 2>&1 || true)"
+VIU_KEY="$(cat "$FAKE_KEY/viu" 2>/dev/null)"
+rm -rf "$FAKE_KEY"; rm -f episodes/2026-08-25.md logs/2026-08-25.log logs/2026-08-25-*.json
+if [[ "$VIU_KEY" == "ausente" && "$OUT_KEY" == *"AVISO: ANTHROPIC_API_KEY no ambiente"* && "$OUT_KEY" == *"Concluído"* ]]; then
+  ok "chave de API no ambiente sai antes do agente: o episódio roda no Max"
+else
+  bad "chave de API no ambiente: o agente viu '${VIU_KEY}'"
+fi
+
+# Lembretes do autor no relatório: de 14 dias antes até a data.
+LEMB="$(python3 - <<'PYLEMB' 2>&1
+import json, os, subprocess, sys, tempfile
+d = tempfile.mkdtemp(); arq = os.path.join(d, "l.json")
+json.dump({"lembretes": [{"data": "2026-12-24", "texto": "renovar a chave"},
+                         {"data": "2026-12-30", "texto": "vence amanhã"},
+                         {"data": "data ruim", "texto": "x"}]}, open(arq, "w"))
+rel = lambda dia: subprocess.run([sys.executable, "scripts/relatorio.py", "--data", dia], capture_output=True,
+                                 text=True, env={**os.environ, "LEMBRETES_ARQ": arq}).stdout
+erros = []
+if "Lembrete" in rel("2026-12-04"):
+    erros.append("apareceu cedo demais")
+r = rel("2026-12-18")
+if "**Lembrete para 24/12** — renovar a chave" not in r or "**Lembrete para 30/12** — vence amanhã" not in r or "Nada pendente" in r:
+    erros.append("faltou na semana")
+if "Lembrete para 24/12" in rel("2026-12-31"):
+    erros.append("ficou depois da data")
+os.remove(arq)
+if "Traceback" in rel("2026-12-18"):
+    erros.append("sem arquivo de lembretes, quebrou")
+print(";".join(erros) if erros else "ok")
+PYLEMB
+)"
+if [[ "$LEMB" == "ok" ]]; then
+  ok "lembretes do autor no relatório: de 14 dias antes até a data"
+else
+  bad "lembretes: $LEMB"
 fi
 
 # ------------------------------------------------------------------- resultado

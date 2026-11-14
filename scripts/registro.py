@@ -328,6 +328,12 @@ def cmd_fecha(a) -> int:
         transcricao = contagem_transcricao(arq)
     tts = _json(a.tts) if _recente(a.tts, inicio) else None
     ind = _json(a.indicadores) if _recente(a.indicadores, inicio) else None
+    # Limite do Max antes e depois do agente (scripts/limites_max.py).
+    leituras = {nome: _json(c) for nome, c in (("antes", a.max_antes), ("depois", a.max_depois))
+                if c and _recente(c, inicio)}
+    if leituras:
+        from limites_max import delta
+        leituras["gasto_pontos"] = delta(leituras.get("antes"), leituras.get("depois"))
     di, df = dt.datetime.fromtimestamp(inicio), dt.datetime.fromtimestamp(fim)
     linha = {
         "data": a.data,
@@ -349,6 +355,9 @@ def cmd_fecha(a) -> int:
                            if a.conferido == "1" else None),
         # Que versão de cada agente rodou (config/agentes.json, scripts/agentes.py).
         "agentes": _json_texto(a.agentes),
+        # Quanto do Max o episódio gastou: leituras antes e depois do agente e a
+        # diferença em pontos percentuais da janela de 5 horas e da semana.
+        "max": leituras or None,
     }
     registra(linha)
     print(f"Registro: {a.estado}, {linha['duracao_s']} s → {arquivo()}")
@@ -463,21 +472,26 @@ def cmd_mostra(a) -> int:
     mmss = lambda s: f"{int(s) // 60}:{int(s) % 60:02d}" if s is not None else "—"
     print(f"{'data':11}{'estado':8}{'total':>7}{'pesquisa':>9}{'narração':>9}{'dormiu':>8}"
           f"{'chamadas':>9}{'cache lido':>12}{'saída':>8}{'créditos':>9}{'US$ est.':>9}{'índice':>8}"
-          f"{'backlog':>9}")
+          f"{'backlog':>9}{'Max 5h/sem':>12}")
     for l in linhas:
         et, tr, cl = l.get("etapas_s") or {}, l.get("claude_transcricao") or {}, l.get("claude") or {}
         el, ind, so = l.get("elevenlabs") or {}, l.get("indicadores") or {}, l.get("mac_dormiu")
         cred = el.get("creditos")
         cred_txt = (f"{cred}" + ("" if el.get("creditos_exatos") else "~")) if cred else "—"
         usd = cl.get("custo_estimado_usd")
+        gm = (l.get("max") or {}).get("gasto_pontos") or {}
+        pts = lambda v: "↺" if v == "reiniciou" else (f"{v:+d}" if isinstance(v, int) else "—")
+        max_txt = f"{pts(gm.get('cinco_horas'))}/{pts(gm.get('semana'))}" if gm else "—"
         print(f"{l['data']:11}{l['estado']:8}{mmss(l.get('duracao_s')):>7}{mmss(et.get('pesquisa')):>9}"
               f"{mmss(et.get('narracao')):>9}{(mmss(so['segundos']) if so else '?'):>8}"
               f"{tr.get('chamadas', '—'):>9}{(f'{tr[chr(99)+chr(97)+chr(99)+chr(104)+chr(101)+chr(95)+chr(108)+chr(105)+chr(100)+chr(111)]:,}' if tr.get('cache_lido') is not None else '—'):>12}"
               f"{(f'{tr[chr(115)+chr(97)+chr(105)+chr(100)+chr(97)]:,}' if tr.get('saida') is not None else '—'):>8}"
               f"{cred_txt:>9}{(f'{usd:.2f}' if isinstance(usd, (int, float)) and usd else '—'):>9}"
               f"{(str(round(ind['indice_pautas_bytes'] / 1024)) + ' KB' if ind.get('indice_pautas_bytes') else '—'):>8}"
-              f"{(str(round(ind['backlog_bytes'] / 1024)) + ' KB' if ind.get('backlog_bytes') else '—'):>9}")
+              f"{(str(round(ind['backlog_bytes'] / 1024)) + ' KB' if ind.get('backlog_bytes') else '—'):>9}"
+              f"{max_txt:>12}")
     print("\n~ créditos estimados pelo contador de cota, anteriores ao registro exato")
+    print("Max 5h/sem: pontos percentuais do limite do Max gastos pelo agente (↺: a janela reiniciou no meio)")
     return 0
 
 
@@ -489,7 +503,7 @@ def main() -> int:
         f.add_argument(f"--{campo}", required=True)
     for campo in ("fim", "pesquisa", "narracao", "publicacao", "aviso",
                   "agente", "tts", "indicadores", "modelo", "erro",
-                  "conferido", "avisos", "agentes"):
+                  "conferido", "avisos", "agentes", "max-antes", "max-depois"):
         f.add_argument(f"--{campo}", default="")
     r = sub.add_parser("resultado"); r.add_argument("arquivo")
     i = sub.add_parser("indicadores"); i.add_argument("--data", required=True)

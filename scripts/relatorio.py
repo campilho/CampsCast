@@ -168,6 +168,14 @@ def monta(d: dt.date) -> tuple[str, dict]:
                          for m in re.finditer(r"(?m)^- aberto:\s*(\d{4}-\d{2}-\d{2})", txt)
                          if ini <= m[1] <= fim)
     avisos = [(r["data"], a) for r in regs for a in (r.get("avisos_roteiro") or [])]
+    # Lembretes do autor (config/lembretes.json): da data menos 14 dias até ela.
+    try:
+        todos = json.loads(ler(arq("LEMBRETES_ARQ", "config/lembretes.json")) or "{}").get("lembretes") or []
+    except (ValueError, AttributeError):
+        todos = []
+    lembretes = sorted((l["data"], l["texto"]) for l in todos
+                       if isinstance(l, dict) and DATA.fullmatch(str(l.get("data", "")))
+                       and l.get("texto") and hoje <= l["data"] <= limite)
 
     L = [f"# Relatório do autor — semana {semana} ({ini_d:%d/%m} a {fim_d:%d/%m})", ""]
     L += ["## Episódios", ""]
@@ -199,8 +207,10 @@ def monta(d: dt.date) -> tuple[str, dict]:
         L.append("Nenhuma execução registrada na semana.")
 
     L += ["", "## Para decidir", ""]
-    if not (pendentes or vencidos or vencendo):
+    if not (pendentes or vencidos or vencendo or lembretes):
         L.append("Nada pendente.")
+    for data, texto in lembretes:
+        L.append(f"- **Lembrete para {data[8:]}/{data[5:7]}** — {texto}")
     for s in pendentes:
         c = s["campos"]
         L.append(f"- **Sugestão de tema {s['id']}** — {c.get('pergunta de fundo', '')} "
@@ -266,7 +276,7 @@ def monta(d: dt.date) -> tuple[str, dict]:
     resumo = {"semana": semana, "episodios": len(regs), "sugestoes_pendentes": len(pendentes),
               "fios_vencidos": len(vencidos), "fios_fechados": len(fechados),
               "fios_abertos_semana": abertos_semana, "fios_expirados": len(expirados),
-              "avisos": len(avisos)}
+              "avisos": len(avisos), "lembretes": len(lembretes)}
     return "\n".join(L) + "\n", resumo
 
 

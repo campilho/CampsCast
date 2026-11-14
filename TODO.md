@@ -14,6 +14,11 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
       ficaram para o autor: o mesmo site menor (Let's Data Science) contando
       como veículo nas três pautas, um comentário no Hacker News citado como
       fonte e o X que não foi tentado. Nenhuma outra mudança no agente até medir
+- [ ] **Quanto do Max o podcast gasta** — a partir de 16/11, cada episódio
+      lê a janela de 5 horas e a semana do Max antes e depois do agente
+      (`scripts/limites_max.py`, [docs/custos.md](docs/custos.md)). Na quinta,
+      19/11, somar a semana: quantos pontos da semana do Max os quatro
+      episódios ocupam, e quanto cada um gasta da janela de 5 horas
 - [ ] **Varredura por feeds (H2), em sombra desde 13/11** —
       [plano](docs/plano-varredura-por-feeds.md). Fase 0 em 12/11, sem custo: os
       feeds e sitemaps trazem 93% das pautas de sites com feed (53 de 57 desde
@@ -33,11 +38,14 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
       episódios 35 e 38 da linha de base. Caminho novo: os créditos da API da
       Anthropic do autor (US$ 138,03 em 14/11, divididos com outro projeto),
       com `ANTHROPIC_API_KEY` só na sessão do verificador, para não gastar o
-      limite do Max que o episódio das 05:00 usa. Antes de rodar: estimar o
-      custo e o autor dizer quanto do crédito pode ir para isso (a linha de
-      base custou US$ 3,70 por episódio; do 41 ao 54 são 14 episódios, uns
-      US$ 50 nesse ritmo, contra a estimativa de US$ 25 a 35 de 02/11).
-      Depois do ensaio, decidir o V1 diário
+      limite do Max que o episódio das 05:00 usa. **Orçamento de US$ 50
+      aprovado pelo autor em 14/11** ([docs/custos.md](docs/custos.md)). No
+      ritmo da linha de base (US$ 3,70 por episódio), os 16 episódios (14
+      novos e 2 de calibração) dariam uns US$ 59: rodar em duas etapas — a
+      calibração e os três mais recentes, medir, e o resto até o teto —, num
+      worktree fora da pasta da produção, com `--max-budget-usd` e a chave
+      com nome próprio no `.env` (nunca `ANTHROPIC_API_KEY`). Depois do
+      ensaio, decidir o V1 diário
 - [ ] **LinkedIn — post sobre a memória** — não saiu (adiado em 13, 15, 20 e
       27/10 e em 03/11). Rascunho em `privado/divulgacao.md`, com a métrica da
       linha de base (memória do programa de 30% para 1,7% de erro). Reconferir
@@ -341,6 +349,10 @@ aposentar, juntar ou subir o teto.
 
 ## Datas fixas
 
+- [ ] **24/12/2026 — renovar a chave de API `chave-campscast`**, que vence em
+      31/12 às 23:00; último aviso em 30/12. Console da Anthropic, e trocar o
+      valor de `ANTHROPIC_API_KEY_VERIFICADOR` no `.env`. Os dois avisos saem
+      no relatório semanal (`config/lembretes.json`)
 - [ ] **03/01/2027 — Apple Podcasts: sem nenhum acesso, sair** (ver Divulgação)
 - [ ] **05/08/2027 — renovar `campscast.com.br`** no registro.br (R$ 40 por
       ano), um mês antes do vencimento em 05/09/2027

@@ -110,6 +110,14 @@ LOG="logs/${EPISODE_DATE}.log"
 log() { printf '[%s] %s\n' "$(date +%H:%M:%S)" "$*" | tee -a "$LOG"; }
 die() { ULTIMO_ERRO="$*"; log "ERRO: $*"; exit 1; }
 
+# O episódio roda na assinatura Max. Com ANTHROPIC_API_KEY no ambiente, o CLI
+# cobraria na API sem avisar ninguém. A chave do verificador mora no .env com
+# outro nome (ANTHROPIC_API_KEY_VERIFICADOR); esta trava cobre o engano.
+if [[ -n "${ANTHROPIC_API_KEY:-}" ]]; then
+  log "AVISO: ANTHROPIC_API_KEY no ambiente; removida para o episódio rodar no Max (docs/custos.md)"
+  unset ANTHROPIC_API_KEY
+fi
+
 # ---------- registro de execução e custo ----------
 # Uma linha por execução em metricas/execucoes.jsonl (scripts/registro.py):
 # horários de cada etapa, sono do Mac, tokens do Claude, créditos da ElevenLabs
@@ -132,6 +140,7 @@ finaliza() {
       --agente "${BASE_REGISTRO}-agente.json" --tts "${BASE_REGISTRO}-tts.json" \
       --indicadores "${BASE_REGISTRO}-indicadores.json" --erro "$ULTIMO_ERRO" \
       --conferido "$ROTEIRO_CONFERIDO" --avisos "$AVISOS_ROTEIRO" --agentes "${AGENTES_VERSOES:-}" \
+      --max-antes "${BASE_REGISTRO}-max-antes.json" --max-depois "${BASE_REGISTRO}-max-depois.json" \
       >>"$LOG" 2>&1 || true
     # Relatório do autor: junta o que pede decisão e o que deu errado na semana
     # (scripts/relatorio.py). Não bloqueia nada: falhar aqui não derruba um
@@ -408,6 +417,14 @@ $PAUTAS"
     AVISOS_CLAUDE="$(python3 scripts/confere_claude.py antes 2>"$CC_ERR" || true)"
     while IFS= read -r l; do log "$l"; done < "$CC_ERR"; rm -f "$CC_ERR"
 
+    # Limite do Max: uma leitura antes e outra depois do agente; a diferença é o
+    # que o episódio gastou da janela de 5 horas e da semana (docs/custos.md).
+    # Chamada mínima ao Haiku, fora da pasta do projeto, com prazo; falhar só
+    # deixa a leitura sem número. LIMITES_MAX=0 desliga.
+    if [[ "${LIMITES_MAX:-1}" == "1" ]]; then
+      python3 scripts/limites_max.py > "${BASE_REGISTRO}-max-antes.json" 2>>"$LOG" || true
+    fi
+
     # A etapa demora vários minutos e a saída do CLI só chega no fim, porque
     # precisa ser capturada inteira para ser validada. Sem isso o terminal fica
     # mudo e parece travado. O watcher lê a transcrição que o próprio CLI grava
@@ -451,6 +468,11 @@ except ValueError: print("ficha ilegível")' 2>/dev/null)"
     if [[ -n "$WATCHER_PID" ]]; then
       kill "$WATCHER_PID" 2>/dev/null || true
       wait "$WATCHER_PID" 2>/dev/null || true
+    fi
+    if [[ "${LIMITES_MAX:-1}" == "1" ]]; then
+      python3 scripts/limites_max.py > "${BASE_REGISTRO}-max-depois.json" 2>>"$LOG" || true
+      log "$(python3 scripts/limites_max.py --resumo "${BASE_REGISTRO}-max-antes.json" \
+        "${BASE_REGISTRO}-max-depois.json" 2>/dev/null || echo 'Max: sem leitura')"
     fi
     # A saída vem em JSON, com tokens e custo; o texto final do agente fica no
     # campo result. Stub de teste ou CLI antigo devolve texto puro, que vale como

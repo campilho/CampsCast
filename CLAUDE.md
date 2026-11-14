@@ -78,6 +78,7 @@ três veículos, dito no ar; reportagem não é publicação oficial (Editor 1.1
 | `agentes.py` | a ficha dos agentes: que versão roda (vai ao log, ao registro e ao estúdio) e se os prompts batem com ela; `ativos`, `confere`, `mostra` |
 | `jornalista.py` | o Jornalista: subagente que lê as páginas, e o hook que barra o WebFetch fora dele; só com `JORNALISTA=1` (e `JORNALISTA_MODELO`), desligado na produção ([plano](docs/plano-leitura-por-subagente.md)) |
 | `varredura.py` | o que as fontes publicaram na janela, pelos feeds e sitemaps, sem modelo; em sombra, depois do agente e fora do prompt, em `logs/varredura-AAAA-MM-DD.md`; `VARREDURA=0` desliga ([plano](docs/plano-varredura-por-feeds.md)) |
+| `limites_max.py` | quanto do limite do Max (5 horas e semana) está usado; o orquestrador lê antes e depois do agente, e a diferença vai ao log e ao registro ([custos](docs/custos.md)); `LIMITES_MAX=0` desliga |
 | `confere_repeticao.py` | avisa pauta do dia com link já usado antes; ignora páginas de listagem |
 | `relatorio.py` | relatório semanal do autor: decisões pendentes, temas, fios, fontes que falharam, avisos; `--semana`, `--fecha-semana` |
 | `confere_roteiro.py` | confere o que a abertura e a ficha não podem deixar de dizer; registra, não bloqueia |
@@ -119,6 +120,7 @@ três veículos, dito no ar; reportagem não é publicação oficial (Editor 1.1
 | `config/pronuncia.json` | como o sintetizador deve ler nomes que ele erra; só muda o áudio |
 | `config/novidades.json` | mudanças a anunciar na abertura, cada uma com data de início e de fim |
 | `config/schedule.json` | dias de publicação, feriados, exceções |
+| `config/lembretes.json` | lembretes do autor (vencimento de chave, por exemplo) que entram no relatório semanal a partir de 14 dias antes |
 | `memoria/temas.md` | temas: questões de fundo que não fecham; criados pelo autor |
 | `memoria/temas-sugeridos.md` | sugestões de tema (do agente; no futuro, de ouvintes) que o autor aprova ou recusa |
 | `memoria/fios.md` | fios em aberto: promessas, previsões e preocupações à espera de desfecho ([ADR 0008](docs/decisions/0008-memoria-em-camadas.md)) |
