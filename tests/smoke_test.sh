@@ -3086,7 +3086,14 @@ r = ativos("0")
 assert json.loads(r.stdout) == {"editor": ed["versao"] + "+mudado"} and "mudou e a ficha não" in r.stderr, (r.stdout, r.stderr)
 # O estúdio: quem faz o Jornalista hoje é o Editor, porque o Jornalista não está na produção.
 assert estudio.quem_faz("jornalista")["id"] == "editor" and estudio.quem_faz("locutor") is None
-assert set(estudio.ficha_agentes()) == {"editor", "jornalista"}
+assert set(estudio.ficha_agentes()) == {"editor", "jornalista", "divulgador"}
+# O Divulgador roda à parte (scripts/divulga.py): o modelo, o esforço e as
+# ferramentas da ficha são os do script, e ele não entra na ficha do episódio.
+import divulga
+dv = f["divulgador"]["historico"][-1]
+assert (dv["modelo"], dv["esforco"], dv["ferramentas"]) == (divulga.MODELO, divulga.ESFORCO, divulga.FERRAMENTAS), "Divulgador fora da ficha"
+assert set(dv["prompts"]) == {"prompts/divulgador.md", "config/divulgacao.md"}
+assert not f["divulgador"]["producao"] and "WebFetch" not in dv["ferramentas"] and "Bash" not in dv["ferramentas"]
 print("ok")
 FIM
 )" && [[ "$FICHA_OK" == "ok" ]]; then
@@ -3514,6 +3521,247 @@ if [[ "$LEMB" == "ok" ]]; then
 else
   bad "lembretes: $LEMB"
 fi
+
+# ------------------------------------------------------------------ Divulgador
+# A pauta do post da semana (scripts/divulga.py). O que travava a divulgação
+# era o tempo do autor: um post pronto ficou cinco terças sem sair. O agente
+# entrega matéria-prima conferida e não publica; o que os testes seguram é a
+# conferência, que roda sem modelo, e que nada é enviado sem querer.
+export DIV_DIR="$(mktemp -d)"
+export DIVULGACAO_DIR="$DIV_DIR/pautas" DIVULGACAO_ARQ="$DIV_DIR/registro.jsonl" DIVULGA_AVISO=0
+mkdir -p "$DIVULGACAO_DIR" logs
+printf '%s\n' '# Fonte de teste' 'Foram 949 afirmações nos episódios 1 a 40.' \
+  'O erro ficou em 7,9% no total.' > logs/divulga-fonte.md
+
+DIV_UNI="$(python3 - <<'FIM' 2>&1
+import datetime as dt, pathlib, re, sys
+sys.path.insert(0, "scripts")
+import divulga as d
+D = dt.date.fromisoformat
+# Sábado e domingo ainda são a semana que acabou; de segunda a sexta, a anterior.
+# 2026 tem 53 semanas ISO: a pauta de 02/01/2027 é da W53, e o post, de 05/01.
+for dia, sem in [("2026-11-21", "2026-W47"), ("2026-11-22", "2026-W47"), ("2026-11-23", "2026-W47"),
+                 ("2026-11-27", "2026-W47"), ("2026-11-28", "2026-W48"), ("2027-01-02", "2026-W53")]:
+    assert d.semana_da_pauta(D(dia)) == sem, (dia, d.semana_da_pauta(D(dia)))
+assert d.dia_do_post("2026-W47", 2) == D("2026-11-24") and d.dia_do_post("2026-W53", 2) == D("2027-01-05")
+assert d.numeros("5.693 pessoas, 7,9% e o Opus 5.5 às 05h") == {"5693", "7.9", "5.5", "5"}, d.numeros("5.693 pessoas, 7,9% e o Opus 5.5 às 05h")
+assert d.canonico("5-5") == "5.5" and d.canonico("08") == "8"
+# Os links do primeiro comentário são os do README (o do repositório, o de
+# config/show.json), letra por letra: o do Spotify com "I" no lugar do "l" dá 404.
+conf, sabidos = d.config(), pathlib.Path("README.md").read_text() + pathlib.Path("config/show.json").read_text()
+for i in conf["primeiro_comentario"]:
+    assert i["url"] in sabidos, i["url"]
+assert 1 <= conf["dia_do_post"] <= 7 and re.fullmatch(r"\d\d:\d\d", conf["hora_do_post"])
+
+def pauta(fatos, rascunho, semana="2026-W47", extra="## Outras histórias\n\n- outra\n"):
+    return ("---\nsemana: %s\npost_para: 2026-11-24\nhistoria: \"teste\"\nestado: rascunho\n---\n\n"
+            "## A história\n\nx\n\n## Por que agora\n\nx\n\n## Fatos\n\n"
+            "| n | afirmação | tipo | fonte | trecho |\n|---|---|---|---|---|\n%s\n\n"
+            "## Rascunho de partida\n\n%s\n\n%s") % (semana, "\n".join(fatos), rascunho, extra)
+F1 = "| 1 | 949 afirmações conferidas | citado | logs/divulga-fonte.md:2 | Foram 949 afirmações |"
+F2 = "| 2 | 7,9% de erro | citado | logs/divulga-fonte.md:3 | ficou em 7,9% no total |"
+F3 = "| 3 | o programa tem 12 semanas | conta | logs/divulga-fonte.md | de 24/08 a 17/11 |"
+R = "Conferi 949 afirmações em 12 semanas: 7,9% tinham erro. E você, mede?"
+conf_ = lambda t, s="2026-W47": d.confere(t, s, 2200)
+r = conf_(pauta([F1, F2, F3], R))
+assert r["problemas"] == [] and r["fatos"] == 3 and len(r["contas"]) == 1, r
+barra = lambda t, pedaco, s="2026-W47": any(pedaco in p for p in conf_(t, s)["problemas"]) or sys.exit(f"não barrou: {pedaco}: {conf_(t, s)['problemas']}")
+barra(pauta([F1, F2, F3], R + " Foram 40 episódios."), "o número 40 está no rascunho")
+barra(pauta([F1.replace("divulga-fonte", "nao-existe"), F2, F3], R), "não existe no repositório")
+barra(pauta([F1.replace("logs/divulga-fonte.md:2", "../fora.md:1"), F2, F3], R), "não existe no repositório")
+barra(pauta([F1.replace("Foram 949", "Foram 950"), F2, F3], R), "o trecho não está na linha 2")
+barra(pauta([F1.replace("949 afirmações conferidas", "949 afirmações em 41 episódios"), F2, F3], R), "o número 41 da afirmação")
+barra(pauta([F1.replace(".md:2", ".md"), F2, F3], R), "sem linha na fonte")
+barra(pauta([F1.replace(".md:2", ".md:99"), F2, F3], R), "tem 3 linhas")
+barra(pauta([F1 + " a mais |", F2, F3], R), "colunas")
+barra(pauta([F1, F2, F3], R + " Veja em campscast.com.br."), "link ou endereço")
+barra(pauta([F1, F2, F3], R, extra=""), "falta a seção 'Outras histórias'")
+barra(pauta([F1, F2, F3], R), "a pauta é da 2026-W48", "2026-W48")
+assert "não termina em pergunta" in " ".join(conf_(pauta([F1, F2, F3], R.replace("E você, mede?", "Fim.")))["avisos"])
+# A seção trocada não duplica, e o cabeçalho sobrevive a aspas na história.
+c = d.com_secao(d.com_secao("## A\n\nx\n", "Conferência", "um"), "Conferência", "dois")
+assert c.count("## Conferência") == 1 and "dois" in c and "um" not in c, c
+campos, corpo = d.cabecalho(d.monta({"semana": "2026-W47", "historia": 'a "b" c'}, "## A\n\nx\n"))
+assert campos == {"semana": "2026-W47", "historia": "a 'b' c"} and corpo.lstrip().startswith("## A"), (campos, corpo)
+print("ok")
+FIM
+)"
+if [[ "$DIV_UNI" == "ok" ]]; then
+  ok "Divulgador: a semana da pauta, o dia do post, e a conferência barra número sem fonte, trecho que não está na linha e link no corpo"
+else
+  bad "Divulgador, conferência: $DIV_UNI"
+fi
+
+# Ponta a ponta com um agente falso: a pauta, a conferência, a entrega, o
+# lembrete e a marca do autor. A chave de API não chega ao agente.
+cat > "$DIV_DIR/claude" <<'STUB'
+#!/bin/sh
+printf '%s\n' "${ANTHROPIC_API_KEY:-sem-chave}" > "$DIV_DIR/chave"
+printf '%s\n' "$@" > "$DIV_DIR/args"
+SEM="$(printf '%s\n' "$@" | sed -n 's/^- SEMANA: //p')"
+[ "$SEM" = "2026-W49" ] && { printf '%s' '{"type":"result","is_error":true,"result":"Failed to authenticate"}'; exit 0; }
+NUM=""; [ "$SEM" = "2026-W48" ] && NUM=" Foram 40 episódios."
+cat > "$DIVULGACAO_DIR/$SEM.md" <<MD
+---
+semana: $SEM
+post_para: 2026-11-24
+historia: "a conferência dos 40 primeiros"
+estado: rascunho
+---
+
+## A história
+
+x
+
+## Por que agora
+
+x
+
+## Fatos
+
+| n | afirmação | tipo | fonte | trecho |
+|---|---|---|---|---|
+| 1 | 949 afirmações conferidas | citado | logs/divulga-fonte.md:2 | Foram 949 afirmações |
+| 2 | o programa tem 12 semanas | conta | logs/divulga-fonte.md | de 24/08 a 17/11 |
+
+## Rascunho de partida
+
+Conferi 949 afirmações em 12 semanas.$NUM E você, mede?
+
+## Outras histórias
+
+- outra
+MD
+printf '%s' "{\"type\":\"result\",\"is_error\":false,\"result\":\"OK $SEM.md\",\"num_turns\":7,\"total_cost_usd\":0.42,\"duration_ms\":61000}"
+STUB
+chmod +x "$DIV_DIR/claude"
+DIV_E2E="$(
+  set +e; erros=""
+  falha() { erros="$erros; $1"; }
+  estado() { sed -n 's/^estado: //p' "$DIVULGACAO_DIR/$1.md"; }
+  O1="$(ANTHROPIC_API_KEY=sk-teste CLAUDE_BIN="$DIV_DIR/claude" python3 scripts/divulga.py --data 2026-11-21 --only pauta,confere 2>&1)"; RC=$?
+  [[ $RC -eq 0 && "$(estado 2026-W47)" == "conferida" ]] || falha "pauta boa não saiu conferida (rc=$RC): $O1"
+  [[ "$(cat "$DIV_DIR/chave")" == "sem-chave" ]] || falha "ANTHROPIC_API_KEY chegou ao agente"
+  grep -q -- '- POST_PARA: 2026-11-24' "$DIV_DIR/args" && grep -qx 'Read,Write,Glob,Grep' "$DIV_DIR/args" \
+    || falha "parâmetros ou ferramentas fora do comando"
+  grep -q 'open.spotify.com/show/5toSeNQlZxjbCAFPA1gAuJ' "$DIVULGACAO_DIR/2026-W47.md" \
+    && grep -q 'Conferir à mão' "$DIVULGACAO_DIR/2026-W47.md" || falha "primeiro comentário ou contas fora da pauta"
+  grep -q '"evento": "pauta", "estado": "ok".*"custo_usd": 0.42' "$DIVULGACAO_ARQ" \
+    && grep -q '"evento": "conferencia", "resultado": "ok"' "$DIVULGACAO_ARQ" || falha "registro sem a pauta ou a conferência"
+  O2="$(python3 scripts/divulga.py --data 2026-11-21 --only entrega --dry-run 2>&1)"
+  [[ "$O2" == *"pauta do post de terça, 24/11"* && "$O2" == *"nada foi enviado"* && "$(estado 2026-W47)" == "conferida" ]] \
+    || falha "dry-run da entrega mexeu no estado ou não mostrou a pauta"
+  # A rotina inteira: a pauta já existe, o agente não roda de novo; depois de entregue, nada a fazer.
+  O3="$(CLAUDE_BIN=/usr/bin/false python3 scripts/divulga.py --data 2026-11-21 --rotina 2>&1)"; RC=$?
+  [[ $RC -eq 0 && "$(estado 2026-W47)" == "entregue" ]] || falha "a rotina não entregou (rc=$RC): $O3"
+  O4="$(CLAUDE_BIN=/usr/bin/false python3 scripts/divulga.py --data 2026-11-22 --rotina 2>&1)"
+  [[ "$O4" == *"Nada a fazer"* ]] || falha "repescagem refez a semana entregue"
+  # No dia do post, a rotina é o lembrete do primeiro comentário.
+  O5="$(python3 scripts/divulga.py --data 2026-11-24 --rotina 2>&1)"
+  [[ "$O5" == *"o primeiro comentário"* && "$O5" == *"github.com/campilho/CampsCast"* ]] || falha "lembrete: $O5"
+  python3 scripts/divulga.py --semana 2026-W47 --marca agendado --minutos 25 >/dev/null 2>&1
+  [[ "$(estado 2026-W47)" == "agendado" && "$(python3 scripts/divulga.py --mostra)" == *"1 de 1 semanas com post agendado"* ]] \
+    || falha "marca do autor"
+  # Pauta com número sem fonte: barrada, entregue com ressalvas, e a rotina sai com 1.
+  O6="$(CLAUDE_BIN="$DIV_DIR/claude" python3 scripts/divulga.py --data 2026-11-28 --rotina 2>&1)"; RC=$?
+  [[ $RC -eq 1 && "$O6" == *"(com ressalvas)"* && "$(estado 2026-W48)" == "entregue" ]] \
+    && grep -q '^conferencia: barrada' "$DIVULGACAO_DIR/2026-W48.md" || falha "pauta barrada (rc=$RC): $O6"
+  python3 scripts/divulga.py --semana 2026-W48 --marca sem-post >/dev/null 2>&1
+  [[ "$(python3 scripts/divulga.py --data 2026-12-01 --rotina 2>&1)" == *"Sem post para hoje"* ]] || falha "lembrete de semana sem post"
+  # Login expirado sai com código 0 e só a mensagem denuncia, como no episódio.
+  O7="$(CLAUDE_BIN="$DIV_DIR/claude" python3 scripts/divulga.py --data 2026-12-05 --rotina 2>&1)"; RC=$?
+  [[ $RC -eq 3 && ! -f "$DIVULGACAO_DIR/2026-W49.md" ]] && grep -q '"semana": "2026-W49", "evento": "pauta", "estado": "falhou"' "$DIVULGACAO_ARQ" \
+    || falha "falha do agente (rc=$RC): $O7"
+  printf '%s' "${erros:-ok}"
+)"
+if [[ "$DIV_E2E" == "ok" ]]; then
+  ok "Divulgador ponta a ponta: pauta, conferência, entrega, lembrete e marca; a chave de API não chega ao agente; pauta barrada sai com ressalvas"
+else
+  bad "Divulgador ponta a ponta: $DIV_E2E"
+fi
+
+# O agendamento à parte: sábado para a pauta, o dia e a hora do post para o lembrete.
+if command -v plutil >/dev/null 2>&1; then
+  PL_DIV="$(bash scripts/install_launchd_divulgador.sh --print 2>&1)"
+  ESPERA="$(python3 -c "
+import json; c = json.load(open('config/divulgacao.json')); h, m = c['hora_do_post'].split(':')
+print(f\"<key>Weekday</key><integer>{c['dia_do_post'] % 7}</integer><key>Hour</key><integer>{int(h)}</integer><key>Minute</key><integer>{int(m)}</integer>\")")"
+  if printf '%s' "$PL_DIV" | plutil -lint - >/dev/null 2>&1 && [[ "$PL_DIV" == *"--rotina"* && "$PL_DIV" == *"$ESPERA"* \
+        && "$PL_DIV" == *"<key>Weekday</key><integer>6</integer><key>Hour</key><integer>8</integer>"* ]]; then
+    ok "agendamento do Divulgador: plist válido, sábado às 08:00 e o lembrete na hora de config/divulgacao.json"
+  else
+    bad "agendamento do Divulgador: plist inválido ou sem os horários"
+  fi
+fi
+# O token da assinatura vem do .env, como no run_episode.sh: o launchd não o
+# passa, e sem ele o CLI cai no login interativo do Mac, que pode estar
+# desligado (15/11: "OAuth refresh token is no longer valid"). E o Max é lido
+# antes e depois do agente, como no episódio.
+cat > "$DIV_DIR/claude2" <<'STUB'
+#!/bin/sh
+case "$*" in
+  *stream-json*)
+    n=$(cat "$DIV_DIR/n" 2>/dev/null || echo 0); n=$((n+1)); echo $n > "$DIV_DIR/n"
+    if [ $n -eq 1 ]; then u=0.30; else u=0.32; fi
+    printf '{"type":"rate_limit_event","rate_limit_info":{"status":"allowed","unifiedWindows":{"five_hour":{"utilization":%s,"resetsAt":1794685200},"seven_day":{"utilization":0.13,"resetsAt":1794708000}}}}\n' "$u"
+    exit 0 ;;
+esac
+printf '%s\n' "${CLAUDE_CODE_OAUTH_TOKEN:-sem-token}" > "$DIV_DIR/token"
+SEM="$(printf '%s\n' "$@" | sed -n 's/^- SEMANA: //p')"
+cat > "$DIVULGACAO_DIR/$SEM.md" <<MD
+---
+semana: $SEM
+post_para: 2026-12-15
+historia: "teste do token"
+estado: rascunho
+---
+
+## A história
+
+x
+
+## Por que agora
+
+x
+
+## Fatos
+
+| n | afirmação | tipo | fonte | trecho |
+|---|---|---|---|---|
+| 1 | 949 afirmações conferidas | citado | logs/divulga-fonte.md:2 | Foram 949 afirmações |
+
+## Rascunho de partida
+
+Conferi 949 afirmações. E você, mede?
+
+## Outras histórias
+
+- outra
+MD
+printf '%s' "{\"type\":\"result\",\"is_error\":false,\"result\":\"OK $SEM.md\",\"num_turns\":3,\"total_cost_usd\":0.1,\"duration_ms\":1000}"
+STUB
+chmod +x "$DIV_DIR/claude2"
+printf 'CLAUDE_CODE_OAUTH_TOKEN=token-do-env\nSMTP_HOST=\n' > "$DIV_DIR/env"
+DIV_TOK="$(
+  set +e; erros=""
+  env -u CLAUDE_CODE_OAUTH_TOKEN DIV_DIR="$DIV_DIR" DIVULGA_ENV_ARQ="$DIV_DIR/env" LIMITES_MAX=1 CLAUDE_BIN="$DIV_DIR/claude2" \
+    python3 scripts/divulga.py --data 2026-12-12 --only pauta >/dev/null 2>&1
+  [[ "$(cat "$DIV_DIR/token" 2>/dev/null)" == "token-do-env" ]] || erros="$erros; o token do .env não chegou ao agente ($(cat "$DIV_DIR/token" 2>/dev/null))"
+  grep -q '"semana": "2026-W50", "evento": "pauta".*"gasto_pontos": {"cinco_horas": 2, "semana": 0}' "$DIVULGACAO_ARQ" \
+    || erros="$erros; o Max antes e depois não foi para o registro"
+  # Sem SMTP, a pauta não sai do Mac: a falta tem de aparecer, com os nomes que faltam.
+  F="$(env -u NOTIFY_TO -u SMTP_HOST -u SMTP_USER -u SMTP_PASS DIVULGA_ENV_ARQ="$DIV_DIR/env" python3 -c '
+import sys; sys.path.insert(0, "scripts"); import divulga; print(",".join(divulga.falta_smtp()))' 2>&1)"
+  [[ "$F" == "NOTIFY_TO,SMTP_HOST,SMTP_USER,SMTP_PASS" ]] || erros="$erros; SMTP faltando não apareceu: $F"
+  printf '%s' "${erros:-ok}"
+)"
+if [[ "$DIV_TOK" == "ok" ]]; then
+  ok "Divulgador: token da assinatura vem do .env, o Max entra no registro, e a falta de SMTP aparece"
+else
+  bad "Divulgador, token e Max:$DIV_TOK"
+fi
+rm -rf "$DIV_DIR" logs/divulga-fonte.md logs/divulga-*-agente.json
+unset DIVULGACAO_DIR DIVULGACAO_ARQ DIVULGA_AVISO DIV_DIR
 
 # ------------------------------------------------------------------- resultado
 printf '\n\033[1m%s\033[0m\n' "Resultado: $PASS ok, $FAIL falha(s)"

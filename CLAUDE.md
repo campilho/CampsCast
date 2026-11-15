@@ -4,7 +4,7 @@ Podcast diário de IA em português, escrito e narrado por agentes, publicado em
 dias úteis. Rodando em produção desde 24/08/2026.
 
 > **Antes de mexer em qualquer coisa:** `bash tests/smoke_test.sh`
-> São 176 testes, offline, sem custo. Rode antes e depois de alterar.
+> São 186 testes, offline, sem custo. Rode antes e depois de alterar.
 
 ## Regra número um
 
@@ -101,6 +101,12 @@ três veículos, dito no ar; reportagem não é publicação oficial (Editor 1.1
 | `transcricoes.py` | a transcrição de uma sessão com as dos subagentes dela; desde 05/11 as leituras de página moram lá |
 | `estado.py` | publica `estado.json` no S3 dizendo como a execução terminou; é o que o vigia externo lê |
 
+### Divulgação
+| Script | O que faz |
+|---|---|
+| `divulga.py` | o Divulgador: no sábado, a pauta do post da semana em `privado/divulgacao/` (o agente escolhe a história e ancora cada fato em arquivo e linha), a conferência sem modelo e a entrega ao autor, que escreve e agenda; `--only pauta,confere,entrega`, `--dry-run`, `--lembrete`, `--marca agendado\|sem-post`, `--mostra` ([ADR 0014](docs/decisions/0014-o-divulgador.md), [plano](docs/plano-divulgador.md)) |
+| `install_launchd_divulgador.sh` | o agendamento do Divulgador, à parte do episódio; `--print`, `--uninstall` |
+
 ### Clonagem de voz
 | Script | O que faz |
 |---|---|
@@ -129,6 +135,8 @@ três veículos, dito no ar; reportagem não é publicação oficial (Editor 1.1
 | `prompts/jornalista.md` | o Jornalista, e `prompts/leitura-pelo-jornalista.md`, o que o agente principal ganha no prompt quando ele está ligado |
 | `config/varredura.json` | feeds, sitemaps e APIs que o `varredura.py` lê, com teto por fonte e prazos; fora do `sources.yaml` porque o agente lê aquele |
 | `config/rubrica-pautas.md` | régua das pautas: porteira da fonte e quatro notas ([ADR 0012](docs/decisions/0012-nota-das-pautas.md)); ainda fora da produção |
+| `prompts/divulgador.md` | o Divulgador; as regras do texto ficam em `config/divulgacao.md`, e as duas entram na ficha dele |
+| `config/divulgacao.json` | dia e hora do post, teto do rascunho e os links do primeiro comentário |
 | `config/cloudfront-site.js` | função do CloudFront que abre o `index.html` das pastas do site e leva `/studio` ao estúdio; colada à mão no console |
 
 Relatório da semana: comando `/relatorio` (`.claude/commands/relatorio.md`).

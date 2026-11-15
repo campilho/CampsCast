@@ -362,6 +362,16 @@ aposentar, juntar ou subir o teto.
 
 ## Divulgação
 
+- [ ] **O Divulgador** ([plano](docs/plano-divulgador.md),
+      [ADR 0014](docs/decisions/0014-o-divulgador.md)) — escrito em 15/11, com
+      a suíte verde. Ensaio em 15/11: US$ 0,83, +1 ponto na semana do Max,
+      conferência ok (ADR 0014). O login que falhou era o token do `.env` que
+      o script não passava; corrigido. Post às terças, 12:00. Falta: o e-mail
+      no `.env` (`NOTIFY_TO`, `SMTP_USER`, `SMTP_PASS`; sem eles a pauta não
+      sai do Mac), o autor ler `config/divulgacao.md`, o commit, instalar o
+      agendamento (`scripts/install_launchd_divulgador.sh`) e a primeira
+      pauta, no sábado 21/11. Depois de cada domingo:
+      `python3 scripts/divulga.py --marca agendado --minutos N`
 - [ ] **Post sobre a memória** — ver a semana de 02/11. Rascunhos e regras em
       `privado/divulgacao.md`
 - [ ] **Apple Podcasts: divulgar ou sair** — o foco é o Spotify. Se até

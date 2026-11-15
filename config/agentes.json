@@ -66,6 +66,25 @@
           "medido": "Ensaio de 04/11, rodado em 09/11: US$ 5,98 (1.1: 6,98; modo direto: 5,05). Os relatórios voltaram como resposta da chamada. O Editor fez 39 chamadas ao modelo (1.1: 59; modo direto: 51), e o Opus custou 4,00, o mesmo do modo direto. Sobram o Sonnet (0,53) e as buscas: o Editor fez 49, contra 23 no modo direto, então não era a espera que as puxava. Nenhum 429."
         }
       ]
+    },
+    "divulgador": {
+      "nome": "Divulgador",
+      "papel": "Uma vez por semana, monta a pauta do post do LinkedIn: escolhe a história, confere cada fato no repositório e escreve um rascunho de partida. Não escreve o post final e não publica: o autor escreve a versão dele e agenda.",
+      "personagens": [],
+      "producao": false,
+      "chave": "scripts/divulga.py",
+      "historico": [
+        {
+          "versao": "1.0",
+          "desde": "2026-11-21",
+          "prompts": {"prompts/divulgador.md": "90b6dda57c1c", "config/divulgacao.md": "af8bef93757c"},
+          "modelo": "claude-opus-5-5",
+          "esforco": "high",
+          "ferramentas": ["Read", "Write", "Glob", "Grep"],
+          "mudou": "Primeira versão. Sem web: tudo o que entra na pauta está no repositório. A saída é um arquivo só, em privado/divulgacao/, com a tabela de fatos (citado, com arquivo e linha, ou conta, com o modo de contar) que o scripts/divulga.py confere sem modelo. Fora da ficha da produção do episódio: roda à parte, no sábado.",
+          "medido": "Ensaio de 15/11, semana 46 (post para 17/11), no ambiente do launchd e numa pasta à parte: US$ 0,83 a preço de API, 14 turnos, 2 minutos; o Max subiu 2 pontos na janela de 5 horas e 1 na semana. A conferência passou: 12 fatos citados, cada um na linha da fonte, e 1 conta para conferir à mão. Escolheu a história da semana (o ensaio do verificador), não a da fila. O que a conferência não viu: uma frase sem número no rascunho e as outras histórias, que não são conferidas."
+        }
+      ]
     }
   }
 }

@@ -1,0 +1,12 @@
+{
+  "_sobre": "O que o scripts/divulga.py precisa saber do post da semana. dia_do_post é o dia da semana ISO (2 = terça); hora_do_post é a hora de São Paulo em que o post agendado sai, e é nela que o script lembra do primeiro comentário. limite_caracteres é o teto do rascunho de partida. primeiro_comentario são os links, na ordem: o script os escreve na pauta e no lembrete, e a suíte confere cada endereço contra o README e o config/show.json (o do Spotify tem um 'l' minúsculo depois de NQ; com 'I' maiúsculo dá página não encontrada).",
+  "dia_do_post": 2,
+  "hora_do_post": "12:00",
+  "limite_caracteres": 2200,
+  "primeiro_comentario": [
+    {"rotulo": "🎧 Spotify", "url": "https://open.spotify.com/show/5toSeNQlZxjbCAFPA1gAuJ"},
+    {"rotulo": "🍎 Apple Podcasts", "url": "https://podcasts.apple.com/br/podcast/campscast/id6809631318"},
+    {"rotulo": "💻 Código aberto", "url": "https://github.com/campilho/CampsCast"},
+    {"rotulo": "🎙️ O estúdio, com os agentes trabalhando", "url": "https://campscast.com.br"}
+  ]
+}
