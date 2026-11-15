@@ -323,8 +323,11 @@ aposentar, juntar ou subir o teto.
       (`forward-email=contato:…`) traz o endereço do Gmail por extenso, e
       `dig TXT campscast.com.br` mostra para qualquer um (medido em 02/11). O
       site vai convidar a escrever para o `contato@`, então vale esconder
-      antes de divulgar: o Forward Email oferece cifrar o valor desse TXT
-      (conferir no site deles), e aí é trocar o registro no Route 53.
+      antes de divulgar: o Forward Email cifra o valor desse TXT de graça
+      (forwardemail.net/en/encrypt, conferido em 15/11), e aí é trocar a linha
+      `forward-email=` no Route 53, sem mexer no SPF nem nos MX. Preferir isso
+      a encaminhar para o Gmail do CampsCast: a senha de app daquela conta
+      está no `.env` e abre a caixa, e as sugestões de ouvintes iriam parar lá.
       Anotação do encaminhamento em `privado/email-contato.md`
 
 - [ ] **Sem rede, conferir a repescagem de verdade** — desde 28/10 a execução
@@ -339,9 +342,10 @@ aposentar, juntar ou subir o teto.
       decidir o teto olhando o registro, não no chute
 - [ ] **Antes da próxima viagem:** `claude setup-token` para um token longo;
       Remote Control ligado na sessão do app; Mac na tomada, tampa aberta
-- [ ] **Preencher `NOTIFY_TO`, `SMTP_USER` e `SMTP_PASS`** no `.env`, ou tirar
-      as variáveis pela metade. Hoje o `notify.py` cai calado na notificação do
-      macOS, que não sai da tela de casa
+- [x] **E-mail de aviso pelo SMTP** (15/11) — um Gmail só do CampsCast envia,
+      com senha de app; o Gmail do autor só recebe e não guarda credencial no
+      `.env`. Teste pelo `notify.py` chegou. Se a senha vazar, revoga-se só
+      ela, numa caixa que não guarda nada além dos avisos
 - [ ] (ideia) **Detectar sozinho a troca de modelo ou de voz** e gerar a
       novidade — exige gravar os modelos usados no front-matter
 
@@ -366,11 +370,9 @@ aposentar, juntar ou subir o teto.
       [ADR 0014](docs/decisions/0014-o-divulgador.md)) — escrito em 15/11, com
       a suíte verde. Ensaio em 15/11: US$ 0,83, +1 ponto na semana do Max,
       conferência ok (ADR 0014). O login que falhou era o token do `.env` que
-      o script não passava; corrigido. Post às terças, 12:00. Falta: o e-mail
-      no `.env` (`NOTIFY_TO`, `SMTP_USER`, `SMTP_PASS`; sem eles a pauta não
-      sai do Mac), o autor ler `config/divulgacao.md`, o commit, instalar o
-      agendamento (`scripts/install_launchd_divulgador.sh`) e a primeira
-      pauta, no sábado 21/11. Depois de cada domingo:
+      o script não passava; corrigido. Post às terças, 12:00. Agendamento
+      instalado e e-mail configurado em 15/11. Falta: a primeira pauta, no
+      sábado 21/11. Depois de cada domingo:
       `python3 scripts/divulga.py --marca agendado --minutos N`
 - [ ] **Post sobre a memória** — ver a semana de 02/11. Rascunhos e regras em
       `privado/divulgacao.md`
