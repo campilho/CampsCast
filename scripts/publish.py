@@ -29,6 +29,11 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 EPISODES = ROOT / "episodes"
 AUDIO = ROOT / "audio"
 FEED_OUT = ROOT / "feed" / "feed.xml"
+# Capa própria de um episódio: assets/capas/AAAA-MM-DD.jpg. Sem o arquivo, o
+# episódio herda a capa do programa, como sempre. A Apple lê <itunes:image> por
+# episódio; se o Spotify lê vindo por RSS é o que o teste de 20/11 vai dizer
+# (a ajuda dele fala só de programa hospedado lá).
+CAPAS = ROOT / "assets" / "capas"
 
 # Hub público de WebSub (PubSubHubbub). Serve para avisar agregadores de que o
 # feed mudou, em vez de depender de eles voltarem sozinhos.
@@ -186,6 +191,7 @@ def collect_episodes() -> list[dict]:
             "size": audio_path.stat().st_size,
             "duration": secs,
             "episode": fm.get("episode"),
+            "capa": (CAPAS / f"{path.stem}.jpg").exists(),
         })
     return eps
 
@@ -208,6 +214,8 @@ def build_feed(show: dict, eps: list[dict]) -> str:
         num = (f"    <itunes:episode>{int(str(ep['episode']))}</itunes:episode>\n"
                if str(ep.get("episode") or "").isdigit() else "")
         url = f"{base}/audio/{ep['audio_path'].name}"
+        capa = (f"    <itunes:image href=\"{escape(base)}/capas/{ep['date']}.jpg\"/>\n"
+                if ep.get("capa") else "")
         items.append(
             "  <item>\n"
             f"    <title>{escape(ep['title'])}</title>\n"
@@ -220,6 +228,7 @@ def build_feed(show: dict, eps: list[dict]) -> str:
             f"    <itunes:explicit>{'true' if show['explicit'] else 'false'}</itunes:explicit>\n"
             f"    <itunes:episodeType>full</itunes:episodeType>\n"
             f"{num}"
+            f"{capa}"
             "  </item>"
         )
 
@@ -308,6 +317,13 @@ def upload(date: str, show: dict) -> bool:
                      "audio/mpeg", "max-age=31536000"))
     else:
         print(f"AVISO: {audio_file.name} não existe — subindo só o feed.")
+    # A capa do episódio também antes do feed, pelo mesmo motivo. Cache de um
+    # dia, e não de um ano como o áudio: uma capa refeita com o mesmo nome
+    # precisa aparecer.
+    capa_file = CAPAS / f"{date}.jpg"
+    if capa_file.exists():
+        jobs.append((capa_file, key_for(f"capas/{capa_file.name}"),
+                     "image/jpeg", "max-age=86400"))
     jobs.append((FEED_OUT, key_for("feed.xml"),
                  "application/rss+xml", "max-age=300"))
 

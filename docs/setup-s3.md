@@ -68,7 +68,8 @@ python3 scripts/s3.py --print-policy
 
 Cole a saída em **Permissions → Bucket policy → Edit → Save changes**.
 
-A permissão é só para `feed.xml`, `cover.jpg` e `audio/*`, não para o bucket
+A permissão é só para o que o feed e o site servem (`feed.xml`, `cover.jpg`,
+`audio/*`, `capas/*`, as pastas do site), não para o bucket
 inteiro. Se um dia você guardar rascunho ou nota lá dentro, ele não fica exposto
 por acidente.
 

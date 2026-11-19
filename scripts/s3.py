@@ -258,6 +258,8 @@ def bucket_policy(bucket: str) -> dict:
                 f"arn:aws:s3:::{bucket}/cover.jpg",
                 f"arn:aws:s3:::{bucket}/audio/*",
                 f"arn:aws:s3:::{bucket}/referencias/*",
+                # capa própria de um episódio, lida pelo app de podcast
+                f"arn:aws:s3:::{bucket}/capas/*",
             ],
         }, {
             "Sid": "LeituraPublicaDoSite",

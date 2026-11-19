@@ -774,6 +774,7 @@ assert recursos == [
     "arn:aws:s3:::meu-bucket/cover.jpg",
     "arn:aws:s3:::meu-bucket/audio/*",
     "arn:aws:s3:::meu-bucket/referencias/*",
+    "arn:aws:s3:::meu-bucket/capas/*",
 ], recursos
 assert all(r.startswith("arn:aws:s3:::") for r in recursos), "ARN mal formado"
 assert not any("s3://" in r for r in recursos), "ARN não usa esquema s3://"
@@ -1308,6 +1309,26 @@ if [[ "$PUB" == "ok" ]]; then
   ok "feed leva <itunes:episode> quando o roteiro tem número"
 else
   bad "feed sem <itunes:episode> ($PUB)"
+fi
+CAPA="$(python3 - <<'PYCAPA'
+import json, pathlib, sys
+sys.path.insert(0, "scripts")
+import publish
+show = json.load(open("config/show.json"))
+base = {"date": "2026-11-19", "title": "t", "topics": ["a"], "audio_path": pathlib.Path("audio/x.mp3"),
+        "size": 1, "duration": 60}
+com = publish.build_feed(show, [{**base, "capa": True}])
+sem = publish.build_feed(show, [base])
+item_com = com.split("<item>")[1]; item_sem = sem.split("<item>")[1]
+url = show["base_url"].rstrip("/") + "/capas/2026-11-19.jpg"
+print("ok" if f'<itunes:image href="{url}"/>' in item_com and "itunes:image" not in item_sem
+      and sem.count("itunes:image") == 1 else "falhou")
+PYCAPA
+)" || CAPA="erro"
+if [[ "$CAPA" == "ok" ]]; then
+  ok "capa do episódio entra no feed só quando o arquivo existe"
+else
+  bad "capa por episódio no feed ($CAPA)"
 fi
 if grep -q "EPISODE_NUMBER" prompts/master.md && grep -q "AGENTE_NOME" prompts/master.md \
    && ! grep -qi "observar hoje: " prompts/master.md && ! grep -q "recap em três frases" prompts/master.md; then

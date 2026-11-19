@@ -262,7 +262,21 @@ aposentar, juntar ou subir o teto.
       é a mesma em todos. O feed aceita `<itunes:image>` por episódio;
       conferir se o Spotify usa essa imagem quando o programa vem por RSS (a
       Apple usa). Se usar: uma imagem por dia a partir da manchete, com a
-      identidade da capa atual, medindo o custo
+      identidade da capa atual, medindo o custo. É o trabalho do Artista, que
+      o estúdio já anuncia como "em breve".
+      **Teste no ar na quinta 19/11** (sexta é feriado, sem episódio): a
+      imagem já está em `assets/capas/`, e a execução das 5h publica com ela.
+      Exigiu `capas/*` na policy de leitura pública do bucket (`s3.py
+      --print-policy`), colada à mão no console. O `publish.py` põe
+      `<itunes:image>` no episódio que tiver `assets/capas/AAAA-MM-DD.jpg`
+      (sobe em `capas/`); sem o arquivo, nada muda. A imagem de teste é
+      âmbar, "ep. 58 · 19/11", feita com o Chrome sem janela a partir do
+      `teste-2026-11-19.html` ao lado. Na quinta: conferir o item no feed;
+      o autor olha no Spotify (carro e celular) e na Apple, de novo à tarde,
+      porque o Spotify demora a reler o feed. O painel do Spotify for Creators já respondeu em 18/11: não
+      dá para editar episódio que vem por RSS (o menu só tem clip, vídeo e
+      compartilhar), então só o feed pode mudar a capa. Resultado em
+      `docs/aprendizados.md`
 
 ## Fase 3 — feedback e site
 
