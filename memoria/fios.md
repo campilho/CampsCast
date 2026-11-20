@@ -85,7 +85,7 @@ Regras:
   - 2026-11-09 (ep. 50) — a Meta leva ao Muse e ao Meta AI (06/11) versões especializadas dos modelos "trained using Muse Wonder", com memória e foco ativos e números só internos; o anúncio não fala de segurança, e a lista do blog de pesquisa da Meta não tem relatório de segurança do Wonder depois de 12/10 (o mais próximo é de 08/09, sobre o Muse); o Wonder Full na API não foi conferido; dito no ar ("não encontrei esse relatório")
   - 2026-11-10 (ep. 51) — a Meta lança o Muse Ember (09/11) com um parágrafo de segurança (avaliado pelo Superintelligence Scaling Framework, abaixo dos limites de alto risco em química e biologia, cibersegurança e controle), mas a lista do blog de pesquisa segue sem relatório de segurança do Muse Wonder depois de 12/10; pela busca, o Wonder Full continua só na assinatura do Muse Code, sem API; dito no ar ("continua sem aparecer")
 - situação: aberto
-- rever até: 2026-11-30
+- rever até: 2026-12-31
 
 ## F-026 · China e o controle de exportação de IA: o catálogo final sai, e o que acontece com o peso aberto?
 - aberto: 2026-10-20 (ep. 37)
@@ -166,7 +166,7 @@ Regras:
   - 2026-11-10 (ep. 51) — a versão 2.1.321 (09/11, a que trouxe o Fable 5.2) muda a checagem do e-mail da conta: passa a recusar só comando de terminal que contém o e-mail e nomeia um User-Agent, sem perguntar; o changelog não diz que o e-mail saiu do contexto; a issue segue aberta, com relato de 09/11 do envio passando por curl com o complemento de privacidade da 2.1.319; dito no ar
 - temas: T-02
 - situação: aberto
-- rever até: 2026-11-30
+- rever até: 2026-12-31
 
 ## F-037 · RSA de 1024 bits e os agentes do DeepMind: os artigos saem e alguém de fora confirma?
 - aberto: 2026-11-09 (ep. 50)
