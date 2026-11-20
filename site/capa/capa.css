@@ -101,6 +101,10 @@ main > section:not(.hero) { padding-block: clamp(48px, 7vw, 88px); }
 .faixa { background: linear-gradient(180deg, var(--bg-2), var(--bg)); border-block: 1px solid var(--linha); }
 .duas { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(28px, 5vw, 64px); align-items: start; }
 .duas.centro { align-items: center; }
+/* Ouvir: o cartão do episódio vai do rótulo "Ouvir" até a linha do RSS. */
+.duas.lado-a-lado { align-items: stretch; }
+.lado-a-lado > div { display: flex; flex-direction: column; }
+.lado-a-lado > div .rss { margin-top: auto; }
 @media (max-width: 860px) { .duas { grid-template-columns: minmax(0, 1fr); } }
 
 .plataformas { list-style: none; padding: 0; margin: 20px 0; display: flex; flex-wrap: wrap; gap: 10px; }
@@ -109,14 +113,28 @@ main > section:not(.hero) { padding-block: clamp(48px, 7vw, 88px); }
   overflow-wrap: anywhere; }
 
 .episodio { background: var(--sup); border: 1px solid var(--linha-forte); border-radius: var(--raio); padding: 22px 22px 24px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, .35); }
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .35); display: flex; flex-direction: column; }
+.episodio .acoes { margin-top: auto; }
+.ep-topo { display: flex; gap: 16px; align-items: center; margin-bottom: 12px; }
+.ep-capa { width: 112px; height: 112px; flex: none; border-radius: 10px; border: 1px solid var(--crt-linha);
+  box-shadow: 0 0 24px rgba(57, 255, 106, .12); }
 .ep-num { font: 40px/1 var(--f-crt); color: var(--crt-fg); margin: 0 0 8px; }
-.episodio h3 { font-size: 22px; line-height: 1.25; margin: 0 0 10px; color: #fff; }
-.ep-meta { font-size: 15px; color: var(--mudo); }
+.episodio h3 { font-size: 22px; line-height: 1.25; margin: 0; color: #fff; }
+.ep-meta { font-size: 15px; color: var(--mudo); margin: 0 0 14px; }
+@media (max-width: 420px) { .ep-capa { width: 84px; height: 84px; } .episodio h3 { font-size: 19px; } }
 
-.passos { list-style: none; counter-reset: passo; padding: 0; margin: 28px 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-@media (max-width: 900px) { .passos { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 560px) { .passos { grid-template-columns: minmax(0, 1fr); } }
+/* Player do episódio: o MP3 do próprio site, sem nada de terceiros. */
+.player { display: flex; align-items: center; gap: 12px; background: #000; border: 1px solid var(--crt-linha);
+  border-radius: 999px; padding: 6px 16px 6px 6px; margin: 0 0 18px; }
+.player-botao { flex: none; width: 44px; height: 44px; border-radius: 50%; border: 0; cursor: pointer;
+  background: var(--crt-fg); color: #03140a; display: grid; place-items: center; box-shadow: 0 0 18px rgba(57, 255, 106, .3); }
+.player-botao:hover { background: #7dffa0; }
+.player-botao svg { width: 18px; height: 18px; }
+.player-barra { flex: 1; min-width: 0; accent-color: var(--crt-fg); height: 4px; cursor: pointer; }
+.player-tempo { flex: none; font: 13.5px var(--f-mono); color: var(--crt-texto); min-width: 92px; text-align: right; }
+
+.passos { list-style: none; counter-reset: passo; padding: 0; margin: 28px 0 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 700px) { .passos { grid-template-columns: minmax(0, 1fr); } }
 .passos li { counter-increment: passo; background: var(--sup); border: 1px solid var(--linha); border-radius: var(--raio); padding: 18px 18px 16px;
   display: grid; gap: 6px; align-content: start; }
 .passos b { font-size: 18px; color: #fff; }
@@ -124,8 +142,23 @@ main > section:not(.hero) { padding-block: clamp(48px, 7vw, 88px); }
 .passos span { color: var(--tinta-2); font-size: 16px; }
 .passos em { font: 500 13.5px/1.4 var(--f-mono); font-style: normal; color: var(--crt-texto); }
 .passos em:empty { display: none; }
+/* Cada personagem com o boneco do estúdio e o número da última gravação num balão. */
+/* Cartão do personagem: o nome em cima; embaixo, o boneco à esquerda e, à
+   direita, o balão com o número (alinhado com o alto da cabeça) e o que ele faz.
+   Sem JavaScript, não há boneco nem número: fica o nome e o texto. */
+.quem { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px 14px; align-items: start; }
+.com-avatar .quem { grid-template-columns: 80px minmax(0, 1fr); }
+.avatar { display: none; width: 80px; height: 112px; image-rendering: pixelated; }
+.com-avatar .avatar { display: block; }
+.fala { display: grid; gap: 10px; align-content: start; padding-top: 4px; }
+.fala .balao { justify-self: start; }
+.balao { position: relative; background: #000; border: 1px solid var(--crt-linha); border-radius: 12px; padding: 8px 12px; }
+.com-avatar .balao::before { content: ""; position: absolute; left: -7px; top: 18px; width: 12px; height: 12px; background: #000;
+  border-left: 1px solid var(--crt-linha); border-bottom: 1px solid var(--crt-linha); transform: rotate(45deg); }
+
 
 /* GitHub: os dois repositórios lado a lado */
+#github .intro { max-width: none; }
 .repos { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: 16px; margin-top: 28px; }
 @media (max-width: 860px) { .repos { grid-template-columns: minmax(0, 1fr); } }
 .repo { display: grid; gap: 4px; align-content: start; background: var(--sup); border: 1px solid var(--linha-forte); border-radius: var(--raio); padding: 24px; }

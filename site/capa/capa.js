@@ -24,6 +24,8 @@ async function carrega() {
   poe("#ep-titulo", ep.titulo);
   poe("#ep-meta", [`${semana(d.data)}, ${diaMes(d.data)}`, ex.audio_s && duracao(ex.audio_s), `${n} ${n === 1 ? "pauta" : "pautas"}`].filter(Boolean).join(" · "));
   if (ep.roteiro_url) $("#ep-roteiro").href = ep.roteiro_url;
+  capaDoEpisodio(d.data, ep.numero);
+  if (ep.mp3) player(ep.mp3, ex.audio_s);
   $("#episodio").hidden = false;
 
   poe("#como-fonte", `Os números são da última gravação, ${semana(d.data)}, ${diaMes(d.data)}.`);
@@ -34,6 +36,60 @@ async function carrega() {
   if (ep.palavras) poe("#n-roteiro", `${num(ep.palavras)} palavras`);
   if (ex.audio_s) poe("#n-voz", `${duracao(ex.audio_s)} de áudio`);
   if (ex.fim) poe("#n-publica", `no ar às ${hhmm(ex.fim)}`);
+}
+
+// Capa do episódio: a do dia (desde 23/11, .png; a âmbar de 19/11, .jpg) ou a
+// do programa. Fora do site publicado (prévia local), as imagens vêm de lá.
+function capaDoEpisodio(data, numero) {
+  const base = location.hostname.endsWith("campscast.com.br") ? "" : "https://campscast.com.br";
+  const img = $("#ep-capa"), tentativas = [`${base}/capas/${data}.png`, `${base}/capas/${data}.jpg`, `${base}/cover.jpg`];
+  const proxima = () => { if (tentativas.length) img.src = tentativas.shift(); else img.onerror = null; };
+  img.onerror = proxima;
+  img.alt = `Capa do episódio ${numero}`;
+  proxima();
+}
+
+// Player: o MP3 do próprio site, o mesmo do feed. Nada de terceiros na página
+// (é o que a página de privacidade promete); só baixa quando a pessoa aperta.
+function player(mp3, segundos) {
+  const audio = $("#ep-audio"), botao = $("#player-botao"), barra = $("#player-barra"), icone = $("#player-icone");
+  const mmss = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+  const total = () => audio.duration || segundos || 0;
+  const mostra = () => {
+    $("#player-tempo").textContent = `${mmss(audio.currentTime)} / ${mmss(total())}`;
+    if (total()) barra.value = Math.round(1000 * audio.currentTime / total());
+  };
+  audio.src = mp3;
+  botao.addEventListener("click", () => (audio.paused ? audio.play() : audio.pause()));
+  audio.addEventListener("play", () => { icone.setAttribute("d", "M4 2.5h3v11H4zM9 2.5h3v11H9z"); botao.setAttribute("aria-label", "Pausar"); });
+  audio.addEventListener("pause", () => { icone.setAttribute("d", "M4 2.5v11l9-5.5z"); botao.setAttribute("aria-label", "Tocar o episódio"); });
+  audio.addEventListener("timeupdate", mostra);
+  audio.addEventListener("loadedmetadata", mostra);
+  barra.addEventListener("input", () => { if (total()) audio.currentTime = total() * barra.value / 1000; });
+  mostra();
+  $("#player").hidden = false;
+}
+
+// Os personagens do "como funciona", desenhados pelo mesmo código do estúdio
+// (/estudio/sprites.js). Animam só enquanto aparecem na tela, e não animam para
+// quem pediu menos movimento. Se o módulo não carregar, os cartões ficam só com texto.
+async function avatares() {
+  const { sprite, quadroNoTempo } = await import("/estudio/sprites.js");
+  const itens = [...document.querySelectorAll(".passos li[data-persona]")];
+  const parado = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const desenha = (li, t, i) => {
+    const cv = li.querySelector(".avatar"), ctx = cv.getContext("2d");
+    const estado = li.dataset.estado || "parado";
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    ctx.drawImage(sprite(li.dataset.persona, estado, parado ? 0 : quadroNoTempo(estado, t, i, li.dataset.persona)), 0, 0);
+  };
+  itens.forEach((li, i) => desenha(li, 0, i));
+  $(".passos").classList.add("com-avatar");
+  if (parado) return;
+  let visivel = false;
+  new IntersectionObserver(e => { visivel = e[0].isIntersecting; }).observe($(".passos"));
+  const anima = t => { if (visivel) itens.forEach((li, i) => desenha(li, t, i)); requestAnimationFrame(anima); };
+  requestAnimationFrame(anima);
 }
 
 $("#rss-copiar").addEventListener("click", async e => {
@@ -65,3 +121,4 @@ $("#fale-form").addEventListener("submit", e => {
 });
 
 carrega().catch(err => console.warn("capa sem dados do estúdio:", err.message));
+avatares().catch(err => console.warn("capa sem os personagens:", err.message));

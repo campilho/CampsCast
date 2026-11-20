@@ -85,7 +85,7 @@
   </section>
 
   <section class="gutter faixa" id="ouvir" aria-labelledby="ouvir-titulo">
-    <div class="largura duas centro">
+    <div class="largura duas lado-a-lado">
       <div>
         <p class="rotulo">Ouvir</p>
         <h2 id="ouvir-titulo">Em qualquer aplicativo de podcast</h2>
@@ -104,9 +104,23 @@
 
       <article class="episodio" id="episodio" aria-labelledby="ep-titulo" hidden>
         <p class="rotulo">Último episódio</p>
-        <p class="ep-num" id="ep-num"></p>
-        <h3 id="ep-titulo"></h3>
+        <div class="ep-topo">
+          <img class="ep-capa" id="ep-capa" src="/cover.jpg" width="112" height="112" alt="">
+          <div>
+            <p class="ep-num" id="ep-num"></p>
+            <h3 id="ep-titulo"></h3>
+          </div>
+        </div>
         <p class="ep-meta" id="ep-meta"></p>
+        <!-- Toca o MP3 do próprio site, o mesmo do feed: nada de terceiros na página. -->
+        <div class="player" id="player" hidden>
+          <audio id="ep-audio" preload="none"></audio>
+          <button class="player-botao" id="player-botao" type="button" aria-label="Tocar o episódio">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path id="player-icone" d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>
+          </button>
+          <input class="player-barra" id="player-barra" type="range" min="0" max="1000" value="0" step="1" aria-label="Posição no episódio">
+          <span class="player-tempo" id="player-tempo">0:00</span>
+        </div>
         <div class="acoes">
           <a class="btn btn-crt btn-p" href="https://open.spotify.com/show/5toSeNQlZxjbCAFPA1gAuJ">Ouvir no Spotify</a>
           <a class="btn btn-linha btn-p" id="ep-roteiro" href="https://github.com/campilho/CampsCast/tree/main/episodes">Ler o roteiro</a>
@@ -122,12 +136,12 @@
       <h2 id="como-titulo">Às 5 da manhã, o estúdio abre sozinho</h2>
       <p class="intro">Um agendador no Mac do autor chama o Claude Code sem ninguém olhando. Cada etapa tem um personagem no estúdio. <span id="como-fonte"></span></p>
       <ol class="passos">
-        <li><b>Produtor</b><span>Abre o estúdio às 05:00 e decide a janela: as notícias desde o último episódio até a véspera.</span><em id="n-janela"></em></li>
-        <li><b>Jornalista</b><span>Percorre os laboratórios, os papers e os investidores, e lê cada página na fonte.</span><em id="n-pesquisa"></em></li>
-        <li><b>Editor</b><span>Lê a memória do programa, avalia as candidatas e fica com até três.</span><em id="n-editor"></em></li>
-        <li><b>Roteirista</b><span>Escreve o roteiro no tamanho que cabe no ritmo medido da voz.</span><em id="n-roteiro"></em></li>
-        <li><b>Locutor</b><span>Narra com uma cópia sintética da voz do autor, feita por ele e com o consentimento dele.</span><em id="n-voz"></em></li>
-        <li><b>Produtor</b><span>Publica no feed, que chega ao Spotify, à Apple e aos outros aplicativos.</span><em id="n-publica"></em></li>
+        <li data-persona="produtor" data-estado="parado"><b>Produtor</b><div class="quem"><canvas class="avatar" width="40" height="56" aria-hidden="true"></canvas><div class="fala"><em class="balao" id="n-janela"></em><span>Abre o estúdio às 05:00 e decide a janela: as notícias desde o último episódio até a véspera.</span></div></div></li>
+        <li data-persona="jornalista" data-estado="trabalhando"><b>Jornalista</b><div class="quem"><canvas class="avatar" width="40" height="56" aria-hidden="true"></canvas><div class="fala"><em class="balao" id="n-pesquisa"></em><span>Percorre os laboratórios, os papers e os investidores, e lê cada página na fonte.</span></div></div></li>
+        <li data-persona="editor" data-estado="parado"><b>Editor</b><div class="quem"><canvas class="avatar" width="40" height="56" aria-hidden="true"></canvas><div class="fala"><em class="balao" id="n-editor"></em><span>Lê a memória do programa, avalia as candidatas e fica com até três.</span></div></div></li>
+        <li data-persona="roteirista" data-estado="trabalhando"><b>Roteirista</b><div class="quem"><canvas class="avatar" width="40" height="56" aria-hidden="true"></canvas><div class="fala"><em class="balao" id="n-roteiro"></em><span>Escreve o roteiro no tamanho que cabe no ritmo medido da voz.</span></div></div></li>
+        <li data-persona="locutor" data-estado="trabalhando"><b>Locutor</b><div class="quem"><canvas class="avatar" width="40" height="56" aria-hidden="true"></canvas><div class="fala"><em class="balao" id="n-voz"></em><span>Narra com uma cópia sintética da voz do autor, feita por ele e com o consentimento dele.</span></div></div></li>
+        <li data-persona="produtor" data-estado="parado"><b>Produtor</b><div class="quem"><canvas class="avatar" width="40" height="56" aria-hidden="true"></canvas><div class="fala"><em class="balao" id="n-publica"></em><span>Publica no feed, que chega ao Spotify, à Apple e aos outros aplicativos.</span></div></div></li>
       </ol>
     </div>
   </section>
