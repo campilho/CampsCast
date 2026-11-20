@@ -49,9 +49,9 @@ Regras:
 - aberto: 2026-09-10 (ep. 10)
 - pergunta: o que a METR publica ao fim das oito semanas, e se OpenAI ou Google contratam auditoria externa equivalente
 - marcos:
-  - 2026-10-14 (ep. 33) — Reuters (13/10): até 05/10 a Anthropic e a OpenAI buscavam controle editorial sobre o que avaliadores embutidos publicam; a Anthropic se reserva aprovar relatórios de avaliadores novos (a conversa "evoluiu" até 08/10); a OpenAI redigiu o relatório da METR e da Redwood sobre a Hugging Face
   - 2026-10-16 (ep. 35) — a Anthropic descreve o acordo (15/10): seis pessoas da METR dentro da empresa, com acesso de funcionário; a METR publica sobre risco, incidentes e práticas sem veto, com cortes só em categorias predefinidas e direito de dizer se foram justificados; três níveis, o primeiro ainda com aprovação; SecureBio revisa o capítulo bio do relatório de agosto; nada publicado pela METR nesse regime; OpenAI e Google sem anúncio parecido
   - 2026-10-30 (ep. 45) — do lado da OpenAI, um piloto embutido: um funcionário da METR e um da Redwood passaram três semanas dentro da OpenAI (21/07 a 11/08) testando o monitoramento de desalinhamento; o relatório público (22/10) acha cerca de 10% do tráfego interno elegível de Codex sem vigilância entre maio e julho e agentes capazes de adiar o monitoramento, mas a OpenAI tinha direito de cortar e cortou um achado; a OpenAI cita o teste no post de 29/10 e diz ter corrigido a maioria; dito no ar. Na Anthropic, a METR ainda não publicou nada no regime sem veto; o Google segue sem anúncio
+  - 2026-11-17 (ep. 56) — duas respostas. Na Anthropic: a METR publicou em 05/11 a avaliação feita lá dentro de 12/08 a 29/10 (aceleração da P&D de IA), com direito unilateral da Anthropic de cortar informação não pública e cerca de 100 páginas cortadas; dito no ar ("um contraste que eu não tinha contado"). Na OpenAI: em 16/11 a empresa contratou a primeira fase de avaliações embutidas com Apollo, METR, Transluce e Goodfire (F-043); dito no ar. O Google segue sem anúncio equivalente
 - temas: T-03
 - situação: aberto
 - rever até: 2026-12-15
@@ -87,22 +87,6 @@ Regras:
 - situação: aberto
 - rever até: 2026-11-30
 
-## F-023 · Comissão Europeia e os agentes fora do controle: os pedidos de informação viram processo ou multa?
-- aberto: 2026-10-15 (ep. 34)
-- pergunta: depois dos pedidos de informação de 14/10 à OpenAI e à Anthropic (segurança, avaliação externa, monitoramento), o Escritório de IA abre processo formal, aplica multa, ou publica o que pediu e o que recebeu? A isenção de pesquisa e teste derruba a ação? O Google entra pelo Gemini que escapou?
-- marcos:
-- temas: T-02, T-03
-- situação: aberto
-- rever até: 2027-03-31
-
-## F-025 · FTC e os agentes fora do controle: as intimações viram processo ou acordo, e os executivos depõem?
-- aberto: 2026-10-16 (ep. 35)
-- pergunta: depois das intimações de 14/10 à OpenAI e à Anthropic (incidentes, salvaguardas, marketing, privacidade), a FTC ouve os executivos, intima também a METR e outros laboratórios, e chega a processo ou acordo com base na lei contra prática enganosa ou desleal?
-- marcos:
-- temas: T-02, T-03
-- situação: aberto
-- rever até: 2027-04-30
-
 ## F-026 · China e o controle de exportação de IA: o catálogo final sai, e o que acontece com o peso aberto?
 - aberto: 2026-10-20 (ep. 37)
 - pergunta: depois da consulta pública (até 15/11) do Anúncio nº 48, de 16/10, o MOFCOM e o MOST publicam o catálogo final com os 23 itens de IA? O limiar (2 trilhões de parâmetros, ou entre os dez primeiros) se mantém, a exceção para o que já é aberto continua, e algum laboratório chinês deixa de abrir pesos ou de servir clientes de fora por causa dele?
@@ -112,14 +96,6 @@ Regras:
 - temas: T-04
 - situação: aberto
 - rever até: 2027-01-31
-
-## F-024 · Estados contra a OpenAI: algum juiz restringe o desenvolvimento de modelos?
-- aberto: 2026-10-15 (ep. 34)
-- pergunta: a Justiça da Flórida concede a liminar pedida em 28/09 contra modelos novos sem salvaguarda independente, ou algum dos oito processos de 14/10 obtém ordem que limite modelos que se aperfeiçoam sozinhos? Há acordo com os estados?
-- marcos:
-- temas: T-02, T-03
-- situação: aberto
-- rever até: 2027-03-31
 
 ## F-028 · Falhas do PHP achadas com IA: a exploração em massa se confirma, e alguém explica o vazamento?
 - aberto: 2026-10-22 (ep. 39)
@@ -143,6 +119,7 @@ Regras:
 - pergunta: depois do S-1 de 26/10 (Nasdaq, código ANT, sem preço nem quantidade), a oferta é precificada e as ações começam a ser negociadas? A versão final mantém a classe F com 50,1% dos votos e o LTBT elegendo a maioria do conselho pela classe T? O prospecto completo diz o que a FTC e a Comissão Europeia pediram?
 - marcos:
   - 2026-11-11 (ep. 52) — a Anthropic lança o roadshow (10/11): 825 milhões de ações classe A (801,4 milhões da empresa, 23,6 milhões de acionistas atuais) a US$ 70 a US$ 78, cerca de US$ 58 a 64 bilhões pelas contas do roteiro, mais opção de 123,75 milhões de ações em 30 dias; Nasdaq Global Select, ANT; Goldman Sachs e Morgan Stanley; registro ainda não efetivo; sem valor da empresa, sem data de precificação e sem menção à classe F nem ao LTBT; dito no ar
+  - 2026-11-19 (ep. 58) — a oferta é precificada em 18/11: 980 milhões de ações a US$ 83 (acima da faixa e das 825 milhões), registro declarado efetivo pela SEC em 18/11, negociação prevista para 19/11 na Nasdaq (ANT), liquidação em 20/11, opção de 147 milhões de ações em 30 dias; cerca de US$ 79,4 bilhões para a empresa e US$ 81,3 bilhões no total; pela imprensa, US$ 1,5 trilhão de valor, maior estreia já feita e US$ 26 bilhões em ações sem voto de sete parceiros, entre eles Google e NVIDIA (Fortune). O comunicado não fala de classe F nem do LTBT, e o prospecto final não foi lido; dito no ar. Falta: a negociação de fato e o desenho de controle na versão final
 - temas: T-03, T-10
 - situação: aberto
 - rever até: 2027-01-31
@@ -203,6 +180,7 @@ Regras:
 - aberto: 2026-11-10 (ep. 51)
 - pergunta: a Anthropic diz que limitou no treino do Fable 5.2 e do Mythos 5.2 (09/11) as capacidades de pesquisa que mais aceleram a IA — otimização de kernels de acelerador e arquitetura de grandes modelos — ao nível do Opus 5.5. A METR, o instituto britânico ou outro avaliador de fora publica medição que confirme ou conteste esse limite? A ficha de segurança diz como foi medido, e algum outro laboratório anuncia freio parecido?
 - marcos:
+  - 2026-11-18 (ep. 57) — o outro laboratório foi pelo lado oposto: a OpenAI lança o GPT-6.2 Astra (17/11), "the first externally released model to meet the High threshold for AI Self-Improvement", com KernelGen 1P a 76,92% contra 66,72% do GPT-6 Astra — a mesma capacidade (código que roda nos chips) que a Anthropic diz ter segurado; nenhuma medição de fora do freio do Fable publicada; dito no ar (F-044)
 - temas: T-01, T-03
 - situação: aberto
 - rever até: 2027-03-31
@@ -229,6 +207,40 @@ Regras:
 - aberto: 2026-11-13 (ep. 54)
 - pergunta: depois da renúncia de Huang (12/11; o 8-K dá 11/11), sem motivo no comunicado, a investigação independente do conselho (Joon H. Kim e Wachtell, Lipton, Rosen & Katz, desde 10/11) publica conclusão sobre as reportagens de que ele foi alvo de inteligência estrangeira e sobre o comprometimento de segredos ou da segurança nacional? Huang depõe no Congresso antes de 26/11, como diz o TechCrunch, e o que sai disso? O conselho nomeia CEO permanente no lugar de Colette Kress, e a regra de venda de chips à China muda por causa do caso?
 - marcos:
+  - 2026-11-18 (ep. 57) — primeiro balanço sem Huang (17/11): receita de US$ 115,8 bilhões no trimestre encerrado em 25/10, previsão de US$ 130 bilhões sem receita de centros de dados na China; no mesmo dia, o conselho cria o Comitê de Supervisão de Segurança Nacional e Controle de Exportação (Suzanne Nora Johnson, Stephen C. Neal, John O. Dabiri), a quem passam a responder as equipes de segurança nacional e de conformidade de comércio; nenhum dos dois textos cita Huang, a investigação ou a busca por CEO, e o comitê não cita a China; dito no ar
 - temas: T-04
 - situação: aberto
 - rever até: 2027-03-31
+
+## F-041 · ChatGPT Wallet: a compra delegada, sem aprovar uma a uma, chega, e quem responde pelo erro do agente?
+- aberto: 2026-11-16 (ep. 55)
+- pergunta: a OpenAI lançou em 13/11 o ChatGPT Wallet (American Express, Mastercard e Visa; token no lugar do cartão; aprovação por rosto ou digital a cada compra; só Pro nos EUA) e diz esperar que o usuário passe a delegar compras ao agente dentro de limites de gasto, categoria ou período. A compra delegada sai, com que limites, e a OpenAI ou as bandeiras dizem quem paga quando o agente compra o que não devia (estorno, responsabilidade, disputa)? A carteira sai do Pro e dos EUA?
+- marcos:
+- temas: T-02
+- situação: aberto
+- rever até: 2027-05-31
+
+## F-042 · As conjecturas de Weil no Lean pelo /teamwork do Google: o código sai e alguém de fora confere?
+- aberto: 2026-11-16 (ep. 55)
+- pergunta: o Google Research disse em 13/11 que agentes do /teamwork, com o Gemini 4, formalizaram de forma autônoma as conjecturas de Weil em cerca de 1,8 milhão de linhas de Lean (e uma prova recente do décimo problema de Hilbert em mais de 919 mil). O código é publicado, com o tempo gasto e os enunciados, e algum matemático ou a comunidade do Lean (mathlib) confere que os enunciados formalizados são mesmo os teoremas de Deligne?
+- marcos:
+- temas: T-08
+- situação: aberto
+- rever até: 2027-03-31
+
+## F-043 · Avaliações embutidas da OpenAI: os relatórios saem, e com que cortes?
+- aberto: 2026-11-17 (ep. 56)
+- pergunta: a OpenAI fechou em 16/11 a primeira fase com Apollo Research (seis pessoas, quatro meses, dois relatórios públicos, veredito sem corte, direito de contar acesso negado, cortes e pressão), METR (duas avaliações), Transluce (seis semanas a partir de dezembro; não pode publicar resultado de modelo só interno) e Goodfire. Os relatórios da Apollo e da Transluce saem, com que cortes declarados e que veredito? A METR publica as regras da parte dela? A segunda fase da Transluce, no início de 2027, acontece com acesso mais amplo, e a OpenAI chega ao acesso de funcionário que Shlegeris (Redwood) diz ter sido prometido?
+- marcos:
+- temas: T-03
+- situação: aberto
+- rever até: 2027-04-30
+
+## F-044 · GPT-6.2 Astra no nível Alto de autoaperfeiçoamento: alguém de fora mede, e a OpenAI chega ao Crítico ou freia?
+- aberto: 2026-11-18 (ep. 57)
+- pergunta: a OpenAI lançou em 17/11 o GPT-6.2 Astra, primeiro modelo dela lançado ao público no nível Alto de autoaperfeiçoamento (Internal Research Debugging 81,85%, KernelGen 1P 76,92%, MLE-Bench Revised percentil 96), com uso interno condicionado a testes de alinhamento, vigilância de todo o tráfego interno do Codex e o Control Room; a ficha registra mais percepção de teste e mais facilidade de escapar da vigilância do raciocínio. Algum avaliador de fora (METR, Apollo, instituto britânico) publica medição da capacidade de autoaperfeiçoamento do modelo? A OpenAI amplia o uso interno dele no Codex, anuncia modelo no nível Crítico, ou adota freio parecido com o que a Anthropic diz ter posto no Fable 5.2?
+- marcos:
+  - 2026-11-19 (ep. 58) — no dia seguinte, a OpenAI publica a própria medição da aceleração ("Research acceleration: The jagged frontier", 18/11; página 403, lida pela cobertura de quatro veículos): agentes concluem sozinhos 46% das tarefas de pesquisa de 2 a 4 horas (23% em março) e 35% das de 4 a 8 horas (13%), de forma irregular (79% vigiar treino, 25% código de serviço); gasto mediano de US$ 2.400 por dia por pesquisador. Medição interna, não de fora; nenhum avaliador externo publicou sobre o GPT-6.2 Astra; dito no ar
+- temas: T-01, T-03
+- situação: aberto
+- rever até: 2027-05-31

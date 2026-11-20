@@ -18,14 +18,8 @@ Regras:
 
 ---
 
-## Meituan abre os pesos do LongCat-2.5, cerca de 1,6 trilhão de parâmetros, sob licença MIT
-- data_original: 2026-11-10
-- fonte: Meituan LongCat — https://huggingface.co/meituan-longcat/LongCat-2.5
-- validade: 2026-11-17
-- resumo: modelo de peso aberto com cerca de 1,6 trilhão de parâmetros (48 bilhões ativos), contexto de 1 milhão de tokens, licença MIT e números próprios fortes em agentes; sem seção de segurança. Falta anúncio oficial lido e medição independente (Artificial Analysis) antes de ir ao ar (T-09).
-
-## Google DeepMind lança o Gemini Robotics 2.5, modelo de visão, linguagem e ação para robôs, com piloto de 96% na fábrica da Mercedes-Benz
-- data_original: 2026-11-10
-- fonte: Google DeepMind — https://deepmind.google/blog/gemini-robotics-2-5-accelerates-real-world-physical-intelligence/
-- validade: 2026-11-17
-- resumo: mais 30% a 100% de sucesso e 20% a 30% mais rápido que o Gemini Robotics 2 em mais de 200 tarefas; 96% num piloto de produção da Mercedes-Benz; teste novo ASIMOV-Jailbreak (99,5% de resistência, número próprio); vai para Apptronik, Agile e Mercedes. Números todos do DeepMind; a execução de 11/11 não o considerou.
+## Claude lê os cadernos de Kurt Gödel e cataloga 663 teoremas, segundo Jan von Plato
+- data_original: 2026-11-13
+- fonte: The Guardian (reportagem, a ferramenta não abre o domínio) — https://www.theguardian.com/science/2026/nov/13/kurt-godel-notebooks-ai-helps-unlock-hidden-discoveries-man-who-transformed-maths
+- validade: 2026-11-20
+- resumo: o lógico Jan von Plato (Universidade de Helsinque) deu ao Claude as transcrições das 1.009 páginas de cadernos de Gödel em taquigrafia; em dias, um relato de 650 páginas e 663 teoremas, dos quais cerca de 400 conferidos no Coq, 200 ajustados e 50 falsos, e uma prova quase completa da independência do axioma da escolha que Gödel dizia ter. Só reportagem: falta publicação de von Plato, da universidade ou da Anthropic antes de ir ao ar (T-08).
