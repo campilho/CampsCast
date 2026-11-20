@@ -75,7 +75,8 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
       METR entram, primeira mão sem teto, página só editada fora da lista, AWS
       fica. O buraco negro não vai ao backlog: passou, e faz parte do
       processo (autor). Sombra segue de 23 a 27/11 com o acerto; o a16z deu
-      404 em 20/11 — conferir se mudou de endereço
+      404 em 20/11, e o Thinking Machines
+      falhava: os dois passam a ler sitemap (acertado em 20/11)
 - [x] **Verificador V1 — ensaio pela API** (14/11, US$ 37,72 dos US$ 50,
       [docs/custos.md](docs/custos.md); resultado em
       `verificacao/v1/resumo.md` e em `docs/aprendizados.md`, "O verificador
@@ -101,7 +102,11 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
       4 vindas do LinkedIn, e a primeira estrela. O `gh` foi instalado (com o
       Homebrew) e o `scripts/trafego_github.py` guarda o tráfego toda sexta,
       no relatório; linha de base de 06 a 19/11, e testado dentro do launchd.
-      Próximo: os títulos dos episódios pensando em quem busca
+      Próximo: os títulos dos episódios pensando em quem busca. Primeiro indício
+      (20/11): os dois episódios com mais impressões por dia abrem com o nome
+      do modelo (Fable 5.2, Sonnet 5.5 — este de 29/09 e ainda aparecendo);
+      não separa título de tamanho da notícia. Mudar o título é mudar o agente:
+      entra na fila, uma mudança por vez
 - [ ] **LinkedIn — post sobre a memória** — não saiu (adiado em 13, 15, 20 e
       27/10 e em 03/11). Rascunho em `privado/divulgacao.md`, com a métrica da
       linha de base (memória do programa de 30% para 1,7% de erro). Reconferir
