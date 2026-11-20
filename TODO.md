@@ -6,19 +6,42 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
 
 ## Semana de 16/11 — sexta, 20/11, é feriado (Consciência Negra)
 
-- [ ] **Segunda, 16/11 — primeiro episódio do Editor 1.1** (publicação oficial
+- [x] **Segunda, 16/11 — primeiro episódio do Editor 1.1** (publicação oficial
       fechada por todas as portas entra com três veículos de texto próprio,
       dito no ar; reportagem não entra). Conferir: custo contra a semana
       anterior, se a porta foi usada e como (endereço tentado no log, veículos
       que contaram) e se algum furo de reportagem passou. Do ensaio de 12/11,
       ficaram para o autor: o mesmo site menor (Let's Data Science) contando
       como veículo nas três pautas, um comentário no Hacker News citado como
-      fonte e o X que não foi tentado. Nenhuma outra mudança no agente até medir
-- [ ] **Quanto do Max o podcast gasta** — a partir de 16/11, cada episódio
+      fonte e o X que não foi tentado. Nenhuma outra mudança no agente até medir.
+      **Conferido em 20/11 (eps. 55 a 58):** custo de US$ 5,08 por episódio,
+      contra 5,55 na semana 46, com turnos e páginas iguais. A porta da
+      cobertura foi usada em 16/11 (Wallet: Reuters, 9to5Mac, Cointelegraph),
+      em 17/11 junto com os posts dos avaliadores (TechCrunch, CNBC, Unite.AI)
+      e em 19/11 (jagged frontier: StartupHub.ai, Blockchain.News, FourWeekMBA,
+      BigGo); em 18/11 a outra porta da própria OpenAI resolveu, sem imprensa.
+      Duas pautas foram recusadas certo por falta de três veículos. Abri pelo
+      Chrome as três páginas da OpenAI que deram 403 ao agente: **o que foi ao
+      ar bate com todas**, número a número (no 19/11, o "por mês" do
+      StartupHub estava errado, e o roteiro seguiu a maioria, que estava
+      certa). Nenhum comentário do HN citado; o X foi tentado (402). Dois
+      pontos para o Editor 1.2: (a) em 16/11, a fala de Craig ("liderou a
+      prova") e os três revisores vieram de newsletter (AI Weekly) e DEV
+      Community, numa pauta que entrou pelo arXiv; o ar disse só "e a
+      cobertura", sem contar veículos — estava certo, mas por sorte; (b) a
+      segunda porta, o arquivo público, não abre nunca (a ferramenta não lê
+      web.archive.org) e conta como página fechada na ficha todo dia. Os
+      quatro veículos de 19/11 são sites pequenos; desta vez acertaram
+- [x] **Quanto do Max o podcast gasta** — a partir de 16/11, cada episódio
       lê a janela de 5 horas e a semana do Max antes e depois do agente
       (`scripts/limites_max.py`, [docs/custos.md](docs/custos.md)). Na quinta,
       19/11, somar a semana: quantos pontos da semana do Max os quatro
-      episódios ocupam, e quanto cada um gasta da janela de 5 horas
+      episódios ocupam, e quanto cada um gasta da janela de 5 horas.
+      **Somado em 20/11:** a janela de 5 horas sobe 8, 6, 6 e 5 pontos (média
+      6,25); a semana sobe 1, 0, 0 e 0 — **cerca de 1 ponto da semana do Max
+      para os quatro episódios**, abaixo da resolução da leitura (1 ponto) em
+      três dias. A semana foi de 21% a 34% entre segunda e quinta às 5h; o
+      resto é o uso do autor fora do podcast
 - [ ] **Varredura por feeds (H2), em sombra desde 13/11** —
       [plano](docs/plano-varredura-por-feeds.md). Fase 0 em 12/11, sem custo: os
       feeds e sitemaps trazem 93% das pautas de sites com feed (53 de 57 desde
@@ -30,7 +53,29 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
       Inkling 2 Small, pesos num repositório criado em 04/11 e aberto em 12/11,
       que nem o feed nem a API do Hugging Face (data de criação) pegam.
       Depois, ensaio de um Editor com a lista no prompt, usando as listas
-      gravadas na sombra
+      gravadas na sombra.
+      **Sombra fechada em 20/11 (13, 16 a 19/11):** 34 a 46 linhas por dia.
+      Das 15 pautas no ar, 9 estavam na lista (60%, abaixo dos 80% da fase
+      0); mais 1 estava no feed e o teto de 6 por fonte cortou — a manchete de
+      17/11, as avaliações embutidas da OpenAI. As outras 5: Google Research
+      e METR (têm feed, `research.google/blog/rss/` e `metr.org/feed.xml`,
+      mas não estão no `varredura.json`), MLCommons e microsoft.ai (feed dá
+      403) e o repositório do Inkling. Fontes que só ocuparam linha: AWS (30
+      linhas, 0 pautas), Google Cloud (27), NVIDIA blog e Microsoft (11
+      cada), e as páginas "editadas" do sitemap da Anthropic (quase todas as
+      23 linhas dela). Feed que falha: Thinking Machines, 4 de 5 dias.
+      **A lista viu o que o agente perdeu:** "Claude Fable 5.2 solves two
+      open problems in the physics of black holes" (anthropic.com/research,
+      página datada de 17/11, no sitemap desde 18/11 às 18h42; o agente lê só
+      /news) e o "GTIG AI Threat Tracker: Agentic Threat Activity Crosses a
+      Significant Threshold" (Google Cloud, 16/11). Nenhum dos dois foi ao
+      ar, e os dois ficam fora da janela de 23/11. Medida 4 (data do feed
+      contra a da página): o caso do buraco negro, um dia de diferença.
+      **Acertado em 20/11** (plano, "Resultado da sombra"): Google Research e
+      METR entram, primeira mão sem teto, página só editada fora da lista, AWS
+      fica. O buraco negro não vai ao backlog: passou, e faz parte do
+      processo (autor). Sombra segue de 23 a 27/11 com o acerto; o a16z deu
+      404 em 20/11 — conferir se mudou de endereço
 - [x] **Verificador V1 — ensaio pela API** (14/11, US$ 37,72 dos US$ 50,
       [docs/custos.md](docs/custos.md); resultado em
       `verificacao/v1/resumo.md` e em `docs/aprendizados.md`, "O verificador
@@ -270,8 +315,8 @@ aposentar, juntar ou subir o teto.
       brilhos. O orquestrador chama antes do `publish.py`; se falhar, o
       episódio sai com a capa do programa. Primeira no ar: episódio 59, de
       segunda 23/11 — conferir no Spotify e na Apple. Os episódios antigos
-      seguem sem capa própria; dar capa a eles (gerar e subir as 57) é
-      decisão do autor.
+      ficam sem capa própria, por decisão do autor em 20/11: a capa começa
+      no 59 e evolui daqui para a frente.
       **Ideia: cor própria para edição especial.** O âmbar do teste destacou o
       episódio na lista. Guardar uma cor diferente para um episódio que não é
       o diário comum, como um resumo da semana no sábado, se ele vier a

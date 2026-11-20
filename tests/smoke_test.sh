@@ -3313,6 +3313,8 @@ feeds = [
     {"nome": "Ausente", "url": "file://" + str(d / "nao-existe.xml")},
     {"nome": "Fechado", "url": f"http://127.0.0.1:{porta}/fechado"},
     {"nome": "Gotejando", "url": f"http://127.0.0.1:{porta}/gotejando"},
+    # Fonte de primeira mão sem teto: em 17/11 o teto de 6 cortou a manchete do dia.
+    {"nome": "Primeira mão", "url": grava("mao.xml", muitos.replace("muitos.test", "mao.test")), "sem_teto": True},
 ]
 cfg = d / "cfg.json"
 cfg.write_text(json.dumps({"teto_por_fonte": 6, "prazo_por_feed_s": 2, "prazo_total_s": 3, "feeds": feeds}))
@@ -3363,6 +3365,8 @@ if "já foi ao ar em 05/11" not in md:
     erros.append("marca de já foi ao ar")
 if "- +2 desta fonte na janela, fora da lista" not in md or md.count("muitos.test/") != 6:
     erros.append("teto por fonte")
+if md.count("mao.test/") != 8:
+    erros.append(f"fonte sem teto: {md.count('mao.test/')} itens na lista")
 if links("HF") != ["https://huggingface.co/org/modelo-x"]:
     erros.append(f"hf: {links('HF')}")
 if len(f["Comprimido"]["na_janela"]) != 2 or f["Comprimido"]["erro"]:
@@ -3394,6 +3398,12 @@ if pag("l11c") != {"https://exemplo.test/news/a": "editada", "https://exemplo.te
                    "https://exemplo.test/news/c": "nova"} \
         or depois["exemplo.test/news/a"] != "2026-11-01T05:00:00-03:00" or "exemplo.test/news/c" not in depois:
     erros.append(f"estado do sitemap: {pag('l11c')} / {depois}")
+# Página só editada fica no JSON, mas sai da lista: em 13 a 19/11, as da
+# Anthropic foram 23 linhas e nenhuma pauta.
+md_c = (d / "l11c.md").read_text(encoding="utf-8")
+if "· https://exemplo.test/news/a" in md_c or "- +1 página só editada, fora da lista" not in md_c \
+        or "· https://exemplo.test/news/c" not in md_c:
+    erros.append("página editada deveria sair da lista, contada")
 cfg.write_text("{ não é json")
 if roda("2026-11-11", "l-ruim")[0].returncode != 2:
     erros.append("configuração ilegível não deu rc 2")
@@ -3402,7 +3412,7 @@ print(";".join(erros) if erros else "ok")
 PYVARR
 )"
 if [[ "$VARR" == "ok" ]]; then
-  ok "varredura: fuso de Brasília, RSS, Atom, sitemap, Hugging Face e gzip; teto, repetidos e já ao ar; falha e prazo não param"
+  ok "varredura: fuso de Brasília, RSS, Atom, sitemap, Hugging Face e gzip; teto, fonte sem teto, editadas fora, repetidos e já ao ar; falha e prazo não param"
 else
   bad "varredura: $VARR"
 fi

@@ -226,7 +226,7 @@ def descomprime(corpo: bytes, compressao: str) -> bytes:
 def processa(feed: dict, prazo: float) -> dict:
     inicio = time.monotonic()
     res = {"nome": feed["nome"], "url": feed["url"], "tipo": feed.get("tipo", "rss"),
-           "erro": None, "itens": []}
+           "sem_teto": bool(feed.get("sem_teto")), "erro": None, "itens": []}
     try:
         corpo = baixa(feed["url"], prazo)
         if res["tipo"] == "sitemap":
@@ -390,11 +390,28 @@ def monta(resultados, de, ate, episodio, ar, estado, teto, gerado):
                 item["pagina"] = classifica_pagina(chave, r["url"], estado, inicio_janela)
             na_janela.append(item)
         na_janela.sort(key=lambda i: i["data"], reverse=True)
-        fontes.append({"nome": r["nome"], "url": r["url"], "tipo": r["tipo"], "erro": r["erro"],
+        fontes.append({"nome": r["nome"], "url": r["url"], "tipo": r["tipo"],
+                       "sem_teto": r.get("sem_teto", False), "erro": r["erro"],
                        "ms": r["ms"], "itens_no_feed": len(r["itens"]), "sem_data": sem_data,
                        "na_janela": na_janela})
     return {"gerado": gerado, "janela": [de, ate], "episodio": episodio, "teto_por_fonte": teto,
             "fontes": fontes}
+
+
+def na_lista(fonte: dict, teto: int) -> tuple[list[dict], int, int]:
+    """O que da fonte entra na lista: (itens, quantos ficaram fora pelo teto,
+    quantas páginas só editadas ficaram fora).
+
+    Página de sitemap só editada fica no JSON, mas não na lista: de 13 a 19/11
+    foram 23 linhas da Anthropic e nenhuma pauta. Fonte de primeira mão
+    (`sem_teto` no varredura.json) não tem teto: em 17/11 o de 6 por fonte
+    cortou a manchete do dia, as avaliações embutidas da OpenAI.
+    """
+    itens = [i for i in fonte["na_janela"] if i.get("pagina") != "editada"]
+    editadas = len(fonte["na_janela"]) - len(itens)
+    if fonte.get("sem_teto"):
+        return itens, 0, editadas
+    return itens[:teto], max(0, len(itens) - teto), editadas
 
 
 def dia_curto(iso: str, com_hora: bool) -> str:
@@ -424,7 +441,8 @@ def markdown(lista: dict) -> str:
         host = urllib.parse.urlsplit(f["url"]).hostname or ""
         tipo = {"sitemap": "sitemap", "hf": "Hugging Face"}.get(f["tipo"], "feed")
         linhas += ["", f"### {f['nome']} ({tipo}, {host.removeprefix('www.')})"]
-        for it in f["na_janela"][:teto]:
+        mostrados, sobra, editadas = na_lista(f, teto)
+        for it in mostrados:
             marcas = []
             if it.get("pagina"):
                 marcas.append(f"página {it['pagina']}")
@@ -433,9 +451,11 @@ def markdown(lista: dict) -> str:
             extra = f" [{'; '.join(marcas)}]" if marcas else ""
             resumo = f" — {it['resumo']}" if it["resumo"] else ""
             linhas.append(f"- {dia_curto(it['data'], not it.get('so_data'))} · {it['titulo']} · {it['link']}{resumo}{extra}")
-        sobra = len(f["na_janela"]) - teto
         if sobra > 0:
             linhas.append(f"- +{sobra} desta fonte na janela, fora da lista")
+        if editadas:
+            plural = "páginas só editadas" if editadas > 1 else "página só editada"
+            linhas.append(f"- +{editadas} {plural}, fora da lista")
     if vazias:
         linhas += ["", "### Sem item na janela", ", ".join(vazias)]
     if falhas:
@@ -446,7 +466,7 @@ def markdown(lista: dict) -> str:
 def resumo_linha(lista: dict, segundos: float) -> str:
     fontes = lista["fontes"]
     n = sum(len(f["na_janela"]) for f in fontes)
-    mostradas = sum(min(len(f["na_janela"]), lista["teto_por_fonte"]) for f in fontes)
+    mostradas = sum(len(na_lista(f, lista["teto_por_fonte"])[0]) for f in fontes)
     com = sum(1 for f in fontes if f["na_janela"])
     falhas = [f"{f['nome']}: {f['erro']}" for f in fontes if f["erro"]]
     txt = (f"Varredura: {n} itens na janela ({mostradas} na lista) de {com} de {len(fontes)} feeds, "

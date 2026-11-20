@@ -119,6 +119,26 @@ As listas da sombra servem também de entrada para a fase 2: o ensaio de um dia
 passado usa a lista gravada naquele dia, e não a dos feeds de agora (o da AWS,
 por exemplo, só guarda três dias).
 
+### Resultado da sombra (13, 16 a 19/11) e o acerto de 20/11
+
+Das 15 pautas que foram ao ar, 9 estavam na lista (60%) e 1 estava no feed,
+cortada pelo teto de 6 por fonte: a manchete de 17/11, as avaliações
+embutidas da OpenAI. As outras 5 vieram de sites fora do `varredura.json`
+(Google Research e METR, que têm feed; MLCommons e microsoft.ai, cujo feed dá
+403) e de um repositório do Hugging Face. Na direção contrária, a lista viu
+duas histórias que o agente não viu: a física de buracos negros do Fable 5.2
+(anthropic.com/research, 17–18/11) e o relatório do Google sobre ameaças com
+agentes (Google Cloud, 16/11). Linhas por dia: 34 a 46. Feed que falha:
+Thinking Machines, 4 de 5 dias.
+
+Acertos de 20/11, ainda em sombra: Google Research e METR entram; as fontes de
+primeira mão (Anthropic, OpenAI, Google, DeepMind, sala de imprensa da NVIDIA)
+ficam sem teto; página de sitemap só editada sai da lista e vira uma linha de
+contagem. A AWS fica, por decisão do autor: só ocupou linha na semana, mas deu
+pauta em 06/10 e 05/11. Refeitas com os feeds de 20/11, as janelas de 16 e
+18/11 dão 34 e 45 linhas, e a de 16/11 já traz as avaliações embutidas. A
+sombra segue mais uma semana com o acerto antes do ensaio da fase 2.
+
 ## Fase 2 — ensaio com a lista no prompt
 
 Versão nova do Editor em `config/agentes.json`: a lista entra como seção do
