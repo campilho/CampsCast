@@ -75,6 +75,9 @@ export VARREDURA=0
 # A leitura do limite do Max chama o Claude CLI antes e depois do agente; com o
 # stub dos testes não haveria o que ler. Desligada aqui; a seção dela liga.
 export LIMITES_MAX=0
+# O tráfego do GitHub vai à API de verdade pelo gh, na sexta do relatório.
+# Desligado aqui; a seção dele usa um gh falso.
+export TRAFEGO_GITHUB=0
 
 ok()   { printf '  \033[32m✓\033[0m %s\n' "$1"; PASS=$((PASS+1)); }
 bad()  { printf '  \033[31m✗\033[0m %s\n' "$1"; FAIL=$((FAIL+1)); }
@@ -3864,6 +3867,57 @@ else
 fi
 rm -rf "$DIV_DIR" logs/divulga-fonte.md logs/divulga-*-agente.json
 unset DIVULGACAO_DIR DIVULGACAO_ARQ DIVULGA_AVISO DIV_DIR
+
+# ------------------------------------------------------------ tráfego do GitHub
+# O GitHub só mostra 14 dias; o histórico junta por dia, sem perder os velhos,
+# e uma falha do gh não apaga nada.
+head_ "Tráfego do GitHub"
+TRF_DIR="$(mktemp -d)"
+cat > "$TRF_DIR/gh" <<'GHSTUB'
+#!/bin/bash
+[[ -f "$TRF_DIR/falha" ]] && { echo "HTTP 401: Bad credentials" >&2; exit 1; }
+case "$2" in
+  */traffic/views) cat "$TRF_DIR/views.json" ;;
+  */traffic/clones) echo '{"count":3,"uniques":2,"clones":[{"timestamp":"2026-11-18T00:00:00Z","count":3,"uniques":2}]}' ;;
+  */traffic/popular/referrers) echo '[{"referrer":"linkedin.com","count":5,"uniques":4}]' ;;
+  */traffic/popular/paths) echo '[{"path":"/campilho/CampsCast","title":"t","count":22,"uniques":9}]' ;;
+  *) echo '{"stargazers_count":1,"forks_count":0,"subscribers_count":0}' ;;
+esac
+GHSTUB
+chmod +x "$TRF_DIR/gh"
+TRF="$(
+  set +e; erros=""
+  export TRF_DIR GH_BIN="$TRF_DIR/gh" TRAFEGO_ARQ="$TRF_DIR/hist.json" TRAFEGO_REPO="campilho/CampsCast"
+  echo '{"count":7,"uniques":3,"views":[{"timestamp":"2026-11-06T00:00:00Z","count":1,"uniques":1},{"timestamp":"2026-11-18T00:00:00Z","count":6,"uniques":2}]}' > "$TRF_DIR/views.json"
+  python3 scripts/trafego_github.py >/dev/null || erros="$erros; primeira leitura falhou"
+  # Uma semana depois: o 06/11 saiu da janela, o 18/11 cresceu.
+  echo '{"count":30,"uniques":6,"views":[{"timestamp":"2026-11-18T00:00:00Z","count":25,"uniques":5},{"timestamp":"2026-11-25T00:00:00Z","count":5,"uniques":1}]}' > "$TRF_DIR/views.json"
+  python3 scripts/trafego_github.py >/dev/null || erros="$erros; segunda leitura falhou"
+  python3 - "$TRF_DIR/hist.json" <<'PYTRF' || erros="$erros; histórico errado"
+import json, sys
+h = json.load(open(sys.argv[1]))
+d = h["dias"]
+assert d["2026-11-06"]["visualizacoes"] == 1, d          # velho fica
+assert d["2026-11-18"]["visualizacoes"] == 25, d         # o maior lido vale
+assert d["2026-11-18"]["clones"] == 3, d
+assert len(h["leituras"]) == 1, h["leituras"]            # uma por data
+l = h["leituras"][0]
+assert l["estrelas"] == 1 and l["origens"] == [["linkedin.com", 5, 4]], l
+PYTRF
+  antes="$(cat "$TRF_DIR/hist.json")"; touch "$TRF_DIR/falha"
+  python3 scripts/trafego_github.py >/dev/null 2>"$TRF_DIR/err"; rc=$?
+  [[ $rc -eq 1 ]] || erros="$erros; falha do gh devia dar rc 1 ($rc)"
+  grep -q "Bad credentials" "$TRF_DIR/err" || erros="$erros; o motivo da falha não aparece"
+  [[ "$(cat "$TRF_DIR/hist.json")" == "$antes" ]] || erros="$erros; a falha mexeu no histórico"
+  printf '%s' "${erros:-ok}"
+)"
+if [[ "$TRF" == "ok" ]] \
+   && grep -q 'TRAFEGO_GITHUB:-1' scripts/run_episode.sh && grep -q 'scripts/trafego_github.py' scripts/run_episode.sh; then
+  ok "tráfego do GitHub: junta por dia sem perder os velhos, uma leitura por data; falha do gh não apaga; sexta do relatório"
+else
+  bad "tráfego do GitHub:$TRF"
+fi
+rm -rf "$TRF_DIR"; unset TRF_DIR
 
 # ------------------------------------------------------------------- resultado
 printf '\n\033[1m%s\033[0m\n' "Resultado: $PASS ok, $FAIL falha(s)"

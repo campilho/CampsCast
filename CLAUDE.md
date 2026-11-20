@@ -101,6 +101,7 @@ três veículos, dito no ar; reportagem não é publicação oficial (Editor 1.1
 | `precos.py` | preço dos modelos; o registro refaz por ele o custo de modelo que o CLI não conhece e cobraria como Opus |
 | `memoria_custo.py` | reparte o cache lido de cada execução entre prompt, índice, backlog, roteiros e web; o dos subagentes, à parte |
 | `transcricoes.py` | a transcrição de uma sessão com as dos subagentes dela; desde 05/11 as leituras de página moram lá |
+| `trafego_github.py` | guarda o tráfego do repositório no GitHub (que só mostra 14 dias) em `privado/dados/`, pelo `gh`; roda na sexta do relatório; `--mostra`; `TRAFEGO_GITHUB=0` desliga |
 | `estado.py` | publica `estado.json` no S3 dizendo como a execução terminou; é o que o vigia externo lê |
 
 ### Divulgação

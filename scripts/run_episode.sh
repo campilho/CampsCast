@@ -155,6 +155,14 @@ finaliza() {
       else
         log "AVISO: relatório do autor falhou; o episódio não é afetado."
       fi
+      # Tráfego do repositório no GitHub (scripts/trafego_github.py): o GitHub
+      # só guarda 14 dias, e a sexta do relatório cobre a semana com folga. Vai
+      # para privado/, nunca para o relatório, que é público. TRAFEGO_GITHUB=0
+      # desliga.
+      if [[ "${TRAFEGO_GITHUB:-1}" == "1" ]]; then
+        python3 scripts/trafego_github.py >>"$LOG" 2>&1 \
+          || log "AVISO: tráfego do GitHub não lido; o episódio não é afetado."
+      fi
     fi
     # Estado público no S3. É o único aviso que chega a quem está longe do Mac:
     # notificação do macOS morre na tela de casa. Sucesso também sobe — vigia

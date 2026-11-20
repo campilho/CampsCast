@@ -86,6 +86,22 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
       que tira a cautela da fonte. Para a v2 da rubrica: a regra 5 pune meio
       ponto de arredondamento, e a regra 10 depende do web.archive.org, que o
       WebFetch não abre
+- [ ] **Crescer fora da rede do autor** — pedido do autor em 20/11. A rede
+      (7.355 seguidores) é quase toda de quem trabalhou com ele, em TI de São
+      Paulo, e o post da memória circulou ainda mais entre colegas (detalhe em
+      `privado/divulgacao.md`). O único salto de alcance até hoje veio de fora
+      dela: o LinkedIn News, em 01/10. Antes de planejar, medir por onde
+      chegam os ouvintes que não vieram do LinkedIn: aba "Descobertas" do
+      Spotify for Creators, tráfego do GitHub (referências, precisa do
+      autor ou do `gh`) e o site. Depois, um plano curto com uma ou duas
+      frentes, cada uma com medida.
+      **Medido em 20/11** (`privado/audiencia.md`): no Spotify, metade das
+      impressões vem da **Busca** (1.263 de 2.488 em 30 dias), 42% do Início;
+      conversão de 7,9%. No GitHub, 37 visualizações de 11 pessoas em 14 dias,
+      4 vindas do LinkedIn, e a primeira estrela. O `gh` foi instalado (com o
+      Homebrew) e o `scripts/trafego_github.py` guarda o tráfego toda sexta,
+      no relatório; linha de base de 06 a 19/11, e testado dentro do launchd.
+      Próximo: os títulos dos episódios pensando em quem busca
 - [ ] **LinkedIn — post sobre a memória** — não saiu (adiado em 13, 15, 20 e
       27/10 e em 03/11). Rascunho em `privado/divulgacao.md`, com a métrica da
       linha de base (memória do programa de 30% para 1,7% de erro). Reconferir
