@@ -31,6 +31,7 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+import xml.etree.ElementTree as ET
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
@@ -215,10 +216,64 @@ def put_object(bucket: str, key: str, data: bytes, content_type: str,
         raise S3Error(f"Falha de rede ao subir {key}: {e}") from None
 
 
-def _explain(code: int, body: str, bucket: str, region: str) -> str:
+# ------------------------------------------------------------------ leitura
+def _get(bucket: str, key: str, params: dict[str, str], region: str | None,
+         creds: Credentials | None, timeout: int) -> bytes:
+    """GET assinado (SigV4) no endereço virtual do bucket. Levanta S3Error."""
+    region = region or os.environ.get("AWS_REGION", "us-east-1")
+    creds = creds or load_credentials()
+    host = f"{bucket}.s3.{region}.amazonaws.com"
+    canonical_uri = "/" + uri_encode(key.lstrip("/"), encode_slash=False)
+    query = "&".join(f"{uri_encode(k)}={uri_encode(v)}" for k, v in sorted(params.items()))
+    payload_hash = hashlib.sha256(b"").hexdigest()
+    now = _dt.datetime.now(_dt.timezone.utc)
+    amzdate, datestamp = now.strftime("%Y%m%dT%H%M%SZ"), now.strftime("%Y%m%d")
+    headers = {"host": host, "x-amz-content-sha256": payload_hash, "x-amz-date": amzdate}
+    if creds.token:
+        headers["x-amz-security-token"] = creds.token
+    creq, signed_headers = canonical_request("GET", canonical_uri, query, headers, payload_hash)
+    headers["authorization"] = authorization_header(creds, region, amzdate, datestamp, creq, signed_headers)
+    url = f"https://{host}{canonical_uri}" + (f"?{query}" if query else "")
+    req = urllib.request.Request(url, headers={k: v for k, v in headers.items() if k != "host"})
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            return r.read()
+    except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8", "replace")
+        raise S3Error(_explain(e.code, body, bucket, region, leitura=True)) from None
+    except Exception as e:
+        raise S3Error(f"Falha de rede ao ler {bucket}/{key}: {e}") from None
+
+
+def list_objects(bucket: str, prefix: str = "", region: str | None = None,
+                 creds: Credentials | None = None, timeout: int = 60) -> list[dict]:
+    """Chaves do bucket (ListObjectsV2), com tamanho e data. Pede s3:ListBucket."""
+    itens, token = [], None
+    while True:
+        params = {"list-type": "2", "prefix": prefix}
+        if token:
+            params["continuation-token"] = token
+        raiz = ET.fromstring(_get(bucket, "", params, region, creds, timeout))
+        ns = raiz.tag.split("}")[0] + "}" if raiz.tag.startswith("{") else ""
+        for c in raiz.findall(f"{ns}Contents"):
+            itens.append({"key": c.findtext(f"{ns}Key"), "size": int(c.findtext(f"{ns}Size") or 0),
+                          "modified": c.findtext(f"{ns}LastModified")})
+        if raiz.findtext(f"{ns}IsTruncated") != "true":
+            return itens
+        token = raiz.findtext(f"{ns}NextContinuationToken")
+
+
+def get_object(bucket: str, key: str, region: str | None = None,
+               creds: Credentials | None = None, timeout: int = 60) -> bytes:
+    """Conteúdo de um objeto. Pede s3:GetObject."""
+    return _get(bucket, key, {}, region, creds, timeout)
+
+
+def _explain(code: int, body: str, bucket: str, region: str, leitura: bool = False) -> str:
     hints = {
         403: (f"Acesso negado ao bucket '{bucket}'. Confira se as credenciais "
-              "têm permissão de s3:PutObject nesse bucket."),
+              + ("têm s3:ListBucket e s3:GetObject nesse bucket (--print-iam-policy)."
+                 if leitura else "têm permissão de s3:PutObject nesse bucket.")),
         404: (f"Bucket '{bucket}' não encontrado na região {region}. "
               "Confira o nome e a região."),
         301: (f"Bucket '{bucket}' fica em outra região. Ajuste AWS_REGION."),
@@ -271,8 +326,15 @@ def bucket_policy(bucket: str) -> dict:
     }
 
 
+def bucket_registros(bucket: str) -> str:
+    """O bucket privado dos registros de acesso do CloudFront (20/11)."""
+    return os.environ.get("S3_BUCKET_REGISTROS", "").strip() or f"{bucket}-registros"
+
+
 def iam_policy(bucket: str) -> dict:
-    """Permissão mínima do usuário de upload: só PUT, só neste bucket."""
+    """Permissão mínima do usuário do pipeline: PUT no bucket do site; no dos
+    registros de acesso, só listar e ler (scripts/acessos_site.py)."""
+    registros = bucket_registros(bucket)
     return {
         "Version": "2012-10-17",
         "Statement": [{
@@ -280,6 +342,16 @@ def iam_policy(bucket: str) -> dict:
             "Effect": "Allow",
             "Action": "s3:PutObject",
             "Resource": f"arn:aws:s3:::{bucket}/*",
+        }, {
+            "Sid": "ListaOsRegistrosDeAcesso",
+            "Effect": "Allow",
+            "Action": "s3:ListBucket",
+            "Resource": f"arn:aws:s3:::{registros}",
+        }, {
+            "Sid": "LeOsRegistrosDeAcesso",
+            "Effect": "Allow",
+            "Action": "s3:GetObject",
+            "Resource": f"arn:aws:s3:::{registros}/*",
         }],
     }
 

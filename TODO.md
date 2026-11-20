@@ -87,6 +87,28 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
       que tira a cautela da fonte. Para a v2 da rubrica: a regra 5 pune meio
       ponto de arredondamento, e a regra 10 depende do web.archive.org, que o
       WebFetch não abre
+- [x] **Medir os acessos ao site** — pedido do autor em 20/11. A página de
+      privacidade promete "sem cookies, sem ferramentas de análise, sem
+      rastreamento"; a medida tem de caber nisso. Proposta: já, os relatórios
+      do próprio CloudFront no console (60 dias, sem configurar nada); depois,
+      os registros de acesso do CloudFront num bucket privado, apagados em
+      poucos dias, e um script sem dependência que guarda só contagens em
+      `privado/` (páginas, origens, dispositivo, robôs à parte), como o do
+      GitHub. Pede: bucket e permissão no console (autor) e uma frase nova na
+      página de privacidade.
+      **Em 20/11:** os relatórios do CloudFront vinham vazios porque a
+      distribuição estava no plano Free, sem registros. O autor passou para o
+      pague pelo uso e desligou o WAF (custos em `docs/custos.md`). O painel
+      do WAF, antes de sair, deu a linha de base: 9,4 mil pedidos em 7 dias,
+      88,8% de robôs, o Brasil fora dos dez países (`privado/audiencia.md`).
+      **Montado em 20/11:** bucket privado `campscast-registros` (apaga em 7
+      dias), Logging v2 da distribuição em W3C com só 11 campos (sem cookie,
+      consulta nem porta; o registro não tem país, e o `x-edge-location` dá a
+      região), leitura para o usuário `campscast`, `scripts/acessos_site.py`
+      no fim de toda execução e a seção "Contagem de visitas" na página de
+      privacidade, no ar antes do primeiro registro. Primeira leitura às
+      18h: 3 pedidos, dois deles o feed lido pelo Spotify e pelo Podimo.
+      Na sexta, 27/11, olhar a primeira semana
 - [ ] **Crescer fora da rede do autor** — pedido do autor em 20/11. A rede
       (7.355 seguidores) é quase toda de quem trabalhou com ele, em TI de São
       Paulo, e o post da memória circulou ainda mais entre colegas (detalhe em

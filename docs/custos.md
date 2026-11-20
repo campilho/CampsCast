@@ -19,6 +19,28 @@ não entram aqui: ficam em `privado/`.
   o `run_episode.sh` exporta tudo o que está no `.env`, e com essa variável o
   episódio das 05:00 sairia cobrado na API em vez do Max.
 
+## A conta da AWS
+
+O site, o feed, os áudios e as capas saem de um bucket S3 atrás do CloudFront.
+A conta da AWS é do autor e já custava US$ 1,78 por mês antes do projeto (de
+novembro de 2025 a agosto de 2026, todo mês igual); o que passou disso é o
+podcast: US$ 2,37 em setembro, US$ 4,33 em outubro e US$ 3,16 em novembro até
+o dia 20 (previsão da AWS: US$ 4,45). O detalhe por serviço não aparece para o
+papel de administrador do autor: o painel de custos exige que a conta raiz
+libere o acesso do IAM à cobrança.
+
+Há um orçamento de US$ 25 por mês (AWS Budgets), com aviso por e-mail ao autor em dois
+limites de custo real: 40% (US$ 10, o dobro do normal; acrescentado em 20/11, quando
+o plano Free do CloudFront saiu e com ele o teto de custo) e 80% (US$ 20).
+
+**CloudFront.** Até 20/11 a distribuição estava no plano Free de preço fixo,
+que não tem registros de acesso — e sem eles não se mede quem visita o site.
+Em 20/11 o autor a passou para o pague pelo uso e desligou o WAF que vinha com
+o plano (avulso, custaria uns US$ 8 a 10 por mês). O tráfego cabe na franquia
+gratuita permanente do CloudFront, de 1 TB e 10 milhões de pedidos por mês: na
+semana de 13 a 19/11 foram 9,4 mil pedidos. O que muda é que não há mais teto
+de custo; o orçamento acima é o alarme.
+
 ## O limite do Max
 
 O Max não cobra por episódio: cobra em limite. São duas janelas, e o app

@@ -78,6 +78,9 @@ export LIMITES_MAX=0
 # O tráfego do GitHub vai à API de verdade pelo gh, na sexta do relatório.
 # Desligado aqui; a seção dele usa um gh falso.
 export TRAFEGO_GITHUB=0
+# Os acessos ao site leem o bucket dos registros na AWS; desligado aqui, e a
+# seção dele lê arquivos locais.
+export ACESSOS_SITE=0
 
 ok()   { printf '  \033[32m✓\033[0m %s\n' "$1"; PASS=$((PASS+1)); }
 bad()  { printf '  \033[31m✗\033[0m %s\n' "$1"; FAIL=$((FAIL+1)); }
@@ -788,6 +791,13 @@ ip = iam_policy("meu-bucket")
 assert ip["Statement"][0]["Action"] == "s3:PutObject", "upload só escreve"
 assert ip["Statement"][0]["Resource"] == "arn:aws:s3:::meu-bucket/*"
 assert "Principal" not in ip["Statement"][0], "policy de IAM não leva Principal"
+# Registros de acesso (20/11): só listar e ler, só no bucket deles.
+leitura = {st["Sid"]: st for st in ip["Statement"][1:]}
+assert leitura["ListaOsRegistrosDeAcesso"]["Action"] == "s3:ListBucket"
+assert leitura["ListaOsRegistrosDeAcesso"]["Resource"] == "arn:aws:s3:::meu-bucket-registros"
+assert leitura["LeOsRegistrosDeAcesso"]["Action"] == "s3:GetObject"
+assert leitura["LeOsRegistrosDeAcesso"]["Resource"] == "arn:aws:s3:::meu-bucket-registros/*"
+assert not any("Put" in st["Action"] or "Delete" in st["Action"] for st in ip["Statement"][1:])
 print(f"    bucket resolvido do .env: {bucket}")
 PYEOF
 
@@ -3918,6 +3928,100 @@ else
   bad "tráfego do GitHub:$TRF"
 fi
 rm -rf "$TRF_DIR"; unset TRF_DIR
+
+# ------------------------------------------------------------- acessos ao site
+# Registros do CloudFront viram contagens por dia; nenhum IP nem navegador
+# sai do script (é o que a página de privacidade promete). JSON e W3C,
+# comprimidos ou não; dia no horário de Brasília; um dia só cresce.
+head_ "Acessos ao site"
+ACS="$(python3 - <<'PYACS' 2>&1
+import gzip, json, os, pathlib, subprocess, sys, tempfile
+d = pathlib.Path(tempfile.mkdtemp()); (d / "logs").mkdir()
+erros = []
+CEL = "Mozilla/5.0 (Linux; Android 14) Mobile Safari"
+PC = "Mozilla/5.0 (Macintosh; Intel Mac OS X) Chrome/130"
+def j(data, hora, ip, uri, status, ua, ref="-", pais="BR"):
+    return json.dumps({"date": data, "time": hora, "c-ip": ip, "cs-uri-stem": uri, "sc-status": status,
+                       "cs(User-Agent)": ua, "cs(Referer)": ref, "c-country": pais, "x-edge-location": "GRU3-P1"})
+linhas = [
+    j("2026-11-21", "12:00:00", "200.1.1.1", "/", "200", CEL, "https://www.linkedin.com/feed/"),
+    j("2026-11-21", "12:00:05", "200.1.1.1", "/estudio/", "200", CEL, "https://campscast.com.br/"),
+    j("2026-11-21", "12:00:06", "200.1.1.1", "/capa/capa.css", "200", CEL),
+    j("2026-11-21", "13:00:00", "189.2.2.2", "/", "200", PC, "-", "PT"),
+    j("2026-11-21", "13:00:01", "66.249.1.1", "/", "200", "Googlebot/2.1", "-", "US"),
+    j("2026-11-21", "14:00:00", "3.3.3.3", "/feed.xml", "200", "Spotify/1.0", "-", "US"),
+    j("2026-11-21", "14:05:00", "3.3.3.3", "/feed.xml", "304", "Spotify/1.0", "-", "US"),
+    j("2026-11-21", "15:00:00", "200.1.1.1", "/audio/2026-11-23.mp3", "206", "AppleCoreMedia/1.0"),
+    j("2026-11-21", "15:00:09", "200.1.1.1", "/audio/2026-11-23.mp3", "206", "AppleCoreMedia/1.0"),
+    j("2026-11-21", "15:00:10", "9.9.9.9", "/wp-login.php", "404", "zgrab/0.x", "-", "NL"),
+    # 01:30 UTC de 22/11 ainda é 21/11 em Brasília
+    j("2026-11-22", "01:30:00", "177.4.4.4", "/", "200", CEL, "https://l.instagram.com/"),
+]
+(d / "logs" / "a.json.gz").write_bytes(gzip.compress("\n".join(linhas[:6]).encode()))
+w3c = ("#Version: 1.0\n#Fields: date time c-ip cs-uri-stem sc-status cs(User-Agent) cs(Referer) c-country\n"
+       + "\n".join("\t".join(json.loads(l)[k] for k in ["date", "time", "c-ip", "cs-uri-stem", "sc-status",
+                                                        "cs(User-Agent)", "cs(Referer)", "c-country"]).replace(" ", "%20")
+                   for l in linhas[6:]))
+(d / "logs" / "b.log").write_text(w3c)
+amb = {**os.environ, "ACESSOS_ARQ": str(d / "acessos.json")}
+r = subprocess.run([sys.executable, "scripts/acessos_site.py", "--dir", str(d / "logs")], capture_output=True, text=True, env=amb)
+if r.returncode != 0:
+    erros.append(f"rc {r.returncode}: {r.stderr[-200:]}")
+saida = (d / "acessos.json").read_text()
+h = json.loads(saida)["dias"]
+x = h.get("2026-11-21", {})
+esperado = {"pedidos": 11, "paginas_gente": 4, "paginas_robo": 1, "visitantes": 3, "feed_leituras": 2, "feed_leitores": 1}
+for k, v in esperado.items():
+    if x.get(k) != v:
+        erros.append(f"{k}: {x.get(k)} (esperado {v})")
+if x.get("audio_downloads") != {"2026-11-23.mp3": 1}:
+    erros.append(f"áudio: {x.get('audio_downloads')}")
+if x.get("origens") != {"linkedin.com": 1, "(direto)": 1, "l.instagram.com": 1}:
+    erros.append(f"origens: {x.get('origens')}")
+if x.get("dispositivo") != {"celular": 3, "computador": 1} or x.get("paises", {}).get("BR") != 3 \
+        or x.get("bordas", {}).get("GRU") != 3:
+    erros.append(f"dispositivo/país: {x.get('dispositivo')} {x.get('paises')}")
+if "2026-11-22" in h:
+    erros.append("01:30 UTC de 22/11 devia contar em 21/11 (Brasília)")
+for vazado in ("200.1.1.1", "189.2.2.2", "Mozilla", "AppleCoreMedia", "Googlebot"):
+    if vazado in saida:
+        erros.append(f"vazou {vazado} no arquivo guardado")
+# Releitura com só metade da janela (o dia saindo dos 7 dias): não diminui.
+(d / "logs" / "a.json.gz").unlink()
+subprocess.run([sys.executable, "scripts/acessos_site.py", "--dir", str(d / "logs")], capture_output=True, env=amb)
+if json.loads((d / "acessos.json").read_text())["dias"]["2026-11-21"]["pedidos"] != 11:
+    erros.append("dia pela metade apagou a contagem maior")
+print("; ".join(erros) or "ok")
+PYACS
+)"
+if [[ "$ACS" == "ok" ]] && grep -q 'ACESSOS_SITE:-1' scripts/run_episode.sh; then
+  ok "acessos ao site: contagens por dia em Brasília, gente e robô à parte, sem IP nem navegador guardados; dia só cresce"
+else
+  bad "acessos ao site: $ACS"
+fi
+
+# ------------------------------------------------------------- prints do site
+# O print em si precisa do Chrome; aqui, sem ele, a tabela de aparelhos e o
+# veredito que vai embaixo de cada print.
+PRS="$(python3 - <<'PYPRS' 2>&1
+import sys; sys.path.insert(0, "scripts"); import prints_site as p
+e = []
+chaves = [l[0] for l in p.APARELHOS]
+for k in ("mac", "s24", "iphone16", "ipadpro", "fullhd"):
+    if k not in chaves: e.append(f"falta {k}")
+if len(set(chaves)) != len(chaves): e.append("chave repetida")
+if p.veredito({"altura": 659, "img_fim": 423, "botoes_fim": 691, "lateral": False}) != "ilustração inteira; botões abaixo da dobra":
+    e.append("veredito do iPhone")
+if p.veredito({"altura": 820, "img_fim": 828, "botoes_fim": 900, "lateral": True}) != "ilustração: faltam 8 px; botões abaixo da dobra; ROLAGEM LATERAL":
+    e.append("veredito com falta e rolagem")
+print("; ".join(e) or "ok")
+PYPRS
+)"
+if [[ "$PRS" == "ok" ]] && python3 scripts/prints_site.py --listar | grep -q "^s24 "; then
+  ok "prints do site: aparelhos do autor na tabela e o veredito de cada print"
+else
+  bad "prints do site: $PRS"
+fi
 
 # ------------------------------------------------------------------- resultado
 printf '\n\033[1m%s\033[0m\n' "Resultado: $PASS ok, $FAIL falha(s)"

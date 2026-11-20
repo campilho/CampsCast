@@ -164,6 +164,13 @@ finaliza() {
           || log "AVISO: tráfego do GitHub não lido; o episódio não é afetado."
       fi
     fi
+    # Acessos ao site (scripts/acessos_site.py): os registros do CloudFront
+    # ficam 7 dias no bucket privado; lendo todo dia, nenhum se perde. Só
+    # contagens, em privado/. ACESSOS_SITE=0 desliga.
+    if [[ "${ACESSOS_SITE:-1}" == "1" ]]; then
+      python3 scripts/acessos_site.py >>"$LOG" 2>&1 \
+        || log "AVISO: acessos ao site não lidos; o episódio não é afetado."
+    fi
     # Estado público no S3. É o único aviso que chega a quem está longe do Mac:
     # notificação do macOS morre na tela de casa. Sucesso também sobe — vigia
     # que só enxerga fracasso não distingue "falhou" de "nem chegou a rodar".

@@ -86,6 +86,7 @@ três veículos, dito no ar; reportagem não é publicação oficial (Editor 1.1
 | `confere_roteiro.py` | confere o que a abertura e a ficha não podem deixar de dizer; registra, não bloqueia |
 | `estudio.py` | dados do site: a execução evento a evento, por personagem, e as instruções de cada um; `--orfaos` |
 | `paginas.py` | cópia do roteiro e do log de pesquisa do dia em HTML, para o site; chamado pelo `estudio.py` |
+| `prints_site.py` | fotografa a abertura do site em 8 aparelhos (os do autor primeiro) pelo Chrome sem janela e mede se a ilustração e os botões cabem sem rolar; `logs/prints-site/`; `--url`, `--so`, `--listar` |
 | `publica_site.py` | sobe o site (capa, estúdio, sugestão, privacidade) para o bucket, sem tocar no podcast; o orquestrador chama no fim de cada episódio publicado; `--dry-run` |
 
 ### Diagnóstico e manutenção
@@ -101,6 +102,7 @@ três veículos, dito no ar; reportagem não é publicação oficial (Editor 1.1
 | `precos.py` | preço dos modelos; o registro refaz por ele o custo de modelo que o CLI não conhece e cobraria como Opus |
 | `memoria_custo.py` | reparte o cache lido de cada execução entre prompt, índice, backlog, roteiros e web; o dos subagentes, à parte |
 | `transcricoes.py` | a transcrição de uma sessão com as dos subagentes dela; desde 05/11 as leituras de página moram lá |
+| `acessos_site.py` | conta as visitas ao site pelos registros do CloudFront (bucket privado `campscast-registros`, apagados em 7 dias) e guarda só contagens por dia em `privado/dados/`; roda no fim de toda execução; `--dir`, `--mostra`; `ACESSOS_SITE=0` desliga |
 | `trafego_github.py` | guarda o tráfego do repositório no GitHub (que só mostra 14 dias) em `privado/dados/`, pelo `gh`; roda na sexta do relatório; `--mostra`; `TRAFEGO_GITHUB=0` desliga |
 | `estado.py` | publica `estado.json` no S3 dizendo como a execução terminou; é o que o vigia externo lê |
 
