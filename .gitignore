@@ -1,3 +1,6 @@
+# Capa do dia, gerada pelo scripts/capa.py — vive no S3, e o script a refaz.
+# A âmbar do teste de 19/11 (.jpg) fica no git.
+assets/capas/*.png
 # Áudio gerado — vive no S3, não no repo
 audio/
 *.mp3

@@ -114,7 +114,8 @@ launchd (seg–sex, 05:00; repescagem às 06:00 e 07:00)
          ├─ [1] claude -p prompts/master.md   → episodes/ e research/ do dia
          │       (lê e atualiza a memória: temas, fios em aberto, backlog)
          ├─ [2] scripts/tts.py                → audio/AAAA-MM-DD.mp3
-         ├─ [3] scripts/publish.py            → feed.xml no S3, atrás do CloudFront
+         ├─ [3] scripts/capa.py               → a capa do dia, com número e data
+         │       scripts/publish.py            → feed.xml no S3, atrás do CloudFront
          ├─ [4] scripts/notify.py             → e-mail / notificação macOS
          └─ depois: registro de custo e do uso do Max, estado.json, o site,
             e no último episódio da semana o relatório do autor

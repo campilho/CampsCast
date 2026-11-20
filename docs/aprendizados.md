@@ -1220,3 +1220,23 @@ instruções dela não chegou ao CLI (caminho relativo depois de um `cd`), e só
 **Um número de erro baixo pode ser o verificador concordando com o roteiro.
 Antes de comparar taxas, calibre o verificador contra erros já conhecidos.**
 
+
+### O Spotify lê a capa do episódio vinda pelo RSS
+
+A ajuda do Spotify for Creators diz que capa por episódio é só para programa
+hospedado lá, e o painel confirma o que dá para fazer à mão: num episódio que
+vem por RSS, o menu tem só clip, vídeo e compartilhar, nada de editar. Mesmo
+assim, o `<itunes:image>` no item do feed funcionou. O episódio 58, de 19/11,
+saiu com uma variante âmbar da capa ("ep. 58 · 19/11"), e às 7h05 ela já
+aparecia no carro (Android Auto), na lista e no player, e no app do Android.
+Às 8h23, também no Spotify do iPhone e no Apple Podcasts. Na Apple, só o
+episódio 58 ganhou miniatura na lista; os outros aparecem sem imagem nenhuma,
+porque ela só mostra a capa no item quando o episódio tem uma própria. No
+Spotify, a miniatura do programa no topo da página também passou a ser a do
+episódio mais novo: a capa do dia vira o rosto do programa ali, então ela tem
+de continuar reconhecível como CampsCast. Duas coisas não foram ao ar sem ser
+descobertas no caminho: a policy de leitura pública do bucket lista prefixo a
+prefixo, e sem `capas/*` a imagem subia e dava 403.
+
+**A ajuda descrevia o painel, não o feed. Antes de desistir pelo que a
+documentação diz, um teste de um episódio custa um dia.**

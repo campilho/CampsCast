@@ -594,6 +594,10 @@ fi
 if stage_enabled publish; then
   log "── [3/4] Publicação (feed.xml + S3)"
   REGISTRAR=1; T_PUBLICACAO="$(date +%s)"; ETAPA_ATUAL="publicacao"
+  # A capa do dia (verde, com número e data) antes do feed; se falhar, o
+  # episódio sai com a capa do programa, como até 18/11 — não vale parar.
+  run python3 scripts/capa.py "$EPISODE_DATE" 2>&1 | tee -a "$LOG" \
+    || log "AVISO: capa do dia não gerada; o episódio sai com a capa do programa."
   run python3 scripts/publish.py --date "$EPISODE_DATE" 2>&1 | tee -a "$LOG"
 else
   log "── [3/4] Publicação — PULADA"

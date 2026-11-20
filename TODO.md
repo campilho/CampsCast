@@ -258,10 +258,26 @@ aposentar, juntar ou subir o teto.
 - [ ] **Chamada para seguir mais destacada** — no ar, sai colada no fim da
       primeira pauta e passa muito rápido. Pausa maior antes e depois, e rever
       a orientação do texto; a pausa pode vir do mesmo mecanismo dos capítulos
-- [ ] **Capa própria por episódio** — no carro, a capa aparece grande, e hoje
-      é a mesma em todos. O feed aceita `<itunes:image>` por episódio;
-      conferir se o Spotify usa essa imagem quando o programa vem por RSS (a
-      Apple usa). Se usar: uma imagem por dia a partir da manchete, com a
+- [ ] **Capa própria por episódio** — **o teste deu certo em 19/11: o Spotify
+      lê a capa do feed**, e a Apple também (carro, Android, iPhone; ver
+      `docs/aprendizados.md`).
+      **Decidido pelo autor em 19/11: capa do dia em verde**, a cor da marca,
+      com número e data; no app do Spotify a miniatura do programa vira a do
+      episódio mais novo, então ela tem de ser a identidade de sempre.
+      **Feito em 20/11: `scripts/capa.py`**, sem modelo e sem dependência
+      (PNG de 1400 px, 273 KB, meio segundo), com as medidas da capa
+      original: grade de 12 px, linhas de varredura a cada ~11,7 px, dois
+      brilhos. O orquestrador chama antes do `publish.py`; se falhar, o
+      episódio sai com a capa do programa. Primeira no ar: episódio 59, de
+      segunda 23/11 — conferir no Spotify e na Apple. Os episódios antigos
+      seguem sem capa própria; dar capa a eles (gerar e subir as 57) é
+      decisão do autor.
+      **Ideia: cor própria para edição especial.** O âmbar do teste destacou o
+      episódio na lista. Guardar uma cor diferente para um episódio que não é
+      o diário comum, como um resumo da semana no sábado, se ele vier a
+      existir.
+      No carro, a capa aparece grande, e até 18/11 era a mesma em todos.
+      Ideia: uma imagem por dia a partir da manchete, com a
       identidade da capa atual, medindo o custo. É o trabalho do Artista, que
       o estúdio já anuncia como "em breve".
       **Teste no ar na quinta 19/11** (sexta é feriado, sem episódio): a

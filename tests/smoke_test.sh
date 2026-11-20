@@ -1317,11 +1317,13 @@ import publish
 show = json.load(open("config/show.json"))
 base = {"date": "2026-11-19", "title": "t", "topics": ["a"], "audio_path": pathlib.Path("audio/x.mp3"),
         "size": 1, "duration": 60}
-com = publish.build_feed(show, [{**base, "capa": True}])
+com = publish.build_feed(show, [{**base, "capa": "2026-11-19.jpg"}])
+png = publish.build_feed(show, [{**base, "capa": "2026-11-19.png"}])
 sem = publish.build_feed(show, [base])
 item_com = com.split("<item>")[1]; item_sem = sem.split("<item>")[1]
-url = show["base_url"].rstrip("/") + "/capas/2026-11-19.jpg"
-print("ok" if f'<itunes:image href="{url}"/>' in item_com and "itunes:image" not in item_sem
+url = show["base_url"].rstrip("/") + "/capas/2026-11-19"
+print("ok" if f'<itunes:image href="{url}.jpg"/>' in item_com and "itunes:image" not in item_sem
+      and f'<itunes:image href="{url}.png"/>' in png.split("<item>")[1]
       and sem.count("itunes:image") == 1 else "falhou")
 PYCAPA
 )" || CAPA="erro"
@@ -1329,6 +1331,75 @@ if [[ "$CAPA" == "ok" ]]; then
   ok "capa do episódio entra no feed só quando o arquivo existe"
 else
   bad "capa por episódio no feed ($CAPA)"
+fi
+# A capa do dia é gerada aqui, sem modelo e sem dependência (19/11: o Spotify e a
+# Apple leem a do feed). PNG válido de 1400 px, rótulo certo, e nunca troca uma
+# capa que já existe — a âmbar de 19/11 é .jpg e também conta.
+CAPA_DIR="$(mktemp -d)"
+CAPAPY="$(CAPA_DIR="$CAPA_DIR" python3 - <<'PYCAPAPY'
+import contextlib, io, os, pathlib, struct, sys, zlib
+sys.path.insert(0, "scripts")
+import capa, publish
+def roda(*args):
+    sys.argv = ["capa.py", *args]
+    with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+        return capa.main()
+d = pathlib.Path(os.environ["CAPA_DIR"])
+erros = []
+dados = capa.capa(59, "2026-11-23")
+if dados[:8] != b"\x89PNG\r\n\x1a\n":
+    erros.append("não é PNG")
+w, h, prof, cor = struct.unpack(">IIBB", dados[16:26])
+if (w, h, prof, cor) != (1400, 1400, 8, 2):
+    erros.append(f"cabeçalho {w}x{h} prof {prof} cor {cor}")
+i = dados.index(b"IDAT")
+n = struct.unpack(">I", dados[i - 4:i])[0]
+cru = zlib.decompress(dados[i + 4:i + 4 + n])
+if len(cru) != 1400 * (1 + 1400 * 3):
+    erros.append(f"{len(cru)} bytes crus")
+# verde: o núcleo do cursor é verde quase puro; o canto, escuro
+lin = 700; px = cru[lin * 4201 + 1:][1100 * 3:1100 * 3 + 3]
+if not (px[1] > 240 and px[0] < 80 and px[2] < 120):
+    erros.append(f"cursor não é verde: {tuple(px)}")
+if max(cru[1:1 + 30]) > 10:
+    erros.append("canto não é escuro")
+if len(dados) > 600_000:
+    erros.append(f"{len(dados)} bytes, pesado demais para capa")
+if capa.rotulo(59, "2026-11-23") != "ep. 59 · 23/11" or capa.rotulo(100, "2027-01-04") != "ep. 100 · 04/01":
+    erros.append("rótulo")
+# ep. 999 ainda cabe na largura
+xs = [x + w for x, y, w, h in capa.retangulos(capa.rotulo(999, "2027-12-31"))]
+if max(xs) > 1400 - 60:
+    erros.append("ep. 999 não cabe")
+# não troca a que existe; o publish acha .png e .jpg
+capa.CAPAS = publish.CAPAS = d
+capa.EPISODIOS = d
+(d / "2026-11-19.jpg").write_bytes(b"ambar")
+(d / "2026-11-23.md").write_text("---\ndate: 2026-11-23\nepisode: 59\n---\n")
+roda("2026-11-19", "--numero", "58")
+if (d / "2026-11-19.jpg").read_bytes() != b"ambar" or (d / "2026-11-19.png").exists():
+    erros.append("refez a capa de 19/11")
+if roda("2026-11-23") != 0 or not (d / "2026-11-23.png").exists():
+    erros.append("não gerou a de 23/11 pelo número do roteiro")
+if publish.capa_de("2026-11-19") != "2026-11-19.jpg" or publish.capa_de("2026-11-23") != "2026-11-23.png" \
+        or publish.capa_de("2026-11-24") is not None:
+    erros.append("publish não acha a capa pela extensão")
+if roda("2026-11-24") != 1:
+    erros.append("sem roteiro, devia falhar")
+print("; ".join(erros) or "ok")
+PYCAPAPY
+)" || CAPAPY="erro"
+rm -rf "$CAPA_DIR"
+if [[ "$CAPAPY" == "ok" ]]; then
+  ok "capa.py: PNG verde de 1400 px com número e data, sem trocar capa que já existe"
+else
+  bad "capa.py ($CAPAPY)"
+fi
+if grep -q 'scripts/capa.py "\$EPISODE_DATE"' scripts/run_episode.sh \
+   && [[ $(grep -n 'scripts/capa.py' scripts/run_episode.sh | head -1 | cut -d: -f1) -lt $(grep -n 'scripts/publish.py --date' scripts/run_episode.sh | head -1 | cut -d: -f1) ]]; then
+  ok "orquestrador gera a capa antes de publicar"
+else
+  bad "orquestrador não chama o capa.py antes do publish.py"
 fi
 if grep -q "EPISODE_NUMBER" prompts/master.md && grep -q "AGENTE_NOME" prompts/master.md \
    && ! grep -qi "observar hoje: " prompts/master.md && ! grep -q "recap em três frases" prompts/master.md; then

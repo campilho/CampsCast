@@ -22,7 +22,8 @@ launchd (seg-sex 05:00, repescagem 06:00 e 07:00)
        │                                   → research/AAAA-MM-DD.md
        │    └─ scripts/varredura.py        → logs/varredura-AAAA-MM-DD.md (sombra, fora do prompt)
        ├─ [2] scripts/tts.py               → audio/AAAA-MM-DD.mp3
-       ├─ [3] scripts/publish.py           → feed.xml → S3 → CloudFront
+       ├─ [3] scripts/capa.py              → assets/capas/AAAA-MM-DD.png
+       │    scripts/publish.py           → feed.xml → S3 → CloudFront
        └─ [4] scripts/notify.py
 ```
 
@@ -64,7 +65,8 @@ três veículos, dito no ar; reportagem não é publicação oficial (Editor 1.1
 | `window.py` | calcula a janela de notícias |
 | `schedule.py` | decide se o dia tem episódio (dias úteis, feriados) |
 | `tts.py` | narra; `--check`, `--budget`, `--voice`, `--model`, `--speed`, `--list-voices`, `--voice-status` |
-| `publish.py` | gera o feed e sobe |
+| `capa.py` | capa do episódio: o ">CC▮" verde da capa do programa com "ep. N · DD/MM", em PNG sem dependência; não refaz a que existe sem `--refaz` |
+| `publish.py` | gera o feed e sobe; põe `<itunes:image>` no episódio que tem capa própria |
 | `s3.py` | upload SigV4; `--print-policy`, `--print-iam-policy` |
 | `notify.py` | avisa que saiu |
 | `nomes.py` | nomes falados na ficha técnica e número do episódio |
