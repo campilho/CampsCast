@@ -3664,6 +3664,11 @@ for dia, sem in [("2026-11-21", "2026-W47"), ("2026-11-22", "2026-W47"), ("2026-
 assert d.dia_do_post("2026-W47", 2) == D("2026-11-24") and d.dia_do_post("2026-W53", 2) == D("2027-01-05")
 assert d.numeros("5.693 pessoas, 7,9% e o Opus 5.5 às 05h") == {"5693", "7.9", "5.5", "5"}, d.numeros("5.693 pessoas, 7,9% e o Opus 5.5 às 05h")
 assert d.canonico("5-5") == "5.5" and d.canonico("08") == "8"
+# Nome não é número: em 21/11 a pauta foi barrada pelo "1" de "Verificador V1"
+# e pelo "1.2" de "Editor 1.2". Algarismo colado em letra é nome; agente com
+# versão que existe na ficha também. Versão que a ficha não tem segue número.
+assert d.numeros("o Verificador V1, o Editor 1.2 e o jornalista 1.1") == set(), d.numeros("o Verificador V1, o Editor 1.2 e o jornalista 1.1")
+assert d.numeros("o Editor 1.7 e o Opus 5.5") == {"1.7", "5.5"}, d.numeros("o Editor 1.7 e o Opus 5.5")
 # Os links do primeiro comentário são os do README (o do repositório, o de
 # config/show.json), letra por letra: o do Spotify com "I" no lugar do "l" dá 404.
 conf, sabidos = d.config(), pathlib.Path("README.md").read_text() + pathlib.Path("config/show.json").read_text()

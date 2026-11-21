@@ -165,8 +165,30 @@ def canonico(tok: str) -> str:
     return ".".join(str(int(p)) for p in t.split("."))
 
 
+COLADO_EM_LETRA = re.compile(r"(?<=[^\W\d_])\d+(?:[.,\-]\d+)*")
+
+
+def versoes_da_ficha() -> set[tuple[str, str]]:
+    """(nome do agente em minúsculas, versão) de config/agentes.json."""
+    try:
+        ficha = json.loads((ROOT / "config" / "agentes.json").read_text(encoding="utf-8"))["agentes"]
+    except (OSError, ValueError, KeyError):
+        return set()
+    return {(a.get("nome", k).lower(), h["versao"]) for k, a in ficha.items() for h in a.get("historico", [])}
+
+
+def sem_nomes(texto: str) -> str:
+    """O texto sem os algarismos que são nome, não quantidade: colado em letra
+    ("V1", "W47", "H100") e agente com versão que existe na ficha ("Editor
+    1.2"). Versão que a ficha não tem ("Editor 1.7") fica e é conferida."""
+    sabidas = versoes_da_ficha()
+    texto = re.sub(r"\b([^\W\d_]+)\s+(\d+\.\d+)\b",
+                   lambda m: m.group(1) if (m.group(1).lower(), m.group(2)) in sabidas else m.group(0), texto)
+    return COLADO_EM_LETRA.sub("", texto)
+
+
 def numeros(texto: str) -> set[str]:
-    return {canonico(m.group()) for m in NUMERO.finditer(texto)}
+    return {canonico(m.group()) for m in NUMERO.finditer(sem_nomes(texto))}
 
 
 def limpa(s: str) -> str:

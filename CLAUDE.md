@@ -136,7 +136,7 @@ três veículos, dito no ar; reportagem não é publicação oficial (Editor 1.1
 | `memoria/temas-sugeridos.md` | sugestões de tema (do agente; no futuro, de ouvintes) que o autor aprova ou recusa |
 | `memoria/fios.md` | fios em aberto: promessas, previsões e preocupações à espera de desfecho ([ADR 0008](docs/decisions/0008-memoria-em-camadas.md)) |
 | `prompts/master.md` | o agente |
-| `config/agentes.json` | ficha dos agentes: versão de cada um, prompts, modelo, ferramentas, o que mudou e o que se mediu |
+| `config/agentes.json` | ficha dos agentes: versão de cada um, prompts, modelo, ferramentas, o que mudou e o que se mediu; a história do Editor, versão a versão, em `docs/editor.md` |
 | `prompts/jornalista.md` | o Jornalista, e `prompts/leitura-pelo-jornalista.md`, o que o agente principal ganha no prompt quando ele está ligado |
 | `config/varredura.json` | feeds, sitemaps e APIs que o `varredura.py` lê, com teto por fonte e prazos; fora do `sources.yaml` porque o agente lê aquele |
 | `config/rubrica-pautas.md` | régua das pautas: porteira da fonte e quatro notas ([ADR 0012](docs/decisions/0012-nota-das-pautas.md)); ainda fora da produção |
