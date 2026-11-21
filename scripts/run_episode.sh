@@ -60,6 +60,12 @@ CLAUDE_EFFORT="${CLAUDE_EFFORT:-high}"
 # custo e as medições cegas por quatro dias. Com isto a produção sai do sorteio;
 # scripts/confere_claude.py avisa se o experimento voltar mesmo assim.
 export CLAUDE_CODE_WEB_FETCH_AGENT="${CLAUDE_CODE_WEB_FETCH_AGENT:-0}"
+# E o modelo pequeno, que resume as páginas do WebFetch e faz as buscas: o da
+# ficha (modelo_pequeno em config/agentes.json; a suíte confere). Em 21/11 o
+# CLI 2.1.323 trocou o Haiku 4.5 pelo 5.5 sem ninguém pedir; sem isto, atualizar
+# o CLI mudaria também o leitor das páginas. Um ensaio pode pedir outro.
+# O ID completo é o que a 2.1.283 já usava (modelUsage): nada muda nela.
+export ANTHROPIC_DEFAULT_HAIKU_MODEL="${ANTHROPIC_DEFAULT_HAIKU_MODEL:-claude-haiku-4-5-20251001}"
 # Jornalista (docs/plano-leitura-por-subagente.md): com JORNALISTA=1 as páginas
 # são lidas por um subagente nosso, com prompt e modelo próprios, e o WebFetch
 # do agente principal fica barrado por um hook. Desligado por padrão: com 0 o

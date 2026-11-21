@@ -13,6 +13,7 @@
 #   scripts/ensaio.sh --data 2026-10-29 --dry-run      # monta a cópia e mostra o que rodaria
 #   scripts/ensaio.sh --data 2026-10-29 --pasta DIR    # onde montar (padrão ~/CampsCast-ensaios/)
 #   scripts/ensaio.sh --data 2026-11-02 --force        # dia sem episódio
+#   scripts/ensaio.sh --data 2026-10-29 --cli BIN      # outro Claude CLI (versão nova, antes da produção)
 #   JORNALISTA=1 scripts/ensaio.sh --data 2026-11-06   # com o Jornalista (plano de leitura)
 #
 # A cópia é a árvore de um commit (episódios, memória, backlog, índice) com o
@@ -36,7 +37,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-DATA=""; REF=""; CODIGO="$ROOT"; PASTA=""; DRY_RUN=0; FORCE=0
+DATA=""; REF=""; CODIGO="$ROOT"; PASTA=""; DRY_RUN=0; FORCE=0; CLI=""
 # Dados vêm do git desta pasta; o teste aponta para um repositório de mentira.
 ORIGEM="${ENSAIO_ORIGEM:-$ROOT}"
 ENV_ARQ="${ENSAIO_ENV:-$ROOT/.env}"
@@ -50,6 +51,7 @@ while [[ $# -gt 0 ]]; do
     --pasta)   PASTA="$2"; shift 2 ;;
     --dry-run) DRY_RUN=1; shift ;;
     --force)   FORCE=1; shift ;;
+    --cli)     CLI="$2"; shift 2 ;;
     -h|--help) sed -n '2,34p' "$0"; exit 0 ;;
     *) echo "Argumento desconhecido: $1" >&2; exit 2 ;;
   esac
@@ -58,6 +60,14 @@ done
 die() { echo "ensaio: $*" >&2; exit 1; }
 
 [[ -n "$DATA" ]] || die "falta --data AAAA-MM-DD."
+# Outro Claude CLI: o caminho vai ao ambiente do agente, que vence o
+# CLAUDE_BIN do .env. A versão fica no ENSAIO.json e no registro da cópia.
+CLI_VERSAO=""
+if [[ -n "$CLI" ]]; then
+  [[ -x "$CLI" && ! -d "$CLI" ]] || die "--cli: $CLI não existe ou não é executável."
+  CLI="$(cd "$(dirname "$CLI")" && pwd)/$(basename "$CLI")"
+  CLI_VERSAO="$("$CLI" --version 2>/dev/null | head -1 | awk '{print $1}' || true)"
+fi
 python3 -c "import datetime, sys; datetime.date.fromisoformat(sys.argv[1])" "$DATA" 2>/dev/null \
   || die "data inválida: $DATA"
 
@@ -149,7 +159,7 @@ CODIGO_COMMIT="$(git -C "$CODIGO" rev-parse --short HEAD 2>/dev/null || echo "")
 CODIGO_SUJO="$(git -C "$CODIGO" status --porcelain -- scripts prompts config 2>/dev/null | head -1 || true)"
 DATA="$DATA" REF="$REF" ULTIMO="$ULTIMO" ANTERIOR="$ANTERIOR" EXATO="$EXATO" CODIGO="$CODIGO" \
 CODIGO_COMMIT="$CODIGO_COMMIT" CODIGO_SUJO="$CODIGO_SUJO" PATH_LAUNCHD="$PATH_LAUNCHD" \
-python3 - "$PASTA/ENSAIO.json" <<'PY'
+CLI="$CLI" CLI_VERSAO="$CLI_VERSAO" python3 - "$PASTA/ENSAIO.json" <<'PY'
 import datetime, json, os, sys
 e = os.environ
 json.dump({
@@ -157,6 +167,7 @@ json.dump({
     "anterior_na_producao": e["ANTERIOR"] or None, "estado_exato": e["EXATO"] == "1",
     "codigo": e["CODIGO"], "codigo_commit": e["CODIGO_COMMIT"] or None,
     "codigo_com_mudancas": bool(e["CODIGO_SUJO"]), "path": e["PATH_LAUNCHD"],
+    "cli": e["CLI"] or None, "cli_versao": e["CLI_VERSAO"] or None,
     "montado_em": datetime.datetime.now().astimezone().isoformat(timespec="seconds"),
 }, open(sys.argv[1], "w"), ensure_ascii=False, indent=2)
 PY
@@ -195,6 +206,7 @@ TESTE+=("LIMITES_MAX=${LIMITES_MAX:-0}")
 # Os acessos ao site e o tráfego do GitHub leem a AWS e o GitHub de verdade, e
 # gravam em privado/ da produção; no ensaio, desligados.
 TESTE+=("ACESSOS_SITE=0" "TRAFEGO_GITHUB=0")
+[[ -n "$CLI" ]] && TESTE+=("CLAUDE_BIN=$CLI")
 echo
 set +e
 env -i HOME="$HOME" USER="${USER:-}" LOGNAME="${LOGNAME:-${USER:-}}" SHELL="${SHELL:-/bin/zsh}" \

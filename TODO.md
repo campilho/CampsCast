@@ -14,6 +14,15 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
       outra mudança no agente até medir. Para a versão seguinte: ligação
       causal ("porque") que a fonte não fez é paráfrase que acrescenta; e as
       portas (Editor 1.3).
+- [ ] **Segunda, 30/11 — atualizar o Claude CLI da produção** de 2.1.283 para
+      2.1.323 (canal estável), depois da semana de medição do 1.2. Ensaiado em
+      21/11 (`scripts/ensaio.sh --cli`): com o modelo pequeno fixado no Haiku
+      4.5, custo, turnos e leitura no patamar da 2.1.283; sem fixar, o CLI
+      trocava sozinho para o Haiku 5.5 ([aprendizados](docs/aprendizados.md)).
+      O autor roda `sudo npm i -g @anthropic-ai/claude-code@2.1.323`; o
+      primeiro episódio avisa "o CLI mudou" no log e no registro. O Haiku 5.5
+      (uns US$ 0,70 a menos por episódio) é decisão à parte, com ensaio e
+      verificador.
 
 ## Semana de 16/11 — sexta, 20/11, é feriado (Consciência Negra)
 

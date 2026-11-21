@@ -1256,3 +1256,25 @@ mas ainda cabe no acaso (z = 1,54); a medida de verdade é a produção.
 (`docs/plano-editor-1-2.md`.) **Escrever a frase da fonte ao lado obriga a
 compará-la; a regra sozinha, o 1.1 já tinha ("incerteza é dita como
 incerteza"), e não bastava.**
+
+### Atualizar o CLI troca o modelo que lê as páginas, sem aviso
+
+A produção rodou na 2.1.283 de setembro a novembro, 43 versões atrás. Antes de
+atualizar, o Editor 1.2 rodou na 2.1.323 (canal estável) em 26 e 30/10, do
+mesmo estado das execuções de 20/11 na 2.1.283 (`scripts/ensaio.sh --cli`). O
+vigia pegou no mesmo dia: **o modelo pequeno, que resume as páginas do WebFetch
+e faz as buscas, passou do Haiku 4.5 para o Haiku 5.5**, sem nada pedir. O
+custo caiu (US$ 4,80 e 3,55 contra 6,06 e 4,77; o Haiku saiu de 0,95 e 0,83
+para 0,25 e 0,10), mas a leitura muda de modelo, e o ADR 0013 deixou essa troca
+para depois de medir a qualidade. O resto ficou igual: a leitura seguiu no
+próprio agente (nenhum subagente), a "Conferência da certeza" saiu nos dois
+logs (32 e 26 linhas), e o registro e o rastro leram a transcrição nova. A web
+era a de 21/11, não a de 20/11, e duas das três pautas de 30/10 mudaram; o
+custo do Opus não se compara com segurança. **Atualizar o CLI é mudar o agente:
+o modelo pequeno precisa ser fixado (ANTHROPIC_DEFAULT_HAIKU_MODEL) para que a
+atualização mude só o CLI, e o Haiku 5.5 entra, se entrar, como versão própria,
+com ensaio e verificador.**
+Fixado o Haiku 4.5 no orquestrador, o mesmo dia 26/10 na 2.1.323 voltou ao
+patamar da 2.1.283: US$ 5,88 contra 6,06, 123 turnos contra 128, 15,1 contra
+14,3 minutos, Haiku em 0,95 nos dois, nenhum subagente e nenhum modelo
+inesperado. A queda de custo do primeiro ensaio era quase toda do Haiku 5.5.

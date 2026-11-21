@@ -2867,6 +2867,12 @@ OUT_ENS="$(JORNALISTA_MODELO=claude-haiku-5-5 ANTHROPIC_DEFAULT_HAIKU_MODEL=clau
   ens --data 2026-10-29 --pasta "$ENS/copia")" && RC_ENS=0 || RC_ENS=$?
 OUT_INEXATO="$(ens --data 2026-10-29 --de "$(git -C "$ORI" rev-parse HEAD~2)" --pasta "$ENS/inexato" --dry-run)"
 OUT_FEITO="$(ens --data 2026-10-29 --de "$(git -C "$ORI" rev-parse HEAD)" --pasta "$ENS/feito")" && RC_FEITO=0 || RC_FEITO=$?
+# Outro CLI só no ensaio (--cli): é assim que se mede uma versão nova do Claude
+# Code antes de atualizar a produção. O caminho vence o CLAUDE_BIN do .env.
+{ printf '#!/bin/sh\n[ "$1" = "--version" ] && { echo "9.9.9 (Claude Code)"; exit 0; }\ntouch "%s/cli2-rodou"\n' "$ENS"; tail -n +2 "$ENS/claude" | sed 's|/ambiente|/ambiente2|; s|/onde|/onde2|'; } > "$ENS/claude2"
+chmod +x "$ENS/claude2"
+OUT_CLI="$(ens --data 2026-10-29 --pasta "$ENS/outro-cli" --cli "$ENS/claude2")" && RC_CLI=0 || RC_CLI=$?
+OUT_SEMCLI="$(ens --data 2026-10-29 --pasta "$ENS/sem-cli" --cli "$ENS/nao-existe" --dry-run)" && RC_SEMCLI=0 || RC_SEMCLI=$?
 ENS_OK="$(python3 - "$ENS" "$RC_ENS" "$(git -C "$ORI" status --porcelain)" "$METRICAS_ANTES" "$(shasum "$METRICAS_ARQ")" <<'PY' 2>&1
 import json, os, pathlib, subprocess, sys
 ens, rc, sujo, antes, depois = pathlib.Path(sys.argv[1]), sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5]
@@ -2895,14 +2901,26 @@ reg = json.loads((copia / "metricas" / "execucoes.jsonl").read_text().splitlines
 assert reg["data"] == "2026-10-29" and reg["estado"] == "ok", reg
 r = subprocess.run([sys.executable, "-c", "import s3"], cwd=copia / "scripts", capture_output=True, text=True)
 assert r.returncode != 0 and "desligado" in r.stderr, "S3 ligado na cópia"
+outro = json.loads((ens / "outro-cli" / "ENSAIO.json").read_text())
+assert (ens / "cli2-rodou").exists(), "o ensaio não rodou o CLI pedido"
+assert outro["cli"] == str(ens / "claude2") and outro["cli_versao"] == "9.9.9", outro
+assert json.loads((copia / "ENSAIO.json").read_text())["cli"] is None
+reg2 = json.loads((ens / "outro-cli" / "metricas" / "execucoes.jsonl").read_text().splitlines()[-1])
+assert reg2["claude_cli"] == "9.9.9", reg2.get("claude_cli")
+# O modelo pequeno fica fixado no da ficha: em 21/11 o CLI 2.1.323 trocou o
+# Haiku 4.5 pelo 5.5 sozinho. Pedido de fora (o primeiro ensaio) ainda vence.
+ficha = json.load(open("config/agentes.json"))["agentes"]["editor"]["historico"][-1]["modelo_pequeno"]
+amb2 = (ens / "ambiente2").read_text().splitlines()
+assert any(l.startswith(f"ANTHROPIC_DEFAULT_HAIKU_MODEL={ficha}") for l in amb2), [l for l in amb2 if "HAIKU" in l]
 print("ok")
 PY
 )"
 rm -rf "$ENS"
-if [[ "$ENS_OK" == "ok" && "$OUT_INEXATO" == *"estado inexato"* && "$OUT_ENS" != *"estado inexato"* && $RC_FEITO -ne 0 ]]; then
-  ok "ensaio: dia passado numa cópia com o estado certo, sem chave a mais, sem S3 e sem tocar no real"
+if [[ "$ENS_OK" == "ok" && "$OUT_INEXATO" == *"estado inexato"* && "$OUT_ENS" != *"estado inexato"* && $RC_FEITO -ne 0 \
+      && $RC_CLI -eq 0 && $RC_SEMCLI -ne 0 && "$OUT_SEMCLI" == *"--cli"* ]]; then
+  ok "ensaio: dia passado numa cópia com o estado certo, sem chave a mais, sem S3, sem tocar no real, e com outro CLI se pedido"
 else
-  bad "ensaio: $ENS_OK | rc do commit que já tem o dia: $RC_FEITO"
+  bad "ensaio: $ENS_OK | rc do commit que já tem o dia: $RC_FEITO | --cli: $RC_CLI, inexistente: $RC_SEMCLI $OUT_SEMCLI"
 fi
 
 # --------------------------------------------------------------------- site
@@ -3186,9 +3204,10 @@ ed, jn = f["editor"]["historico"][-1], f["jornalista"]["historico"][-1]
 assert ed["modelo"] == padrao("CLAUDE_MODEL") and ed["esforco"] == padrao("CLAUDE_EFFORT"), "modelo do Editor fora da ficha"
 assert ",".join(ed["ferramentas"]) == re.search(r'^\s*FERRAMENTAS="([^"$]+)"', orq, re.M).group(1), "ferramentas do Editor"
 assert jn["modelo"] == padrao("JORNALISTA_MODELO"), "modelo do Jornalista fora da ficha"
-# O resumidor das páginas: sem variável no orquestrador, é o padrão do CLI.
+# O resumidor das páginas: fixado no orquestrador desde 21/11 (o CLI 2.1.323 trocava sozinho).
 m = re.search(r'ANTHROPIC_DEFAULT_HAIKU_MODEL="\$\{ANTHROPIC_DEFAULT_HAIKU_MODEL:-([^}]+)\}"', orq)
-assert ed["modelo_pequeno"] == (m.group(1) if m else "claude-haiku-4-5"), "modelo pequeno do Editor fora da ficha"
+# O orquestrador fixa o ID completo ("claude-haiku-4-5-20251001"); a ficha, o modelo.
+assert (m.group(1) if m else "claude-haiku-4-5").startswith(ed["modelo_pequeno"]), "modelo pequeno do Editor fora da ficha"
 assert jn["ferramentas"] == jornalista.agentes(jn["modelo"])["jornalista"]["tools"], "ferramentas do Jornalista"
 assert set(jn["prompts"]) == {"prompts/jornalista.md", "prompts/leitura-pelo-jornalista.md"}
 for nome, ag in f.items():
