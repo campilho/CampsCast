@@ -66,6 +66,7 @@ export SITE_ARQ="$(mktemp)"
 # da máquina: um experimento ligado de verdade viraria aviso em todo teste.
 export CLAUDE_JSON="$(mktemp)"; printf '{}' > "$CLAUDE_JSON"
 export INTERRUPTORES_ARQ="$(mktemp)"; rm -f "$INTERRUPTORES_ARQ"
+export CLI_VERSAO_ARQ="$(mktemp)"; rm -f "$CLI_VERSAO_ARQ"
 # Sem rede o orquestrador para de cara; a suíte é offline e checa um nome que
 # sempre resolve. O teste de falta de rede troca por um que nunca resolve.
 export REDE_HOST=localhost
@@ -1524,6 +1525,19 @@ cfg.write_text(json.dumps({"cachedGrowthBookFeatures": {"tengu_clever_orbit": Fa
 r = roda("antes")
 assert r.stdout == "", r.stdout
 assert "tengu_clever_orbit: desligado" in r.stderr and "2 interruptores mudaram desde a execução anterior: tengu_clever_orbit, tengu_outro" in r.stderr, r.stderr
+# A versão do CLI: a produção ficou na 2.1.283 de setembro a novembro sem que
+# nenhum log dissesse. Agora vai ao log a cada execução, e a troca vira aviso.
+env["CLI_VERSAO_ARQ"] = str(d / "cli.json")
+r = roda("antes", "--cli", "2.1.283")
+assert r.stdout == "" and "CLI 2.1.283" in r.stderr, (r.stdout, r.stderr)
+r = roda("antes", "--cli", "2.1.283")
+assert r.stdout == "", r.stdout
+r = roda("antes", "--cli", "2.1.323")
+assert "o CLI mudou de 2.1.283 para 2.1.323" in r.stdout, r.stdout
+r = roda("antes", "--cli", "")
+assert "versão do CLI não lida" in r.stdout, r.stdout
+r = roda("antes", "--cli", "2.1.323")
+assert r.stdout == "", r.stdout
 # Depois: a sessão usou o web-fetch e recebeu página crua, e apareceu um modelo
 # que não é o principal nem o pequeno do CLI.
 uso = lambda i, nome, inp: {"type": "assistant", "message": {"content": [{"type": "tool_use", "id": i, "name": nome, "input": inp}]}}
@@ -1611,13 +1625,14 @@ os.utime(velho, (inicio - 3600, inicio - 3600))
 destino = d / "execucoes.jsonl"
 subprocess.run([sys.executable, "scripts/registro.py", "fecha", "--data", "2026-01-02", "--estado", "ok",
     "--inicio", str(inicio), "--pesquisa", str(inicio + 10), "--narracao", str(inicio + 80),
-    "--agente", str(agente), "--tts", str(tts), "--indicadores", str(velho), "--modelo", "claude-opus-5"],
+    "--agente", str(agente), "--tts", str(tts), "--indicadores", str(velho), "--modelo", "claude-opus-5", "--cli", "2.1.283"],
     env={**os.environ, "METRICAS_ARQ": str(destino)}, capture_output=True, check=True)
 l = json.loads(destino.read_text().splitlines()[-1])
 if l["claude"]["cache_lido"] != 303: erros.append(f"soma entre modelos: {l['claude']['cache_lido']}")
 if l["claude"]["custo_estimado_usd"] != 1.5: erros.append("custo estimado")
 if l["elevenlabs"]["creditos"] != 4600: erros.append("créditos")
 if l["indicadores"] is not None: erros.append("aproveitou arquivo de outra execução")
+if l.get("claude_cli") != "2.1.283": erros.append(f"versão do CLI: {l.get('claude_cli')}")
 if set(l["etapas_s"]) != {"pesquisa", "narracao"} or l["etapas_s"]["pesquisa"] != 70:
     erros.append(f"etapas {l['etapas_s']}")
 print(";".join(erros) if erros else "ok")

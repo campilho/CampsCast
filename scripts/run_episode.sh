@@ -69,7 +69,7 @@ JORNALISTA="${JORNALISTA:-0}"
 JORNALISTA_MODELO="${JORNALISTA_MODELO:-claude-sonnet-5-5}"
 # Que versão de cada agente rodou (config/agentes.json): vai para o log e para
 # o registro, para custo e qualidade serem lidos por versão.
-AGENTES_VERSOES=""
+AGENTES_VERSOES=""; CLI_VERSAO=""
 
 # ---------- args ----------
 EPISODE_DATE=""
@@ -139,7 +139,7 @@ finaliza() {
       --publicacao "$T_PUBLICACAO" --aviso "$T_AVISO" --modelo "${CLAUDE_MODEL:-}" \
       --agente "${BASE_REGISTRO}-agente.json" --tts "${BASE_REGISTRO}-tts.json" \
       --indicadores "${BASE_REGISTRO}-indicadores.json" --erro "$ULTIMO_ERRO" \
-      --conferido "$ROTEIRO_CONFERIDO" --avisos "$AVISOS_ROTEIRO" --agentes "${AGENTES_VERSOES:-}" \
+      --conferido "$ROTEIRO_CONFERIDO" --avisos "$AVISOS_ROTEIRO" --agentes "${AGENTES_VERSOES:-}" --cli "${CLI_VERSAO:-}" \
       --max-antes "${BASE_REGISTRO}-max-antes.json" --max-depois "${BASE_REGISTRO}-max-depois.json" \
       >>"$LOG" 2>&1 || true
     # Relatório do autor: junta o que pede decisão e o que deu errado na semana
@@ -428,8 +428,12 @@ $PAUTAS"
   else
     # Experimentos do Claude Code: o estado no cache do CLI vai para o log, e
     # experimento vigiado ligado vira aviso no registro (ADR 0013).
+    # A versão do CLI vai ao log e ao registro; a que mudou desde a execução
+    # anterior vira aviso, porque CLI novo pede ensaio como modelo novo.
     CC_ERR="$(mktemp)"
-    AVISOS_CLAUDE="$(python3 scripts/confere_claude.py antes 2>"$CC_ERR" || true)"
+    CLI_VERSAO="$("$CLAUDE_BIN" --version 2>/dev/null | head -1 | awk '{print $1}' || true)"
+    [[ "$CLI_VERSAO" =~ ^[0-9]+\.[0-9]+ ]] || CLI_VERSAO=""
+    AVISOS_CLAUDE="$(python3 scripts/confere_claude.py antes --cli "$CLI_VERSAO" 2>"$CC_ERR" || true)"
     while IFS= read -r l; do log "$l"; done < "$CC_ERR"; rm -f "$CC_ERR"
 
     # Limite do Max: uma leitura antes e outra depois do agente; a diferença é o

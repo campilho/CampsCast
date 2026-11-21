@@ -23,8 +23,14 @@ recebia o subagente. Quem confirma é o "depois".
 Avisos saem no stdout, um por linha, e vão para o registro (e daí para o
 relatório da semana). O resto sai no stderr, que o orquestrador põe no log.
 
+Com --cli, o "antes" também diz a versão do CLI que vai rodar e avisa quando
+ela mudou desde a execução anterior. A produção ficou na 2.1.283 de setembro a
+novembro de 2026 sem que nenhum log dissesse; versão nova de CLI muda o
+comportamento do agente tanto quanto um experimento, e pede ensaio.
+
 CLAUDE_JSON e INTERRUPTORES_ARQ trocam o cache do CLI e a foto da execução
-anterior; TRANSCRICOES_DIR, a pasta das transcrições. É o que o smoke test usa.
+anterior; CLI_VERSAO_ARQ, a versão anterior; TRANSCRICOES_DIR, a pasta das
+transcrições. É o que o smoke test usa.
 """
 from __future__ import annotations
 
@@ -64,7 +70,34 @@ def foto_arq() -> pathlib.Path:
     return pathlib.Path(os.environ.get("INTERRUPTORES_ARQ") or ROOT / "logs" / "claude-interruptores.json")
 
 
-def antes() -> int:
+def versao_arq() -> pathlib.Path:
+    return pathlib.Path(os.environ.get("CLI_VERSAO_ARQ") or ROOT / "logs" / "claude-cli.json")
+
+
+def confere_versao(versao: str) -> None:
+    """Versão do CLI no log; a que mudou desde a execução anterior, em aviso."""
+    if not versao:
+        print("claude code: versão do CLI não lida (claude --version falhou)")
+        return
+    print(f"Claude Code — CLI {versao}", file=sys.stderr)
+    arq = versao_arq()
+    try:
+        anterior = json.loads(arq.read_text(encoding="utf-8")).get("versao")
+    except (OSError, ValueError, AttributeError):
+        anterior = None
+    if anterior and anterior != versao:
+        print(f"claude code: o CLI mudou de {anterior} para {versao} desde a execução anterior;"
+              " versão nova de CLI pede ensaio (ADR 0013)")
+    try:
+        arq.parent.mkdir(parents=True, exist_ok=True)
+        arq.write_text(json.dumps({"versao": versao}), encoding="utf-8")
+    except OSError:
+        pass
+
+
+def antes(cli: str | None = None) -> int:
+    if cli is not None:
+        confere_versao(cli.strip())
     feats = cache_cli().get("cachedGrowthBookFeatures") or {}
     variavel = os.environ.get("CLAUDE_CODE_WEB_FETCH_AGENT")
     for nome, oque in VIGIADOS.items():
@@ -150,14 +183,15 @@ def depois(agente: pathlib.Path, modelo: str, jornalista: str | None = None) -> 
 def main() -> int:
     ap = argparse.ArgumentParser(description="Vigia do Claude Code (ADR 0013).")
     sub = ap.add_subparsers(dest="cmd", required=True)
-    sub.add_parser("antes")
+    an = sub.add_parser("antes")
+    an.add_argument("--cli", default=None, help="versão do CLI que vai rodar (claude --version)")
     d = sub.add_parser("depois")
     d.add_argument("--agente", required=True, help="JSON final do claude -p (logs/*-agente.json)")
     d.add_argument("--modelo", default="", help="modelo principal pedido ao CLI")
     d.add_argument("--jornalista", default=None, help="modelo do Jornalista, se ligado")
     a = ap.parse_args()
     if a.cmd == "antes":
-        return antes()
+        return antes(a.cli)
     return depois(pathlib.Path(a.agente), a.modelo, a.jornalista)
 
 

@@ -355,6 +355,8 @@ def cmd_fecha(a) -> int:
                            if a.conferido == "1" else None),
         # Que versão de cada agente rodou (config/agentes.json, scripts/agentes.py).
         "agentes": _json_texto(a.agentes),
+        # Versão do Claude CLI que rodou o agente (claude --version).
+        "claude_cli": a.cli or None,
         # Quanto do Max o episódio gastou: leituras antes e depois do agente e a
         # diferença em pontos percentuais da janela de 5 horas e da semana.
         "max": leituras or None,
@@ -503,7 +505,7 @@ def main() -> int:
         f.add_argument(f"--{campo}", required=True)
     for campo in ("fim", "pesquisa", "narracao", "publicacao", "aviso",
                   "agente", "tts", "indicadores", "modelo", "erro",
-                  "conferido", "avisos", "agentes", "max-antes", "max-depois"):
+                  "conferido", "avisos", "agentes", "max-antes", "max-depois", "cli"):
         f.add_argument(f"--{campo}", default="")
     r = sub.add_parser("resultado"); r.add_argument("arquivo")
     i = sub.add_parser("indicadores"); i.add_argument("--data", required=True)
