@@ -83,3 +83,66 @@ contagem no ar, páginas fechadas na ficha.
 O verificador diário (V1 em produção, em sombra) e a separação dos agentes
 (varredura → verificador → Editor) seguem no TODO. Se o verificador diário
 entrar antes, ele mede o 1.2 de graça na produção, e o ensaio pode encolher.
+
+## Piloto de 20/11: dois dias, 1.1 contra 1.2
+
+Ensaios dos episódios 41 (26/10) e 45 (30/10), estado exato, com o 1.2 numa
+cópia do código fora do repositório (a produção seguiu no 1.1). Verificador V1
+(Opus, rubrica v1) nos quatro roteiros, pela chave de API: US$ 5,95 no total.
+
+| | 1.1 | 1.2 |
+|---|---|---|
+| Afirmações verificáveis (41 + 45) | 22 + 22 = 44 | 26 + 27 = 53 |
+| Erros (impreciso; nenhum errado) | 1 + 4 = **5 (11,4%)** | 3 + 2 = **5 (9,4%)** |
+| Deles, regra 8 (paráfrase) | 1 + 4 = **5** | 0 + 1 = **1** |
+| Custo do agente, a preço de API | US$ 4,99 e 4,36 | US$ 6,06 e 4,77 |
+| Minutos | 12,5 e 10,5 | 14,3 e 12,0 |
+
+- A conferência da certeza apareceu nos dois logs (11 e 26 linhas) e pegou um
+  caso de verdade: "É capacidade que não foi ensinada", mais forte do que o
+  90,5% → 81% da fonte, corrigido pelo próprio agente.
+- O único erro de regra 8 do 1.2 foi anotado na conferência como "a leitura"
+  (o "porque" ligando custo e tokens) e ficou no ar: a regra precisa dizer que
+  ligação causal que a fonte não faz também é paráfrase que acrescenta.
+- Os outros erros do 1.2 são de outras regras: datas da memória do programa
+  (regra 6, dois) e arredondamento sem marcador e conta (regras 5 e 4). O "uns
+  nove" para 9,5 pontos mostra que "cerca de" ainda precisa respeitar o limite
+  de 5% da rubrica.
+- O 1.2 sai uns 10% a 20% mais caro e 1,5 a 2 minutos mais longo: as
+  conferências custam leitura.
+- Dois dias não medem taxa (os intervalos se cruzam), mas a direção da regra 8
+  é a esperada: 5 casos em 44 contra 1 em 53. Próximo: os outros quatro dias
+  (42, 43, 44 e 46) para fechar os seis do plano.
+
+## Os seis dias (21/11, de madrugada)
+
+Os outros quatro dias do plano (42 a 44 e 46) rodaram depois que a janela de 5
+horas virou. Nos dias 27 e 28/10 o estado é inexato (o commit anterior junta
+dias), o que não atrapalha a comparação: as duas versões partem do mesmo
+estado. Verificador V1 nos doze roteiros: US$ 19,08 no total.
+
+| | 1.1 | 1.2 |
+|---|---|---|
+| Afirmações verificáveis | 155 | 155 |
+| Erros (errado + impreciso) | 19 = 12,3% (IC 8,0 a 18,4) | 13 = 8,4% (IC 5,0 a 13,8) |
+| Deles, regra 8 (paráfrase) | **11 = 7,1%** (IC 4,0 a 12,3) | **5 = 3,2%** (IC 1,4 a 7,3) |
+| "Errado" | 1 | 0 |
+| Custo do agente, média por dia | US$ 4,86 | US$ 5,19 (+7%) |
+| Minutos, média | 11,3 | 12,6 |
+
+- A regra 8 caiu à metade (z = 1,54; p ≈ 0,12): direção clara, mas ainda
+  dentro do que o acaso explica com 155 afirmações por lado. O total caiu de
+  12,3% para 8,4% (z = 1,12).
+- Os erros que sobram no 1.2 são de datas da memória do programa (regra 6,
+  três), arredondamento (regra 5, dois), contagem, e cinco de paráfrase. Um
+  deles foi a ligação causal que a fonte não fez, anotada na conferência e
+  mantida no ar.
+- O custo subiu 7% e o tempo, pouco mais de um minuto: a conferência da
+  certeza custa leitura, e cabe no orçamento.
+
+**Recomendação:** pôr o 1.2 como está na produção (é a versão medida) e medir
+na própria produção com o verificador diário, quando ele existir. A ligação
+causal entra numa versão seguinte, junto com as portas ou à parte, com ensaio.
+
+**Decisão do autor (21/11):** o 1.2 entra na produção a partir do episódio de
+23/11. Uma semana de episódios antes de tocar no prompt de novo.

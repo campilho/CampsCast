@@ -4,6 +4,17 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
 [PROJETO.md](PROJETO.md); o que já foi feito, no git, nos ADRs e em
 [docs/aprendizados.md](docs/aprendizados.md). Atualizada em 14/11/2026.
 
+## Semana de 23/11
+
+- [ ] **Segunda, 23/11 — primeiro episódio do Editor 1.2** (a certeza é a da
+      fonte, e a "Conferência da certeza" no log). Ensaio dos eps. 41 a 46 em
+      20 e 21/11: paráfrase de 7,1% para 3,2%, erros de 12,3% para 8,4%, custo
+      +7% ([plano](docs/plano-editor-1-2.md)). Conferir na semana: a seção
+      nova aparece em todo log, custo e duração no patamar do ensaio. Nenhuma
+      outra mudança no agente até medir. Para a versão seguinte: ligação
+      causal ("porque") que a fonte não fez é paráfrase que acrescenta; e as
+      portas (Editor 1.3).
+
 ## Semana de 16/11 — sexta, 20/11, é feriado (Consciência Negra)
 
 - [x] **Segunda, 16/11 — primeiro episódio do Editor 1.1** (publicação oficial

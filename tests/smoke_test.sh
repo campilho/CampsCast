@@ -2871,6 +2871,9 @@ assert f"ESTADO_ARQ={copia}/logs/estado.json" in amb, "estado não desviado"
 assert "CLAUDE_CODE_WEB_FETCH_AGENT=0" in amb.splitlines(), "modo de leitura não fixado"
 assert "JORNALISTA_MODELO=claude-haiku-5-5" in amb.splitlines(), "chave da variante não passou ao ensaio"
 assert "ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-5-5" in amb.splitlines(), "modelo pequeno da variante não passou"
+# O que lê a AWS ou o GitHub de verdade não roda no ensaio (20/11: os quatro
+# ensaios do Editor 1.2 tentaram ler os registros de acesso do site).
+assert "ACESSOS_SITE=0" in amb.splitlines() and "TRAFEGO_GITHUB=0" in amb.splitlines(), "acessos/tráfego ligados no ensaio"
 assert os.path.realpath((ens / "onde").read_text().strip()) == os.path.realpath(copia), "agente fora da cópia"
 assert json.loads((copia / "logs" / "estado.json").read_text())["estado"] == "ok"
 reg = json.loads((copia / "metricas" / "execucoes.jsonl").read_text().splitlines()[-1])

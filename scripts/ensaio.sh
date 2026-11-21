@@ -192,6 +192,9 @@ TESTE+=("VARREDURA=${VARREDURA:-0}")
 # A leitura do limite do Max (scripts/limites_max.py) mede a produção; no
 # ensaio fica desligada, a menos que se peça (LIMITES_MAX=1).
 TESTE+=("LIMITES_MAX=${LIMITES_MAX:-0}")
+# Os acessos ao site e o tráfego do GitHub leem a AWS e o GitHub de verdade, e
+# gravam em privado/ da produção; no ensaio, desligados.
+TESTE+=("ACESSOS_SITE=0" "TRAFEGO_GITHUB=0")
 echo
 set +e
 env -i HOME="$HOME" USER="${USER:-}" LOGNAME="${LOGNAME:-${USER:-}}" SHELL="${SHELL:-/bin/zsh}" \

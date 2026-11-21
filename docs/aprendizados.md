@@ -1240,3 +1240,19 @@ prefixo, e sem `capas/*` a imagem subia e dava 403.
 
 **A ajuda descrevia o painel, não o feed. Antes de desistir pelo que a
 documentação diz, um teste de um episódio custa um dia.**
+
+### Pedir a frase da fonte ao lado da frase do roteiro reduz a paráfrase pela metade
+
+O Verificador V1 achou em 14/11 que metade dos erros dos episódios 41 a 46 era
+paráfrase que tira a cautela da fonte. O Editor 1.2 (20/11, em ensaio) pede a
+certeza da fonte no roteiro e uma "Conferência da certeza" no log: cada número
+e cada afirmação central com a frase da fonte ao lado. Ensaio dos seis dias,
+1.1 contra 1.2, os doze roteiros pelo Verificador: a regra 8 caiu de 11 em 155
+afirmações (7,1%) para 5 em 155 (3,2%), e o total de 12,3% para 8,4%, com 7% a
+mais de custo. A conferência pegou casos que o próprio agente corrigiu antes de
+gravar. O que ela não pega: a ligação causal ("porque") que o agente anota como
+leitura dele e mantém. Com 155 afirmações por lado, a queda tem direção clara
+mas ainda cabe no acaso (z = 1,54); a medida de verdade é a produção.
+(`docs/plano-editor-1-2.md`.) **Escrever a frase da fonte ao lado obriga a
+compará-la; a regra sozinha, o 1.1 já tinha ("incerteza é dita como
+incerteza"), e não bastava.**
