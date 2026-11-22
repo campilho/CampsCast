@@ -145,7 +145,10 @@ PY
 # Do .env, só o que o agente precisa para rodar como na produção.
 : > "$PASTA/.env"
 if [[ -f "$ENV_ARQ" ]]; then
-  grep -E '^[[:space:]]*(CLAUDE_CODE_OAUTH_TOKEN|CLAUDE_BIN)=' "$ENV_ARQ" > "$PASTA/.env" || true
+  # A chave do Parallel só vai à cópia quando a busca pelo Parallel é pedida.
+  CHAVES='CLAUDE_CODE_OAUTH_TOKEN|CLAUDE_BIN'
+  [[ "${BUSCA:-}" == "parallel" ]] && CHAVES="$CHAVES|PARALLEL_API_KEY"
+  grep -E "^[[:space:]]*($CHAVES)=" "$ENV_ARQ" > "$PASTA/.env" || true
 fi
 mkdir -p "$PASTA/logs" "$PASTA/audio" "$PASTA/feed" "$PASTA/metricas"
 
@@ -193,7 +196,7 @@ done
 # se ensaia o Jornalista (JORNALISTA=1 scripts/ensaio.sh --data …) e o modelo
 # pequeno do CLI, que resume as páginas e faz as buscas
 # (ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-5-5 scripts/ensaio.sh --data …).
-for v in JORNALISTA JORNALISTA_MODELO ANTHROPIC_DEFAULT_HAIKU_MODEL; do
+for v in JORNALISTA JORNALISTA_MODELO ANTHROPIC_DEFAULT_HAIKU_MODEL BUSCA PARALLEL_MODO; do
   [[ -n "${!v:-}" ]] && TESTE+=("$v=${!v}")
 done
 # A varredura dos feeds (scripts/varredura.py) lê os feeds de agora, não os do

@@ -1278,3 +1278,22 @@ Fixado o Haiku 4.5 no orquestrador, o mesmo dia 26/10 na 2.1.323 voltou ao
 patamar da 2.1.283: US$ 5,88 contra 6,06, 123 turnos contra 128, 15,1 contra
 14,3 minutos, Haiku em 0,95 nos dois, nenhum subagente e nenhum modelo
 inesperado. A queda de custo do primeiro ensaio era quase toda do Haiku 5.5.
+
+### O Parallel lê o que o WebFetch não lê, mas o trecho curto perde os números
+
+Em 21/11, o extrator do Parallel (`/v1/extract`) recebeu as 15 páginas que
+recusaram o agente de 16 a 19/11, mais a da Procuradoria do Texas: leu 15 de
+16 (a outra não existe mais, 404). As sete da OpenAI (403 para o WebFetch), o
+post dela no X (402), o Texas (402), Guardian, NPR e Quartz vieram com título
+e texto. Três cuidados medidos no mesmo teste: **os trechos padrão podem
+deixar os números de fora** (no "jagged frontier", 0 dos 7 números que foram
+ao ar; com o texto completo, os 7, e todos batem com o episódio de 19/11);
+**a cópia pode ser antiga** (a x.ai/news veio de 23/10, só com o aviso de
+cookies, mesmo pedindo leitura ao vivo); e o preço é US$ 1 por mil páginas.
+Na busca, o mesmo motor sai caro de outro jeito: cada busca devolve uns 27 mil
+caracteres direto ao Opus, contra uns 4 mil do WebSearch, que passa pelo
+Haiku antes. No ensaio de 26/10, 10 buscas do Parallel contra 18 do WebSearch
+custaram US$ 1,59 a mais de Opus e 5 centavos de Parallel. **A leitura pelo
+Parallel ataca o problema das portas fechadas, que hoje leva pautas da OpenAI
+ao ar pela cobertura; o tamanho da busca se corta na configuração
+(`max_chars_total`), não com um resumidor no meio.**

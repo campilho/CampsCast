@@ -221,6 +221,9 @@ def contagem_transcricao(caminho: pathlib.Path) -> dict | None:
         return None
     return {"chamadas": len(ids), **tot,
             "buscas": ferramentas.get("WebSearch", 0),
+            # Busca pelo Parallel (BUSCA=parallel, só em ensaio e sombra).
+            "buscas_parallel": ferramentas.get("mcp__parallel__web_search", 0),
+            "leituras_parallel": ferramentas.get("mcp__parallel__web_fetch", 0),
             "leituras": ferramentas.get("WebFetch", 0),
             "subagentes": len(subagentes(caminho)),
             "esforco": ",".join(sorted(esforcos)) or None}

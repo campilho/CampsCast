@@ -3276,6 +3276,48 @@ else
   bad "chave do Jornalista no orquestrador — desligado: $(printf '%s' "$ARGS_DESL" | grep -c -- '--agents') --agents; ligado: $(printf '%s' "$ARGS_LIG" | grep -- '^--' | tr '\n' ' ')"
 fi
 
+# A busca pelo Parallel (BUSCA=parallel): desligada por padrão; ligada, o
+# servidor MCP do Parallel entra no lugar do WebSearch, o WebFetch fica (o do
+# Parallel só para página que ele não abre), e a
+# chave não aparece em argumento, log nem arquivo (o CLI expande a variável).
+FAKE_PL="$(mktemp -d)"
+cat > "$FAKE_PL/claude" <<STUB
+#!/bin/sh
+printf '%s\n' "\$@" > "$FAKE_PL/args.txt"
+proximo=0
+for a in "\$@"; do
+  [ "\$proximo" = 1 ] && cat "\$a" > "$FAKE_PL/mcp.json" && proximo=0
+  [ "\$a" = "--mcp-config" ] && proximo=1
+done
+printf '%s' '{"type":"result","is_error":true,"result":"parado de propósito","usage":{}}'
+STUB
+chmod +x "$FAKE_PL/claude"
+CLAUDE_BIN="$FAKE_PL/claude" bash scripts/run_episode.sh --date 2026-08-25 --only research >/dev/null 2>&1 || true
+PL_DESL="$(cat "$FAKE_PL/args.txt" 2>/dev/null)"
+BUSCA=parallel PARALLEL_API_KEY=chave-de-teste-123 CLAUDE_BIN="$FAKE_PL/claude" \
+  bash scripts/run_episode.sh --date 2026-08-25 --only research >/dev/null 2>&1 || true
+PL_LIG="$(cat "$FAKE_PL/args.txt" 2>/dev/null)"
+PL_MCP="$(cat "$FAKE_PL/mcp.json" 2>/dev/null)"
+PL_LOG="$(cat logs/2026-08-25.log 2>/dev/null)"
+rm -rf "$FAKE_PL"; rm -f logs/2026-08-25.log logs/2026-08-25-*.json
+PL_OK="$(PL_MCP="$PL_MCP" python3 -c '
+import json, os
+c = json.loads(os.environ["PL_MCP"])["mcpServers"]["parallel"]
+assert c["type"] == "http" and c["url"] == "https://mcp.parallel.ai/mcp?tools=web_search,web_fetch", c
+assert c["headers"]["Authorization"] == "Bearer ${PARALLEL_API_KEY}", "a chave foi escrita no arquivo"
+assert json.loads(c["headers"]["x-parallel-mcp-config"]) == {"web_search": {"override": {"mode": "advanced"}}}
+print("ok")' 2>&1)"
+if [[ "$PL_OK" == "ok" && "$PL_DESL" != *"--mcp-config"* && "$PL_DESL" != *"Busca na web nesta execução"* \
+      && "$PL_LIG" == *"Read,Write,Edit,Glob,Grep,mcp__parallel__web_search,WebFetch,mcp__parallel__web_fetch"* \
+      && "$PL_LIG" == *"--disallowedTools"*"WebSearch"* && "$PL_LIG" == *"--strict-mcp-config"* \
+      && "$PL_LIG" == *"## Busca na web nesta execução: pelo Parallel"* && "$PL_LIG" == *"### Página que o WebFetch não abre"* \
+      && "$PL_LOG" == *"Busca pelo Parallel (advanced)"* \
+      && "$PL_LIG$PL_LOG$PL_MCP" != *"chave-de-teste-123"* ]]; then
+  ok "busca pelo Parallel desligada por padrão; ligada, entra no lugar do WebSearch, e a chave não aparece em lugar nenhum"
+else
+  bad "busca pelo Parallel: $PL_OK | $(printf '%s' "$PL_LIG" | grep -- '^--' | tr '\n' ' ')"
+fi
+
 # ---------------------------------------------------------- varredura dos feeds
 # H2 (docs/plano-varredura-por-feeds.md): os feeds dizem o que saiu na janela
 # sem modelo nenhum. Tudo aqui é local: arquivos file:// e um servidor HTTP na

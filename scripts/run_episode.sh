@@ -73,6 +73,16 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL="${ANTHROPIC_DEFAULT_HAIKU_MODEL:-claude-ha
 # (scripts/ensaio.sh) antes de qualquer decisão sobre a produção.
 JORNALISTA="${JORNALISTA:-0}"
 JORNALISTA_MODELO="${JORNALISTA_MODELO:-claude-sonnet-5-5}"
+# Busca na web: com BUSCA=parallel, o servidor MCP do Parallel (mcp.parallel.ai)
+# entra no lugar do WebSearch do CLI; a leitura de páginas segue no WebFetch, e
+# o leitor do Parallel só entra na página que o WebFetch não abre (em 21/11 ele
+# leu 15 das 16 que tinham recusado o agente de 16 a 19/11, as da OpenAI todas).
+# Desligado por padrão: só em ensaio e sombra, até haver medida. A chave fica
+# no .env (PARALLEL_API_KEY) e nunca vai a argumento, log ou arquivo: a
+# configuração leva ${PARALLEL_API_KEY}, que o próprio CLI expande. O modo
+# "advanced" é o que a Artificial Analysis mediu (US$ 5 por mil buscas).
+BUSCA="${BUSCA:-claude}"
+PARALLEL_MODO="${PARALLEL_MODO:-advanced}"
 # Que versão de cada agente rodou (config/agentes.json): vai para o log e para
 # o registro, para custo e qualidade serem lidos por versão.
 AGENTES_VERSOES=""; CLI_VERSAO=""
@@ -416,6 +426,11 @@ valores, sem recalcular e sem consultar o relógio do sistema.
 
 $(cat prompts/leitura-pelo-jornalista.md)"
   fi
+  if [[ "$BUSCA" == "parallel" ]]; then
+    LEITURA="$LEITURA
+
+$(cat prompts/busca-pelo-parallel.md)"
+  fi
   PROMPT_AGENTE="$(cat prompts/master.md)$LEITURA
 
 $PARAMETROS
@@ -470,6 +485,21 @@ except ValueError: print("ficha ilegível")' 2>/dev/null)"
       EXTRA_CLAUDE=(--agents "$(python3 scripts/jornalista.py agentes --modelo "$JORNALISTA_MODELO")"
                     --settings "$(python3 scripts/jornalista.py hook)")
       log "Jornalista ligado: lê as páginas no $JORNALISTA_MODELO; o WebFetch do agente principal fica barrado"
+    fi
+    if [[ "$BUSCA" == "parallel" ]]; then
+      [[ -n "${PARALLEL_API_KEY:-}" ]] || die "BUSCA=parallel sem PARALLEL_API_KEY no .env."
+      MCP_PARALLEL="$(mktemp)"
+      python3 - "$MCP_PARALLEL" "$PARALLEL_MODO" <<'PY'
+import json, sys
+modo = json.dumps({"web_search": {"override": {"mode": sys.argv[2]}}})
+json.dump({"mcpServers": {"parallel": {
+    "type": "http", "url": "https://mcp.parallel.ai/mcp?tools=web_search,web_fetch",
+    "headers": {"Authorization": "Bearer ${PARALLEL_API_KEY}", "x-parallel-mcp-config": modo}}}},
+    open(sys.argv[1], "w"))
+PY
+      FERRAMENTAS="${FERRAMENTAS/WebSearch/mcp__parallel__web_search},mcp__parallel__web_fetch"
+      EXTRA_CLAUDE+=(--mcp-config "$MCP_PARALLEL" --disallowedTools WebSearch)
+      log "Busca pelo Parallel ($PARALLEL_MODO): mcp__parallel__web_search no lugar do WebSearch, e mcp__parallel__web_fetch para página fechada"
     fi
 
     # --strict-mcp-config e --disable-slash-commands: o agente do podcast não
