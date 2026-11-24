@@ -14,6 +14,7 @@
 #   scripts/ensaio.sh --data 2026-10-29 --pasta DIR    # onde montar (padrão ~/CampsCast-ensaios/)
 #   scripts/ensaio.sh --data 2026-11-02 --force        # dia sem episódio
 #   scripts/ensaio.sh --data 2026-10-29 --cli BIN      # outro Claude CLI (versão nova, antes da produção)
+#   scripts/ensaio.sh --data 2026-11-24 --estado FOTO  # de uma foto do projeto, não de um commit (sombra do dia)
 #   JORNALISTA=1 scripts/ensaio.sh --data 2026-11-06   # com o Jornalista (plano de leitura)
 #
 # A cópia é a árvore de um commit (episódios, memória, backlog, índice) com o
@@ -37,7 +38,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-DATA=""; REF=""; CODIGO="$ROOT"; PASTA=""; DRY_RUN=0; FORCE=0; CLI=""
+DATA=""; REF=""; CODIGO="$ROOT"; PASTA=""; DRY_RUN=0; FORCE=0; CLI=""; ESTADO=""
 # Dados vêm do git desta pasta; o teste aponta para um repositório de mentira.
 ORIGEM="${ENSAIO_ORIGEM:-$ROOT}"
 ENV_ARQ="${ENSAIO_ENV:-$ROOT/.env}"
@@ -52,6 +53,7 @@ while [[ $# -gt 0 ]]; do
     --dry-run) DRY_RUN=1; shift ;;
     --force)   FORCE=1; shift ;;
     --cli)     CLI="$2"; shift 2 ;;
+    --estado)  ESTADO="$(cd "$2" && pwd)"; shift 2 ;;
     -h|--help) sed -n '2,34p' "$0"; exit 0 ;;
     *) echo "Argumento desconhecido: $1" >&2; exit 2 ;;
   esac
@@ -86,7 +88,14 @@ tem_a_partir() {
   return 1
 }
 
-if [[ -z "$REF" ]]; then
+if [[ -n "$ESTADO" ]]; then
+  # Foto do projeto (scripts/sombra.py): é o estado que a produção vai ver, com
+  # o que ainda não foi commitado. Por construção, exato.
+  while IFS= read -r d; do
+    [[ "$d" > "$DATA" || "$d" == "$DATA" ]] && die "a foto já tem episódio em $DATA ou depois ($d)."
+  done < <(ls "$ESTADO/episodes" 2>/dev/null | sed -n 's|^\([0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}\)\.md$|\1|p' | sort)
+  REF="foto:$ESTADO"
+elif [[ -z "$REF" ]]; then
   for c in $(git -C "$ORIGEM" rev-list HEAD); do
     if ! tem_a_partir "$c"; then REF="$c"; break; fi
   done
@@ -98,10 +107,15 @@ else
   fi
 fi
 
-ULTIMO="$(episodios_em "$REF" | tail -1)"
-ANTERIOR="$(episodios_em HEAD | awk -v d="$DATA" '$0 < d' | tail -1)"
-EXATO=1
-[[ "$ULTIMO" == "$ANTERIOR" ]] || EXATO=0
+if [[ -n "$ESTADO" ]]; then
+  ULTIMO="$(ls "$ESTADO/episodes" 2>/dev/null | sed -n 's|\.md$||p' | sort | tail -1)"
+  ANTERIOR="$ULTIMO"; EXATO=1
+else
+  ULTIMO="$(episodios_em "$REF" | tail -1)"
+  ANTERIOR="$(episodios_em HEAD | awk -v d="$DATA" '$0 < d' | tail -1)"
+  EXATO=1
+  [[ "$ULTIMO" == "$ANTERIOR" ]] || EXATO=0
+fi
 
 PASTA="${PASTA:-$HOME/CampsCast-ensaios/${DATA}-$(date +%Y%m%d-%H%M%S)}"
 [[ "$PASTA" == /* ]] || PASTA="$PWD/$PASTA"
@@ -111,7 +125,11 @@ case "$PASTA/" in
 esac
 
 echo "Ensaio de $DATA"
-echo "  estado:  $(git -C "$ORIGEM" log -1 --format='%h de %ad · %s' --date=format:'%d/%m %H:%M' "$REF")"
+if [[ -n "$ESTADO" ]]; then
+  echo "  estado:  foto em $ESTADO"
+else
+  echo "  estado:  $(git -C "$ORIGEM" log -1 --format='%h de %ad · %s' --date=format:'%d/%m %H:%M' "$REF")"
+fi
 echo "  último episódio no estado: ${ULTIMO:-nenhum}; na produção, antes de $DATA: ${ANTERIOR:-nenhum}"
 if [[ $EXATO -eq 0 ]]; then
   echo "  AVISO: estado inexato. A janela vai sair diferente da que a produção teve;"
@@ -123,7 +141,11 @@ echo "  cópia:   $PASTA"
 # ---------- monta a cópia ----------
 umask 077
 mkdir -p "$PASTA"
-git -C "$ORIGEM" archive "$REF" | tar -x -C "$PASTA"
+if [[ -n "$ESTADO" ]]; then
+  rsync -a "$ESTADO"/ "$PASTA"/
+else
+  git -C "$ORIGEM" archive "$REF" | tar -x -C "$PASTA"
+fi
 
 for item in scripts prompts config tests .claude CLAUDE.md; do
   [[ -e "$CODIGO/$item" ]] || continue
@@ -180,7 +202,7 @@ PY
 git -C "$PASTA" init -q -b main
 git -C "$PASTA" add -A
 git -C "$PASTA" -c user.name=ensaio -c user.email=ensaio@localhost \
-  commit -q -m "Estado de $(git -C "$ORIGEM" rev-parse --short "$REF") com o código de $CODIGO"
+  commit -q -m "Estado de $([[ -n "$ESTADO" ]] && echo "$REF" || git -C "$ORIGEM" rev-parse --short "$REF") com o código de $CODIGO"
 
 # ---------- roda, no ambiente do launchd ----------
 ARGS=(--date "$DATA" --only research)

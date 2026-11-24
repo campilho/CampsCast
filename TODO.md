@@ -14,6 +14,14 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
       outra mudança no agente até medir. Para a versão seguinte: ligação
       causal ("porque") que a fonte não fez é paráfrase que acrescenta; e as
       portas (Editor 1.3).
+- [ ] **Terça a sexta, 24 a 27/11 — a sombra do dia** (`scripts/sombra.py`,
+      `config/sombra.json`). Depois da produção, em fila: B, o Editor 1.3
+      (portas e ligação de causa); C, o CLI 2.1.323 com Haiku 4.5; D, o
+      mesmo CLI com Haiku 5.5; E, busca e leitura de página fechada pelo
+      Parallel. Verificador nos cinco roteiros (uns US$ 32 nos quatro dias,
+      dentro dos US$ 40 aprovados). Na sexta, `python3 scripts/sombra.py
+      --semana` decide: o CLI de 30/11, o Haiku 5.5, o Parallel e se o 1.3
+      vai à produção. Depois, `scripts/install_launchd_sombra.sh --uninstall`.
 - [ ] **Segunda, 30/11 — atualizar o Claude CLI da produção** de 2.1.283 para
       2.1.323 (canal estável), depois da semana de medição do 1.2. Ensaiado em
       21/11 (`scripts/ensaio.sh --cli`): com o modelo pequeno fixado no Haiku

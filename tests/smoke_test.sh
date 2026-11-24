@@ -2862,6 +2862,13 @@ chmod +x "$ENS/claude"
 printf 'AWS_SECRET_ACCESS_KEY=nao-pode-ir\nCLAUDE_CODE_OAUTH_TOKEN=token-de-teste\nCLAUDE_BIN=%s\n' "$ENS/claude" > "$ENS/env"
 METRICAS_ANTES="$(shasum "$METRICAS_ARQ")"
 ens() { ENSAIO_ORIGEM="$ORI" ENSAIO_ENV="$ENS/env" ENSAIO_PLIST="$ENS/sem-plist" bash scripts/ensaio.sh "$@" 2>&1; }
+# A sombra do dia parte de uma foto do projeto (o que a produção vai ver), não
+# de um commit: --estado PASTA. Foto que já tem o episódio do dia é recusada.
+mkdir -p "$ENS/foto"; git -C "$ORI" archive HEAD~1 | tar -x -C "$ENS/foto"
+printf 'nao commitado\n' > "$ENS/foto/memoria/rascunho.md"
+OUT_FOTO="$(ens --data 2026-10-29 --estado "$ENS/foto" --pasta "$ENS/da-foto")" && RC_FOTO=0 || RC_FOTO=$?
+mkdir -p "$ENS/foto-feita"; git -C "$ORI" archive HEAD | tar -x -C "$ENS/foto-feita"
+OUT_FOTOFEITA="$(ens --data 2026-10-29 --estado "$ENS/foto-feita" --pasta "$ENS/da-foto-feita" --dry-run)" && RC_FOTOFEITA=0 || RC_FOTOFEITA=$?
 # JORNALISTA_MODELO sozinho não liga nada: só prova que a chave da variante passa.
 OUT_ENS="$(JORNALISTA_MODELO=claude-haiku-5-5 ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-5-5 \
   ens --data 2026-10-29 --pasta "$ENS/copia")" && RC_ENS=0 || RC_ENS=$?
@@ -2906,6 +2913,10 @@ assert (ens / "cli2-rodou").exists(), "o ensaio não rodou o CLI pedido"
 assert outro["cli"] == str(ens / "claude2") and outro["cli_versao"] == "9.9.9", outro
 assert json.loads((copia / "ENSAIO.json").read_text())["cli"] is None
 reg2 = json.loads((ens / "outro-cli" / "metricas" / "execucoes.jsonl").read_text().splitlines()[-1])
+foto = json.loads((ens / "da-foto" / "ENSAIO.json").read_text())
+assert foto["estado_commit"] == f"foto:{ens / 'foto'}" and foto["estado_exato"], foto
+assert (ens / "da-foto" / "memoria" / "rascunho.md").read_text() == "nao commitado\n", "a foto não foi copiada"
+assert (ens / "da-foto" / "episodes" / "2026-10-29.md").exists(), "o agente da foto não rodou"
 assert reg2["claude_cli"] == "9.9.9", reg2.get("claude_cli")
 # O modelo pequeno fica fixado no da ficha: em 21/11 o CLI 2.1.323 trocou o
 # Haiku 4.5 pelo 5.5 sozinho. Pedido de fora (o primeiro ensaio) ainda vence.
@@ -2917,10 +2928,11 @@ PY
 )"
 rm -rf "$ENS"
 if [[ "$ENS_OK" == "ok" && "$OUT_INEXATO" == *"estado inexato"* && "$OUT_ENS" != *"estado inexato"* && $RC_FEITO -ne 0 \
-      && $RC_CLI -eq 0 && $RC_SEMCLI -ne 0 && "$OUT_SEMCLI" == *"--cli"* ]]; then
+      && $RC_CLI -eq 0 && $RC_SEMCLI -ne 0 && "$OUT_SEMCLI" == *"--cli"* \
+      && $RC_FOTO -eq 0 && $RC_FOTOFEITA -ne 0 && "$OUT_FOTOFEITA" == *"já tem episódio"* ]]; then
   ok "ensaio: dia passado numa cópia com o estado certo, sem chave a mais, sem S3, sem tocar no real, e com outro CLI se pedido"
 else
-  bad "ensaio: $ENS_OK | rc do commit que já tem o dia: $RC_FEITO | --cli: $RC_CLI, inexistente: $RC_SEMCLI $OUT_SEMCLI"
+  bad "ensaio: $ENS_OK | rc do commit que já tem o dia: $RC_FEITO | --cli: $RC_CLI, inexistente: $RC_SEMCLI $OUT_SEMCLI | foto: $RC_FOTO, feita: $RC_FOTOFEITA $OUT_FOTOFEITA"
 fi
 
 # --------------------------------------------------------------------- site
@@ -3316,6 +3328,79 @@ if [[ "$PL_OK" == "ok" && "$PL_DESL" != *"--mcp-config"* && "$PL_DESL" != *"Busc
   ok "busca pelo Parallel desligada por padrão; ligada, entra no lugar do WebSearch, e a chave não aparece em lugar nenhum"
 else
   bad "busca pelo Parallel: $PL_OK | $(printf '%s' "$PL_LIG" | grep -- '^--' | tr '\n' ' ')"
+fi
+
+# A sombra do dia (scripts/sombra.py): foto do projeto antes da produção,
+# variantes uma depois da outra (nunca juntas: batem nos mesmos sites), cada
+# uma com o seu ambiente, e nada roda se a produção não terminar bem.
+SOMBRA_OK="$(python3 - <<'FIM' 2>&1
+import json, os, pathlib, subprocess, sys, tempfile, time
+T = pathlib.Path(tempfile.mkdtemp())
+o = T / "origem"; (o / "episodes").mkdir(parents=True); (o / "memoria").mkdir()
+(o / "episodes" / "2026-11-20.md").write_text("ep\n"); (o / "memoria" / "fios.md").write_text("fios\n")
+(o / ".gitignore").write_text(".env\nlogs/\n"); (o / ".env").write_text("SEGREDO=1\n")
+g = lambda *a: subprocess.run(["git", "-C", str(o), *a], capture_output=True, check=True)
+g("init", "-q", "-b", "main"); g("add", "-A"); g("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "x")
+(o / "memoria" / "novo.md").write_text("ainda sem commit\n")
+cli = T / "cli-falso"; cli.write_text("#!/bin/sh\necho 9.9.9\n"); cli.chmod(0o755)
+sobre = T / "sobre" / "prompts"; sobre.mkdir(parents=True); (sobre / "master.md").write_text("PROMPT 1.3\n")
+falso = T / "ensaio-falso"
+falso.write_text("""#!/bin/sh
+pasta=""; data=""; prev=""
+for a in "$@"; do [ "$prev" = "--pasta" ] && pasta="$a"; [ "$prev" = "--data" ] && data="$a"; prev="$a"; done
+echo "inicio $(python3 -c 'import time;print(time.time())') ${BUSCA:-} ${ANTHROPIC_DEFAULT_HAIKU_MODEL:-} $*" >> "%s/chamadas"
+sleep 1
+mkdir -p "$pasta/metricas" "$pasta/episodes"
+printf '{"data": "%%s", "estado": "ok", "origem": "registrado", "claude": {"custo_estimado_usd": 1.5}}\\n' "$data" > "$pasta/metricas/execucoes.jsonl"
+printf -- '---\\nwords: 1200\\ntopics:\\n  - title: Pauta da variante\\n---\\nx\\n' > "$pasta/episodes/$data.md"
+echo "fim $(python3 -c 'import time;print(time.time())')" >> "%s/chamadas"
+""" % (T, T)); falso.chmod(0o755)
+met = T / "metricas.jsonl"; met.write_text(json.dumps({"data": "2026-11-24", "estado": "ok", "origem": "registrado"}) + "\n")
+cfg = {"ate": "2099-12-31", "espera_producao_ate": "23:59",
+       "variantes": [{"id": "X", "nome": "cli e busca", "cli": str(cli), "env": {"BUSCA": "parallel"}},
+                     {"id": "Y", "nome": "editor novo", "sobrepoe": str(T / "sobre")}],
+       "verificador": {"ligado": True}, "parallel_usd": {"busca": 0.005, "leitura": 0.001}}
+(T / "sombra.json").write_text(json.dumps(cfg))
+env = {**os.environ, "SOMBRA_DIR": str(T / "sombra"), "SOMBRA_CONFIG": str(T / "sombra.json"),
+       "SOMBRA_ORIGEM": str(o), "SOMBRA_ENSAIO": str(falso), "METRICAS_ARQ": str(met),
+       "SOMBRA_INTERVALO": "0.1", "BUSCA": "claude"}
+roda = lambda *a, **k: subprocess.run([sys.executable, "scripts/sombra.py", *a], capture_output=True, text=True,
+                                      env={**env, **k})
+r = roda("--data", "2026-11-24", "--sem-verificador")
+assert r.returncode == 0, r.stdout + r.stderr
+dia = T / "sombra" / "2026-11-24"; foto = dia / "foto"
+assert (foto / "memoria" / "novo.md").exists() and (foto / "episodes" / "2026-11-20.md").exists(), "foto incompleta"
+assert not (foto / ".env").exists(), "a foto levou o .env"
+ch = (T / "chamadas").read_text().splitlines()
+assert [l.split()[0] for l in ch] == ["inicio", "fim", "inicio", "fim"], ch
+assert float(ch[2].split()[1]) >= float(ch[1].split()[1]), "variantes ao mesmo tempo"
+assert " parallel " in ch[0] and f"--cli {cli}" in ch[0] and f"--estado {foto}" in ch[0], ch[0]
+assert " parallel " not in ch[2] and f"--codigo {dia / 'codigo-Y'}" in ch[2], ch[2]
+assert (dia / "codigo-Y" / "prompts" / "master.md").read_text() == "PROMPT 1.3\n"
+assert (dia / "codigo-Y" / "scripts" / "sombra.py").exists(), "o código da variante não veio da produção"
+comp = (o / "logs" / "sombra-2026-11-24.md").read_text()
+assert "| A | Produção |" in comp and "| X |" in comp and "| Y |" in comp and "Pauta da variante" in comp, comp
+# Produção que não terminou bem: a sombra não roda.
+n = len(ch)
+r = roda("--data", "2026-11-02", "--sem-verificador", SOMBRA_ESPERA_ATE="00:00")
+assert r.returncode == 1 and "não terminou bem" in r.stdout and len((T / "chamadas").read_text().splitlines()) == n, r.stdout
+# A produção já começou: a foto não seria mais a de antes dela.
+(o / "logs").mkdir(exist_ok=True); (o / "logs" / "2026-11-26.log").write_text("x")
+r = roda("--data", "2026-11-26", "--sem-verificador")
+assert r.returncode == 1 and "antes da foto" in r.stdout, r.stdout
+# Depois do "ate", o agendamento sai sem fazer nada.
+cfg["ate"] = "2020-01-01"; (T / "sombra-velha.json").write_text(json.dumps(cfg))
+r = roda("--rotina", SOMBRA_CONFIG=str(T / "sombra-velha.json"))
+assert r.returncode == 0 and "encerrada" in r.stdout, r.stdout
+r = roda("--data", "2026-11-27", "--dry-run")
+assert r.stdout.index("  X:") < r.stdout.index("  Y:") and "BUSCA=parallel" in r.stdout, r.stdout
+print("ok")
+FIM
+)"
+if [[ "$SOMBRA_OK" == "ok" ]]; then
+  ok "sombra: foto sem o .env, variantes em fila com o ambiente de cada uma, e nada roda sem a produção ok"
+else
+  bad "sombra: $SOMBRA_OK"
 fi
 
 # ---------------------------------------------------------- varredura dos feeds
@@ -3890,6 +3975,19 @@ print(f\"<key>Weekday</key><integer>{c['dia_do_post'] % 7}</integer><key>Hour</k
     ok "agendamento do Divulgador: plist válido, sábado às 08:00 e o lembrete na hora de config/divulgacao.json"
   else
     bad "agendamento do Divulgador: plist inválido ou sem os horários"
+  fi
+fi
+
+# A sombra tem agendamento próprio: dias úteis às 04:57, antes da produção das
+# 05:00, e nunca no fim de semana.
+if command -v plutil >/dev/null 2>&1; then
+  PL_SOM="$(bash scripts/install_launchd_sombra.sh --print 2>&1)"
+  if printf '%s' "$PL_SOM" | plutil -lint - >/dev/null 2>&1 && [[ "$PL_SOM" == *"scripts/sombra.py"* && "$PL_SOM" == *"--rotina"* \
+        && "$PL_SOM" == *"caffeinate"* && "$(printf '%s' "$PL_SOM" | grep -c '<key>Hour</key><integer>4</integer><key>Minute</key><integer>57</integer>')" == "5" \
+        && "$PL_SOM" != *"<integer>6</integer><key>Hour"* && "$PL_SOM" != *"<key>Weekday</key><integer>0</integer>"* ]]; then
+    ok "agendamento da sombra: plist válido, de segunda a sexta às 04:57"
+  else
+    bad "agendamento da sombra: plist inválido ou fora do horário"
   fi
 fi
 # O token da assinatura vem do .env, como no run_episode.sh: o launchd não o

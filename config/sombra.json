@@ -1,0 +1,14 @@
+{
+  "_sobre": "A sombra do dia (scripts/sombra.py): variantes do agente que rodam depois da produção, uma depois da outra, a partir de uma foto do projeto tirada antes dela, e que nunca vão ao ar. Cada variante muda uma coisa em relação à produção. 'ate' encerra a sombra sozinha: depois dessa data o agendamento sai sem fazer nada. 'sobrepoe' é uma pasta com arquivos que vão por cima do código da produção (o prompt e a ficha de um Editor novo); 'cli', outro Claude CLI; 'env', variáveis que o orquestrador entende. Os preços do Parallel servem só para a conta da comparação.",
+  "ate": "2026-11-27",
+  "espera_producao_ate": "08:15",
+  "variantes": [
+    {"id": "B", "nome": "Editor 1.3 (portas e ligação de causa)", "sobrepoe": "~/CampsCast-ensaios/editor-1.3"},
+    {"id": "C", "nome": "CLI 2.1.323 com Haiku 4.5", "cli": "~/CampsCast-ensaios/cli-2.1.323/node_modules/.bin/claude"},
+    {"id": "D", "nome": "CLI 2.1.323 com Haiku 5.5", "cli": "~/CampsCast-ensaios/cli-2.1.323/node_modules/.bin/claude",
+     "env": {"ANTHROPIC_DEFAULT_HAIKU_MODEL": "claude-haiku-5-5"}},
+    {"id": "E", "nome": "Busca e leitura de página fechada pelo Parallel", "env": {"BUSCA": "parallel"}}
+  ],
+  "verificador": {"ligado": true, "modelo": "claude-opus-5-5", "teto_usd_por_roteiro": 5},
+  "parallel_usd": {"busca": 0.005, "leitura": 0.001}
+}

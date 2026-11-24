@@ -94,7 +94,9 @@ três veículos, dito no ar; reportagem não é publicação oficial (Editor 1.1
 |---|---|
 | `watch_agent.py` | mostra ao vivo o que o agente está pesquisando |
 | `research_trail.py` | reconstrói o rastro de pesquisa de um episódio |
-| `ensaio.sh` | roda o agente num dia passado, numa cópia fora do repositório, no ambiente do launchd e sem S3; `--de`, `--codigo`, `--dry-run` |
+| `ensaio.sh` | roda o agente num dia passado, numa cópia fora do repositório, no ambiente do launchd e sem S3; `--de`, `--codigo`, `--cli`, `--estado`, `--dry-run` |
+| `sombra.py` | a sombra do dia: foto do projeto às 04:57, espera a produção terminar bem, roda as variantes de `config/sombra.json` uma depois da outra, passa o verificador e compara em `logs/sombra-AAAA-MM-DD.md`; nada vai ao ar; `--rotina`, `--dry-run`, `--compara`, `--semana` |
+| `install_launchd_sombra.sh` | o agendamento da sombra, à parte da produção; `--print`, `--uninstall` |
 | `calibrate_pace.py` | mede o ritmo real de fala e corrige a faixa de palavras |
 | `set_base_url.py` | troca o endereço do feed, verificando antes; `--resolve` |
 | `install_launchd.sh` | instala o agendamento com os caminhos reais da máquina |
@@ -142,6 +144,9 @@ três veículos, dito no ar; reportagem não é publicação oficial (Editor 1.1
 | `config/rubrica-pautas.md` | régua das pautas: porteira da fonte e quatro notas ([ADR 0012](docs/decisions/0012-nota-das-pautas.md)); ainda fora da produção |
 | `prompts/divulgador.md` | o Divulgador; as regras do texto ficam em `config/divulgacao.md`, e as duas entram na ficha dele |
 | `config/divulgacao.json` | dia e hora do post, teto do rascunho e os links do primeiro comentário |
+| `config/sombra.json` | variantes da sombra do dia, na ordem em que rodam, e a data em que ela se encerra sozinha |
+| `prompts/busca-pelo-parallel.md` | o que o agente ganha no prompt com `BUSCA=parallel` (só ensaio e sombra): a busca do Parallel no lugar do WebSearch e a leitura dele na página que o WebFetch não abre |
+| `prompts/verificador-sombra.md` | o Verificador V1 aplicado a um roteiro da produção ou da sombra, com a rubrica de `prompts/verificador-rubrica.md` |
 | `config/cloudfront-site.js` | função do CloudFront que abre o `index.html` das pastas do site e leva `/studio` ao estúdio; colada à mão no console |
 
 Relatório da semana: comando `/relatorio` (`.claude/commands/relatorio.md`).
