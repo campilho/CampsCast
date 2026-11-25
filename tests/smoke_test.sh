@@ -1835,6 +1835,116 @@ with tempfile.TemporaryDirectory() as t:
     assert contagem_transcricao(s)["classificador"] == 1
 PYEOF
 
+# O agente não tinha prazo: travado, ele prende o job, e com o job preso o
+# launchd não dispara as repescagens. O prazo conta tempo de Mac acordado,
+# leva o grupo de processos inteiro e devolve 124; o orquestrador trata como
+# pesquisa que falhou, e a repescagem refaz.
+PZ_OK=0
+python3 - <<'PYEOF' && PZ_OK=1
+import subprocess, sys, time
+t = time.monotonic()
+r = subprocess.run([sys.executable, "scripts/prazo.py", "1", "sleep", "20"], capture_output=True, text=True)
+assert r.returncode == 124 and "prazo" in r.stderr and time.monotonic() - t < 10, r
+assert subprocess.run([sys.executable, "scripts/prazo.py", "5", "sh", "-c", "echo saida; exit 7"],
+                      capture_output=True, text=True).stdout == "saida\n"
+assert subprocess.run([sys.executable, "scripts/prazo.py", "5", "sh", "-c", "exit 7"]).returncode == 7
+PYEOF
+rm -rf logs/2026-08-25-*
+FAKE_PZ="$(mktemp -d)"
+cat > "$FAKE_PZ/claude" <<'STUB'
+#!/bin/sh
+if [ "$1" = "--version" ]; then echo "2.1.283 (Claude Code)"; exit 0; fi
+printf -- '---\ndate: 2026-08-25\nwindow_start: 2026-08-24\nwindow_end: 2026-08-24\ntitle: teste\nwords: 10\n---\n\nCorpo.\n' > episodes/2026-08-25.md
+sleep 60 &
+echo $! > "$(dirname "$0")/filho"
+wait
+printf '%s' '{"type":"result","is_error":false,"result":"OK","session_id":"sem-transcricao","usage":{}}'
+STUB
+chmod +x "$FAKE_PZ/claude"
+T0_PZ="$(date +%s)"
+RPZ="$(PRAZO_AGENTE_S=2 CLAUDE_BIN="$FAKE_PZ/claude" bash scripts/run_episode.sh --date 2026-08-25 \
+        --skip tts,publish,notify,relatorio 2>&1 || true)"
+DUR_PZ=$(( $(date +%s) - T0_PZ ))
+FILHO_PZ=0; kill -0 "$(cat "$FAKE_PZ/filho" 2>/dev/null || echo 999999)" 2>/dev/null && FILHO_PZ=1
+if [[ $PZ_OK -eq 1 && "$RPZ" == *"passou do prazo"* && $DUR_PZ -lt 40 && $FILHO_PZ -eq 0 \
+      && ! -f episodes/2026-08-25.md ]] && compgen -G "logs/2026-08-25-interrompido-*/episodes/2026-08-25.md" >/dev/null; then
+  ok "agente travado: o prazo encerra o grupo de processos inteiro, e o roteiro pela metade sai do caminho da repescagem"
+else
+  bad "prazo do agente (prazo.py=$PZ_OK, ${DUR_PZ}s, filho vivo=$FILHO_PZ)"
+fi
+kill "$(cat "$FAKE_PZ/filho" 2>/dev/null || echo 999999)" 2>/dev/null || true
+rm -rf "$FAKE_PZ" episodes/2026-08-25.md logs/2026-08-25.log logs/2026-08-25-*
+
+# Em 25/11 o filtro de segurança marcou a sessão e o CLI passou o resto dela
+# ao Opus 4.8 sem perguntar. A ficha técnica diz no ar o modelo pedido: outro
+# modelo só no cabeçalho do roteiro vira aviso; no corpo, o episódio não sai.
+python3 - <<'PYEOF' && ok "autoria: outro modelo só no cabeçalho avisa; no corpo, pelo Write, pelo Edit ou pelo shell, bloqueia; Write do modelo pedido por cima apaga a escrita alheia" || bad "conferência de autoria"
+import json, os, pathlib, subprocess, sys, tempfile
+ROT = "episodes/2026-08-27.md"
+final = "---\ndate: 2026-08-27\nwords: 1221\nestimated_duration: 07:41\n---\n\nCorpo do roteiro.\n"
+def uso(i, modelo, ferramenta, entrada):
+    return {"type": "assistant", "timestamp": f"2026-08-27T05:00:{i:02d}Z",
+            "message": {"id": f"m{i}", "model": modelo, "content": [
+                {"type": "tool_use", "id": f"t{i}", "name": ferramenta, "input": entrada}]}}
+caminho = os.path.abspath(ROT)
+w55 = lambda i: uso(i, "claude-opus-5-5", "Write", {"file_path": caminho, "content": final})
+w48 = lambda i: uso(i, "claude-opus-4-8", "Write", {"file_path": caminho, "content": final})
+cab = lambda i: uso(i, "claude-opus-4-8", "Edit", {"file_path": caminho,
+                    "old_string": "words: 0\nestimated_duration: 00:00",
+                    "new_string": "words: 1221\nestimated_duration: 07:41"})
+corpo = lambda i: uso(i, "claude-opus-4-8", "Edit", {"file_path": caminho,
+                      "old_string": "Corpo.", "new_string": "Corpo do roteiro."})
+shell = lambda i: uso(i, "claude-opus-4-8", "Bash", {"command": f"sed -i '' 's/a/b/' {ROT}"})
+conta = lambda i: uso(i, "claude-opus-4-8", "Bash", {"command": f"awk 'c>=2' {ROT} | wc -w"})
+def roda(entradas, negadas=()):
+    with tempfile.TemporaryDirectory() as t:
+        pathlib.Path(t, "s.jsonl").write_text("\n".join(json.dumps(e) for e in entradas) + "\n")
+        ag = pathlib.Path(t, "ag.json")
+        ag.write_text(json.dumps({"session_id": "s", "permission_denials": [
+            {"tool_name": "Bash", "tool_use_id": n} for n in negadas]}))
+        r = subprocess.run([sys.executable, "scripts/confere_autoria.py", "--agente", str(ag),
+                            "--modelo", "claude-opus-5-5", "--roteiro", ROT],
+                           capture_output=True, text=True, env={**os.environ, "TRANSCRICOES_DIR": t})
+        return r.returncode, r.stdout
+pathlib.Path(ROT).write_text(final)
+try:
+    rc, out = roda([w55(1), cab(2), conta(3)])
+    assert rc == 0 and "só no cabeçalho" in out, (rc, out)
+    assert roda([w48(1)])[0] == 3
+    assert roda([w55(1), corpo(2)])[0] == 3
+    assert roda([w55(1), shell(2)])[0] == 3
+    assert roda([w55(1), shell(2)], negadas=["t2"])[0] == 0
+    assert roda([w48(1), w55(2)]) == (0, "")
+finally:
+    pathlib.Path(ROT).unlink(missing_ok=True)
+PYEOF
+
+# E no orquestrador: roteiro escrito por outro modelo não vai ao ar, e o que o
+# agente deixou sai do caminho, para a repescagem refazer.
+rm -rf logs/2026-08-25-*
+FAKE_AU="$(mktemp -d)"; mkdir -p "$FAKE_AU/transcricoes"
+python3 - "$FAKE_AU/transcricoes/sessao-autoria.jsonl" "$PWD/episodes/2026-08-25.md" <<'PYEOF'
+import json, sys
+open(sys.argv[1], "w").write(json.dumps({"type": "assistant", "timestamp": "2026-08-25T05:00:00Z",
+    "message": {"id": "m1", "model": "claude-opus-4-8", "usage": {"input_tokens": 1}, "content": [
+        {"type": "tool_use", "id": "t1", "name": "Write", "input": {"file_path": sys.argv[2], "content": "x"}}]}}) + "\n")
+PYEOF
+cat > "$FAKE_AU/claude" <<'STUB'
+#!/bin/sh
+if [ "$1" = "--version" ]; then echo "2.1.283 (Claude Code)"; exit 0; fi
+printf -- '---\ndate: 2026-08-25\nwindow_start: 2026-08-24\nwindow_end: 2026-08-24\ntitle: teste\nwords: 10\n---\n\nCorpo.\n' > episodes/2026-08-25.md
+printf '%s' '{"type":"result","is_error":false,"result":"OK episodes/2026-08-25.md 10 00:04","session_id":"sessao-autoria","usage":{}}'
+STUB
+chmod +x "$FAKE_AU/claude"
+RAU="$(TRANSCRICOES_DIR="$FAKE_AU/transcricoes" CLAUDE_BIN="$FAKE_AU/claude" bash scripts/run_episode.sh \
+        --date 2026-08-25 --skip tts,publish,notify,relatorio 2>&1 || true)"
+if [[ "$RAU" == *"Autoria: o roteiro não é só do"*"claude-opus-4-8 reescreveu o roteiro inteiro"* && ! -f episodes/2026-08-25.md ]]; then
+  ok "roteiro escrito por outro modelo não segue para a narração, e sai do caminho da repescagem"
+else
+  bad "orquestrador deixou seguir roteiro de outro modelo"
+fi
+rm -rf "$FAKE_AU" episodes/2026-08-25.md logs/2026-08-25.log logs/2026-08-25-*
+
 if [[ "$(shasum metricas/execucoes.jsonl 2>/dev/null || echo ausente)" == "$METRICAS_REAL_ANTES" ]]; then
   ok "smoke test não tocou no registro real"
 else

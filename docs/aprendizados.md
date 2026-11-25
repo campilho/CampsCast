@@ -1335,3 +1335,15 @@ desligado no meio). **Agora cada etapa é marcada em `logs/AAAA-MM-DD-etapas.jso
 pesquisa ou retoma da etapa que não terminou. A transcrição passa a contar os
 cortes do filtro (`claude_transcricao.classificador` no registro), e a troca
 de modelo já aparecia como "modelo inesperado" no `confere_claude.py`.**
+
+Duas folgas fechadas no mesmo dia. **A troca de modelo vira bloqueio quando
+toca o que vai ao ar** (`scripts/confere_autoria.py`): escrita de outro modelo
+no corpo do roteiro, pelo Write, pelo Edit ou pelo shell, não segue para a
+narração; só no cabeçalho, como a contagem de palavras do 4.8 em 25/11, vira
+aviso. E **o agente ganhou prazo, em tempo de Mac acordado** (`scripts/prazo.py`,
+45 minutos): as execuções longas do registro eram o Mac dormindo, não o agente
+travado (28/10, 266 dos 267 minutos de pesquisa; 11/11, 97 de 110, e aquela
+foi ao ar), e um prazo de relógio teria matado a de 11/11 à toa. No macOS, o
+`time.monotonic` do Python é o `mach_absolute_time`, que para durante o sono.
+Com o CLI de verdade, o prazo encerrou o `claude -p` e os filhos em 5 s, sem
+deixar processo para trás.

@@ -54,6 +54,12 @@ CLAUDE_MODEL="${CLAUDE_MODEL:-claude-opus-5-5}"
 # degrau abaixo. Trocar de modelo sem fixar isto trocaria duas coisas de uma
 # vez, e qualquer diferença no episódio ficaria sem dono.
 CLAUDE_EFFORT="${CLAUDE_EFFORT:-high}"
+# Prazo do agente, em tempo de Mac acordado (scripts/prazo.py). Agente travado
+# prende o job, e com o job preso o launchd não dispara as repescagens. As
+# execuções longas medidas até 25/11 eram sono, não trava; a pesquisa mais longa
+# acordada levou 21 minutos. 45 minutos acordados deixam a das 05:00 terminar
+# antes da repescagem das 06:00.
+PRAZO_AGENTE_S="${PRAZO_AGENTE_S:-2700}"
 # Leitura de páginas fixada também: WebFetch no próprio agente (ADR 0013). De 05
 # a 08/11/2026 um experimento da Anthropic, ligado por interruptor remoto e sem
 # mudança de versão, trocou o WebFetch por um subagente "web-fetch": +57% de
@@ -555,7 +561,7 @@ PY
     # Em 04/10 o Agent Toolkit for AWS instalou os dele para o Mac inteiro.
     set +e
     AGENT_RAW="$(
-      "$CLAUDE_BIN" -p "$PROMPT_AGENTE" \
+      python3 scripts/prazo.py "$PRAZO_AGENTE_S" "$CLAUDE_BIN" -p "$PROMPT_AGENTE" \
         --model "$CLAUDE_MODEL" \
         --effort "$CLAUDE_EFFORT" \
         --output-format json \
@@ -592,6 +598,9 @@ PY
       *) AGENT_OUT="$AGENT_RAW" ;;
     esac
     log "Agente retornou: ${AGENT_OUT:-<vazio>} (rc=$AGENT_RC)"
+    if [[ $AGENT_RC -eq 124 ]]; then
+      die "Agente passou do prazo de $(( PRAZO_AGENTE_S / 60 )) min de Mac acordado e foi encerrado; a repescagem refaz a pesquisa."
+    fi
 
     # Falta de login é o tropeço mais comum na primeira execução: instalar o
     # CLI não autentica, e o armazenamento de credenciais dele é separado do
@@ -618,6 +627,21 @@ PY
     die "Roteiro não foi criado em $SCRIPT_PATH."
   fi
   log "Roteiro: $SCRIPT_PATH"
+
+  # Quem escreveu o texto que vai ao ar (scripts/confere_autoria.py). A ficha
+  # técnica diz no ar o modelo pedido ao CLI; em 25/11 o filtro de segurança
+  # marcou a sessão e o CLI passou o resto dela ao Opus 4.8 sem perguntar.
+  # Outro modelo só no cabeçalho vira aviso; no corpo, o episódio não sai: a
+  # pesquisa conta como falha e a repescagem refaz (scripts/retomada.py).
+  AVISOS_AUTORIA=""
+  if [[ $DRY_RUN -eq 0 ]]; then
+    set +e
+    AVISOS_AUTORIA="$(python3 scripts/confere_autoria.py --agente "${BASE_REGISTRO}-agente.json" \
+      --modelo "$CLAUDE_MODEL" --roteiro "$SCRIPT_PATH" 2>>"$LOG")"
+    RC_AUTORIA=$?
+    set -e
+    if [[ $RC_AUTORIA -eq 3 ]]; then die "Autoria: $AVISOS_AUTORIA"; fi
+  fi
 
   # Varredura dos feeds (H2, docs/plano-varredura-por-feeds.md), em sombra: o
   # que as fontes publicaram na janela, lido dos feeds sem modelo nenhum, para
@@ -664,7 +688,7 @@ PY
     [[ "$JORNALISTA" == "1" ]] && ARGS_CC+=(--jornalista "$JORNALISTA_MODELO")
     AVISOS_SESSAO="$(python3 scripts/confere_claude.py depois "${ARGS_CC[@]}" 2>"$CC_ERR" || true)"
     while IFS= read -r l; do log "$l"; done < "$CC_ERR"; rm -f "$CC_ERR"
-    for extra in "${AVISOS_CLAUDE:-}" "$AVISOS_SESSAO" "$AVISOS_BACKLOG" "$AVISOS_FIOS" "$AVISOS_REPETICAO"; do
+    for extra in "${AVISOS_CLAUDE:-}" "$AVISOS_SESSAO" "$AVISOS_AUTORIA" "$AVISOS_BACKLOG" "$AVISOS_FIOS" "$AVISOS_REPETICAO"; do
       [[ -n "$extra" ]] && AVISOS_ROTEIRO="${AVISOS_ROTEIRO:+$AVISOS_ROTEIRO
 }$extra"
     done

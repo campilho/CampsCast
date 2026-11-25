@@ -77,6 +77,8 @@ três veículos, dito no ar; reportagem não é publicação oficial (Editor 1.1
 | `confere_backlog.py` | confere se o backlog guarda só pauta ativa; registra, não bloqueia |
 | `confere_fios.py` | confere fios (teto de 40, marcos, datas) e temas (teto de 10); registra |
 | `expira_fios.py` | move fio sem marco há 30 dias para `memoria/fios-expirados/`; roda antes do agente |
+| `confere_autoria.py` | quem escreveu o texto que vai ao ar: outro modelo que não o da ficha técnica só no cabeçalho do roteiro vira aviso; no corpo, o episódio não sai e a repescagem refaz (em 25/11 o CLI passou a sessão ao Opus 4.8 sem perguntar) |
+| `prazo.py` | roda o agente com prazo em tempo de Mac acordado (45 min, `PRAZO_AGENTE_S`); passado, encerra o grupo de processos inteiro e sai com 124 |
 | `confere_claude.py` | vigia do Claude Code: experimento da Anthropic ligado na conta, interruptores que mudaram, subagente ou modelo inesperado na sessão ([ADR 0013](docs/decisions/0013-leitura-de-paginas.md)); registra |
 | `agentes.py` | a ficha dos agentes: que versão roda (vai ao log, ao registro e ao estúdio) e se os prompts batem com ela; `ativos`, `confere`, `mostra` |
 | `jornalista.py` | o Jornalista: subagente que lê as páginas, e o hook que barra o WebFetch fora dele; só com `JORNALISTA=1` (e `JORNALISTA_MODELO`), desligado na produção ([plano](docs/plano-leitura-por-subagente.md)) |
