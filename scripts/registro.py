@@ -195,9 +195,16 @@ def contagem_transcricao(caminho: pathlib.Path) -> dict | None:
     from transcricoes import entradas, subagentes
     ids, ferramentas, esforcos = set(), {}, set()
     tot = {"entrada": 0, "cache_escrito": 0, "cache_lido": 0, "saida": 0}
+    classificador = 0
     if not caminho.exists():
         return None
     for entrada, _ in entradas(caminho):
+        # Resposta cortada pelo filtro de segurança do modelo: o CLI grava um
+        # aviso de sistema e manda o agente não repetir o conteúdo. Em 30/10 o
+        # agente seguiu; em 25/11 parou com FAIL depois do roteiro.
+        if (isinstance(entrada, dict) and entrada.get("type") == "system"
+                and "safeguards stopped" in str(entrada.get("content") or "")):
+            classificador += 1
         # O esforço fica no topo de cada entrada. Vale o que a transcrição diz,
         # não o que o orquestrador pediu: foi assim que se descobriu que o
         # Opus 5 rodava em "high" sem ninguém ter pedido.
@@ -226,6 +233,7 @@ def contagem_transcricao(caminho: pathlib.Path) -> dict | None:
             "leituras_parallel": ferramentas.get("mcp__parallel__web_fetch", 0),
             "leituras": ferramentas.get("WebFetch", 0),
             "subagentes": len(subagentes(caminho)),
+            "classificador": classificador,
             "esforco": ",".join(sorted(esforcos)) or None}
 
 

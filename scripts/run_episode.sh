@@ -158,6 +158,13 @@ finaliza() {
       --conferido "$ROTEIRO_CONFERIDO" --avisos "$AVISOS_ROTEIRO" --agentes "${AGENTES_VERSOES:-}" --cli "${CLI_VERSAO:-}" \
       --max-antes "${BASE_REGISTRO}-max-antes.json" --max-depois "${BASE_REGISTRO}-max-depois.json" \
       >>"$LOG" 2>&1 || true
+    # Pesquisa que falhou no meio: roteiro, log e a memória que o agente mexeu
+    # vão para logs/, e a memória volta à foto de antes dele, para a
+    # repescagem recomeçar limpa (scripts/retomada.py). Sem foto, não faz nada.
+    if [[ "$estado" == "falhou" && "$ETAPA_ATUAL" == "pesquisa" ]]; then
+      while IFS= read -r l; do if [[ -n "$l" ]]; then log "$l"; fi; done \
+        < <(python3 scripts/retomada.py desfaz --data "$EPISODE_DATE" 2>>"$LOG" || true)
+    fi
     # Relatório do autor: junta o que pede decisão e o que deu errado na semana
     # (scripts/relatorio.py). Não bloqueia nada: falhar aqui não derruba um
     # episódio já publicado. O resumo, só com contagens, vai no estado.json, e
@@ -226,6 +233,14 @@ run() {
   "$@"
 }
 
+# Começo e fim de cada etapa em logs/AAAA-MM-DD-etapas.json, para a execução
+# seguinte do dia saber de onde recomeçar (scripts/retomada.py). Nunca para o
+# pipeline: sem a marca, o dia só perde a retomada automática.
+marca() {
+  [[ $DRY_RUN -eq 1 ]] && return 0
+  python3 scripts/retomada.py "$1" --data "$EPISODE_DATE" --etapa "$2" >>"$LOG" 2>&1 || true
+}
+
 # Em 11/09 uma repescagem morreu com ENOTFOUND logo depois de o Mac acordar: o
 # agendador dispara antes de o Wi-Fi voltar, e esperar o DNS uns segundos
 # resolve. Em 28/10, com o Mac fora de casa e sem internet, esperar e seguir
@@ -264,6 +279,33 @@ if [[ $FORCE_DAY -eq 0 ]]; then
       "$(date +%H:%M:%S)" | tee -a "logs/${EPISODE_DATE}.log"
     exit 0
   fi
+fi
+
+# ---------- retomada ----------
+# O dia que parou no meio recomeça de onde parou (scripts/retomada.py). Em
+# 25/11 o filtro de segurança do modelo cortou o agente depois do roteiro, e
+# as repescagens das 06:00 e 07:00 viram o roteiro pela metade, leram o
+# window_end dele e não fizeram nada. Pesquisa interrompida recomeça do zero,
+# com a memória de antes dela; pesquisa terminada recomeça na primeira etapa
+# que não terminou, sem chamar o agente de novo. Vem antes da janela: o roteiro
+# interrompido sai de episodes/ e a janela volta a ser a do dia. --only,
+# --overwrite e --skip research são escolha de quem chamou, e ela não se mete.
+if [[ -z "$ONLY" && $OVERWRITE -eq 0 && ",$SKIP," != *",research,"* ]]; then
+  RETOMADA=""; RETOMADA_PULA=""; RETOMADA_MSG=""
+  eval "$(python3 scripts/retomada.py decide --data "$EPISODE_DATE" 2>>"$LOG" || true)"
+  case "$RETOMADA" in
+    refaz)
+      log "$RETOMADA_MSG"
+      if [[ $DRY_RUN -eq 1 ]]; then
+        log "DRY-RUN: python3 scripts/retomada.py desfaz --data $EPISODE_DATE"
+      else
+        while IFS= read -r l; do if [[ -n "$l" ]]; then log "$l"; fi; done \
+          < <(python3 scripts/retomada.py desfaz --data "$EPISODE_DATE" 2>>"$LOG" || true)
+      fi ;;
+    narracao|publicacao|aviso)
+      log "$RETOMADA_MSG"
+      SKIP="${SKIP:+$SKIP,}$RETOMADA_PULA" ;;
+  esac
 fi
 
 # ---------- janela de notícias ----------
@@ -502,6 +544,12 @@ PY
       log "Busca pelo Parallel ($PARALLEL_MODO): mcp__parallel__web_search no lugar do WebSearch, e mcp__parallel__web_fetch para página fechada"
     fi
 
+    # Foto da memória e marca de começo da pesquisa (scripts/retomada.py): se
+    # o agente parar no meio, a execução seguinte recomeça daqui, com a
+    # memória de antes dele.
+    python3 scripts/retomada.py comeca --data "$EPISODE_DATE" --etapa pesquisa >>"$LOG" 2>&1 \
+      || log "AVISO: sem foto da memória; se o agente falhar, a repescagem não recomeça sozinha."
+
     # --strict-mcp-config e --disable-slash-commands: o agente do podcast não
     # herda servidores MCP nem skills da configuração de usuário do Claude Code.
     # Em 04/10 o Agent Toolkit for AWS instalou os dele para o Mac inteiro.
@@ -627,6 +675,7 @@ PY
       log "Roteiro conferido: abertura e ficha técnica com tudo o que é obrigatório."
     fi
   fi
+  marca termina pesquisa
 else
   log "── [1/4] Pesquisa — PULADA"
 fi
@@ -638,9 +687,11 @@ if stage_enabled tts; then
   if [[ $DRY_RUN -eq 0 && ! -f "$SCRIPT_PATH" ]]; then
     die "Sem roteiro em $SCRIPT_PATH para narrar."
   fi
+  marca comeca narracao
   run python3 scripts/tts.py --script "$SCRIPT_PATH" --out "$AUDIO_PATH" \
     --metricas "${BASE_REGISTRO}-tts.json" 2>&1 | tee -a "$LOG"
   log "Áudio: $AUDIO_PATH"
+  marca termina narracao
 else
   log "── [2/4] TTS — PULADA"
 fi
@@ -651,9 +702,11 @@ if stage_enabled publish; then
   REGISTRAR=1; T_PUBLICACAO="$(date +%s)"; ETAPA_ATUAL="publicacao"
   # A capa do dia (verde, com número e data) antes do feed; se falhar, o
   # episódio sai com a capa do programa, como até 18/11 — não vale parar.
+  marca comeca publicacao
   run python3 scripts/capa.py "$EPISODE_DATE" 2>&1 | tee -a "$LOG" \
     || log "AVISO: capa do dia não gerada; o episódio sai com a capa do programa."
   run python3 scripts/publish.py --date "$EPISODE_DATE" 2>&1 | tee -a "$LOG"
+  marca termina publicacao
 else
   log "── [3/4] Publicação — PULADA"
 fi
@@ -670,7 +723,9 @@ fi
 if stage_enabled notify; then
   log "── [4/4] Notificação"
   T_AVISO="$(date +%s)"; ETAPA_ATUAL="aviso"
+  marca comeca aviso
   run python3 scripts/notify.py --date "$EPISODE_DATE" --script "$SCRIPT_PATH" --audio "$AUDIO_PATH" 2>&1 | tee -a "$LOG"
+  marca termina aviso
 else
   log "── [4/4] Notificação — PULADA"
 fi

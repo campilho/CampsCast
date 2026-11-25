@@ -1297,3 +1297,41 @@ custaram US$ 1,59 a mais de Opus e 5 centavos de Parallel. **A leitura pelo
 Parallel ataca o problema das portas fechadas, que hoje leva pautas da OpenAI
 ao ar pela cobertura; o tamanho da busca se corta na configuração
 (`max_chars_total`), não com um resumidor no meio.**
+
+### O filtro de segurança do modelo corta uma resposta, e o dia parava no meio
+
+Em 25/11, às 05:08, o Opus 5.5 escreveu o roteiro inteiro (a prova de
+Riemann, que voltou do backlog; o expoente 9/4 da multiplicação de matrizes,
+da OpenAI; e o GPT-6 desenhando proteínas que se prendem a alvos, com
+resultado de bancada) e a resposta seguinte foi cortada pelo filtro de
+segurança do modelo. O CLI grava "safeguards stopped the response above" e
+manda o agente não produzir aquele conteúdo de novo, nem com outras palavras.
+O agente parou com FAIL, sem log de pesquisa, índice, backlog nem memória, e
+pediu revisão antes de publicar, o que era o certo. Na segunda tentativa, às
+10:00, o filtro cortou de novo, e logo depois o CLI marcou a sessão ("Opus
+5.5's safeguards flagged this session", detalhe `[bio]`, com o aviso de que
+ele às vezes marca trabalho vizinho de pesquisa em biologia) e passou o resto
+dela ao **Opus 4.8, sem perguntar**: a contagem de palavras, o log de
+pesquisa com a conferência da certeza, o índice, o backlog e a memória saíram
+dele. O texto narrado é todo do Opus 5.5 (o 4.8 só trocou `words` e
+`estimated_duration`), e a ficha técnica ficou certa por sorte. O custo foi de
+US$ 9,11, 4,62 deles do 4.8, e 15 pontos da janela de 5 horas do Max. Pauta
+de proteína com teste de bancada já tinha ido ao ar no Opus 5.5 sem corte
+nenhum (01/10, a marca d'água do DeepMind com a proteína do vírus da covid
+como alvo; 21/10, o antídoto de escorpião do Claude; 03/11, a biologia de
+duplo uso da OpenAI): o filtro olha o texto que está sendo escrito, não o
+assunto, e erra para o lado da cautela. O texto cortado não fica na
+transcrição. Já tinha acontecido em 30/10, numa pauta de invasão de
+sistemas, e ali o agente seguiu.
+
+Quem transformou o corte das 05:08 num dia sem episódio foi o orquestrador: o
+roteiro pela metade ficou em `episodes/`, e às 06:00 e às 07:00 a repescagem
+leu o `window_end` dele, concluiu que o dia estava coberto e não fez nada. O
+teste que existia só cobria o agente que falha antes de escrever. Valia o
+mesmo para qualquer falha depois do roteiro (narração, publicação, aviso, Mac
+desligado no meio). **Agora cada etapa é marcada em `logs/AAAA-MM-DD-etapas.json`
+(`scripts/retomada.py`); pesquisa que falha guarda o que o agente deixou em
+`logs/` e devolve a memória à foto de antes dele, e a execução seguinte refaz a
+pesquisa ou retoma da etapa que não terminou. A transcrição passa a contar os
+cortes do filtro (`claude_transcricao.classificador` no registro), e a troca
+de modelo já aparecia como "modelo inesperado" no `confere_claude.py`.**

@@ -1728,6 +1728,113 @@ else
 fi
 rm -f episodes/2026-08-25.md logs/2026-08-25.log logs/2026-08-2[345]-*.json
 
+# Em 25/11 o filtro de segurança do modelo cortou o agente depois do roteiro;
+# ele parou com FAIL e o roteiro pela metade ficou em episodes/. As repescagens
+# das 06:00 e 07:00 leram o window_end dele e não fizeram nada. Agora a falha
+# na pesquisa guarda o que o agente deixou em logs/, devolve a memória à de
+# antes dele, e a execução seguinte refaz a pesquisa; pesquisa terminada e
+# narração não, a seguinte recomeça da narração sem chamar o agente.
+rm -rf logs/2026-08-25-*
+FAKE_RET="$(mktemp -d)"
+cp saved-items/backlog.md "$FAKE_RET/backlog-antes"
+cat > "$FAKE_RET/claude" <<'STUB'
+#!/bin/sh
+if [ "$1" = "--version" ]; then echo "2.1.283 (Claude Code)"; exit 0; fi
+echo x >> "$(dirname "$0")/chamadas"
+cat > episodes/2026-08-25.md <<'MD'
+---
+date: 2026-08-25
+window_start: 2026-08-24
+window_end: 2026-08-24
+title: teste
+words: 10
+estimated_duration: 0:04
+topics: []
+from_backlog: []
+---
+
+Corpo de teste.
+MD
+echo "log de pesquisa" > research/2026-08-25.md
+printf '\n## pauta que o agente pôs\n- data_original: 2026-08-24\n' >> saved-items/backlog.md
+if [ -f "$(dirname "$0")/falha" ]; then
+  printf '%s' '{"type":"result","is_error":false,"result":"FAIL execução interrompida antes do fim","num_turns":3,"session_id":"sem-transcricao","usage":{}}'
+else
+  printf '%s' '{"type":"result","is_error":false,"result":"OK episodes/2026-08-25.md 10 00:04","num_turns":3,"session_id":"sem-transcricao","usage":{}}'
+fi
+STUB
+chmod +x "$FAKE_RET/claude"; touch "$FAKE_RET/falha"
+PULA_RET="tts,publish,notify,relatorio"
+R1="$(CLAUDE_BIN="$FAKE_RET/claude" bash scripts/run_episode.sh --date 2026-08-25 --skip "$PULA_RET" 2>&1 || true)"
+LIMPO=0; [[ ! -f episodes/2026-08-25.md && ! -f research/2026-08-25.md ]] \
+  && cmp -s saved-items/backlog.md "$FAKE_RET/backlog-antes" && LIMPO=1
+GUARDADO=0; compgen -G "logs/2026-08-25-interrompido-*/episodes/2026-08-25.md" >/dev/null \
+  && compgen -G "logs/2026-08-25-interrompido-*/research/2026-08-25.md" >/dev/null \
+  && compgen -G "logs/2026-08-25-interrompido-*/saved-items/backlog.md" >/dev/null && GUARDADO=1
+rm -f "$FAKE_RET/falha"
+R2="$(CLAUDE_BIN="$FAKE_RET/claude" bash scripts/run_episode.sh --date 2026-08-25 --skip "$PULA_RET" 2>&1 || true)"
+C2="$(wc -l < "$FAKE_RET/chamadas" | tr -d ' ')"
+R3="$(CLAUDE_BIN="$FAKE_RET/claude" bash scripts/run_episode.sh --date 2026-08-25 --skip "$PULA_RET" 2>&1 || true)"
+C3="$(wc -l < "$FAKE_RET/chamadas" | tr -d ' ')"
+if [[ "$R1" == *"Agente reportou falha"* && $LIMPO -eq 1 && $GUARDADO -eq 1 ]]; then
+  ok "agente que falha depois do roteiro: roteiro, log e memória que ele mexeu vão para logs/, e a memória volta à de antes"
+else
+  bad "falha depois do roteiro deixou o dia pela metade (limpo=$LIMPO guardado=$GUARDADO)"
+fi
+if [[ "$R2" == *"recomeça do zero"* && "$R2" == *"Concluído"* && "$C2" == "2" && -f episodes/2026-08-25.md ]]; then
+  ok "repescagem depois da falha refaz a pesquisa, em vez de ver o roteiro pela metade e dizer que não há nada a fazer"
+else
+  bad "repescagem não refez a pesquisa interrompida (chamadas=$C2)"
+fi
+if [[ "$R3" == *"Retomando da narração"* && "$C3" == "2" ]]; then
+  ok "pesquisa terminada e narração não: a execução seguinte recomeça da narração sem chamar o agente"
+else
+  bad "retomada da narração não funcionou (chamadas=$C3)"
+fi
+cp "$FAKE_RET/backlog-antes" saved-items/backlog.md
+rm -rf "$FAKE_RET" episodes/2026-08-25.md research/2026-08-25.md logs/2026-08-25.log logs/2026-08-25-*
+
+# As decisões da retomada e o que fica de fora dela: dia sem etapas é legado
+# (vale a janela, como antes), tudo terminado não faz nada, desfazer duas
+# vezes não muda nada, e a transcrição conta as respostas cortadas pelo filtro.
+python3 - <<'PYEOF' && ok "retomada: legado, completo, desfazer repetido, e o filtro de segurança contado no registro" || bad "decisões da retomada"
+import contextlib, io, json, pathlib, subprocess, sys, tempfile
+sys.path.insert(0, "scripts")
+import retomada
+d = "2026-08-26"
+def decide():
+    out = subprocess.run([sys.executable, "scripts/retomada.py", "decide", "--data", d],
+                         capture_output=True, text=True, check=True).stdout
+    return dict(l.split("=", 1) for l in out.splitlines())["RETOMADA"]
+ep = pathlib.Path(f"episodes/{d}.md")
+try:
+    assert decide() == "nova"
+    ep.write_text("---\nwindow_end: 2026-08-25\n---\n")
+    assert decide() == "legado"
+    with contextlib.redirect_stdout(io.StringIO()):
+        for e in retomada.ETAPAS:
+            retomada.comeca(d, e); retomada.termina(d, e)
+        assert decide() == "completo"
+        retomada.comeca(d, "pesquisa")
+    assert decide() == "refaz"
+    assert retomada.desfaz(d) and not ep.exists()
+    assert retomada.desfaz(d) == []
+finally:
+    ep.unlink(missing_ok=True)
+    for p in pathlib.Path("logs").glob(f"{d}-*"):
+        subprocess.run(["rm", "-rf", str(p)])
+from registro import contagem_transcricao
+with tempfile.TemporaryDirectory() as t:
+    s = pathlib.Path(t) / "sessao.jsonl"
+    s.write_text("\n".join(json.dumps(x) for x in [
+        {"type": "assistant", "message": {"id": "m1", "model": "claude-opus-5-5", "content": [],
+                                          "usage": {"input_tokens": 1}}},
+        {"type": "system", "subtype": "informational",
+         "content": "Opus 5.5's safeguards stopped the response above · continuing once with that noted"},
+    ]) + "\n")
+    assert contagem_transcricao(s)["classificador"] == 1
+PYEOF
+
 if [[ "$(shasum metricas/execucoes.jsonl 2>/dev/null || echo ausente)" == "$METRICAS_REAL_ANTES" ]]; then
   ok "smoke test não tocou no registro real"
 else

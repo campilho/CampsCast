@@ -63,6 +63,7 @@ três veículos, dito no ar; reportagem não é publicação oficial (Editor 1.1
 |---|---|
 | `run_episode.sh` | orquestrador; `--only`, `--skip`, `--dry-run`, `--force`, `--overwrite` |
 | `window.py` | calcula a janela de notícias |
+| `retomada.py` | o dia que parou no meio recomeça de onde parou: etapas marcadas em `logs/AAAA-MM-DD-etapas.json` e foto da memória antes do agente; pesquisa que falha guarda o que o agente deixou em `logs/` e devolve a memória, e a repescagem refaz a pesquisa ou retoma da narração, publicação ou aviso |
 | `schedule.py` | decide se o dia tem episódio (dias úteis, feriados) |
 | `tts.py` | narra; `--check`, `--budget`, `--voice`, `--model`, `--speed`, `--list-voices`, `--voice-status` |
 | `capa.py` | capa do episódio: o ">CC▮" verde da capa do programa com "ep. N · DD/MM", em PNG sem dependência; não refaz a que existe sem `--refaz` |
