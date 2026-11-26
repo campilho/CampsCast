@@ -631,13 +631,17 @@ PY
   # Quem escreveu o texto que vai ao ar (scripts/confere_autoria.py). A ficha
   # técnica diz no ar o modelo pedido ao CLI; em 25/11 o filtro de segurança
   # marcou a sessão e o CLI passou o resto dela ao Opus 4.8 sem perguntar.
-  # Outro modelo só no cabeçalho vira aviso; no corpo, o episódio não sai: a
-  # pesquisa conta como falha e a repescagem refaz (scripts/retomada.py).
+  # Outro modelo só no cabeçalho vira aviso. No corpo, a ficha passa a dizer
+  # quem escreveu ("... e terminado pelo Claude Opus quatro ponto oito, depois
+  # que o filtro de segurança interrompeu a sessão") e o episódio sai com a
+  # pauta escolhida: a sombra de 25/11 mostrou que refazer a pesquisa, no dia
+  # de uma pauta que o filtro corta, é cortado de novo. Sem a frase da ficha
+  # para corrigir, não sai, e a repescagem refaz (scripts/retomada.py).
   AVISOS_AUTORIA=""
   if [[ $DRY_RUN -eq 0 ]]; then
     set +e
     AVISOS_AUTORIA="$(python3 scripts/confere_autoria.py --agente "${BASE_REGISTRO}-agente.json" \
-      --modelo "$CLAUDE_MODEL" --roteiro "$SCRIPT_PATH" 2>>"$LOG")"
+      --modelo "$CLAUDE_MODEL" --roteiro "$SCRIPT_PATH" --corrige 2>>"$LOG")"
     RC_AUTORIA=$?
     set -e
     if [[ $RC_AUTORIA -eq 3 ]]; then die "Autoria: $AVISOS_AUTORIA"; fi
@@ -668,7 +672,10 @@ PY
   if [[ $DRY_RUN -eq 0 ]]; then
     ARGS_CONF=("$SCRIPT_PATH")
     [[ -n "${EPISODE_NUMBER:-}" ]] && ARGS_CONF+=(--numero "$EPISODE_NUMBER")
-    [[ -n "${AGENTE_NOME:-}" ]] && ARGS_CONF+=(--agente "$AGENTE_NOME")
+    # Ficha corrigida pela autoria já diz quem escreveu, e pode não ter o AGENTE_NOME.
+    if [[ -n "${AGENTE_NOME:-}" && "$AVISOS_AUTORIA" != *"ficha técnica corrigida"* ]]; then
+      ARGS_CONF+=(--agente "$AGENTE_NOME")
+    fi
     [[ -n "${CHAMADA_SEGUIR:-}" ]] && ARGS_CONF+=(--chamada "$CHAMADA_SEGUIR")
     AVISOS_ROTEIRO="$(python3 scripts/confere_roteiro.py "${ARGS_CONF[@]}" 2>>"$LOG" || true)"
     # O backlog deve guardar só pauta ativa; o histórico de saídas mora em

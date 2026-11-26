@@ -77,7 +77,7 @@ três veículos, dito no ar; reportagem não é publicação oficial (Editor 1.1
 | `confere_backlog.py` | confere se o backlog guarda só pauta ativa; registra, não bloqueia |
 | `confere_fios.py` | confere fios (teto de 40, marcos, datas) e temas (teto de 10); registra |
 | `expira_fios.py` | move fio sem marco há 30 dias para `memoria/fios-expirados/`; roda antes do agente |
-| `confere_autoria.py` | quem escreveu o texto que vai ao ar: outro modelo que não o da ficha técnica só no cabeçalho do roteiro vira aviso; no corpo, o episódio não sai e a repescagem refaz (em 25/11 o CLI passou a sessão ao Opus 4.8 sem perguntar) |
+| `confere_autoria.py` | quem escreveu o texto que vai ao ar: outro modelo que não o pedido só no cabeçalho do roteiro vira aviso; no corpo, o orquestrador reescreve na ficha técnica quem escreveu ("e terminado pelo Claude Opus quatro ponto oito, depois que o filtro de segurança interrompeu a sessão") e o episódio sai com a pauta escolhida; sem a frase da ficha para corrigir, não sai e a repescagem refaz (em 25/11 o filtro passou ao Opus 4.8 as seis execuções com a pauta das proteínas) |
 | `prazo.py` | roda o agente com prazo em tempo de Mac acordado (45 min, `PRAZO_AGENTE_S`); passado, encerra o grupo de processos inteiro e sai com 124 |
 | `confere_claude.py` | vigia do Claude Code: experimento da Anthropic ligado na conta, interruptores que mudaram, subagente ou modelo inesperado na sessão ([ADR 0013](docs/decisions/0013-leitura-de-paginas.md)); registra |
 | `agentes.py` | a ficha dos agentes: que versão roda (vai ao log, ao registro e ao estúdio) e se os prompts batem com ela; `ativos`, `confere`, `mostra` |

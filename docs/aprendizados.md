@@ -1347,3 +1347,32 @@ foi ao ar), e um prazo de relógio teria matado a de 11/11 à toa. No macOS, o
 `time.monotonic` do Python é o `mach_absolute_time`, que para durante o sono.
 Com o CLI de verdade, o prazo encerrou o `claude -p` e os filhos em 5 s, sem
 deixar processo para trás.
+
+**O corte se repete, e não espera o roteiro.** A sombra de 25/11 rodou as
+quatro variantes (B a E) a partir da mesma foto das 04:57, e todas escolheram a
+pauta das proteínas do GPT-6. Seis execuções no dia com essa pauta (as duas da
+produção e as quatro da sombra), seis cortes, todos depois de ler o post da
+OpenAI, e nas seis o CLI passou a sessão ao Opus 4.8. Em três (C, D, E) o corte
+veio no meio da pesquisa, antes de existir roteiro, e o 4.8 escreveu o roteiro
+inteiro; em C e D o próprio 4.8 apagou o roteiro e devolveu FAIL, citando a
+conferência de autoria que leu no CLAUDE.md; na E, o `confere_autoria.py`
+barrou. Na B, como na produção, o corte veio logo depois do Write do 5.5, e o
+4.8 corrigiu as contagens da frase da ficha técnica, no corpo: barrado também.
+Nenhum texto do 4.8 iria ao ar com o nome do 5.5, mas, no dia de uma pauta
+assim, a repescagem que refaz a pesquisa tende a ser cortada de novo: a
+conferência troca o episódio errado por episódio nenhum.
+
+**Decisão do autor (26/11): a ficha diz quem escreveu.** Em vez de barrar, o
+`confere_autoria.py --corrige` reescreve, na última frase "Escrito pelo
+<modelo>" do corpo, o nome de quem de fato escreveu, com o porquê quando a
+transcrição tem o corte do filtro: "Escrito pelo Claude Opus quatro ponto
+oito, depois que o filtro de segurança do Claude Opus cinco ponto cinco
+interrompeu a sessão", ou "Escrito pelo Claude Opus cinco ponto cinco e
+terminado pelo Claude Opus quatro ponto oito, depois que o filtro de segurança
+interrompeu a sessão". O episódio sai com a pauta que o agente escolheu, e o
+`words` do cabeçalho ganha só as palavras acrescentadas. Nos roteiros reais da
+sombra de 25/11 (B, C, D e E), as quatro fichas saíram corrigidas; as
+execuções da produção de 24 a 26/11 ficaram intactas. Bloqueio sobra para o
+roteiro sem a frase da ficha. Fica em aberto o agente que, sabendo-se o 4.8,
+apaga o próprio roteiro e devolve FAIL, como na C e na D: aí não há o que
+corrigir.

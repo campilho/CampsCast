@@ -1919,8 +1919,71 @@ finally:
     pathlib.Path(ROT).unlink(missing_ok=True)
 PYEOF
 
-# E no orquestrador: roteiro escrito por outro modelo não vai ao ar, e o que o
-# agente deixou sai do caminho, para a repescagem refazer.
+# Decisão do autor em 26/11: outro modelo no corpo não derruba o episódio; a
+# ficha passa a dizer quem escreveu. Na sombra de 25/11, refazer a pesquisa no
+# dia de uma pauta que o filtro corta foi cortado de novo, seis vezes em seis.
+python3 - <<'PYEOF' && ok "autoria com --corrige: a ficha diz quem escreveu e por quê, a contagem do cabeçalho acompanha, e sem a frase da ficha bloqueia" || bad "correção da ficha pela autoria"
+import json, os, pathlib, subprocess, sys, tempfile
+ROT = "episodes/2026-08-27.md"
+caminho = os.path.abspath(ROT)
+ficha = ("Este episódio saiu de dez páginas. Escrito pelo Claude Opus cinco ponto cinco e narrado"
+         " pelo ElevenLabs versão quatro, com uma cópia sintética da voz. Até o próximo episódio.\n")
+pauta = "Notícia sobre o Claude Opus cinco ponto cinco, escrito pelo Claude Opus cinco ponto cinco ontem.\n\n"
+final = "---\ndate: 2026-08-27\nwords: 40\n---\n\n" + pauta + ficha
+def uso(i, modelo, ferramenta, entrada):
+    return {"type": "assistant", "timestamp": f"2026-08-27T05:00:{i:02d}Z",
+            "message": {"id": f"m{i}", "model": modelo, "content": [
+                {"type": "tool_use", "id": f"t{i}", "name": ferramenta, "input": entrada}]}}
+corte = lambda i: {"type": "system", "timestamp": f"2026-08-27T05:00:{i:02d}Z",
+                   "content": "Opus 5.5's safeguards flagged this session."}
+w55 = lambda i: uso(i, "claude-opus-5-5", "Write", {"file_path": caminho, "content": final})
+w48 = lambda i: uso(i, "claude-opus-4-8", "Write", {"file_path": caminho, "content": final})
+corpo = lambda i: uso(i, "claude-opus-4-8", "Edit", {"file_path": caminho,
+                      "old_string": "onze páginas", "new_string": "dez páginas"})
+def roda(entradas, texto=final, corrige=True):
+    pathlib.Path(ROT).write_text(texto)
+    with tempfile.TemporaryDirectory() as t:
+        pathlib.Path(t, "s.jsonl").write_text("\n".join(json.dumps(e) for e in entradas) + "\n")
+        ag = pathlib.Path(t, "ag.json")
+        ag.write_text(json.dumps({"session_id": "s"}))
+        r = subprocess.run([sys.executable, "scripts/confere_autoria.py", "--agente", str(ag),
+                            "--modelo", "claude-opus-5-5", "--roteiro", ROT]
+                           + (["--corrige"] if corrige else []),
+                           capture_output=True, text=True, env={**os.environ, "TRANSCRICOES_DIR": t})
+        return r.returncode, r.stdout, pathlib.Path(ROT).read_text()
+try:
+    # Cortado depois do roteiro, e o 4.8 mexeu no corpo (a sombra B de 25/11).
+    rc, out, txt = roda([w55(1), corte(2), corpo(3)])
+    assert rc == 0 and "ficha técnica corrigida" in out, (rc, out)
+    assert ("Escrito pelo Claude Opus cinco ponto cinco e terminado pelo Claude Opus quatro ponto oito,"
+            " depois que o filtro de segurança interrompeu a sessão, e narrado pelo") in txt, txt
+    assert txt.startswith(final.split("\n\n")[0].replace("words: 40", "words: 57")), txt[:60]
+    # A pauta que cita o modelo fica como estava: só a ficha, a última frase, muda.
+    assert pauta in txt, txt
+    # Cortado na pesquisa, e o 4.8 escreveu tudo (C, D e E).
+    rc, out, txt = roda([corte(1), w48(2)])
+    assert rc == 0 and ("Escrito pelo Claude Opus quatro ponto oito, depois que o filtro de segurança"
+                        " do Claude Opus cinco ponto cinco interrompeu a sessão, e narrado") in txt, txt
+    # Troca de modelo sem o filtro: diz quem escreveu, sem inventar motivo.
+    rc, out, txt = roda([w48(1)])
+    assert rc == 0 and "Escrito pelo Claude Opus quatro ponto oito e narrado" in txt, txt
+    # O 4.8 que já se pôs na ficha com o próprio nome também é corrigido.
+    rc, out, txt = roda([corte(1), w48(2)], texto=final.replace("cinco ponto cinco e narrado",
+                                                                  "quatro ponto oito e narrado"))
+    assert rc == 0 and "Escrito pelo Claude Opus quatro ponto oito, depois que o filtro" in txt, txt
+    # Sem a frase da ficha não há o que corrigir; e sem --corrige, bloqueia como antes.
+    assert roda([w48(1)], texto="---\nwords: 1\n---\n\nCorpo.\n")[0] == 3
+    assert roda([w48(1)], corrige=False)[0] == 3
+    # Só o modelo pedido: nada muda.
+    rc, out, txt = roda([corte(1), w55(2)])
+    assert (rc, out, txt) == (0, "", final), (rc, out)
+finally:
+    pathlib.Path(ROT).unlink(missing_ok=True)
+PYEOF
+
+# E no orquestrador: roteiro escrito por outro modelo, sem a frase da ficha
+# para corrigir, não vai ao ar, e o que o agente deixou sai do caminho, para a
+# repescagem refazer.
 rm -rf logs/2026-08-25-*
 FAKE_AU="$(mktemp -d)"; mkdir -p "$FAKE_AU/transcricoes"
 python3 - "$FAKE_AU/transcricoes/sessao-autoria.jsonl" "$PWD/episodes/2026-08-25.md" <<'PYEOF'
@@ -1944,6 +2007,36 @@ else
   bad "orquestrador deixou seguir roteiro de outro modelo"
 fi
 rm -rf "$FAKE_AU" episodes/2026-08-25.md logs/2026-08-25.log logs/2026-08-25-*
+
+# Com a frase da ficha, o mesmo dia segue: a ficha diz quem escreveu, e a
+# conferência do roteiro não cobra o nome do modelo pedido.
+FAKE_AU="$(mktemp -d)"; mkdir -p "$FAKE_AU/transcricoes"
+python3 - "$FAKE_AU/transcricoes/sessao-autoria.jsonl" "$PWD/episodes/2026-08-25.md" <<'PYEOF'
+import json, sys
+linhas = [{"type": "system", "timestamp": "2026-08-25T05:00:00Z",
+           "content": "Opus 5.5's safeguards flagged this session."},
+          {"type": "assistant", "timestamp": "2026-08-25T05:00:01Z",
+           "message": {"id": "m1", "model": "claude-opus-4-8", "usage": {"input_tokens": 1}, "content": [
+               {"type": "tool_use", "id": "t1", "name": "Write", "input": {"file_path": sys.argv[2], "content": "x"}}]}}]
+open(sys.argv[1], "w").write("".join(json.dumps(l) + "\n" for l in linhas))
+PYEOF
+cat > "$FAKE_AU/claude" <<'STUB'
+#!/bin/sh
+if [ "$1" = "--version" ]; then echo "2.1.283 (Claude Code)"; exit 0; fi
+printf -- '---\ndate: 2026-08-25\nwindow_start: 2026-08-24\nwindow_end: 2026-08-24\ntitle: teste\nwords: 30\n---\n\nCorpo.\n\nEscrito pelo Claude Opus cinco ponto cinco e narrado por uma voz sintética. Até o próximo episódio.\n' > episodes/2026-08-25.md
+printf '%s' '{"type":"result","is_error":false,"result":"OK episodes/2026-08-25.md 30 00:12","session_id":"sessao-autoria","usage":{}}'
+STUB
+chmod +x "$FAKE_AU/claude"
+RAU="$(TRANSCRICOES_DIR="$FAKE_AU/transcricoes" CLAUDE_BIN="$FAKE_AU/claude" bash scripts/run_episode.sh \
+        --date 2026-08-25 --skip tts,publish,notify,relatorio 2>&1 || true)"
+if [[ "$RAU" == *"ficha técnica corrigida"* && "$RAU" != *"Autoria: o roteiro"* \
+      && "$RAU" != *"ficha sem o nome de quem escreveu"* \
+      && "$(cat episodes/2026-08-25.md 2>/dev/null)" == *"Escrito pelo Claude Opus quatro ponto oito, depois que o filtro de segurança do Claude Opus cinco ponto cinco interrompeu a sessão, e narrado"* ]]; then
+  ok "roteiro do outro modelo com a frase da ficha segue, e a ficha diz no ar quem escreveu"
+else
+  bad "orquestrador não corrigiu a ficha de quem escreveu"
+fi
+rm -rf "$FAKE_AU" episodes/2026-08-25.md research/2026-08-25.md logs/2026-08-25.log logs/2026-08-25-*
 
 if [[ "$(shasum metricas/execucoes.jsonl 2>/dev/null || echo ausente)" == "$METRICAS_REAL_ANTES" ]]; then
   ok "smoke test não tocou no registro real"
