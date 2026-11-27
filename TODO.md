@@ -22,6 +22,17 @@ Lista curta do que está em cima da mesa. O planejamento de longo prazo vive em
       dentro dos US$ 40 aprovados). Na sexta, `python3 scripts/sombra.py
       --semana` decide: o CLI de 30/11, o Haiku 5.5, o Parallel e se o 1.3
       vai à produção. Depois, `scripts/install_launchd_sombra.sh --uninstall`.
+- [ ] **Sexta, 27/11 — a regra do dia seguinte, na versão do Editor que a
+      sombra escolher** (1.2 ou 1.3, uma mudança por vez). Em 25 e 26/11 a
+      prova de Riemann abriu dois episódios seguidos, o segundo por um
+      desdobramento que não respondia ao F-047 ([aprendizados](docs/aprendizados.md)).
+      Junto da linha 71 do `prompts/master.md`: a história do episódio
+      anterior só volta no dia seguinte, e só abre, se responder à pergunta
+      do fio ou mudar a história de fato; fora isso, uma frase dentro de outra
+      pauta, ou espera. Versão nova em `config/agentes.json`, ensaio na foto
+      de 26/11 (`~/CampsCast-ensaios/sombra/2026-11-26/foto`) contra a
+      anterior: ainda abre com Riemann? O `confere_repeticao.py` já registra
+      o fio que volta (12 casos em 62 episódios, 6 nos últimos cinco).
 - [ ] **Segunda, 30/11 — atualizar o Claude CLI da produção** de 2.1.283 para
       2.1.323 (canal estável), depois da semana de medição do 1.2. Ensaiado em
       21/11 (`scripts/ensaio.sh --cli`): com o modelo pequeno fixado no Haiku

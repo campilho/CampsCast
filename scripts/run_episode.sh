@@ -682,13 +682,15 @@ PY
     # saved-items/historico/. Os avisos vão para o registro junto com os do roteiro.
     AVISOS_BACKLOG="$(python3 scripts/confere_backlog.py "${BACKLOG_ARQ:-saved-items/backlog.md}" \
       --data "$EPISODE_DATE" 2>>"$LOG" || true)"
-    # Fios em aberto (ADR 0008) e pauta repetida pelo link — também só registram.
+    # Fios em aberto (ADR 0008) e pauta repetida, pelo link ou pelo fio que
+    # volta do episódio anterior — também só registram.
     AVISOS_FIOS="$(python3 scripts/confere_fios.py "${FIOS_ARQ:-memoria/fios.md}" \
       --temas "${TEMAS_ARQ:-memoria/temas.md}" \
       --sugestoes "${SUGESTOES_ARQ:-memoria/temas-sugeridos.md}" \
       --data "$EPISODE_DATE" 2>>"$LOG" || true)"
     AVISOS_REPETICAO="$(python3 scripts/confere_repeticao.py "$SCRIPT_PATH" \
-      --indice "${PAUTAS_INDICE:-covered-index.json}" --data "$EPISODE_DATE" 2>>"$LOG" || true)"
+      --indice "${PAUTAS_INDICE:-covered-index.json}" --fios "${FIOS_ARQ:-memoria/fios.md}" \
+      --data "$EPISODE_DATE" 2>>"$LOG" || true)"
     # O que a sessão de fato fez: o cache do CLI é só indício (ADR 0013).
     CC_ERR="$(mktemp)"
     ARGS_CC=(--agente "${BASE_REGISTRO}-agente.json" --modelo "$CLAUDE_MODEL")

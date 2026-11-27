@@ -84,7 +84,7 @@ três veículos, dito no ar; reportagem não é publicação oficial (Editor 1.1
 | `jornalista.py` | o Jornalista: subagente que lê as páginas, e o hook que barra o WebFetch fora dele; só com `JORNALISTA=1` (e `JORNALISTA_MODELO`), desligado na produção ([plano](docs/plano-leitura-por-subagente.md)) |
 | `varredura.py` | o que as fontes publicaram na janela, pelos feeds e sitemaps, sem modelo; em sombra, depois do agente e fora do prompt, em `logs/varredura-AAAA-MM-DD.md`; `VARREDURA=0` desliga ([plano](docs/plano-varredura-por-feeds.md)) |
 | `limites_max.py` | quanto do limite do Max (5 horas e semana) está usado; o orquestrador lê antes e depois do agente, e a diferença vai ao log e ao registro ([custos](docs/custos.md)); `LIMITES_MAX=0` desliga |
-| `confere_repeticao.py` | avisa pauta do dia com link já usado antes; ignora páginas de listagem |
+| `confere_repeticao.py` | avisa pauta do dia com link já usado antes (ignora páginas de listagem) e fio que volta do episódio anterior, dizendo se a pauta abriu os dois; registra |
 | `relatorio.py` | relatório semanal do autor: decisões pendentes, temas, fios, fontes que falharam, avisos; `--semana`, `--fecha-semana` |
 | `confere_roteiro.py` | confere o que a abertura e a ficha não podem deixar de dizer; registra, não bloqueia |
 | `estudio.py` | dados do site: a execução evento a evento, por personagem, e as instruções de cada um; `--orfaos` |

@@ -2856,6 +2856,66 @@ else
   bad "conferência de repetição errada: '${REP}'"
 fi
 
+# Fio que volta do episódio anterior (26/11: Riemann abriu o 61 e o 62). Conta
+# aberto, marco e fechado, nos fios em aberto e nos fechados; a pauta vem da
+# nota do índice, e a abertura, da primeira pauta de cada roteiro.
+SEG_DIR="$(mktemp -d)"; mkdir -p "$SEG_DIR/memoria/fios-fechados" "$SEG_DIR/episodes"
+cat > "$SEG_DIR/memoria/fios.md" <<'FIM'
+# Fios
+## F-010 · Abre ontem e hoje
+- aberto: 2026-10-02 (ep. 4)
+- marcos:
+  - 2026-10-05 (ep. 5) — volta
+## F-011 · Pula um episódio
+- aberto: 2026-09-30 (ep. 3)
+- marcos:
+  - 2026-10-05 (ep. 5) — volta
+## F-012 · Sem nota no índice
+- aberto: 2026-09-30 (ep. 3)
+- marcos:
+  - 2026-10-02 (ep. 4) — um
+  - 2026-10-05 (ep. 5) — dois
+## F-013 · Episódio anterior só na pergunta
+- aberto: 2026-09-30 (ep. 3)
+- pergunta: o que saiu em 2026-10-02 (ep. 4) se confirma?
+- marcos:
+  - 2026-10-05 (ep. 5) — confirma
+FIM
+cat > "$SEG_DIR/memoria/fios-fechados/2026.md" <<'FIM'
+## F-009 · Fecha hoje, fora da abertura
+- aberto: 2026-09-28 (ep. 2)
+- marcos:
+  - 2026-10-02 (ep. 4) — quase
+- fechado: 2026-10-05 (ep. 5) — cumprido
+FIM
+for par in "2026-10-02 4 https://a.com/x https://b.com/y" "2026-10-05 5 https://c.com/z https://d.com/w"; do
+  set -- $par
+  printf -- '---\ndate: %s\nepisode: %s\ntopics:\n  - title: Abertura\n    source_url: %s\n  - title: Segunda\n    source_url: %s\n---\ncorpo\n' \
+    "$1" "$2" "$3" "$4" > "$SEG_DIR/episodes/$1.md"
+done
+cat > "$SEG_DIR/indice.json" <<'FIM'
+{"items": [
+  {"episode": "2026-10-02", "title": "Abertura de ontem", "source_url": "https://a.com/x", "note": "Marcos: F-010 aberto."},
+  {"episode": "2026-10-02", "title": "Segunda de ontem", "source_url": "https://b.com/y", "note": "Marco em F-009."},
+  {"episode": "2026-10-05", "title": "Abertura de hoje", "source_url": "https://www.c.com/z/", "note": "Marcos: F-010 e F-0120."},
+  {"episode": "2026-10-05", "title": "Segunda de hoje", "source_url": "https://d.com/w", "note": "Fecha F-009."}
+]}
+FIM
+SEG="$(python3 scripts/confere_repeticao.py "$SEG_DIR/episodes/2026-10-05.md" --indice "$SEG_DIR/indice.json" \
+  --fios "$SEG_DIR/memoria/fios.md" --data 2026-10-05)"
+SEG_SEM="$(printf -- '---\ndate: 2026-10-05\ntopics:\n  - title: x\n    source_url: https://c.com/z\n---\n' > "$SEG_DIR/sem.md"; \
+  python3 scripts/confere_repeticao.py "$SEG_DIR/sem.md" --indice "$SEG_DIR/indice.json" --fios "$SEG_DIR/memoria/fios.md" --data 2026-10-05)"
+rm -rf "$SEG_DIR"
+if [[ "$(printf '%s\n' "$SEG" | grep -c 'volta do episódio anterior')" == 3 \
+      && "$SEG" == *"F-010 (Abre ontem e hoje) volta do episódio anterior (4), e a pauta abriu os dois episódios"* \
+      && "$SEG" == *"F-009 (Fecha hoje, fora da abertura) volta do episódio anterior (4); o fio fechou hoje"* \
+      && "$SEG" == *"F-012 (Sem nota no índice) volta do episódio anterior (4); a nota do índice de hoje não diz em que pauta"* \
+      && "$SEG" != *"F-011"* && "$SEG" != *"F-013"* && -z "$SEG_SEM" ]]; then
+  ok "fio que volta do episódio anterior vira aviso, com a pauta e se ela abriu os dois"
+else
+  bad "conferência de fio em episódios seguidos errada: '${SEG}' / sem número: '${SEG_SEM}'"
+fi
+
 FAKE_FIO="$(mktemp -d)"
 cat > "$FAKE_FIO/claude" <<STUB
 #!/bin/sh

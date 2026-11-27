@@ -1376,3 +1376,37 @@ execuções da produção de 24 a 26/11 ficaram intactas. Bloqueio sobra para o
 roteiro sem a frase da ficha. Fica em aberto o agente que, sabendo-se o 4.8,
 apaga o próprio roteiro e devolve FAIL, como na C e na D: aí não há o que
 corrigir.
+
+### "Salvo desdobramento novo" deixava a mesma história abrir dias seguidos
+
+Em 25/11 a prova de Riemann de Alpöge abriu o episódio 61, pelo item que o
+autor pôs no backlog (os episódios 59 e 60 tinham perdido a notícia, e o
+roteiro disse "Devia ter contado"). Em 26/11 ela abriu o 62 de novo, por uma
+versão menor da prova em Lean, publicada no GitHub, e pelo post de Scott
+Aaronson. O fio F-047 pergunta se sai uma versão legível por gente, e a versão
+nova não respondia. Com o VP ≠ VNP no 60, a matemática feita por IA abriu três
+episódios seguidos, e o 62 trouxe a segunda correção no ar em dois dias ("E
+aqui eu devo uma correção", sobre o expoente da multiplicação de matrizes). O
+agente cumpriu a regra ao pé da letra: o prompt diz "Você NÃO pode repetir
+pauta já coberta, salvo desdobramento novo", sem tamanho mínimo para o
+desdobramento e sem nada sobre o dia seguinte ou sobre quem abre o episódio. A
+conferência pelo link não pegou porque a fonte era nova.
+
+**A medida.** Nos fios abertos, fechados e expirados, 12 casos de fio com
+acontecimento (aberto, marco ou fechado) em dois episódios seguidos, de 62
+episódios; 6 nos episódios 58 a 62; em 3 a pauta abriu os dois (F-028 nos 39
+e 40, F-003 nos 51 e 52, F-047 nos 61 e 62). Não é caso isolado, e a semana
+acelerou. **Agora o `confere_repeticao.py` registra (não bloqueia) o fio que
+volta do episódio anterior**, com a pauta que o carregou (pela nota do
+covered-index, que não cita o fio em 2 dos 12 casos) e se ela abriu um
+episódio ou os dois. Os avisos vão ao registro e ao relatório de sexta.
+
+**Decisão do autor (26/11): a regra vai para o Editor, na sexta.** Proibir o
+mesmo tema em dias seguidos seria largo demais: o T-08 é a matemática e a
+ciência feitas por IA inteiras. A regra é a do fio. A história do episódio
+anterior só volta no dia seguinte, e só abre o episódio, se responder à
+pergunta do fio ou mudar a história de fato. Fora isso, vira uma frase dentro
+de outra pauta ou espera um fato maior. Entra na versão que a sombra escolher
+em 27/11 (1.2 ou 1.3), para não misturar duas mudanças, e passa por ensaio na
+foto de 26/11 (`~/CampsCast-ensaios/sombra/2026-11-26/foto`), que é este caso.
+Corrigir no ar fica como está: as duas correções eram verdadeiras.
