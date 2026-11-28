@@ -18,8 +18,8 @@ Regras:
 
 ---
 
-## Claude lê os cadernos de Kurt Gödel e cataloga 663 teoremas, segundo Jan von Plato
-- data_original: 2026-11-13
-- fonte: The Guardian (reportagem, a ferramenta não abre o domínio) — https://www.theguardian.com/science/2026/nov/13/kurt-godel-notebooks-ai-helps-unlock-hidden-discoveries-man-who-transformed-maths
-- validade: 2026-11-20
-- resumo: o lógico Jan von Plato (Universidade de Helsinque) deu ao Claude as transcrições das 1.009 páginas de cadernos de Gödel em taquigrafia; em dias, um relato de 650 páginas e 663 teoremas, dos quais cerca de 400 conferidos no Coq, 200 ajustados e 50 falsos, e uma prova quase completa da independência do axioma da escolha que Gödel dizia ter. Só reportagem: falta publicação de von Plato, da universidade ou da Anthropic antes de ir ao ar (T-08).
+## NVIDIA pausa embarques de servidores para Malásia, Singapura, Tailândia e Indonésia
+- data_original: 2026-11-26
+- fonte: à espera de fonte oficial — furo do Wall Street Journal (26/11), lido pelo TechCrunch; regra de base é a interim final rule do BIS "Addressing Remote Access to Advanced Semiconductors" (Federal Register, 19/11), não lida
+- validade: 2026-12-03
+- resumo: segundo o WSJ, a NVIDIA mandou Dell, Supermicro e outros pararem os embarques aos quatro países enquanto confere se os parceiros cumprem a regra americana contra acesso remoto chinês; nenhuma nota da NVIDIA no newsroom até 26/11. Só entra com comunicado da NVIDIA ou do governo (T-04, F-040).

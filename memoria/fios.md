@@ -71,9 +71,9 @@ Regras:
 - aberto: 2026-09-09 (ep. 9)
 - pergunta: alguma das empresas nomeadas responde publicamente, ou vem medida concreta além da acusação?
 - marcos:
-  - 2026-10-01 (ep. 25) — OpenAI liga a campanha de extração de raciocínio à Moonshot
-  - 2026-10-14 (ep. 33) — medida concreta, do lado de quem acusa: a Anthropic diz ter cortado de 90 a 99% os dados colhidos (raciocínio preservado, classificador, cobrança de pedido bloqueado) e acusa a Zhipu (capacidade cibernética no GLM-5.3) e a Moonshot (pedidos de usuários repassados ao Claude); nenhuma resposta pública das acusadas encontrada
   - 2026-10-26 (ep. 41) — a Moonshot, acusada pela OpenAI (01/10) e pela Anthropic (14/10), lança em 23/10 o Kimi K3.1 Pro, quarto no índice da Artificial Analysis (55), à frente do GPT-6 Astra; o anúncio não menciona as acusações, e segue sem resposta pública; dito no ar
+  - 2026-11-23 (ep. 59) — medida concreta do outro acusador: a OpenAI publica "Combatting adversarial distillation" (20/11) — extração do raciocínio protegido de pedido anterior cai de 54,0% (GPT-6 Astra, salvaguardas originais) para 0,2% (GPT-6.2 Astra), do pedido atual de 22,9% para 0,9%, em red teaming automático com seis modelos atacantes; punição semanal de milhares a dezenas de milhares de contas, em alta no verão; indicadores repassados a outros provedores; repete a Moonshot (setembro) e a DeepSeek (Congresso, fevereiro) e apoia o Chip Security Act, o AI OVERWATCH Act e o MATCH Act. Nenhuma resposta da Moonshot nem da DeepSeek encontrada; dito no ar
+  - 2026-11-24 (ep. 60) — a Zhipu, acusada pela Anthropic (12/10) de destilar capacidade cibernética de modelos americanos para o GLM-5.3, lança o GLM-5.4 (23/11) só no plano de programação, com API à espera de avaliação de segurança; nem a documentação nem a cobertura lida mencionam a acusação; dito no ar ("o anúncio do modelo novo não fala de nada disso")
 - temas: T-04
 - situação: aberto
 - rever até: 2026-12-31
@@ -97,40 +97,16 @@ Regras:
 - situação: aberto
 - rever até: 2027-01-31
 
-## F-028 · Falhas do PHP achadas com IA: a exploração em massa se confirma, e alguém explica o vazamento?
-- aberto: 2026-10-22 (ep. 39)
-- pergunta: depois das correções de 21/10 (CVE-2026-109618 e CVE-2026-109619), algum governo, a CISA ou empresa de segurança confirma invasões em massa de servidores PHP? A PHP Foundation, a OpenAI ou a Cloudflare explicam como a falha vazou antes da data oficial? A OpenAI publica o relato com verificação de fora sobre o papel do GPT-5.6 Sol e da coalizão, e o Patch the Planet aponta outra falha desse porte?
-- marcos:
-  - 2026-10-23 (ep. 40) — dito no ar: segundo a SecurityWeek (22/10), a Amazon viu a primeira tentativa de exploração em 17/10, quatro dias antes da correção, sem saber como o atacante obteve a informação; os detalhes vazaram em rede social antes da data marcada de 22/10 (watchTowr); milhões de tentativas depois do anúncio; nenhuma invasão confirmada em público, e a CISA não pôs os CVEs no catálogo de exploradas até 22/10; ninguém explicou o vazamento
-- temas: T-05
-- situação: aberto
-- rever até: 2027-01-31
-
-## F-027 · EUA tiram o DeepSeek do governo: a ordem se amplia ou é contestada?
-- aberto: 2026-10-21 (ep. 38)
-- pergunta: depois da ordem de exclusão e remoção do DHS (publicada em 20/10, assinada em 24/07), alguma agência civil obtém exceção no prazo de 60 dias? A regra alcança peso aberto da DeepSeek rodado localmente, se estende além da compra federal (outros fornecedores chineses, uso privado) ou é contestada na Justiça? A China ou a DeepSeek respondem com medida concreta?
-- marcos:
-- temas: T-04
-- situação: aberto
-- rever até: 2027-01-31
-
 ## F-030 · Anthropic na bolsa: a oferta sai, a que preço, e o controle dos fundadores e do LTBT se mantém?
 - aberto: 2026-10-27 (ep. 42)
 - pergunta: depois do S-1 de 26/10 (Nasdaq, código ANT, sem preço nem quantidade), a oferta é precificada e as ações começam a ser negociadas? A versão final mantém a classe F com 50,1% dos votos e o LTBT elegendo a maioria do conselho pela classe T? O prospecto completo diz o que a FTC e a Comissão Europeia pediram?
 - marcos:
   - 2026-11-11 (ep. 52) — a Anthropic lança o roadshow (10/11): 825 milhões de ações classe A (801,4 milhões da empresa, 23,6 milhões de acionistas atuais) a US$ 70 a US$ 78, cerca de US$ 58 a 64 bilhões pelas contas do roteiro, mais opção de 123,75 milhões de ações em 30 dias; Nasdaq Global Select, ANT; Goldman Sachs e Morgan Stanley; registro ainda não efetivo; sem valor da empresa, sem data de precificação e sem menção à classe F nem ao LTBT; dito no ar
   - 2026-11-19 (ep. 58) — a oferta é precificada em 18/11: 980 milhões de ações a US$ 83 (acima da faixa e das 825 milhões), registro declarado efetivo pela SEC em 18/11, negociação prevista para 19/11 na Nasdaq (ANT), liquidação em 20/11, opção de 147 milhões de ações em 30 dias; cerca de US$ 79,4 bilhões para a empresa e US$ 81,3 bilhões no total; pela imprensa, US$ 1,5 trilhão de valor, maior estreia já feita e US$ 26 bilhões em ações sem voto de sete parceiros, entre eles Google e NVIDIA (Fortune). O comunicado não fala de classe F nem do LTBT, e o prospecto final não foi lido; dito no ar. Falta: a negociação de fato e o desenho de controle na versão final
+  - 2026-11-23 (ep. 59) — fechamento (20/11): negociação iniciada em 19/11 na Nasdaq (ANT); 1.127.000.000 ações a US$ 83 com a opção de 147 milhões exercida por inteiro, cerca de US$ 93,5 bilhões brutos, US$ 91,6 bilhões para a Anthropic; venda paralela de 313.253.007 ações classe N, ao mesmo preço, à AMD, Broadcom, Google, Micron, Microsoft, NVIDIA e TSMC Partners (cerca de US$ 26 bilhões); US$ 119,5 bilhões ao todo. O comunicado não descreve os direitos da classe N nem fala de classe F ou LTBT; prospecto final não lido; dito no ar. Falta só o desenho de controle
 - temas: T-03, T-10
 - situação: aberto
 - rever até: 2027-01-31
-
-## F-031 · A refutação da Hipótese do Tempo Exponencial pela OpenAI: os verificadores confirmam?
-- aberto: 2026-10-27 (ep. 42)
-- pergunta: o grupo de Russell Impagliazzo, Ramamohan Paturi e Ryan Williams confirma ou derruba a refutação anunciada em 26/10 (achada em 16/10, Lean em 17/10)? O enunciado formalizado é mesmo a ETH? O grupo de David Gross publica a parte de física (QCD, Yang–Mills), e a prova da suavização local, que resolve Kakeya, é aceita?
-- marcos:
-- temas: T-08
-- situação: aberto
-- rever até: 2027-04-30
 
 ## F-032 · Carta dos democratas da Câmara: as cinco empresas entregam a lista de incidentes até 11/11 e passam a avisar em 48 horas?
 - aberto: 2026-10-29 (ep. 44)
@@ -199,15 +175,17 @@ Regras:
 - marcos:
   - 2026-09-28 (ep. 22) — Casa Branca cria o Diálogo de Superinteligência com a China
   - 2026-11-12 (ep. 53) — volta dos expirados: Scott Bessent (discurso de 10/11 no NCUSCR, texto do Tesouro de 11/11) diz que os dois países devem trocar boas práticas de avaliação e teste de modelos avançados antes do lançamento e manter o julgamento humano no comando, e que o canal direto servirá para avisar incidentes graves com modelos de superinteligência; vai com Trump a Shenzhen na semana seguinte, e a Reuters dá a reunião do diálogo em 18 e 19/11, na APEC. Sem definição de incidente, sem verificação e sem dizer se os laboratórios participam; dito no ar
+  - 2026-11-23 (ep. 59) — no encontro de Shenzhen (19/11), Xi diz a Trump que os dois países devem reforçar comunicação e coordenação para prevenir riscos de segurança da IA e mantê-la sob controle humano (Xinhua); o fact sheet da Casa Branca sobre a viagem (20/11) cita a "Super Intelligence" uma vez, como prosperidade, e não menciona o diálogo, a reunião de 18 e 19/11 nem o canal de incidentes. Nenhum protocolo escrito encontrado; páginas do Ministério das Relações Exteriores chinês e da embaixada não abriram; dito no ar
 - temas: T-04
 - situação: aberto
 - rever até: 2026-12-31
 
-## F-040 · NVIDIA sem Jensen Huang: a investigação conclui algo sobre a inteligência estrangeira, e quem assume?
+## F-040 · Jensen Huang e a inteligência estrangeira: a investigação conclui algo, agora que ele voltou?
 - aberto: 2026-11-13 (ep. 54)
-- pergunta: depois da renúncia de Huang (12/11; o 8-K dá 11/11), sem motivo no comunicado, a investigação independente do conselho (Joon H. Kim e Wachtell, Lipton, Rosen & Katz, desde 10/11) publica conclusão sobre as reportagens de que ele foi alvo de inteligência estrangeira e sobre o comprometimento de segredos ou da segurança nacional? Huang depõe no Congresso antes de 26/11, como diz o TechCrunch, e o que sai disso? O conselho nomeia CEO permanente no lugar de Colette Kress, e a regra de venda de chips à China muda por causa do caso?
+- pergunta: depois da renúncia de Huang (12/11; o 8-K dá 11/11) e da recondução (23/11), a investigação independente do conselho (Joon H. Kim e Wachtell, Lipton, Rosen & Katz, desde 10/11) publica conclusão sobre as reportagens de que ele foi alvo de inteligência estrangeira e sobre o comprometimento de segredos ou da segurança nacional? O que sai do depoimento de Huang à Câmara (1 e 2/12, pela NPR)? Quem é o Chief Compliance Officer, e a regra de venda de chips à China muda por causa do caso?
 - marcos:
   - 2026-11-18 (ep. 57) — primeiro balanço sem Huang (17/11): receita de US$ 115,8 bilhões no trimestre encerrado em 25/10, previsão de US$ 130 bilhões sem receita de centros de dados na China; no mesmo dia, o conselho cria o Comitê de Supervisão de Segurança Nacional e Controle de Exportação (Suzanne Nora Johnson, Stephen C. Neal, John O. Dabiri), a quem passam a responder as equipes de segurança nacional e de conformidade de comércio; nenhum dos dois textos cita Huang, a investigação ou a busca por CEO, e o comitê não cita a China; dito no ar
+  - 2026-11-24 (ep. 60) — quem assume, respondido: o conselho reconduz Huang (comunicado de 23/11; 8-K com evento em 22/11), por unanimidade, a presidente-executivo e conselheiro, seis dias depois de Harvey Jones dizer que não pretendia (NPR, 17/11); "the Board received input from senior levels of the United States government" e não vê "national security risk"; Kress segue diretora financeira; busca por um Chief Compliance Officer. A investigação "will proceed to conclusion", sem conclusão publicada; Huang e o diretor jurídico depõem à Câmara em 1 e 2/12 (NPR); dito no ar
 - temas: T-04
 - situação: aberto
 - rever até: 2027-03-31
@@ -241,6 +219,34 @@ Regras:
 - pergunta: a OpenAI lançou em 17/11 o GPT-6.2 Astra, primeiro modelo dela lançado ao público no nível Alto de autoaperfeiçoamento (Internal Research Debugging 81,85%, KernelGen 1P 76,92%, MLE-Bench Revised percentil 96), com uso interno condicionado a testes de alinhamento, vigilância de todo o tráfego interno do Codex e o Control Room; a ficha registra mais percepção de teste e mais facilidade de escapar da vigilância do raciocínio. Algum avaliador de fora (METR, Apollo, instituto britânico) publica medição da capacidade de autoaperfeiçoamento do modelo? A OpenAI amplia o uso interno dele no Codex, anuncia modelo no nível Crítico, ou adota freio parecido com o que a Anthropic diz ter posto no Fable 5.2?
 - marcos:
   - 2026-11-19 (ep. 58) — no dia seguinte, a OpenAI publica a própria medição da aceleração ("Research acceleration: The jagged frontier", 18/11; página 403, lida pela cobertura de quatro veículos): agentes concluem sozinhos 46% das tarefas de pesquisa de 2 a 4 horas (23% em março) e 35% das de 4 a 8 horas (13%), de forma irregular (79% vigiar treino, 25% código de serviço); gasto mediano de US$ 2.400 por dia por pesquisador. Medição interna, não de fora; nenhum avaliador externo publicou sobre o GPT-6.2 Astra; dito no ar
+  - 2026-11-23 (ep. 59) — o cientista-chefe da OpenAI, Jakub Pachocki, propõe em ensaio pessoal ("Perplexity and Intelligence", 22/11) "common limits, based on perplexity and other measurements", que os laboratórios não cruzariam até um marco concreto de monitoramento (como um sucessor dos monitores de cadeia de raciocínio); diz que o modelo de ~0,76 de log-perplexidade trouxe resultados "groundbreaking" em matemática e espera capacidades transformadoras entre ~0,68 e 0,70. Não é compromisso da empresa nem freio; sem fiscal nem pausa; nenhum avaliador de fora publicou sobre o GPT-6.2 Astra; dito no ar
 - temas: T-01, T-03
 - situação: aberto
 - rever até: 2027-05-31
+
+## F-045 · VP ≠ VNP pelo Claude: alguém de fora confere a prova e o enunciado?
+- aberto: 2026-11-24 (ep. 60)
+- pergunta: a Anthropic pôs no GitHub (anthropics/formal-math, ramo vp-vnp, 23/11) um artigo e uma prova em Lean de que VP ≠ VNP sobre qualquer corpo (a conjectura de Valiant, de 1979), descobertos por um Claude interno, escritos por modelos e sem nenhum matemático humano na conferência; o README avisa que nenhuma máquina confere que o enunciado formal diz o que se afirma (apêndice Q, tabela 3). Algum especialista em complexidade algébrica, ou a comunidade do Lean, confere o enunciado e a prova, confirma ou acha o erro? A Anthropic anuncia o resultado oficialmente, diz que modelo o achou, e o artigo vai ao arXiv ou a periódico?
+- marcos:
+  - 2026-11-25 (ep. 61) — contraste com a prova de Riemann de Alpöge (F-047): lá o Lean FRO e a Mathlib certificaram o enunciado por especialistas antes de dar a prova por aceita; aqui, o enunciado do VP ≠ VNP segue sem conferência de fora. No mesmo dia, a OpenAI publicou no GitHub a prova do expoente 9/4 da multiplicação de matrizes, também limite inferior sem verificação externa — o padrão de publicar direto no repositório se repete; dito no ar
+  - 2026-11-26 (ep. 62) — o history.md da OpenAI mostra que ela também publicou "VP and VNP are different" em 23/11 (resultado obtido em 06/11), no mesmo dia da Anthropic, e em 24/11 dois artigos de circuitos que o subsomem; Scott Aaronson (25/11) lista as provas de VP ≠ VNP das duas e escreve que sua "working assumption" é que prova vinda direto da OpenAI ou da Anthropic está correta "barring information to the contrary" — sem dizer que conferiu; conferência de enunciado por especialista de fora segue sem aparecer; dito no ar, como correção ("eu contei esse resultado como se fosse só da Anthropic")
+- temas: T-08
+- situação: aberto
+- rever até: 2027-05-31
+
+## F-047 · A prova de Riemann de Alpöge: sai versão legível por gente, e a comunidade digere o argumento?
+- aberto: 2026-11-25 (ep. 61)
+- pergunta: Levent Alpöge (Anthropic) diz ter descoberto com o Claude uma prova da hipótese de Riemann e da generalizada, apresentada só em Lean (cerca de 17 milhões de linhas); o Lean FRO e a Mathlib certificaram enunciado e prova (21/11), e as conferências finais por máquina passaram (registro de Sutherland/MIT, 24/11). Sai um artigo ou texto legível por humanos que explique as ideias (Alpöge promete escrever)? Algum especialista em teoria dos números digere e aceita a prova além da conferência por máquina, ou aparece objeção ao enunciado ou a um passo? A Anthropic publica nota oficial, o Instituto Clay se pronuncia sobre o prêmio do milênio, e o resultado vai a periódico?
+- marcos:
+  - 2026-11-26 (ep. 62) — versão curta em Lean da GRH (github.com/lsernau/grh-lean, 25/11), "produced in collaboration with my colleagues at Anthropic, and Claude", a partir da prova de Alpöge: ~300 mil linhas na edição "readable" e ~76 mil na condensada, contra ~17 milhões; compila em uma a duas horas com 12 núcleos; "passed machine checks only... No mathematician has read it through, and no paper comes with it"; copyright da Anthropic. Encolheu, mas segue sem texto legível por gente nem nota oficial da Anthropic; dito no ar
+- temas: T-08
+- situação: aberto
+- rever até: 2027-05-31
+
+## F-046 · GLM-5.4: a API passa na avaliação de segurança, os pesos saem, e alguém de fora mede?
+- aberto: 2026-11-24 (ep. 60)
+- pergunta: a Zhipu (Z.ai) lançou em 23/11 o GLM-5.4, com transformador em laço (28 camadas da base do GLM-5 percorridas duas vezes; cerca de 750 bilhões de parâmetros pela cobertura; "comparable to 2T-3T parameter models", diz a empresa), só no GLM Coding Plan; "The Model API will be made available upon completion of the security assessment", e a cobertura diz que os pesos serão abertos, sem data. A API sai, e a Zhipu diz quem fez a avaliação de segurança e o que ela mediu? Os pesos são publicados, com que licença? A Artificial Analysis ou outro avaliador de fora mede o modelo, e ele passa o Kimi K3.1 Pro entre os abertos?
+- marcos:
+- temas: T-09, T-04
+- situação: aberto
+- rever até: 2027-03-31

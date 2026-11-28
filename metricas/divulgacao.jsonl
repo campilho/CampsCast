@@ -2,3 +2,4 @@
 {"quando": "2026-11-21T08:02:33-03:00", "semana": "2026-W47", "evento": "conferencia", "resultado": "barrada", "fatos": 15, "contas": 2, "problemas": 2, "avisos": 0}
 {"quando": "2026-11-21T08:02:37-03:00", "semana": "2026-W47", "evento": "entrega", "canal": "e-mail", "ressalvas": true}
 {"quando": "2026-11-21T09:40:12-03:00", "semana": "2026-W47", "evento": "conferencia", "resultado": "ok", "fatos": 15, "contas": 2, "problemas": 0, "avisos": 0}
+{"quando": "2026-11-24T12:00:08-03:00", "semana": "2026-W47", "evento": "lembrete", "canal": "e-mail", "estado": "entregue"}
