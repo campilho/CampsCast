@@ -528,18 +528,27 @@ def parecido(a: str, b: str) -> bool:
     return bool(pa) and len(pa & pb) / len(pa) >= 0.5
 
 
+def do_backlog(fm: dict) -> list[str]:
+    """Títulos do from_backlog. O leitor do cabeçalho lê "- título: resto"
+    como dicionário; em 27/11 ("58 empresas: poucas demissões") isso derrubou
+    o estúdio, e o site ficou sem a gravação do dia."""
+    return [b if isinstance(b, str) else "; ".join(f"{k}: {v}" for k, v in b.items())
+            if isinstance(b, dict) else str(b)
+            for b in fm.get("from_backlog") or []]
+
+
 def episodio(data: str) -> dict:
     from publish import parse_front_matter
     texto = (ROOT / "episodes" / f"{data}.md").read_text(encoding="utf-8")
     fm = parse_front_matter(texto)
     corpo = texto.lstrip().split("---", 2)[2].strip() if texto.lstrip().startswith("---") else texto
     show = json.loads((ROOT / "config" / "show.json").read_text(encoding="utf-8"))
-    do_backlog = set(fm.get("from_backlog") or [])
+    titulos_backlog = do_backlog(fm)
     return {"numero": int(fm.get("episode", 0) or 0), "titulo": fm.get("title", ""),
             "janela": [fm.get("window_start"), fm.get("window_end")],
             "palavras": int(fm.get("words", 0) or 0),
             "pautas": [{"titulo": p.get("title", ""), "fonte": p.get("source_name", ""), "url": p.get("source_url", ""),
-                        "do_backlog": any(parecido(b, p.get("title", "")) for b in do_backlog)}
+                        "do_backlog": any(parecido(b, p.get("title", "")) for b in titulos_backlog)}
                        for p in fm.get("topics") or [] if isinstance(p, dict)],
             "roteiro": [p.strip() for p in corpo.split("\n\n") if p.strip()],
             "roteiro_url": no_site(f"estudio/roteiros/{data}.html"),

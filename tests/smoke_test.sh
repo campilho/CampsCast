@@ -3051,6 +3051,32 @@ else
   bad "dados do estúdio errados: $EST_OK"
 fi
 
+# 27/11: título do backlog com dois-pontos ("58 empresas: poucas demissões")
+# vira dicionário no leitor do cabeçalho, e o estúdio quebrava; o site ficou
+# sem a gravação do dia. O episódio não é afetado.
+BKL="$(python3 - <<'PY' 2>&1
+import sys; sys.path.insert(0, "scripts")
+from publish import parse_front_matter
+from estudio import do_backlog
+fm = parse_front_matter("""---
+from_backlog:
+  - Anthropic entrevista 58 empresas: poucas demissões, menos contratação
+  - OpenAI e Cisco abrem o Shirudo
+---
+corpo
+""")
+assert do_backlog(fm) == ["Anthropic entrevista 58 empresas: poucas demissões, menos contratação",
+                          "OpenAI e Cisco abrem o Shirudo"], do_backlog(fm)
+assert do_backlog({}) == [] and do_backlog({"from_backlog": None}) == []
+print("ok")
+PY
+)"
+if [[ "$BKL" == "ok" ]]; then
+  ok "estúdio: título do backlog com dois-pontos não derruba o site"
+else
+  bad "título do backlog com dois-pontos: $BKL"
+fi
+
 # O log de pesquisa é Markdown, e a página dele no site sai de um conversor
 # nosso, sem dependências: só o que os logs usam. Texto do log é dado de fora
 # (títulos e trechos de páginas), então nada dele vira HTML de verdade.
